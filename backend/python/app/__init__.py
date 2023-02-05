@@ -10,7 +10,6 @@ from logging.config import dictConfig
 
 from .config import app_config
 
-
 def create_app(config_name):
     # configure Flask logger
     dictConfig(
