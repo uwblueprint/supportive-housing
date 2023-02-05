@@ -33,8 +33,7 @@ services:
     env_file:
       - ./.env
   db:
-    # TODO: rename container for your project
-    container_name: scv2_db
+    container_name: SHOW-database
     image: postgres:12-alpine
     ports:
       - 5432:5432
