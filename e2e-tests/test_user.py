@@ -126,4 +126,4 @@ def test_users(backend_url, auth_header, lang, api, new_user_email):
     assert updated_user == retrieved_user_by_email
 
     assert get_users(backend_url, auth_header)
-    #delete_user(backend_url, auth_header, user["id"], lang)
+    delete_user(backend_url, auth_header, user["id"], lang)
