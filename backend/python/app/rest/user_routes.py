@@ -96,7 +96,7 @@ def get_users():
 
 
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
-@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Admin"})
 @validate_request("CreateUserDTO")
 def create_user():
     """
@@ -129,7 +129,7 @@ def update_user(user_id):
 
 
 @blueprint.route("/", methods=["DELETE"], strict_slashes=False)
-@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Admin"})
 def delete_user():
     """
     Delete a user by user_id or email, specified through a query parameter
