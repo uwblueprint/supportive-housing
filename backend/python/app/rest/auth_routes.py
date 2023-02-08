@@ -11,9 +11,11 @@ from ..resources.create_user_dto import CreateUserDTO
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
+from ..services.implementations.sign_in_logs_service import SignInLogService
 
 
 user_service = UserService(current_app.logger)
+sign_in_logs_service = SignInLogService(current_app.logger)
 email_service = EmailService(
     current_app.logger,
     {
@@ -64,6 +66,9 @@ def login():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
+        print("LOOK HERE!!!!!!")
+        print(auth_dto.id)
+        sign_in_logs_service.create_log(auth_dto.id)
         return response, 200
     except Exception as e:
         error_message = getattr(e, "message", None)

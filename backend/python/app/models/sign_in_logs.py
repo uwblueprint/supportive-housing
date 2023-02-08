@@ -1,10 +1,12 @@
 from . import db
+from sqlalchemy import inspect
+from sqlalchemy.orm.properties import ColumnProperty
 
 class SignInLogs(db.Model):
     __tablename__ = "sign_in_log"
     log_id = db.Column(db.Integer,primary_key=True, nullable=False)
     id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    time = db.Column(db.DateTime, nullable=False)
+    time = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def to_dict(self, include_relationships=False):
         # define the entities table

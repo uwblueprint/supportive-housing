@@ -1,8 +1,8 @@
-"""add sign_in_logs table
+"""adding db table for logging user data
 
-Revision ID: e094e656e1dd
+Revision ID: f97592e183de
 Revises: 797bfedc3a06
-Create Date: 2023-02-01 01:16:56.489686
+Create Date: 2023-02-05 19:50:41.833067
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e094e656e1dd'
+revision = 'f97592e183de'
 down_revision = '797bfedc3a06'
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('sign_in_log',
     sa.Column('log_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('time', sa.DateTime(), nullable=False),
+    sa.Column('time', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('log_id')
     )
