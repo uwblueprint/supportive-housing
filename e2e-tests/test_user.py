@@ -84,21 +84,30 @@ def test_users(backend_url, auth_header, lang, api, new_user_email):
     body1 = {
         "firstName": "Test",
         "lastName": "Script",
-        "role": "User",
+        "role": "Relief Staff",
         "email": new_user_email,
         "password": "password",
     }
     body2 = {
-        "firstName": "Test2",
-        "lastName": "Script2",
-        "role": "User",
+        "firstName": "Test",
+        "lastName": "Script",
         "email": new_user_email,
+        "role": "Regular Staff",
+    }
+    body3 = {
+        "firstName": "Test",
+        "lastName": "Script",
+        "email": new_user_email,
+        "role": "Admin",
     }
     if lang != "ts":
         body1 = {inflection.underscore(k): v for k, v in body1.items()}
         body2 = {inflection.underscore(k): v for k, v in body2.items()}
+        body3 = {inflection.underscore(k): v for k, v in body3.items()}
 
     user = create_user(backend_url, auth_header, body1)
+
+    # update to Regular Staff
     updated_user = update_user(backend_url, auth_header, user["id"], body2)
     retrieved_user_by_id = get_user_by_id(backend_url, auth_header, user["id"], lang)
     assert updated_user == retrieved_user_by_id
@@ -106,5 +115,15 @@ def test_users(backend_url, auth_header, lang, api, new_user_email):
         backend_url, auth_header, updated_user["email"]
     )
     assert updated_user == retrieved_user_by_email
+
+    # update to Admin
+    updated_user = update_user(backend_url, auth_header, user["id"], body3)
+    retrieved_user_by_id = get_user_by_id(backend_url, auth_header, user["id"], lang)
+    assert updated_user == retrieved_user_by_id
+    retrieved_user_by_email = get_user_by_email(
+        backend_url, auth_header, updated_user["email"]
+    )
+    assert updated_user == retrieved_user_by_email
+
     assert get_users(backend_url, auth_header)
     delete_user(backend_url, auth_header, user["id"], lang)
