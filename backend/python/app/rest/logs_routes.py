@@ -15,7 +15,7 @@ sign_in_logs_service = SignInLogService(current_app.logger)
 blueprint = Blueprint("logs", __name__, url_prefix="/logs")
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-# @require_authorization_by_role({"User", "Admin"})
+@require_authorization_by_role({"Admin"})
 def filter_logs():
     email = request.json["email"]
     start_date = request.json["start_date"]
