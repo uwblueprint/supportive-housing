@@ -2,10 +2,11 @@ from . import db
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 
+
 class SignInLogs(db.Model):
     __tablename__ = "sign_in_log"
-    log_id = db.Column(db.Integer,primary_key=True, nullable=False)
-    id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    log_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     time = db.Column(db.DateTime(timezone=True), nullable=False)
 
     def to_dict(self, include_relationships=False):
@@ -27,7 +28,3 @@ class SignInLogs(db.Model):
                 # don't format the relationship's relationships
                 formatted[field] = [obj.to_dict() for obj in attr]
         return formatted
-
-   
-
-
