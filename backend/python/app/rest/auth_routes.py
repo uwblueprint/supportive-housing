@@ -66,8 +66,6 @@ def login():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
-        print("LOOK HERE!!!!!!")
-        print(auth_dto.id)
         sign_in_logs_service.create_log(auth_dto.id)
         return response, 200
     except Exception as e:
