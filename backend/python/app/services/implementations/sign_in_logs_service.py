@@ -1,7 +1,8 @@
 from ..interfaces.sign_in_logs_service import ISignInLogService
 from ...models.sign_in_logs import SignInLogs
 from ...models import db
-from datetime import datetime, timezone
+from datetime import datetime
+from pytz import timezone
 from sqlalchemy import select, cast, Date
 import json
 
