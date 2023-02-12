@@ -36,7 +36,11 @@ def upgrade():
         sa.Column("first_name", sa.String(), nullable=False),
         sa.Column("last_name", sa.String(), nullable=False),
         sa.Column("auth_id", sa.String(), nullable=False),
-        sa.Column("role", sa.Enum("User", "Admin", name="roles"), nullable=True),
+        sa.Column(
+            "role",
+            sa.Enum("Admin", "Regular Staff", "Relief Staff", name="roles"),
+            nullable=True,
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     # ### end Alembic commands ###

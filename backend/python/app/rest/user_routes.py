@@ -35,7 +35,7 @@ DEFAULT_CSV_OPTIONS = {
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-@require_authorization_by_role({"User", "Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_users():
     """
     Get all users, optionally filter by a user_id or email query parameter to retrieve a single user
@@ -96,7 +96,7 @@ def get_users():
 
 
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
-@require_authorization_by_role({"User", "Admin"})
+@require_authorization_by_role({"Admin"})
 @validate_request("CreateUserDTO")
 def create_user():
     """
@@ -113,7 +113,7 @@ def create_user():
 
 
 @blueprint.route("/<int:user_id>", methods=["PUT"], strict_slashes=False)
-@require_authorization_by_role({"User", "Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 @validate_request("UpdateUserDTO")
 def update_user(user_id):
     """
@@ -129,7 +129,7 @@ def update_user(user_id):
 
 
 @blueprint.route("/", methods=["DELETE"], strict_slashes=False)
-@require_authorization_by_role({"User", "Admin"})
+@require_authorization_by_role({"Admin"})
 def delete_user():
     """
     Delete a user by user_id or email, specified through a query parameter

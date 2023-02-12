@@ -60,7 +60,7 @@ class AuthService(IAuthService):
                     first_name=google_user["firstName"],
                     last_name=google_user["lastName"],
                     email=google_user["email"],
-                    role="User",
+                    role="Relief Staff",
                     password="",
                 ),
                 auth_id=google_user["localId"],
