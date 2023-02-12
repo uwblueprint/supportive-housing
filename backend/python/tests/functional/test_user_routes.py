@@ -23,7 +23,7 @@ TEST_USERS = [
         "auth_id": "B",
         "first_name": "Hello",
         "last_name": "World",
-        "role": "User",
+        "role": "Relief Staff",
     },
 ]
 

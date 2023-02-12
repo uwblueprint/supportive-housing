@@ -727,7 +727,8 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "User",
+                      "Relief Staff",
+                      "Regular Staff",
                       "Admin"
                     ]
                   },
@@ -863,7 +864,8 @@
                   "role": {
                     "type": "string",
                     "enum": [
-                      "User",
+                      "Relief Staff",
+                      "Regular Staff",
                       "Admin"
                     ]
                   },

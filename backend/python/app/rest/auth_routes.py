@@ -80,7 +80,7 @@ def register():
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     try:
-        request.json["role"] = "User"
+        request.json["role"] = "Relief Staff"
         user = CreateUserDTO(**request.json)
         user_service.create_user(user)
         auth_dto = auth_service.generate_token(
