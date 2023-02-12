@@ -35,8 +35,6 @@ def get_user_by_email(backend_url, auth_header, email):
 
 
 def create_user(backend_url, auth_header, body):
-    print("HERE")
-    print(auth_header)
     response = requests.post(
         f"{backend_url}/users/",
         json=body,
