@@ -39,7 +39,8 @@ blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
 def login():
     """
-    Returns access token in response body and sets refreshToken as an httpOnly cookie
+    Returns access token in response body and sets refreshToken as an httpOnly cookie only
+    Also includes whether the user needs 2FA or not
     """
     try:
         auth_dto = None
@@ -49,7 +50,16 @@ def login():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
-        response = jsonify(
+        response = {
+            "requires_two_fa": False,
+            "auth_user": None
+        }
+
+        if auth_dto.role == "Relief Staff":
+            response["requires_two_fa"] = True
+            return jsonify(response), 200
+
+        response["auth_user"] = jsonify(
             {
                 "access_token": auth_dto.access_token,
                 "id": auth_dto.id,
