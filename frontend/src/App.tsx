@@ -25,13 +25,14 @@ import HooksDemo from "./components/pages/HooksDemo";
 import { AuthenticatedUser } from "./types/AuthTypes";
 
 const App = (): React.ReactElement => {
-  const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
+  const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
     AUTHENTICATED_USER_KEY,
   );
 
-  const [authenticatedUser, setAuthenticatedUser] = useState<AuthenticatedUser>(
-    currentUser,
-  );
+  const [
+    authenticatedUser,
+    setAuthenticatedUser,
+  ] = useState<AuthenticatedUser | null>(currentUser);
 
   // Some sort of global state. Context API replaces redux.
   // Split related states into different contexts as necessary.
