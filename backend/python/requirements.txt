@@ -4,7 +4,7 @@ attrs==21.2.0
 black==20.8b1
 CacheControl==0.12.6
 cachetools==4.2.1
-certifi==2020.12.5
+certifi==2022.12.7
 cffi==1.14.5
 chardet==4.0.0
 click==7.1.2
@@ -30,8 +30,8 @@ idna==2.10
 importlib-metadata==4.4.0
 iniconfig==1.1.1
 itsdangerous==1.1.0
-Jinja2==2.11.2
-Mako==1.1.4
+Jinja2==2.11.3
+Mako==1.2.2
 MarkupSafe==1.1.1
 mongoengine==0.23.0
 mongomock==3.23.0
@@ -41,7 +41,7 @@ packaging==20.9
 pathspec==0.8.1
 pluggy==0.13.1
 proto-plus==1.18.1
-protobuf==3.15.8
+protobuf==3.18.3
 psycopg2==2.8.6
 py==1.10.0
 pyasn1==0.4.8
@@ -65,6 +65,6 @@ toml==0.10.2
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
 uritemplate==3.0.1
-urllib3==1.26.4
+urllib3==1.26.5
 Werkzeug==1.0.1
 zipp==3.4.1
