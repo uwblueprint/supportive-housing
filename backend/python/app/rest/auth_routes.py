@@ -58,20 +58,20 @@ def login():
             "auth_user": None
         }
 
-        if auth_dto.role == "Relief Staff":
+        if os.getenv("AUTHY_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
 
-        response["auth_user"] = jsonify(
-            {
-                "access_token": auth_dto.access_token,
-                "id": auth_dto.id,
-                "first_name": auth_dto.first_name,
-                "last_name": auth_dto.last_name,
-                "email": auth_dto.email,
-                "role": auth_dto.role,
-            }
-        )
+        response["auth_user"] = {
+            "access_token": auth_dto.access_token,
+            "id": auth_dto.id,
+            "first_name": auth_dto.first_name,
+            "last_name": auth_dto.last_name,
+            "email": auth_dto.email,
+            "role": auth_dto.role,
+        }
+
+        response = jsonify(response)
         response.set_cookie(
             "refreshToken",
             value=auth_dto.refresh_token,
