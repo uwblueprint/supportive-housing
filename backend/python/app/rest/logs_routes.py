@@ -1,7 +1,4 @@
-import os
-from sqlalchemy import select
 from datetime import datetime
-import json
 
 
 from flask import Blueprint, current_app, jsonify, request
@@ -18,9 +15,21 @@ blueprint = Blueprint("logs", __name__, url_prefix="/logs")
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def filter_logs():
-    email = request.json["email"]
-    start_date = request.json["start_date"]
-    end_date = request.json["end_date"]
+    email = None
+    start_date = None
+    end_date = None
+    try:
+        email = request.json["email"]
+    except:
+        pass
+
+    try:
+        start_date = request.json["start_date"]
+        end_date = request.json["end_date"]
+    except:
+        pass
+
+    user_id = None
 
     if email:
         if type(email) is not str:
