@@ -1,16 +1,10 @@
 import React, { useContext, useState } from "react";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-
-type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
 type AuthyProps = {
   email: string;
@@ -29,7 +23,16 @@ const Authy = ({
   const [passcode, setPasscode] = useState("");
 
   const onAuthyClick = async () => {
-    console.log("test");
+    let authUser: AuthenticatedUser | null;
+
+    if (token) {
+      authUser = await authAPIClient.twoFaWithGoogle(passcode, token);
+    } else {
+      authUser = await authAPIClient.twoFa(passcode, email, password);
+    }
+
+    localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
+    setAuthenticatedUser(authUser);
   };
 
   if (authenticatedUser) {

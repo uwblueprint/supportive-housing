@@ -1,3 +1,7 @@
+export type TwoFaResponse = {
+  authUser: AuthenticatedUser;
+} | null;
+
 export type LoginResponse = {
   requiresTwoFa: boolean;
   authUser: AuthenticatedUser;
