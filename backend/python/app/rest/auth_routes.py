@@ -37,7 +37,8 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
-authy_api = AuthyApiClient(os.getenv('AUTHY_API_KEY'))
+authy_api = AuthyApiClient(os.getenv("AUTHY_API_KEY"))
+
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
 def login():
@@ -53,10 +54,7 @@ def login():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
-        response = {
-            "requires_two_fa": False,
-            "auth_user": None
-        }
+        response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("AUTHY_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
@@ -82,26 +80,32 @@ def login():
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+
 @blueprint.route("/twoFa", methods=["POST"], strict_slashes=False)
 def two_fa():
     """
-    Validated passcode with Authy client and if successful, 
+    Validated passcode with Authy client and if successful,
     returns access token in response body and sets refreshToken as an httpOnly cookie only
     """
 
     passcode = request.args.get("passcode")
 
     if not passcode:
-        return (jsonify({"error": "Must supply one of user_id or email as query parameter."}), 400,) 
+        return (
+            jsonify(
+                {"error": "Must supply one of user_id or email as query parameter."}
+            ),
+            400,
+        )
 
     try:
-        verification = authy_api.tokens.verify(
-            os.getenv('AUTHY_USER_ID'),
-            passcode
-        )
+        verification = authy_api.tokens.verify(os.getenv("AUTHY_USER_ID"), passcode)
         if not verification.ok():
-            return (jsonify({"error": "Invalid passcode."}), 400,) 
-        
+            return (
+                jsonify({"error": "Invalid passcode."}),
+                400,
+            )
+
         auth_dto = None
         if "id_token" in request.json:
             auth_dto = auth_service.generate_token_for_oauth(request.json["id_token"])
@@ -125,10 +129,11 @@ def two_fa():
             **cookie_options,
         )
         return response, 200
-        
+
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
+
 
 @blueprint.route("/register", methods=["POST"], strict_slashes=False)
 @validate_request("RegisterUserDTO")
