@@ -6,6 +6,7 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 
+import MicrosoftLogin from "react-microsoft-login";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
@@ -88,6 +89,13 @@ const Login = (): React.ReactElement => {
             // eslint-disable-next-line no-alert
             window.alert(JSON.stringify(error))
           }
+        />
+        <MicrosoftLogin
+          clientId={process.env.MICROSOFT_CLIENT_ID || ""}
+          authCallback={(error) => {
+            // eslint-disable-next-line no-alert
+            window.alert(error);
+          }}
         />
       </form>
       <div>
