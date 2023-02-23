@@ -4,13 +4,13 @@ def init_app(app):
         auth_routes,
         entity_routes,
         documentation_routes,
+        invite_users_routes,
         logs_routes,
-        invite_users_routes
     )
 
     app.register_blueprint(user_routes.blueprint)
     app.register_blueprint(auth_routes.blueprint)
     app.register_blueprint(entity_routes.blueprint)
     app.register_blueprint(documentation_routes.blueprint)
-    app.register_blueprint(logs_routes.blueprint)
     app.register_blueprint(invite_users_routes.blueprint)
+    app.register_blueprint(logs_routes.blueprint)
