@@ -10,6 +10,7 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser, LoginResponse } from "../../types/AuthTypes";
+import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
@@ -40,21 +41,38 @@ const Credentials = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
-  const onLogInClick = async () => {
-    const loginResponse: LoginResponse = await authAPIClient.login(
-      email,
-      password,
-    );
-    if (loginResponse) {
-      const { requiresTwoFa, authUser } = loginResponse;
-      if (requiresTwoFa) {
-        setToggle(!toggle);
-      } else {
-        localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-        setAuthenticatedUser(authUser);
-      }
+  const isUserInvited = async (userEmail: string) => {
+    if (userEmail !== "") {
+      await routesAPIClient.isUserInvited(userEmail);
+      return true;
     }
-    // Otherwise we can display some sort of error
+    return false;
+  };
+
+  const onLogInClick = async () => {
+    const isInvited = await isUserInvited(email);
+    if (isInvited) {
+      const loginResponse: LoginResponse = await authAPIClient.login(
+        email,
+        password,
+      );
+      if (loginResponse) {
+        const { requiresTwoFa, authUser } = loginResponse;
+        if (requiresTwoFa) {
+          setToggle(!toggle);
+        } else {
+          localStorage.setItem(
+            AUTHENTICATED_USER_KEY,
+            JSON.stringify(authUser),
+          );
+          setAuthenticatedUser(authUser);
+        }
+      }
+      // Otherwise we can display some sort of error
+    } else {
+      // eslint-disable-next-line no-alert
+      window.alert("user not invited");
+    }
   };
 
   const onSignUpClick = () => {

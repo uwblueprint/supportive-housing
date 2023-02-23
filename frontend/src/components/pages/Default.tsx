@@ -26,21 +26,10 @@ const TeamInfoDisplay = () => {
   const { teamName, numTerms, members, isActive } = useContext(SampleContext);
 
   const [email, setEmail] = useState<string>("");
-  const [validEmail, setValidEmail] = useState<string>("");
-  const [isValid, setIsValid] = useState(false);
 
   const inviteUser = async (userEmail: string) => {
     if (userEmail !== "") {
       await routesAPIClient.inviteUser(userEmail);
-    }
-  };
-
-  const isUserInvited = async (userEmail: string) => {
-    if (userEmail !== "") {
-      const isInvited = await routesAPIClient.isUserInvited(userEmail);
-      setIsValid(isInvited);
-    } else {
-      setIsValid(false);
     }
   };
 
@@ -71,23 +60,6 @@ const TeamInfoDisplay = () => {
         >
           Invite User
         </button>
-      </div>
-      <div>
-        Is user invited:
-        <input
-          type="email"
-          value={validEmail}
-          onChange={(event) => setValidEmail(event.target.value)}
-          placeholder="username@domain.com"
-        />
-        <button
-          onClick={() => isUserInvited(validEmail)}
-          className="btn btn-primary"
-          type="button"
-        >
-          Check
-        </button>
-        {isValid ? "valid email" : "invalid email"}
       </div>
     </div>
   );
