@@ -10,6 +10,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
+import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
@@ -24,9 +25,26 @@ const Login = (): React.ReactElement => {
   const [password, setPassword] = useState("");
   const history = useHistory();
 
+  const isUserInvited = async (userEmail: string) => {
+    if (userEmail !== "") {
+      await routesAPIClient.isUserInvited(userEmail);
+      return true;
+    }
+    return false;
+  };
+
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(email, password);
-    setAuthenticatedUser(user);
+    const isInvited = await isUserInvited(email);
+    if (isInvited) {
+      const user: AuthenticatedUser = await authAPIClient.login(
+        email,
+        password,
+      );
+      setAuthenticatedUser(user);
+    } else {
+      // eslint-disable-next-line no-alert
+      window.alert("user not invited");
+    }
   };
 
   const onSignUpClick = () => {
