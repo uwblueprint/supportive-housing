@@ -1,4 +1,3 @@
-
 from ..interfaces.invite_users_service import IInviteUserService
 from ...models.invited_users import InvitedUsers
 from ...models import db
@@ -10,14 +9,17 @@ class InviteUserService(IInviteUserService):
     InviteUserService interface with methods to manage invited users
     """
 
-    def __init__(self, logger):
+    def __init__(self, logger, email_service=None):
         """
         Create an instance of InviteUserService
 
         :param logger: application's logger instance
         :type logger: logger
+        :param email_service: an email_service instance
+        :type email_service: IEmailService
         """
         self.logger = logger
+        self.email_service = email_service
 
     def get_user_by_id(self, user_id):
         try:
@@ -175,6 +177,35 @@ class InviteUserService(IInviteUserService):
             self.logger.error(
                 "Failed to delete user. Reason = {reason}".format(
                     reason=(reason if reason else str(e))
+                )
+            )
+            raise e
+        
+    def send_email_sign_in_link(self, email):
+        if not self.email_service:
+            error_message = """
+                Attempted to call send_email_verification_link but this instance of AuthService 
+                does not have an EmailService instance
+                """
+            self.logger.error(error_message)
+            raise Exception(error_message)
+
+        try:
+            email_body = """
+                Hello,
+                <br><br>
+                Please click the following link to sign in your email and activate your account.
+                <strong>This link is only valid for 1 hour.</strong>
+                <br><br>
+                <a href={sign_in_link}>Sign in here</a>
+                """.format(
+                sign_in_link="http://localhost:3000/login"
+            )
+            self.email_service.send_email(email, "Sign in with your email", email_body)
+        except Exception as e:
+            self.logger.error(
+                "Failed to generate email sign in link for user with email {email}.".format(
+                    email=email
                 )
             )
             raise e
