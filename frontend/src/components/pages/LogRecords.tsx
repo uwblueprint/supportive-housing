@@ -21,20 +21,22 @@ const mockRecords = [
   },
   {
     "id": 3, "Date": "Jan 21", "Time": "2:45 AM", "Resident": "DE307", "Note": "Vic came", "Employee": "Huseyin", "Attn_To": "John Doe"
+  },
+  {
+    "id": 4, "Date": "Jan 21", "Time": "3:20 AM", "Resident": "MB404",
+    "Note": "During security check, MB404 was making some noise. TSW warned her to be quiet. She yelled on TSW behind the door, yelled, and swore (f..uck of......). TSW told her that I will call the police if she continues. Then she came down for laundry.",
+    "Employee": "Huseyin", "Attn_To": "John Doe"
   }
 ]
 
 const LogRecords = (): React.ReactElement => {
   return (
     <div className="records">
-      <h1>Log Records</h1>
       <TableContainer>
-        <Table variant='simple' css={{ overflowY: 'auto', maxHeight: '400px' }}>
+        <Table variant='simple'>
 
-          <Thead>
-            <Tr css={{
-              background: 'EDF2F7'
-            }}>
+          <Thead className="table-header">
+            <Tr>
               <Th>Date</Th>
               <Th>Time</Th>
               <Th>Resident</Th>
@@ -44,16 +46,17 @@ const LogRecords = (): React.ReactElement => {
             </Tr>
           </Thead>
 
+
           <Tbody>
             {mockRecords.map((record) => {
               return (
                 <Tr key={record.id} style={{ verticalAlign: 'top' }}>
-                  <Td >{record.Date}</Td>
-                  <Td>{record.Time}</Td>
-                  <Td>{record.Resident}</Td>
-                  <Td whiteSpace="normal" >{record.Note}</Td>
-                  <Td>{record.Employee}</Td>
-                  <Td>{record.Attn_To}</Td>
+                  <Td width="5%">{record.Date}</Td>
+                  <Td width="5%">{record.Time}</Td>
+                  <Td width="5%">{record.Resident}</Td>
+                  <Td whiteSpace="normal" width="75%">{record.Note}</Td>
+                  <Td width="5%">{record.Employee}</Td>
+                  <Td width="5%">{record.Attn_To}</Td>
                 </Tr>
               );
             })}
