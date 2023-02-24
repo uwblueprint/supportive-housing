@@ -9,7 +9,6 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 
-
 // Replace the mock data with data from API, JSON response
 const mockRecords = [
   {
