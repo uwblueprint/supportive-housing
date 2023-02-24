@@ -33,8 +33,7 @@ const LogRecords = (): React.ReactElement => {
   return (
     <div className="records">
       <TableContainer>
-        <Table variant='simple'>
-
+        <Table variant='simple' style={{minHeight: "400px", verticalAlign: "middle"}}>
           <Thead className="table-header">
             <Tr>
               <Th>Date</Th>
@@ -46,11 +45,10 @@ const LogRecords = (): React.ReactElement => {
             </Tr>
           </Thead>
 
-
           <Tbody>
             {mockRecords.map((record) => {
               return (
-                <Tr key={record.id} style={{ verticalAlign: 'top' }}>
+                <Tr key={record.id} style={{ verticalAlign: 'middle' }}>
                   <Td width="5%">{record.Date}</Td>
                   <Td width="5%">{record.Time}</Td>
                   <Td width="5%">{record.Resident}</Td>
@@ -61,7 +59,6 @@ const LogRecords = (): React.ReactElement => {
               );
             })}
           </Tbody>
-
         </Table>
       </TableContainer>
     </div>
