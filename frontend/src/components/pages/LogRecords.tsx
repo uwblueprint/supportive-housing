@@ -69,6 +69,7 @@ const LogRecords = (): React.ReactElement => {
             </Tr>
           </Thead>
 
+
           <Tbody>
             {mockRecords.map((record) => {
               return (
