@@ -58,7 +58,7 @@ def auth_user(backend_url, api, auth):
                 "password": os.getenv("TEST_SCRIPT_PASSWORD"),
             },
         )
-        return response.json()
+        return response.json()["auth_user"]
     else:
         query = """
         mutation($email: String!, $password: String!) {

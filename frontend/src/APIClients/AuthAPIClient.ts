@@ -4,7 +4,7 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser } from "../types/AuthTypes";
+import { AuthenticatedUser, LoginResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -14,28 +14,59 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<AuthenticatedUser> => {
+): Promise<LoginResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
       { email, password },
       { withCredentials: true },
     );
-    localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(data));
     return data;
   } catch (error) {
     return null;
   }
 };
 
-const loginWithGoogle = async (idToken: string): Promise<AuthenticatedUser> => {
+const loginWithGoogle = async (idToken: string): Promise<LoginResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
       { idToken },
       { withCredentials: true },
     );
-    localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(data));
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
+const twoFa = async (
+  passcode: string,
+  email: string,
+  password: string,
+): Promise<AuthenticatedUser | null> => {
+  try {
+    const { data } = await baseAPIClient.post(
+      `/auth/twoFa?passcode=${passcode}`,
+      { email, password },
+      { withCredentials: true },
+    );
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
+const twoFaWithGoogle = async (
+  passcode: string,
+  idToken: string,
+): Promise<AuthenticatedUser | null> => {
+  try {
+    const { data } = await baseAPIClient.post(
+      `/auth/twoFa?passcode=${passcode}`,
+      { idToken },
+      { withCredentials: true },
+    );
     return data;
   } catch (error) {
     return null;
@@ -65,7 +96,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<AuthenticatedUser> => {
+): Promise<AuthenticatedUser | null> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
@@ -119,6 +150,8 @@ export default {
   login,
   logout,
   loginWithGoogle,
+  twoFa,
+  twoFaWithGoogle,
   register,
   resetPassword,
   refresh,

@@ -1,5 +1,7 @@
 import os
 
+from authy import AuthyFormatException
+from authy.api import AuthyApiClient
 from flask import Blueprint, current_app, jsonify, request
 
 from ..middlewares.auth import (
@@ -37,13 +39,75 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
+authy_api = AuthyApiClient(os.getenv("AUTHY_API_KEY"))
+
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
 def login():
     """
-    Returns access token in response body and sets refreshToken as an httpOnly cookie
+    Returns access token in response body and sets refreshToken as an httpOnly cookie only
+    Also includes whether the user needs 2FA or not
     """
     try:
+        auth_dto = None
+        if "id_token" in request.json:
+            auth_dto = auth_service.generate_token_for_oauth(request.json["id_token"])
+        else:
+            auth_dto = auth_service.generate_token(
+                request.json["email"], request.json["password"]
+            )
+        response = {"requires_two_fa": False, "auth_user": None}
+
+        if os.getenv("AUTHY_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+            response["requires_two_fa"] = True
+            return jsonify(response), 200
+
+        response["auth_user"] = {
+            "access_token": auth_dto.access_token,
+            "id": auth_dto.id,
+            "first_name": auth_dto.first_name,
+            "last_name": auth_dto.last_name,
+            "email": auth_dto.email,
+            "role": auth_dto.role,
+        }
+
+        response = jsonify(response)
+        response.set_cookie(
+            "refreshToken",
+            value=auth_dto.refresh_token,
+            **cookie_options,
+        )
+        return response, 200
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/twoFa", methods=["POST"], strict_slashes=False)
+def two_fa():
+    """
+    Validated passcode with Authy client and if successful,
+    returns access token in response body and sets refreshToken as an httpOnly cookie only
+    """
+
+    passcode = request.args.get("passcode")
+
+    if not passcode:
+        return (
+            jsonify(
+                {"error": "Must supply one of user_id or email as query parameter."}
+            ),
+            400,
+        )
+
+    try:
+        verification = authy_api.tokens.verify(os.getenv("AUTHY_USER_ID"), passcode)
+        if not verification.ok():
+            return (
+                jsonify({"error": "Invalid passcode."}),
+                400,
+            )
+
         auth_dto = None
         if "id_token" in request.json:
             auth_dto = auth_service.generate_token_for_oauth(request.json["id_token"])
@@ -68,6 +132,7 @@ def login():
         )
         sign_in_logs_service.create_log(auth_dto.id)
         return response, 200
+
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
