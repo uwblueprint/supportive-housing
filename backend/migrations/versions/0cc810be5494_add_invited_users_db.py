@@ -7,7 +7,7 @@ Create Date: 2023-02-21 03:05:30.019336
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '0cc810be5494'
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('invited_users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(), nullable=False),
-    sa.Column('role', sa.Enum('Admin', 'Regular Staff', 'Relief Staff', name='roles'), nullable=False),
+    sa.Column('role', postgresql.ENUM('Admin', 'Regular Staff', 'Relief Staff', name='roles', create_type=False), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
