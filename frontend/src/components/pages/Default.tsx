@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
@@ -6,6 +6,7 @@ import SampleContext from "../../contexts/SampleContext";
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
 import ResetPassword from "../auth/ResetPassword";
+import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 type ButtonProps = { text: string; path: string };
 
@@ -21,6 +22,13 @@ const Button = ({ text, path }: ButtonProps) => {
 
 const TeamInfoDisplay = () => {
   const { teamName, numTerms, members, isActive } = useContext(SampleContext);
+
+  const [email, setEmail] = useState<string>("");
+
+  const inviteUser = async (userEmail: string) => {
+    await routesAPIClient.inviteUser(userEmail);
+  };
+
   return (
     <div>
       <h2>Team Info</h2>
@@ -33,6 +41,22 @@ const TeamInfoDisplay = () => {
         )}
       </div>
       <div>Active: {isActive ? "Yes" : "No"}</div>
+      <div>
+        <p>Invite User:</p>
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="username@domain.com"
+        />
+        <button
+          onClick={() => inviteUser(email)}
+          className="btn btn-primary"
+          type="button"
+        >
+          Invite User
+        </button>
+      </div>
     </div>
   );
 };
