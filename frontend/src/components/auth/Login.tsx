@@ -25,16 +25,8 @@ const Login = (): React.ReactElement => {
   const [password, setPassword] = useState("");
   const history = useHistory();
 
-  const isUserInvited = async (userEmail: string) => {
-    if (userEmail !== "") {
-      await routesAPIClient.isUserInvited(userEmail);
-      return true;
-    }
-    return false;
-  };
-
   const onLogInClick = async () => {
-    const isInvited = await isUserInvited(email);
+    const isInvited = await routesAPIClient.isUserInvited(email);
     if (isInvited) {
       const user: AuthenticatedUser = await authAPIClient.login(
         email,

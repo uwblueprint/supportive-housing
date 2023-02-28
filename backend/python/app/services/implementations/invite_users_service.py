@@ -3,7 +3,6 @@ from ...models.invited_users import InvitedUsers
 from ...models import db
 from ...resources.invited_user_dto import InvitedUserDTO
 
-
 class InviteUserService(IInviteUserService):
     """
     InviteUserService interface with methods to manage invited users
@@ -20,7 +19,7 @@ class InviteUserService(IInviteUserService):
         """
         self.logger = logger
         self.email_service = email_service
-
+        
     def get_user_by_id(self, user_id):
         try:
             invited_user_entry = InvitedUsers.query.get(user_id)
@@ -83,19 +82,19 @@ class InviteUserService(IInviteUserService):
 
         return invited_user_dtos
 
-    def create_user(self, user, auth_id=None, signup_method="PASSWORD"):
-        new_user = None
-        firebase_user = None
-
+    def create_user(self, user):
         try:
-            postgres_invited_user = {
-                "email": user.email,
-                "role": user.role
-            }
+            invited_user_entry = InvitedUsers.query.filter_by(email=user.email).first()
 
-            new_invited_user = InvitedUsers(**postgres_invited_user)
-            db.session.add(new_invited_user)
-            db.session.commit()
+            if not invited_user_entry:
+                postgres_invited_user = {
+                    "email": user.email,
+                    "role": user.role
+                }
+
+                invited_user_entry = InvitedUsers(**postgres_invited_user)
+                db.session.add(invited_user_entry)
+                db.session.commit()
         except Exception as e:
             db.session.rollback()
             reason = getattr(e, "message", None)
@@ -105,12 +104,6 @@ class InviteUserService(IInviteUserService):
                 )
             )
             raise e
-
-        return InvitedUserDTO(
-            new_invited_user.id,
-            new_invited_user.email,
-            new_invited_user.role
-        )
 
     def delete_user_by_id(self, user_id):
         try:
@@ -201,7 +194,7 @@ class InviteUserService(IInviteUserService):
                 """.format(
                 sign_in_link="http://localhost:3000/login"
             )
-            self.email_service.send_email(email, "Sign in with your email", email_body)
+            return self.email_service.send_email(email, "Sign in with your email", email_body)
         except Exception as e:
             self.logger.error(
                 "Failed to generate email sign in link for user with email {email}.".format(

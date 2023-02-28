@@ -2,6 +2,9 @@ import baseAPIClient from "./BaseAPIClient";
 
 const inviteUser = async (email: string, role = "Admin"): Promise<boolean> => {
   try {
+    if (email === "") {
+      return false;
+    }
     await baseAPIClient.post(
       "/invite-users",
       { email, role },
@@ -15,6 +18,9 @@ const inviteUser = async (email: string, role = "Admin"): Promise<boolean> => {
 
 const isUserInvited = async (email: string): Promise<boolean> => {
   try {
+    if (email === "") {
+      return false;
+    }
     const { data } = await baseAPIClient.get("/invite-users", {
       params: {
         email,
