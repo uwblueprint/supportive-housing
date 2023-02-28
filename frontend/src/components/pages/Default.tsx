@@ -28,9 +28,7 @@ const TeamInfoDisplay = () => {
   const [email, setEmail] = useState<string>("");
 
   const inviteUser = async (userEmail: string) => {
-    if (userEmail !== "") {
-      await routesAPIClient.inviteUser(userEmail);
-    }
+    await routesAPIClient.inviteUser(userEmail);
   };
 
   return (

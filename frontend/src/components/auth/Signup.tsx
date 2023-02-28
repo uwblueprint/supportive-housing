@@ -5,6 +5,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
+import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 const Signup = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -14,13 +15,19 @@ const Signup = (): React.ReactElement => {
   const [password, setPassword] = useState("");
 
   const onSignupClick = async () => {
-    const user: AuthenticatedUser | null = await authAPIClient.register(
-      firstName,
-      lastName,
-      email,
-      password,
-    );
-    setAuthenticatedUser(user);
+    const isInvited = await routesAPIClient.isUserInvited(email);
+    if (isInvited) {
+      const user: AuthenticatedUser | null = await authAPIClient.register(
+        firstName,
+        lastName,
+        email,
+        password,
+      );
+      setAuthenticatedUser(user);
+    } else {
+      // eslint-disable-next-line no-alert
+      window.alert("user not invited");
+    }
   };
 
   if (authenticatedUser) {

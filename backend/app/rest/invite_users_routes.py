@@ -83,13 +83,12 @@ def create_user():
     """
     try:
         invited_user = CreateInvitedUserDTO(**request.json)
-        created_invited_user = invited_user_service.create_user(invited_user)
-        invited_user_service.send_email_sign_in_link(invited_user.email)
-        return jsonify(created_invited_user.__dict__), 201
+        invited_user_service.create_user(invited_user)
+        email = invited_user_service.send_email_sign_in_link(invited_user.email)
+        return jsonify({"user": invited_user.__dict__, "email": email}), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-
 
 @blueprint.route("/", methods=["DELETE"], strict_slashes=False)
 # @require_authorization_by_role({"Admin"})
