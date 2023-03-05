@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { useHistory } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
 import ResetPassword from "../auth/ResetPassword";
+
+import NavigationBar from "../common/NavigationBar";
 
 type ButtonProps = { text: string; path: string };
 
@@ -40,6 +42,7 @@ const TeamInfoDisplay = () => {
 const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
+      <NavigationBar />
       <h1>Default Page</h1>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
