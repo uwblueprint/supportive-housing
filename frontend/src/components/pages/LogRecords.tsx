@@ -3,14 +3,14 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
 
+
+// Replace the mock data with data from API, JSON response
 const mockRecords = [
   {
     id: 1,
