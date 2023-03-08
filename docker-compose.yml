@@ -19,14 +19,14 @@ services:
     container_name: SHOW-backend
     restart: always
     build:
-      context: ./backend/python
+      context: ./backend
       dockerfile: Dockerfile
     ports:
       - 8080:8080
     dns:
       - 8.8.8.8
     volumes:
-      - ./backend/python:/app
+      - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
