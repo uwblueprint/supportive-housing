@@ -49,9 +49,10 @@ const Credentials = ({
       const { requiresTwoFa, authUser } = loginResponse;
       if (requiresTwoFa) {
         setToggle(!toggle);
+      } else {
+        localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
+        setAuthenticatedUser(authUser);
       }
-      localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-      setAuthenticatedUser(authUser);
     }
     // Otherwise we can display some sort of error
   };

@@ -31,8 +31,10 @@ const Authy = ({
       authUser = await authAPIClient.twoFa(passcode, email, password);
     }
 
-    localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-    setAuthenticatedUser(authUser);
+    if (authUser) {
+      localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
+      setAuthenticatedUser(authUser);
+    }
   };
 
   if (authenticatedUser) {

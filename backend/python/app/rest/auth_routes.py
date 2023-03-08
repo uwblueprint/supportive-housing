@@ -1,8 +1,7 @@
 import os
 
-from authy import AuthyFormatException
-from authy.api import AuthyApiClient
 from flask import Blueprint, current_app, jsonify, request
+from twilio.rest import Client
 
 from ..middlewares.auth import (
     require_authorization_by_user_id,
@@ -37,8 +36,7 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
-authy_api = AuthyApiClient(os.getenv("AUTHY_API_KEY"))
-
+client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
 def login():
@@ -56,7 +54,7 @@ def login():
             )
         response = {"requires_two_fa": False, "auth_user": None}
 
-        if os.getenv("AUTHY_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+        if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
 
@@ -99,8 +97,17 @@ def two_fa():
         )
 
     try:
-        verification = authy_api.tokens.verify(os.getenv("AUTHY_USER_ID"), passcode)
-        if not verification.ok():
+        challenge = client.verify \
+            .v2 \
+            .services(os.getenv("TWILIO_SERVICE_SID")) \
+            .entities(os.getenv("TWILIO_ENTITY_ID")) \
+            .challenges \
+            .create(
+                auth_payload=passcode,
+                factor_sid=os.getenv("TWILIO_FACTOR_SID")
+            )
+
+        if challenge.status != "approved":
             return (
                 jsonify({"error": "Invalid passcode."}),
                 400,
