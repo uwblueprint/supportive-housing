@@ -42,7 +42,7 @@ class LogRecordsService(ILogRecordsService):
                         "log_id": log.log_id,
                         "employee_id": log.employee_id,
                         "resident_first_name": log.resident_first_name,
-                        "resdient_last_name": log.resident_last_name,
+                        "resident_last_name": log.resident_last_name,
                         "time": str(log.time.astimezone(timezone("US/Eastern"))),
                         "flagged": log.flagged,
                         "attn_to": log.attn_to,
