@@ -17,8 +17,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
-import avatarImage from "../../images/avatar.png";
-import Logo from "../../images/Logo.png"
+import SHOW_LOGO from "../../images/SHOW-Logo.png"
 
 type NavigationItemProps = {
   onClick: () => void;
@@ -38,58 +37,59 @@ const NavigationBar = (): React.ReactElement => {
 
   return (
     <div className="Navigation Bar">
-      <Box position="fixed" top={0} left={0} right={0} bg='#285E61' px={4}>
-        <Flex h={16} alignItems="center" justifyContent="space-between">
-          <IconButton
-            size="md"
-            aria-label="Open Menu"
-            display={{ md: "none" }}
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <HStack spacing={8} alignItems="center">
-            <HStack
-              as="nav"
-              spacing={4}
-              display={{ base: "none", md: "flex" }}
-            />
-            <Image
-                  src={Logo}
-                />
-            <NavigationItem onClick={() => console.log('Home clicked')} text="Home" />
-            <NavigationItem onClick={() => console.log('About clicked')} text="Resident Directory" />
-            <NavigationItem onClick={() => console.log('Contact clicked')} text="Admin" />
-          </HStack>
-          <Flex alignItems="center">
-            <Menu>
-              <MenuButton
-                as={Button}
-                rounded="full"
-                variant="link"
-                cursor="pointer"
-                minW={0}
-              >
-                <Image
-                  borderRadius='full'
-                  boxSize='50px'
-                  src={avatarImage}
-                />
-              </MenuButton>
-              <MenuList>
-                <MenuItem>Sign Out</MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-        </Flex>
-
-        {isOpen ? (
-          <Box pb={4} display={{ md: "none" }}>
-            <Stack as="nav" spacing={4} />
-          </Box>
-        ) : null}
+      <Box
+        bg="#1A202C"
+        color={useColorModeValue('gray', 'gray.800')}
+        h='97px'
+        py={{ base: 2 }}
+        px={{ base: 4 }}
+        borderBottom={1}
+        borderStyle='solid'
+        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        display='flex'
+        justifyContent='center'
+        alignItems='center' >
+        <Box 
+        mx="auto" 
+        my={2} 
+        w="1108px" 
+        h="65px"
+        display='flex'
+        alignItems='center'>
+          <Image src={SHOW_LOGO} />
+        <Stack
+          flex={{ base: 1, md: "auto" }}
+          justify='flex-end'
+          direction='row'
+          spacing={6}
+          alignItems="center">
+          <Button
+            variant='link'
+            className='navbar-text'>
+            Home
+          </Button>
+          <Button
+            variant='link'
+            marginLeft="48px"
+            className='navbar-text'>
+            Resident Directory
+          </Button>
+          <Button
+            variant='link'
+            marginLeft="48px"
+            className='navbar-text'>
+            Employee Directory
+          </Button>
+          <Button
+            variant='link'
+            marginLeft="48px"
+            className='navbar-text'>
+            Logout
+          </Button>
+        </Stack>
+        </Box>
       </Box>
-
-      <Box p={4}>Main Content Here</Box>
-    </div>
+    </div >
   );
 };
 
