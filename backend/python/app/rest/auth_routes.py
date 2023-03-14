@@ -36,7 +36,8 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
-client = Client(os.getenv('TWILIO_ACCOUNT_SID'), os.getenv('TWILIO_AUTH_TOKEN'))
+client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
 def login():
@@ -97,15 +98,13 @@ def two_fa():
         )
 
     try:
-        challenge = client.verify \
-            .v2 \
-            .services(os.getenv("TWILIO_SERVICE_SID")) \
-            .entities(os.getenv("TWILIO_ENTITY_ID")) \
-            .challenges \
-            .create(
-                auth_payload=passcode,
-                factor_sid=os.getenv("TWILIO_FACTOR_SID")
+        challenge = (
+            client.verify.v2.services(os.getenv("TWILIO_SERVICE_SID"))
+            .entities(os.getenv("TWILIO_ENTITY_ID"))
+            .challenges.create(
+                auth_payload=passcode, factor_sid=os.getenv("TWILIO_FACTOR_SID")
             )
+        )
 
         if challenge.status != "approved":
             return (
