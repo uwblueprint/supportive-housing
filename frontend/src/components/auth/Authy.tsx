@@ -20,6 +20,7 @@ const Authy = ({
   toggle,
 }: AuthyProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [error, setError] = useState("");
   const [passcode, setPasscode] = useState("");
 
   const onAuthyClick = async () => {
@@ -34,6 +35,8 @@ const Authy = ({
     if (authUser) {
       localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
       setAuthenticatedUser(authUser);
+    } else {
+      setError("Error: Invalid token");
     }
   };
 
@@ -51,7 +54,10 @@ const Authy = ({
             <input
               type="text"
               value={passcode}
-              onChange={(event) => setPasscode(event.target.value)}
+              onChange={(event) => {
+                setPasscode(event.target.value);
+                setError("");
+              }}
               placeholder="passcode"
             />
           </div>
@@ -64,6 +70,7 @@ const Authy = ({
               Verify
             </button>
           </div>
+          {error && <p style={{ color: "red" }}>{error}</p>}
         </form>
       </div>
     );
