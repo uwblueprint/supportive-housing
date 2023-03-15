@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useHistory } from "react-router-dom";
 import {
   Box,
   Flex,
@@ -17,23 +18,33 @@ import {
   Stack,
 } from "@chakra-ui/react";
 
+import {
+  HOME_PAGE,
+  RESIDENT_DIRECTORY_PAGE,
+  EMPLOYEE_DIRECTORY_PAGE
+} from "../../constants/Routes";
+
+import authAPIClient from "../../APIClients/AuthAPIClient";
+import AuthContext from "../../contexts/AuthContext";
+
 import SHOW_LOGO from "../../images/SHOW-Logo.png"
 
-type NavigationItemProps = {
-  onClick: () => void;
-  text: string;
-};
-
-const NavigationItem: React.FC<NavigationItemProps> = ({ onClick, text }: NavigationItemProps) => {
-  return (
-    <button type="button" onClick={onClick}>
-      {text}
-    </button>
-  );
-};
-
 const NavigationBar = (): React.ReactElement => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const history = useHistory();
+  const navigateToHome = () => history.push(HOME_PAGE);
+  const navigateToResidentDirectory = () => history.push(RESIDENT_DIRECTORY_PAGE);
+  const navigateToEmployeeDirectory = () => history.push(EMPLOYEE_DIRECTORY_PAGE);
+
+  const handleLogout = async () => {
+    const success = await authAPIClient.logout(authenticatedUser?.id);
+    if (success) {
+      setAuthenticatedUser(null);
+      navigateToHome();
+    }
+  };
 
   return (
     <div className="Navigation Bar">
@@ -49,44 +60,48 @@ const NavigationBar = (): React.ReactElement => {
         display='flex'
         justifyContent='center'
         alignItems='center' >
-        <Box 
-        mx="auto" 
-        my={2} 
-        w="1108px" 
-        h="65px"
-        display='flex'
-        alignItems='center'>
+        <Box
+          mx="auto"
+          my={2}
+          w="1108px"
+          h="65px"
+          display='flex'
+          alignItems='center'>
           <Image src={SHOW_LOGO} />
-        <Stack
-          flex={{ base: 1, md: "auto" }}
-          justify='flex-end'
-          direction='row'
-          spacing={6}
-          alignItems="center">
-          <Button
-            variant='link'
-            className='navbar-text'>
-            Home
-          </Button>
-          <Button
-            variant='link'
-            marginLeft="48px"
-            className='navbar-text'>
-            Resident Directory
-          </Button>
-          <Button
-            variant='link'
-            marginLeft="48px"
-            className='navbar-text'>
-            Employee Directory
-          </Button>
-          <Button
-            variant='link'
-            marginLeft="48px"
-            className='navbar-text'>
-            Logout
-          </Button>
-        </Stack>
+          <Stack
+            flex={{ base: 1, md: "auto" }}
+            justify='flex-end'
+            direction='row'
+            spacing={6}
+            alignItems="center">
+            <Button
+              variant='link'
+              className='navbar-text'
+              onClick={navigateToHome}>
+              Home
+            </Button>
+            <Button
+              variant='link'
+              marginLeft="48px"
+              className='navbar-text'
+              onClick={navigateToResidentDirectory}>
+              Resident Directory
+            </Button>
+            <Button
+              variant='link'
+              marginLeft="48px"
+              className='navbar-text'
+              onClick={navigateToEmployeeDirectory}>
+              Employee Directory
+            </Button>
+            <Button
+              variant='link'
+              marginLeft="48px"
+              className='navbar-text'
+              onClick={handleLogout}>
+              Logout
+            </Button>
+          </Stack>
         </Box>
       </Box>
     </div >

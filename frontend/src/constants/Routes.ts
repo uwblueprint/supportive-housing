@@ -14,4 +14,6 @@ export const UPDATE_ENTITY_PAGE = "/entity/update";
 
 export const HOOKS_PAGE = "/hooks";
 
-export const LOG_RECORDS_PAGE = "/log-records";
+export const RESIDENT_DIRECTORY_PAGE = "/resident-directory";
+
+export const EMPLOYEE_DIRECTORY_PAGE = "/employee-directory";
