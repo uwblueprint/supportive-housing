@@ -23,7 +23,7 @@ const Authy = ({
   const [error, setError] = useState("");
   const [passcode, setPasscode] = useState("");
 
-  const onAuthyClick = async () => {
+  const onAuthySubmit = async () => {
     let authUser: AuthenticatedUser | null;
 
     if (token) {
@@ -48,7 +48,12 @@ const Authy = ({
     return (
       <div style={{ textAlign: "center" }}>
         <h1>Authy</h1>
-        <form>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            onAuthySubmit();
+          }}
+        >
           <div>
             <p>Enter token from Authy App</p>
             <input
@@ -62,11 +67,7 @@ const Authy = ({
             />
           </div>
           <div>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onAuthyClick}
-            >
+            <button className="btn btn-primary" type="submit">
               Verify
             </button>
           </div>
