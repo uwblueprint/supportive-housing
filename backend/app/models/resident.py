@@ -12,10 +12,7 @@ class Resident(db.Model):
         db.Enum("Current", "Past", name="statuses"), nullable=False
         )
     building = db.Column(
-        db.Enum("Seniors", "Adults", "Supports", name="buildings"), nullable=False
-        )
-    address = db.Column(
-        db.Enum("144 Erb St. East", "402 Erb St. West", "362 Erb St. West", name="buildings"), nullable=True
+        db.Enum("144", "402", "362", name="buildings"), nullable=False
         )
 
     def to_dict(self, include_relationships=False):
