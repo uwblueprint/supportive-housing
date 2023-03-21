@@ -11,7 +11,7 @@ from logging.config import dictConfig
 from .config import app_config
 
 
-def create_app(config_name):
+def create_app(config_name="development"):
     # configure Flask logger
     dictConfig(
         {

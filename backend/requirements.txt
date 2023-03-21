@@ -1,0 +1,14 @@
+firebase-admin
+Flask
+Flask-Cors
+Flask-Migrate
+Flask-SQLAlchemy
+SQLAlchemy
+python-dotenv
+psycopg2
+google-auth
+google-api-python-client
+pytz
+alembic
+pytest
+black
