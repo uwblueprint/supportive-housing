@@ -1,3 +1,12 @@
+export type TwoFaResponse = {
+  authUser: AuthenticatedUser;
+} | null;
+
+export type LoginResponse = {
+  requiresTwoFa: boolean;
+  authUser: AuthenticatedUser;
+} | null;
+
 export type AuthenticatedUser = {
   id: string;
   firstName: string;
@@ -5,7 +14,7 @@ export type AuthenticatedUser = {
   email: string;
   role: "Admin" | "User";
   accessToken: string;
-} | null;
+};
 
 export type DecodedJWT =
   | string
