@@ -49,9 +49,9 @@ const NavigationBar = (): React.ReactElement => {
   return (
     <div className="Navigation Bar">
       <Box
-        bg="#1A202C"
+        bg="#1B2A2C"
         color={useColorModeValue('gray', 'gray.800')}
-        h='97px'
+        h='71px'
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
@@ -59,7 +59,7 @@ const NavigationBar = (): React.ReactElement => {
         borderColor={useColorModeValue('gray.200', 'gray.900')}
         display='flex'
         justifyContent='center'
-        alignItems='center' >
+        alignItems='center'>
         <Box
           mx="auto"
           my={2}
@@ -67,7 +67,12 @@ const NavigationBar = (): React.ReactElement => {
           h="65px"
           display='flex'
           alignItems='center'>
-          <Image src={SHOW_LOGO} />
+          <Image 
+          src={SHOW_LOGO}
+          w="128px"
+          h="51.61px"
+          />
+
           <Stack
             flex={{ base: 1, md: "auto" }}
             justify='flex-end'
@@ -80,6 +85,7 @@ const NavigationBar = (): React.ReactElement => {
               onClick={navigateToHome}>
               Home
             </Button>
+
             <Button
               variant='link'
               marginLeft="48px"
@@ -87,6 +93,7 @@ const NavigationBar = (): React.ReactElement => {
               onClick={navigateToResidentDirectory}>
               Resident Directory
             </Button>
+
             <Button
               variant='link'
               marginLeft="48px"
@@ -94,6 +101,7 @@ const NavigationBar = (): React.ReactElement => {
               onClick={navigateToEmployeeDirectory}>
               Employee Directory
             </Button>
+            
             <Button
               variant='link'
               marginLeft="48px"

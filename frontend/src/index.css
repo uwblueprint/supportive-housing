@@ -33,7 +33,7 @@ code {
 
 .navbar-text {
   font-family: 'DM Sans';
-  font-size: 20px;
+  font-size: 16px !important;
   font-weight: 400;
   color: #FFFFFF !important;
   text-decoration: none
