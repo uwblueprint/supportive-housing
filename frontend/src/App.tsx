@@ -23,6 +23,7 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
+import LogRecords from "./components/pages/LogRecords";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 
@@ -86,6 +87,11 @@ const App = (): React.ReactElement => {
                   exact
                   path={Routes.HOOKS_PAGE}
                   component={HooksDemo}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.LOG_RECORDS_PAGE}
+                  component={LogRecords}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
