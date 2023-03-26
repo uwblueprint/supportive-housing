@@ -8,7 +8,6 @@ import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
-import Default from "./components/pages/Default";
 import DisplayPage from "./components/pages/DisplayPage";
 import NotFound from "./components/pages/NotFound";
 import UpdatePage from "./components/pages/UpdatePage";

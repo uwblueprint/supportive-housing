@@ -2,19 +2,8 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Box,
-  Flex,
-  HStack,
-  Link,
-  IconButton,
   Image,
   Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  useDisclosure,
-  useColorModeValue,
   Stack,
 } from "@chakra-ui/react";
 
@@ -50,13 +39,11 @@ const NavigationBar = (): React.ReactElement => {
     <div className="Navigation Bar">
       <Box
         bg="#1B2A2C"
-        color={useColorModeValue('gray', 'gray.800')}
         h='71px'
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle='solid'
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
         display='flex'
         justifyContent='center'
         alignItems='center'>
