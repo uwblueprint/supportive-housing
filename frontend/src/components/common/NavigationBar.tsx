@@ -1,32 +1,25 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  Box,
-  Image,
-  Button,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Image, Button, Stack,} from "@chakra-ui/react";
 
 import {
   HOME_PAGE,
   RESIDENT_DIRECTORY_PAGE,
-  EMPLOYEE_DIRECTORY_PAGE
+  EMPLOYEE_DIRECTORY_PAGE,
 } from "../../constants/Routes";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
-import SHOW_LOGO from "../../images/SHOW-Logo.png"
+import SHOW_LOGO from "../../images/SHOW-Logo.png";
 
 const NavigationBar = (): React.ReactElement => {
-
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
   const navigateToResidentDirectory = () => history.push(RESIDENT_DIRECTORY_PAGE);
   const navigateToEmployeeDirectory = () => history.push(EMPLOYEE_DIRECTORY_PAGE);
-
   const handleLogout = async () => {
     const success = await authAPIClient.logout(authenticatedUser?.id);
     if (success) {
