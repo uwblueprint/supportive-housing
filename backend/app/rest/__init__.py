@@ -5,6 +5,7 @@ def init_app(app):
         entity_routes,
         documentation_routes,
         logs_routes,
+        residents_routes
     )
 
     app.register_blueprint(user_routes.blueprint)
@@ -12,3 +13,4 @@ def init_app(app):
     app.register_blueprint(entity_routes.blueprint)
     app.register_blueprint(documentation_routes.blueprint)
     app.register_blueprint(logs_routes.blueprint)
+    app.register_blueprint(residents_routes.blueprint)
