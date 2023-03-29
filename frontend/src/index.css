@@ -30,3 +30,11 @@ code {
   color: #2D3748;
   background-color: #EDF2F7
 }
+
+.navbar-text {
+  font-family: 'DM Sans';
+  font-size: 16px !important;
+  font-weight: 400;
+  color: #FFFFFF !important;
+  text-decoration: none
+}

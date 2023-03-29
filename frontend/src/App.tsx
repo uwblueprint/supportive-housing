@@ -8,7 +8,6 @@ import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
-import Default from "./components/pages/Default";
 import DisplayPage from "./components/pages/DisplayPage";
 import NotFound from "./components/pages/NotFound";
 import UpdatePage from "./components/pages/UpdatePage";
@@ -24,6 +23,8 @@ import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherCo
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import LogRecords from "./components/pages/LogRecords";
+import ResidentDirectory from "./components/pages/ResidentDirectory";
+import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 
@@ -61,7 +62,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
-                  component={Default}
+                  component={LogRecords}
                 />
                 <PrivateRoute
                   exact
@@ -90,8 +91,13 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.LOG_RECORDS_PAGE}
-                  component={LogRecords}
+                  path={Routes.RESIDENT_DIRECTORY_PAGE}
+                  component={ResidentDirectory}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.EMPLOYEE_DIRECTORY_PAGE}
+                  component={EmployeeDirectory}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
