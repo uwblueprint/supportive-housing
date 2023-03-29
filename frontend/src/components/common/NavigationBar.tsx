@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Image, Button, Stack,} from "@chakra-ui/react";
+import { Box, Image, Button, Stack} from "@chakra-ui/react";
 
 import {
   HOME_PAGE,
@@ -19,7 +19,9 @@ const NavigationBar = (): React.ReactElement => {
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
   const navigateToResidentDirectory = () => history.push(RESIDENT_DIRECTORY_PAGE);
+
   const navigateToEmployeeDirectory = () => history.push(EMPLOYEE_DIRECTORY_PAGE);
+
   const handleLogout = async () => {
     const success = await authAPIClient.logout(authenticatedUser?.id);
     if (success) {
@@ -32,11 +34,11 @@ const NavigationBar = (): React.ReactElement => {
     <div className="Navigation Bar">
       <Box
         bg="#1B2A2C"
-        h='71px'
+        h="71px"
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
-        borderStyle='solid'
+        borderStyle="solid"
         display='flex'
         justifyContent='center'
         alignItems='center'>
