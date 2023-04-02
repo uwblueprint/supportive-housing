@@ -108,7 +108,7 @@ class LogRecordsService(ILogRecordsService):
                 attn_tos.first_name AS attn_to_first_name,\n \
                 attn_tos.last_name AS attn_to_last_name\n \
                 FROM log_records logs\n \
-                JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
+                LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
                 JOIN users employees ON logs.employee_id = employees.id'
         
             if filters:   
@@ -128,9 +128,9 @@ class LogRecordsService(ILogRecordsService):
                     else: 
                         sql = sql + "\nAND " + options[filter](filters.get(filter))
 
+            sql = sql + "\nORDER BY datetime DESC"
             log_records = db.session.execute(text(sql))
             json_list = self.to_json_list(log_records)
-
             num_results = len(json_list)
             return {"log_records": json_list[start_index:end_index], "num_results": num_results}
         
@@ -154,10 +154,22 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.attn_to: updated_log_record["attn_to"],
                 }
             )
+        else: 
+            LogRecords.query.filter_by(log_id=log_id).update(
+                {
+                    LogRecords.attn_to: None,
+                }
+            )
         if "note" in updated_log_record:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {
                     LogRecords.note: updated_log_record["note"]
+                }
+            )
+        else: 
+            LogRecords.query.filter_by(log_id=log_id).update(
+                {
+                    LogRecords.note: None,
                 }
             )
         if "tags" in updated_log_record:
@@ -166,6 +178,12 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.tags: updated_log_record["tags"]
                 }
             )
+        else: 
+            LogRecords.query.filter_by(log_id=log_id).update(
+                {
+                    LogRecords.tags: None,
+                }
+            )        
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
                 LogRecords.employee_id: updated_log_record["employee_id"],
