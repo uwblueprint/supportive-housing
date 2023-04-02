@@ -71,6 +71,11 @@ class LogRecordsService(ILogRecordsService):
         return f"\nemployee_id={employee_id}"
     
     def filter_by_attn_to(self, attn_to):
+        if type(attn_to) == list:
+            sql_statement = f"\nattn_to={attn_to[0]}"
+            for i in range(1, len(attn_to)):
+                sql_statement = sql_statement + f"\nOR attn_to={attn_to[i]}"
+            return sql_statement
         return f"\nattn_to={attn_to}"
     
     def filter_by_date_range(self, date_range):
@@ -83,8 +88,12 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_tags(self, tags):
         sql_statement = f"\n'{tags[0]}'=ANY (tags)"
         for i in range (1, len(tags)):
-            sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tags)"
+            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tags)"
         return sql_statement
+    
+    def filter_by_flagged(self, flagged):
+        print(flagged)
+        return f"\nflagged={bool(flagged)}"
     
     def get_log_records(self, page_number,filters=None):
         try:
@@ -119,7 +128,8 @@ class LogRecordsService(ILogRecordsService):
                     "employee_id": self.filter_by_employee_id,
                     "attn_to": self.filter_by_attn_to,
                     "date_range": self. filter_by_date_range,
-                    "tags": self.filter_by_tags
+                    "tags": self.filter_by_tags,
+                    "flagged": self.filter_by_flagged
                 }
                 for filter in filters:
                     if is_first_filter:
