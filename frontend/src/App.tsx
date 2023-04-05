@@ -89,7 +89,7 @@ const App = (): React.ReactElement => {
                   path={Routes.HOOKS_PAGE}
                   component={HooksDemo}
                 />
-                <PrivateRoute
+                <Route
                   exact
                   path={Routes.RESIDENT_DIRECTORY_PAGE}
                   component={ResidentDirectory}

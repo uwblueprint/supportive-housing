@@ -38,3 +38,8 @@ code {
   color: #FFFFFF !important;
   text-decoration: none
 }
+
+.log-entry h1{
+  font-size: 28px;
+  font-weight: 500;
+}
