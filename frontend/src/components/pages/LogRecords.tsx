@@ -21,9 +21,9 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-
 import { Col, InputGroup, Row } from "react-bootstrap";
 import { BsFillPersonFill, BsFillFlagFill, BsHouseFill } from "react-icons/bs";
+import NavigationBar from "../common/NavigationBar";
 
 // Replace the mock data with data from API, JSON response
 const mockRecords = [
