@@ -22,7 +22,6 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 
-import NavigationBar from "../common/NavigationBar";
 import { Col, InputGroup, Row } from "react-bootstrap";
 import { BsFillPersonFill, BsFillFlagFill, BsHouseFill } from "react-icons/bs";
 
@@ -302,10 +301,10 @@ const LogComponent = () => {
 
 const LogRecords = (): React.ReactElement => {
   return (
-<<<<<<< HEAD
     <div className="page-container">
       <NavigationBar />
       <div className="records">
+        <LogComponent />
         <TableContainer>
           <Table
             variant="simple"
@@ -321,25 +320,6 @@ const LogRecords = (): React.ReactElement => {
                 <Th>Attn To</Th>
               </Tr>
             </Thead>
-=======
-    <div className="records">
-      <LogComponent />
-      <TableContainer>
-        <Table
-          variant="simple"
-          style={{ minHeight: "400px", verticalAlign: "middle" }}
-        >
-          <Thead className="table-header">
-            <Tr>
-              <Th>Date</Th>
-              <Th>Time</Th>
-              <Th>Resident</Th>
-              <Th>Note</Th>
-              <Th>Employee</Th>
-              <Th>Attn To</Th>
-            </Tr>
-          </Thead>
->>>>>>> 9a59e79d4 (add log)
 
             <Tbody>
               {mockRecords.map((record) => {
@@ -364,9 +344,6 @@ const LogRecords = (): React.ReactElement => {
   );
 };
 
-<<<<<<< HEAD
-export default LogRecords;
-=======
 export default LogRecords;
 
 // type LogComponentProps = {
@@ -374,4 +351,3 @@ export default LogRecords;
 // };
 
 // eslint-disable-next-line react/prop-types
->>>>>>> 9a59e79d4 (add log)
