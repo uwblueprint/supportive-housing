@@ -30,3 +30,8 @@ code {
   color: #2D3748;
   background-color: #EDF2F7
 }
+
+.log-entry h1{
+  font-size: 28px;
+  font-weight: 500;
+}

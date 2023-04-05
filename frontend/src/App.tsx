@@ -86,7 +86,7 @@ const App = (): React.ReactElement => {
                   path={Routes.HOOKS_PAGE}
                   component={HooksDemo}
                 />
-                <PrivateRoute
+                <Route
                   exact
                   path={Routes.LOG_RECORDS_PAGE}
                   component={LogRecords}
