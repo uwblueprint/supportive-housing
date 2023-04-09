@@ -10,6 +10,7 @@ def init_app(app):
     from .user import User
     from .sign_in_logs import SignInLogs
     from .log_records import LogRecords
+    from .tag import Tag
 
     app.app_context().push()
     db.init_app(app)
