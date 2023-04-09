@@ -8,6 +8,7 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
+import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
@@ -60,9 +61,30 @@ const LogRecords = (): React.ReactElement => {
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
   console.log(logRecords);
 
+  const [email, setEmail] = useState<string>("");
+
+  const inviteUser = async (userEmail: string) => {
+    await routesAPIClient.inviteUser(userEmail);
+  };
   return (
     <div className="page-container">
       <NavigationBar />
+      <div>
+        <p>Invite User:</p>
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="username@domain.com"
+        />
+        <button
+          onClick={() => inviteUser(email)}
+          className="btn btn-primary"
+          type="button"
+        >
+          Invite User
+        </button>
+      </div>
       <div className="records">
         <CreateLog />
         <SearchAndFilters setLogRecords={setLogRecords} />
