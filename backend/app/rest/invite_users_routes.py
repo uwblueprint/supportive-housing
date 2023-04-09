@@ -2,7 +2,7 @@ import os
 
 from flask import Blueprint, current_app, jsonify, request
 
-# from ..middlewares.auth import require_authorization_by_role
+from ..middlewares.auth import require_authorization_by_role
 from ..middlewares.validate import validate_request
 from ..resources.create_invited_user_dto import CreateInvitedUserDTO
 from ..services.implementations.invite_users_service import InviteUserService
@@ -25,8 +25,7 @@ invited_user_service = InviteUserService(current_app.logger, email_service)
 blueprint = Blueprint("invite-users", __name__, url_prefix="/invite-users")
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-# @require_authorization_by_role({"Admin"})
-def get_users():
+def get_invited_users():
     """
     Get all users, optionally filter by a user_id or email query parameter to retrieve a single user
     """
@@ -75,9 +74,9 @@ def get_users():
 
 
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
-# @require_authorization_by_role({"Admin"})
+@require_authorization_by_role({"Admin"})
 @validate_request("CreateInvitedUserDTO")
-def create_user():
+def create_invited_user():
     """
     Create an invited user
     """
@@ -91,8 +90,8 @@ def create_user():
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 @blueprint.route("/", methods=["DELETE"], strict_slashes=False)
-# @require_authorization_by_role({"Admin"})
-def delete_user():
+@require_authorization_by_role({"Admin"})
+def delete_invited_user():
     """
     Delete a user by user_id or email, specified through a query parameter
     """
