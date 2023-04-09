@@ -7,6 +7,11 @@ import {
   Th,
   Td,
   TableContainer,
+  Button,
+  Input,
+  Box,
+  Text,
+  Badge,
 } from "@chakra-ui/react";
 import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
@@ -62,29 +67,48 @@ const LogRecords = (): React.ReactElement => {
   console.log(logRecords);
 
   const [email, setEmail] = useState<string>("");
+  const [invitedEmail, setInvitedEmail] = useState<string>("");
+  const [isInvited, setIsInvited] = useState<boolean>(false);
 
-  const inviteUser = async (userEmail: string) => {
-    await routesAPIClient.inviteUser(userEmail);
+  const inviteUser = async () => {
+    await routesAPIClient.inviteUser(email);
+  };
+  const checkInvitedUser = async () => {
+    const res = await routesAPIClient.isUserInvited(invitedEmail);
+    setIsInvited(res);
   };
   return (
     <div className="page-container">
       <NavigationBar />
-      <div>
-        <p>Invite User:</p>
-        <input
+      <Box padding="20px">
+        <Text>Invite User:</Text>
+        <Input
           type="email"
+          width="70%"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="username@domain.com"
         />
-        <button
-          onClick={() => inviteUser(email)}
-          className="btn btn-primary"
-          type="button"
-        >
-          Invite User
-        </button>
-      </div>
+        <Button width="30%" onClick={() => inviteUser()}>
+          Invite user
+        </Button>
+        <Text>
+          Check if user is invited:
+          <Badge colorScheme={isInvited ? "green" : "red"}>
+            {isInvited ? "true" : "false"}
+          </Badge>
+        </Text>
+        <Input
+          width="70%"
+          type="email"
+          value={invitedEmail}
+          onChange={(event) => setInvitedEmail(event.target.value)}
+          placeholder="username@domain.com"
+        />
+        <Button width="30%" onClick={() => checkInvitedUser()}>
+          Check if invited
+        </Button>
+      </Box>
       <div className="records">
         <CreateLog />
         <SearchAndFilters setLogRecords={setLogRecords} />
