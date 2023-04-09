@@ -41,16 +41,8 @@ const Credentials = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
-  const isUserInvited = async (userEmail: string) => {
-    if (userEmail !== "") {
-      await routesAPIClient.isUserInvited(userEmail);
-      return true;
-    }
-    return false;
-  };
-
   const onLogInClick = async () => {
-    const isInvited = await isUserInvited(email);
+    const isInvited = await routesAPIClient.isUserInvited(email);
     if (isInvited) {
       const loginResponse: LoginResponse = await authAPIClient.login(
         email,

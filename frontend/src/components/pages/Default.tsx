@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 

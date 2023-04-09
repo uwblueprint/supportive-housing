@@ -4,7 +4,6 @@ def init_app(app):
         auth_routes,
         entity_routes,
         documentation_routes,
-        invite_users_routes,
         logs_routes,
         log_records_routes,
         residents_routes,
