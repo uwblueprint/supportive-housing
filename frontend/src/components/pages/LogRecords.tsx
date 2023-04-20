@@ -12,6 +12,7 @@ import {
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
+import SearchAndFilters from "../common/SearchAndFilters";
 
 // Replace the mock data with data from API, JSON response
 const mockRecords = [
@@ -55,11 +56,13 @@ const mockRecords = [
 ];
 
 const LogRecords = (): React.ReactElement => {
+  const [logRecords, setLogRecords] = useState(mockRecords);
+
   return (
     <div className="page-container">
       <NavigationBar />
+      <SearchAndFilters logRecords={logRecords} setLogRecords={setLogRecords} />
       <div className="records">
-
         <CreateLog />
 
         <TableContainer>
