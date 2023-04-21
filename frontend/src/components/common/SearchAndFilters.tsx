@@ -21,28 +21,27 @@ import {
   Text,
 } from "@chakra-ui/react";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
+import { LogRecord } from "./types/LogRecord";
 
-/* TODO: change inputs to correct types
-  - for employee -> we'll need to get an employee's ID by their name to pass into the route
-  - for attention to -> same as above
-  - for startDate & endDate the date format should be 'YYYY-MM-DD'
-  - for tags -> change to an actual array of strings instead of a string
-*/
+type Props = {
+  setLogRecords: React.Dispatch<React.SetStateAction<LogRecord[]>>;
+}
 
-const SearchAndFilters = (
-  logRecords: any,
-  setLogRecords: React.Dispatch<React.SetStateAction<{
-    id: number;
-    Date: string;
-    Time: string;
-    Resident: string;
-    Note: string;
-    Employee: string;
-    Attn_To: string;
-}>>,
-): React.ReactElement => {
+const SearchAndFilters = ({
+  setLogRecords,
+}: Props): React.ReactElement => {
+  /* TODO: change inputs to correct types
+  - this is possible when the data in LogRecords comes from the API since the API will have the employees/attnTos names + userId
+    names + userId and we can query using the /users route based on that
+    e.g.:
+      - for employee -> we'll need to get an employee's ID by their name to pass into the route
+      - for attention to -> same as above
+      - for startDate & endDate the date format should be 'YYYY-MM-DD'
+       - for tags -> change to an actual array of strings instead of a string
+  */
+  // TODO: search by resident
   const [residents, setResidents] = useState("");
-  const [employeeId, setEmployeeId] = useState("");
+  const [employees, setEmployees] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [tags, setTags] = useState("");
@@ -52,20 +51,36 @@ const SearchAndFilters = (
 
   useEffect(() => {
     const getLogRecordsAfterFiltering = async () => {
+      const employeeIds = employees
+        ? employees.replaceAll(`"`, "").split(",")
+        : [];
+      const attentionTos = attentionTo
+        ? attentionTo.replaceAll(`"`, "").split(",")
+        : [];
+      const dateRange = startDate && endDate ? [startDate, endDate] : [];
+
       const data = await commonAPIClient.filterLogRecords(
         building,
-        employeeId,
-        attentionTo,
-        [startDate, endDate],
-        tags,
+        employeeIds,
+        attentionTos,
+        dateRange,
+        tags ? [tags] : [],
         flagged,
       );
-      // setxLogRecords(data);
-      console.log(data);
+      setLogRecords(data);
     };
 
     getLogRecordsAfterFiltering();
-  });
+  }, [
+    building,
+    employees,
+    attentionTo,
+    startDate,
+    endDate,
+    tags,
+    flagged,
+    setLogRecords,
+  ]);
 
   // console.log("data", data);
   return (
@@ -103,9 +118,9 @@ const SearchAndFilters = (
                         <Icon />
                       </InputLeftElement>
                       <Input
-                        value={employeeId}
+                        value={employees}
                         placeholder="Employee ID"
-                        onChange={(e) => setEmployeeId(e.target.value)}
+                        onChange={(e) => setEmployees(e.target.value)}
                       />
                     </InputGroup>
                   </GridItem>

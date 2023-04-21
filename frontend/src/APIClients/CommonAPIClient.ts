@@ -2,10 +2,10 @@ import baseAPIClient from "./BaseAPIClient";
 
 const filterLogRecords = async (
   building: string,
-  employeeId: string,
-  attentionTo: string,
+  employeeId: string[],
+  attnTo: string[],
   dateRange: string[],
-  tags: string,
+  tags: string[],
   flagged: boolean,
 ): Promise<any> => {
   try {
@@ -14,7 +14,7 @@ const filterLogRecords = async (
         filters: {
           building,
           employeeId,
-          attentionTo,
+          attnTo,
           dateRange,
           tags,
           flagged,
