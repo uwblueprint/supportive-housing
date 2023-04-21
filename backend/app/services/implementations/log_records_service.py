@@ -132,11 +132,13 @@ class LogRecordsService(ILogRecordsService):
                     "flagged": self.filter_by_flagged
                 }
                 for filter in filters:
-                    if is_first_filter:
-                        sql = sql + "\nWHERE " + options[filter](filters.get(filter))
-                        is_first_filter = False
-                    else: 
-                        sql = sql + "\nAND " + options[filter](filters.get(filter))
+                    if filters.get(filter):
+                        if is_first_filter:
+                            sql = sql + "\nWHERE " + options[filter](filters.get(filter))
+                            is_first_filter = False
+                        else: 
+                            if filters.get(filter):
+                                sql = sql + "\nAND " + options[filter](filters.get(filter))
 
             sql = sql + "\nORDER BY datetime DESC"
             log_records = db.session.execute(text(sql))
