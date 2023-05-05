@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MultiSelect } from "react-multi-select-component";
 import {
   Button,
   Checkbox,
@@ -24,6 +25,15 @@ import {
 import { Col, InputGroup, Row } from "react-bootstrap";
 import { BsFillPersonFill, BsFillFlagFill, BsHouseFill } from "react-icons/bs";
 import NavigationBar from "../common/NavigationBar";
+
+const BUILDINGS = ["144", "362", "402"]
+
+// Replace this with the tags from the db once the API and table are made
+const TAGS = [
+  {label: "Tag A", value: "A"},
+  {label: "Tag B", value: "B"},
+  {label: "Tag C", value: "C"},
+]
 
 // Replace the mock data with data from API, JSON response
 const mockRecords = [
@@ -67,8 +77,8 @@ const mockRecords = [
 ];
 
 const LogComponent = () => {
-  const [building, setBuilding] = useState<string>("");
-  const [tags, setTags] = useState<string>("");
+  const [building, setBuilding] = React.useState("");
+  const [tags, setTags] = React.useState([]);
   const [value, setValue] = React.useState("");
 
   const handleInputChange = (e: { target: { value: unknown } }) => {
@@ -80,10 +90,6 @@ const LogComponent = () => {
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setBuilding(event.target.value);
-  };
-
-  const handleTagsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTags(event.target.value);
   };
 
   // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -166,14 +172,20 @@ const LogComponent = () => {
                       <BsHouseFill />
                     </InputLeftElement>
                     <Select
-                      placeholder="Building No."
                       value={building}
                       onChange={handleBuildingChange}
                       style={{ textIndent: "10px" }}
                     >
-                      <option value="Building A">Building A</option>
-                      <option value="Building B">Building B</option>
-                      <option value="Building C">Building C</option>
+                      {BUILDINGS.map((buildingOption) => {
+                        return (
+                          <option
+                            value={buildingOption}
+                            key={buildingOption}
+                          >
+                            {buildingOption}
+                          </option>
+                        )
+                      })}
                     </Select>
                   </InputGroup>
                 </FormControl>
@@ -220,16 +232,6 @@ const LogComponent = () => {
                     >
                       <BsHouseFill />
                     </InputLeftElement>
-                    <Select
-                      placeholder="Enter tags"
-                      value={building}
-                      onChange={handleBuildingChange}
-                      style={{ textIndent: "10px" }}
-                    >
-                      <option value="Tag A">Tag A</option>
-                      <option value="Tag B">Tag B</option>
-                      <option value="Tag C">Tag C</option>
-                    </Select>
                   </InputGroup>
                 </FormControl>
               </Col>
