@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MultiSelect } from "react-multi-select-component";
+import Select from 'react-select'
 import {
     Button,
     Checkbox,
@@ -12,19 +12,35 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Select,
     Textarea,
 } from "@chakra-ui/react";
 import { Col, InputGroup, Row } from "react-bootstrap";
-import { BsFillPersonFill, BsFillFlagFill, BsHouseFill } from "react-icons/bs";
 
-const BUILDINGS = ["144", "362", "402"]
+// Ideally we should be storing this information in the database
+const BUILDINGS = [
+    { label: "144", value: "144 Erb St. West" },
+    { label: "362", value: "362 Erb St. West" },
+    { label: "402", value: "402 Erb St. West" },
+]
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS = [
     { label: "Tag A", value: "A" },
     { label: "Tag B", value: "B" },
     { label: "Tag C", value: "C" },
+]
+
+// Replace this with the residents from the db
+const RESIDENTS = [
+    { label: "DE307", value: "DE307" },
+    { label: "AH206", value: "AH206" },
+    { label: "MB404", value: "MB404" },
+]
+
+// Replace this with the users from the db
+const EMPLOYEES = [
+    { label: "Huseyin", value: "Huseyin" },
+    { label: "John Doe", value: "John Doe" },
 ]
 
 const CreateLog = () => {
@@ -64,26 +80,7 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl>
                                     <FormLabel>Employee</FormLabel>
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents="none"
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                height: "100%",
-                                                paddingLeft: "6px",
-                                            }}
-                                        >
-                                            <BsFillPersonFill />
-                                        </InputLeftElement>
-                                        <Input
-                                            type="text"
-                                            variant="filled"
-                                            bg="#EAF0EF"
-                                            isDisabled
-                                        />
-                                    </InputGroup>
+                                    <Select options={EMPLOYEES} isDisabled defaultValue={{label: "Huseyin", value: "Huseyin" }} />
                                 </FormControl>
                             </Col>
                             <Col>
@@ -93,105 +90,37 @@ const CreateLog = () => {
                                 </FormControl>
                             </Col>
                         </Row>
+
                         <Row>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Building</FormLabel>
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents="none"
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                height: "100%",
-                                                paddingLeft: "6px",
-                                            }}
-                                        >
-                                            <BsHouseFill />
-                                        </InputLeftElement>
-                                        <Select
-                                            value={building}
-                                            onChange={handleBuildingChange}
-                                            style={{ textIndent: "10px" }}
-                                        >
-                                            {BUILDINGS.map((buildingOption) => {
-                                                return (
-                                                    <option
-                                                        value={buildingOption}
-                                                        key={buildingOption}
-                                                    >
-                                                        {buildingOption}
-                                                    </option>
-                                                )
-                                            })}
-                                        </Select>
-                                    </InputGroup>
+                                    <Select options={BUILDINGS} />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Resident</FormLabel>
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents="none"
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                height: "100%",
-                                                paddingLeft: "6px",
-                                            }}
-                                        >
-                                            <BsFillPersonFill />
-                                        </InputLeftElement>
-                                        <Input
-                                            type="text"
-                                            placeholder="Enter Resident Code"
-                                            style={{ textIndent: "10px" }}
-                                        />
-                                    </InputGroup>
+                                    <Select options={RESIDENTS} />
                                 </FormControl>
                             </Col>
                         </Row>
+
                         <Row>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Tags</FormLabel>
-                                    <MultiSelect
-                                            options={TAGS}
-                                            value={tags}
-                                            onChange={setTags}
-                                            labelledBy="Select"
-                                            hasSelectAll={false}
-                                        />
+                                    <Select options={TAGS} isMulti closeMenuOnSelect={false}/>
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Attention To</FormLabel>
-                                    <InputGroup>
-                                        <InputLeftElement
-                                            pointerEvents="none"
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                height: "100%",
-                                                paddingLeft: "6px",
-                                            }}
-                                        >
-                                            <BsFillFlagFill />
-                                        </InputLeftElement>
-                                        <Input
-                                            type="text"
-                                            placeholder="Enter Employee"
-                                            style={{ textIndent: "10px" }}
-                                        />
-                                    </InputGroup>
+                                    <Select options={EMPLOYEES} />
                                 </FormControl>
                             </Col>
                         </Row>
+
                         <Row>
                             <Col>
                                 <FormLabel mt={4}>Notes</FormLabel>
@@ -204,9 +133,11 @@ const CreateLog = () => {
                                 />
                             </Col>
                         </Row>
+
                         <Checkbox defaultChecked style={{ paddingTop: "1rem" }}>
                             Flag this Report
                         </Checkbox>
+
                         <Row
                             style={{
                                 textAlign: "right",
