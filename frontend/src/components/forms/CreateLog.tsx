@@ -48,27 +48,35 @@ const EMPLOYEES = [
 ]
 
 const CreateLog = () => {
-    const [employee, setEmployee] = useState(""); // currently, the select for employees is locked. Need to check if admins/regular staff are allowed to change this
+    const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
     const [date, setDate] = useState(new Date());
+    const [time, setTime] = useState("");
     const [building, setBuilding] = useState("");
     const [resident, setResident] = useState("");
     const [tags, setTags] = useState<string[]>([]);
     const [attnTo, setAttnTo] = useState("");
     const [notes, setNotes] = useState("");
 
+    // error states for non-nullable inputs
+    const [employeeError, setEmployeeError] = useState(false);
+    const [dateError, setDateError] = useState(false);
+    const [timeError, setTimeError] = useState(false);
+    const [buildingError, setBuildingError] = useState(false);
+    const [residentError, setResidentError] = useState(false);
+    const [notesError, setNotesError] = useState(false);
+
 
     const handleDateChange = (newDate: Date) => {
         setDate(newDate);
     };
 
-    // Time changes are handled separately, since the inputs are separate. Changes are made to the date state.
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const timeValue: string = e.target.value;
+        setTime(e.target.value);
         const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Regex to match time format HH:mm
 
         // Check to see if the input is valid, prevents an application crash
-        if (timeRegex.test(timeValue)) {
-            const [hour, minute] = timeValue.split(":");
+        if (timeRegex.test(e.target.value)) {
+            const [hour, minute] = e.target.value.split(":");
             const updatedDate = new Date(date); // update the time values of the current date state
             updatedDate.setHours(parseInt(hour, 10));
             updatedDate.setMinutes(parseInt(minute, 10));
@@ -113,6 +121,28 @@ const CreateLog = () => {
         setCreateOpen(false);
     };
 
+    const handleSubmit = () => {
+        // Do something with the form data
+        console.log({
+            employee,
+            date,
+            building,
+            resident,
+            tags,
+            attnTo,
+            notes,
+        });
+        // Clear the form fields after submission
+        setEmployee("");
+        setDate(new Date());
+        setBuilding("");
+        setResident("");
+        setTags([]);
+        setAttnTo("");
+        setNotes("");
+        setCreateOpen(false);
+    };
+
     return (
         <div>
             <Button
@@ -127,36 +157,39 @@ const CreateLog = () => {
                     <ModalBody>
                         <Row>
                             <Col>
-                                <FormControl isRequired>
+                                <FormControl isRequired isInvalid={employeeError}>
                                     <FormLabel>Employee</FormLabel>
                                     <Select
                                         options={EMPLOYEES}
                                         isDisabled
-                                        defaultValue={{ label: "Huseyin", value: "Huseyin" }} // needs to be the current user
+                                        defaultValue={{ label: employee, value: employee }} // needs to be the current user
                                     />
                                 </FormControl>
                             </Col>
                             <Col>
-                                <FormControl isRequired>
-                                    <FormLabel>Date and Time</FormLabel>
-                                    <Grid templateColumns="repeat(2, 1fr)" gap="8px">
-                                        <GridItem>
+                                <Grid templateColumns="repeat(2, 1fr)" gap="8px">
+                                    <GridItem>
+                                        <FormControl isRequired>
+                                            <FormLabel>Date</FormLabel>
                                             <SingleDatepicker
                                                 name="date-input"
                                                 date={date}
                                                 onDateChange={handleDateChange}
                                             />
-                                        </GridItem>
-                                        <GridItem>
+                                        </FormControl>
+                                    </GridItem>
+                                    <GridItem>
+                                        <FormControl isRequired>
+                                            <FormLabel>Time</FormLabel>
                                             <Input
                                                 size="md"
                                                 type="time"
                                                 defaultValue={date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
                                                 onChange={handleTimeChange}
                                             />
-                                        </GridItem>
-                                    </Grid>
-                                </FormControl>
+                                        </FormControl>
+                                    </GridItem>
+                                </Grid>
                             </Col>
                         </Row>
 
@@ -238,7 +271,7 @@ const CreateLog = () => {
                                 </Button>
                             </Col>
                             <Col xs="auto">
-                                <Button color="#285E61" type="submit">
+                                <Button onClick={handleSubmit} color="#285E61" type="submit">
                                     Submit
                                 </Button>
                             </Col>
