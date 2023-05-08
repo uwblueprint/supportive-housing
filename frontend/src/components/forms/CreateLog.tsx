@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Select from 'react-select'
+import Select, { ActionMeta, MultiValue, SingleValue } from 'react-select'
 import {
     Button,
     Checkbox,
@@ -8,20 +8,17 @@ import {
     Grid,
     GridItem,
     Input,
-    InputLeftElement,
     Modal,
     ModalBody,
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Text,
     Textarea,
-    useDisclosure,
 } from "@chakra-ui/react";
 
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
-import { Col, InputGroup, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -51,39 +48,60 @@ const EMPLOYEES = [
 ]
 
 const CreateLog = () => {
-    const [building, setBuilding] = React.useState("");
-    const [tags, setTags] = React.useState([]);
+    const [employee, setEmployee] = useState(""); // currently, the select for employees is locked. Need to check if admins/regular staff are allowed to change this
     const [date, setDate] = useState(new Date());
-    const [value, setValue] = React.useState("");
+    const [building, setBuilding] = useState("");
+    const [resident, setResident] = useState("");
+    const [tags, setTags] = useState<string[]>([]);
+    const [attnTo, setAttnTo] = useState("");
+    const [notes, setNotes] = useState("");
 
 
     const handleDateChange = (newDate: Date) => {
         setDate(newDate);
     };
 
+    // Time changes are handled separately, since the inputs are separate. Changes are made to the date state.
     const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const timeValue: string = e.target.value;
         const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Regex to match time format HH:mm
-        
-        // Check to see if the input is valid, otherwise a crash will occur
+
+        // Check to see if the input is valid, prevents an application crash
         if (timeRegex.test(timeValue)) {
-          const [hour, minute] = timeValue.split(":");
-          const updatedDate = new Date(date);
-          updatedDate.setHours(parseInt(hour, 10));
-          updatedDate.setMinutes(parseInt(minute, 10));
-          setDate(updatedDate);
+            const [hour, minute] = timeValue.split(":");
+            const updatedDate = new Date(date); // update the time values of the current date state
+            updatedDate.setHours(parseInt(hour, 10));
+            updatedDate.setMinutes(parseInt(minute, 10));
+            setDate(updatedDate);
         }
     };
 
-    const handleInputChange = (e: { target: { value: unknown } }) => {
-        const inputValue: string = e.target.value as string;
-        setValue(inputValue);
+    const handleBuildingChange = (selectedOption: SingleValue<{ label: string; value: string; }>) => {
+        if (selectedOption !== null) {
+            setBuilding(selectedOption.value);
+        }
     };
 
-    const handleBuildingChange = (
-        event: React.ChangeEvent<HTMLSelectElement>,
-    ) => {
-        setBuilding(event.target.value);
+    const handleResidentChange = (selectedOption: SingleValue<{ label: string; value: string; }>) => {
+        if (selectedOption !== null) {
+            setResident(selectedOption.value);
+        }
+    };
+
+    const handleTagsChange = (selectedTags: MultiValue<{ label: string; value: string; }>) => {
+        const newTagsList = selectedTags.map((tag) => tag.value);
+        setTags(newTagsList);
+    };
+
+    const handleAttnToChange = (selectedOption: SingleValue<{ label: string; value: string; }>) => {
+        if (selectedOption !== null) {
+            setAttnTo(selectedOption.value);
+        }
+    };
+
+    const handleNotesChange = (e: { target: { value: unknown } }) => {
+        const inputValue: string = e.target.value as string;
+        setNotes(inputValue);
     };
 
     const [isCreateOpen, setCreateOpen] = React.useState(false);
@@ -97,7 +115,11 @@ const CreateLog = () => {
 
     return (
         <div>
-            <Button onClick={handleCreateOpen}>+ Log</Button>
+            <Button
+                onClick={handleCreateOpen}
+            >
+                Log
+            </Button>
             <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
                 <ModalOverlay />
                 <ModalContent>
@@ -107,7 +129,11 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl isRequired>
                                     <FormLabel>Employee</FormLabel>
-                                    <Select options={EMPLOYEES} isDisabled defaultValue={{ label: "Huseyin", value: "Huseyin" }} />
+                                    <Select
+                                        options={EMPLOYEES}
+                                        isDisabled
+                                        defaultValue={{ label: "Huseyin", value: "Huseyin" }} // needs to be the current user
+                                    />
                                 </FormControl>
                             </Col>
                             <Col>
@@ -138,13 +164,21 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl isRequired mt={4}>
                                     <FormLabel>Building</FormLabel>
-                                    <Select options={BUILDINGS} placeholder="Building No." />
+                                    <Select
+                                        options={BUILDINGS}
+                                        placeholder="Building No."
+                                        onChange={handleBuildingChange}
+                                    />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl isRequired mt={4}>
                                     <FormLabel>Resident</FormLabel>
-                                    <Select options={RESIDENTS} placeholder="Select Tags" />
+                                    <Select
+                                        options={RESIDENTS}
+                                        placeholder="Select Resident"
+                                        onChange={handleResidentChange}
+                                    />
                                 </FormControl>
                             </Col>
                         </Row>
@@ -158,13 +192,18 @@ const CreateLog = () => {
                                         isMulti
                                         closeMenuOnSelect={false}
                                         placeholder="Select Tags"
+                                        onChange={handleTagsChange}
                                     />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Attention To</FormLabel>
-                                    <Select options={EMPLOYEES} placeholder="Select Employee" />
+                                    <Select
+                                        options={EMPLOYEES}
+                                        placeholder="Select Employee"
+                                        onChange={handleAttnToChange}
+                                    />
                                 </FormControl>
                             </Col>
                         </Row>
@@ -173,8 +212,8 @@ const CreateLog = () => {
                             <Col>
                                 <FormLabel mt={4}>Notes</FormLabel>
                                 <Textarea
-                                    value={value}
-                                    onChange={handleInputChange}
+                                    value={notes}
+                                    onChange={handleNotesChange}
                                     placeholder="Enter log notes here..."
                                     size="lg"
                                     style={{ resize: "none" }}
