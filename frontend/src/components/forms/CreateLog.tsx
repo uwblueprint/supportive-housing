@@ -5,6 +5,8 @@ import {
     Checkbox,
     FormControl,
     FormLabel,
+    Grid,
+    GridItem,
     Input,
     InputLeftElement,
     Modal,
@@ -12,8 +14,13 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Text,
     Textarea,
+    useDisclosure,
 } from "@chakra-ui/react";
+
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
+
 import { Col, InputGroup, Row } from "react-bootstrap";
 
 // Ideally we should be storing this information in the database
@@ -46,7 +53,27 @@ const EMPLOYEES = [
 const CreateLog = () => {
     const [building, setBuilding] = React.useState("");
     const [tags, setTags] = React.useState([]);
+    const [date, setDate] = useState(new Date());
     const [value, setValue] = React.useState("");
+
+
+    const handleDateChange = (newDate: Date) => {
+        setDate(newDate);
+    };
+
+    const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const timeValue: string = e.target.value;
+        const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Regex to match time format HH:mm
+        
+        // Check to see if the input is valid, otherwise a crash will occur
+        if (timeRegex.test(timeValue)) {
+          const [hour, minute] = timeValue.split(":");
+          const updatedDate = new Date(date);
+          updatedDate.setHours(parseInt(hour, 10));
+          updatedDate.setMinutes(parseInt(minute, 10));
+          setDate(updatedDate);
+        }
+    };
 
     const handleInputChange = (e: { target: { value: unknown } }) => {
         const inputValue: string = e.target.value as string;
@@ -80,13 +107,29 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl>
                                     <FormLabel>Employee</FormLabel>
-                                    <Select options={EMPLOYEES} isDisabled defaultValue={{label: "Huseyin", value: "Huseyin" }} />
+                                    <Select options={EMPLOYEES} isDisabled defaultValue={{ label: "Huseyin", value: "Huseyin" }} />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl>
-                                    <FormLabel>Date</FormLabel>
-                                    <Input type="datetime-local" size="sm" />
+                                    <FormLabel>Date and Time</FormLabel>
+                                    <Grid templateColumns="repeat(2, 1fr)" gap="8px">
+                                        <GridItem>
+                                            <SingleDatepicker
+                                                name="date-input"
+                                                date={date}
+                                                onDateChange={handleDateChange}
+                                            />
+                                        </GridItem>
+                                        <GridItem>
+                                            <Input
+                                                size="md"
+                                                type="time"
+                                                defaultValue={date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                                                onChange={handleTimeChange}
+                                            />
+                                        </GridItem>
+                                    </Grid>
                                 </FormControl>
                             </Col>
                         </Row>
@@ -95,13 +138,13 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Building</FormLabel>
-                                    <Select options={BUILDINGS} />
+                                    <Select options={BUILDINGS} placeholder="Building No." />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Resident</FormLabel>
-                                    <Select options={RESIDENTS} />
+                                    <Select options={RESIDENTS} placeholder="Select Tags" />
                                 </FormControl>
                             </Col>
                         </Row>
@@ -110,13 +153,18 @@ const CreateLog = () => {
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Tags</FormLabel>
-                                    <Select options={TAGS} isMulti closeMenuOnSelect={false}/>
+                                    <Select
+                                        options={TAGS}
+                                        isMulti
+                                        closeMenuOnSelect={false}
+                                        placeholder="Select Tags"
+                                    />
                                 </FormControl>
                             </Col>
                             <Col>
                                 <FormControl mt={4}>
                                     <FormLabel>Attention To</FormLabel>
-                                    <Select options={EMPLOYEES} />
+                                    <Select options={EMPLOYEES} placeholder="Select Employee" />
                                 </FormControl>
                             </Col>
                         </Row>
@@ -134,7 +182,7 @@ const CreateLog = () => {
                             </Col>
                         </Row>
 
-                        <Checkbox defaultChecked style={{ paddingTop: "1rem" }}>
+                        <Checkbox style={{ paddingTop: "1rem" }}>
                             Flag this Report
                         </Checkbox>
 
@@ -159,7 +207,7 @@ const CreateLog = () => {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-        </div>
+        </div >
     );
 };
 
