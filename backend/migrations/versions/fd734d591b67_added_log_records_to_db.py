@@ -26,7 +26,7 @@ def upgrade():
     sa.Column('datetime', sa.DateTime(timezone=True), nullable=False),
     sa.Column('flagged', sa.Boolean(), nullable=False),
     sa.Column('attn_to', sa.Integer(), nullable=True),
-    sa.Column('note', sa.String(), nullable=True),
+    sa.Column('note', sa.String(), nullable=False),
     sa.Column('tags', sa.ARRAY(sa.String()), nullable=True),
     sa.Column('building', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['attn_to'], ['users.id'], ),

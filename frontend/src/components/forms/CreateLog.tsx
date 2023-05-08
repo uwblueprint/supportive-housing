@@ -105,13 +105,13 @@ const CreateLog = () => {
                     <ModalBody>
                         <Row>
                             <Col>
-                                <FormControl>
+                                <FormControl isRequired>
                                     <FormLabel>Employee</FormLabel>
                                     <Select options={EMPLOYEES} isDisabled defaultValue={{ label: "Huseyin", value: "Huseyin" }} />
                                 </FormControl>
                             </Col>
                             <Col>
-                                <FormControl>
+                                <FormControl isRequired>
                                     <FormLabel>Date and Time</FormLabel>
                                     <Grid templateColumns="repeat(2, 1fr)" gap="8px">
                                         <GridItem>
@@ -136,13 +136,13 @@ const CreateLog = () => {
 
                         <Row>
                             <Col>
-                                <FormControl mt={4}>
+                                <FormControl isRequired mt={4}>
                                     <FormLabel>Building</FormLabel>
                                     <Select options={BUILDINGS} placeholder="Building No." />
                                 </FormControl>
                             </Col>
                             <Col>
-                                <FormControl mt={4}>
+                                <FormControl isRequired mt={4}>
                                     <FormLabel>Resident</FormLabel>
                                     <Select options={RESIDENTS} placeholder="Select Tags" />
                                 </FormControl>
