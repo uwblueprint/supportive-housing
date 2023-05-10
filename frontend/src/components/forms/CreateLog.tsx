@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import React, { useState } from "react";
-import Select, { ActionMeta, MultiValue, SingleValue } from 'react-select'
+import Select, { MultiValue, SingleValue } from 'react-select'
 import {
+    Box,
     Button,
     Checkbox,
     FormControl,
@@ -15,11 +16,12 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    Text,
     Textarea,
 } from "@chakra-ui/react";
 
+import { AddIcon } from '@chakra-ui/icons'
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-
 import { Col, Row } from "react-bootstrap";
 
 // Ideally we should be storing this information in the database
@@ -210,176 +212,178 @@ const CreateLog = () => {
 
     return (
         <div>
-            <Button
-                onClick={handleCreateOpen}
-            >
-                Log
-            </Button>
-            <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>New Log Entry Details</ModalHeader>
-                    <ModalBody>
-                        <Row>
-                            <Col>
-                                <FormControl isRequired>
-                                    <FormLabel>Employee</FormLabel>
-                                    <Select
-                                        options={EMPLOYEES}
-                                        isDisabled
-                                        defaultValue={{ label: employee, value: employee }} // needs to be the current user
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: getBorderStyle(state, employeeError),
+            <Box textAlign="right">
+                <Button
+                    onClick={handleCreateOpen}
+                    className="button main-button"
+                    marginBottom="16px"
+                >
+                    <AddIcon boxSize="16px" marginRight="8px" />
+                    Add Log
+                </Button>
+            </Box>
 
-                                                borderRadius: "4px"
-                                            })
-                                        }}
-                                    />
-                                </FormControl>
-                            </Col>
-                            <Col>
-                                <Grid templateColumns="repeat(2, 1fr)" gap="8px">
-                                    <GridItem>
-                                        <FormControl isRequired>
-                                            <FormLabel>Date</FormLabel>
-                                            <SingleDatepicker
-                                                name="date-input"
-                                                date={date}
-                                                onDateChange={handleDateChange}
-                                            />
-                                        </FormControl>
-                                    </GridItem>
-                                    <GridItem>
-                                        <FormControl isRequired isInvalid={timeError}>
-                                            <FormLabel>Time</FormLabel>
-                                            <Input
-                                                size="md"
-                                                type="time"
-                                                defaultValue={time}
-                                                onChange={handleTimeChange}
-                                            />
-                                            <FormErrorMessage>Time is invalid.</FormErrorMessage>
-                                        </FormControl>
-                                    </GridItem>
-                                </Grid>
-                            </Col>
-                        </Row>
+            <Box>
+                <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>New Log Entry Details</ModalHeader>
+                        <ModalBody>
+                            <Row>
+                                <Col>
+                                    <FormControl isRequired>
+                                        <FormLabel>Employee</FormLabel>
+                                        <Select
+                                            options={EMPLOYEES}
+                                            isDisabled
+                                            defaultValue={{ label: employee, value: employee }} // needs to be the current user
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: getBorderStyle(state, employeeError),
 
-                        <Row>
-                            <Col>
-                                <FormControl isRequired isInvalid={buildingError} mt={4}>
-                                    <FormLabel>Building</FormLabel>
-                                    <Select
-                                        options={BUILDINGS}
-                                        placeholder="Building No."
-                                        onChange={handleBuildingChange}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: getBorderStyle(state, buildingError),
-                                                "&:hover": {
-                                                    borderColor: buildingError ? "#e53e3e" : "#B1B1B1",
-                                                    cursor: "pointer"
-                                                },
-                                                borderRadius: "4px"
-                                            })
-                                        }}
-                                    />
-                                    <FormErrorMessage>Building is required.</FormErrorMessage>
-                                </FormControl>
-                            </Col>
-                            <Col>
-                                <FormControl isRequired isInvalid={residentError} mt={4}>
-                                    <FormLabel>Resident</FormLabel>
-                                    <Select
-                                        options={RESIDENTS}
-                                        placeholder="Select Resident"
-                                        onChange={handleResidentChange}
-                                        styles={{
-                                            control: (provided, state) => ({
-                                                ...provided,
-                                                border: getBorderStyle(state, residentError),
-                                                "&:hover": {
-                                                    borderColor: residentError ? "#e53e3e" : "#B1B1B1",
-                                                    cursor: "pointer"
-                                                },
-                                                borderRadius: "4px"
-                                            })
-                                        }}
-                                    />
-                                    <FormErrorMessage>Resident is required.</FormErrorMessage>
-                                </FormControl>
-                            </Col>
-                        </Row>
+                                                    borderRadius: "4px"
+                                                })
+                                            }}
+                                        />
+                                    </FormControl>
+                                </Col>
+                                <Col>
+                                    <Grid templateColumns="repeat(2, 1fr)" gap="8px">
+                                        <GridItem>
+                                            <FormControl isRequired>
+                                                <FormLabel>Date</FormLabel>
+                                                <SingleDatepicker
+                                                    name="date-input"
+                                                    date={date}
+                                                    onDateChange={handleDateChange}
+                                                />
+                                            </FormControl>
+                                        </GridItem>
+                                        <GridItem>
+                                            <FormControl isRequired isInvalid={timeError}>
+                                                <FormLabel>Time</FormLabel>
+                                                <Input
+                                                    size="md"
+                                                    type="time"
+                                                    defaultValue={time}
+                                                    onChange={handleTimeChange}
+                                                />
+                                                <FormErrorMessage>Time is invalid.</FormErrorMessage>
+                                            </FormControl>
+                                        </GridItem>
+                                    </Grid>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col>
-                                <FormControl mt={4}>
-                                    <FormLabel>Tags</FormLabel>
-                                    <Select
-                                        options={TAGS}
-                                        isMulti
-                                        closeMenuOnSelect={false}
-                                        placeholder="Select Tags"
-                                        onChange={handleTagsChange}
-                                    />
-                                </FormControl>
-                            </Col>
-                            <Col>
-                                <FormControl mt={4}>
-                                    <FormLabel>Attention To</FormLabel>
-                                    <Select
-                                        options={EMPLOYEES}
-                                        placeholder="Select Employee"
-                                        onChange={handleAttnToChange}
-                                    />
-                                </FormControl>
-                            </Col>
-                        </Row>
+                            <Row>
+                                <Col>
+                                    <FormControl isRequired isInvalid={buildingError} mt={4}>
+                                        <FormLabel>Building</FormLabel>
+                                        <Select
+                                            options={BUILDINGS}
+                                            placeholder="Building No."
+                                            onChange={handleBuildingChange}
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: getBorderStyle(state, buildingError),
+                                                    "&:hover": {
+                                                        borderColor: buildingError ? "#e53e3e" : "#B1B1B1",
+                                                        cursor: "pointer"
+                                                    },
+                                                    borderRadius: "4px"
+                                                })
+                                            }}
+                                        />
+                                        <FormErrorMessage>Building is required.</FormErrorMessage>
+                                    </FormControl>
+                                </Col>
+                                <Col>
+                                    <FormControl isRequired isInvalid={residentError} mt={4}>
+                                        <FormLabel>Resident</FormLabel>
+                                        <Select
+                                            options={RESIDENTS}
+                                            placeholder="Select Resident"
+                                            onChange={handleResidentChange}
+                                            styles={{
+                                                control: (provided, state) => ({
+                                                    ...provided,
+                                                    border: getBorderStyle(state, residentError),
+                                                    "&:hover": {
+                                                        borderColor: residentError ? "#e53e3e" : "#B1B1B1",
+                                                        cursor: "pointer"
+                                                    },
+                                                    borderRadius: "4px"
+                                                })
+                                            }}
+                                        />
+                                        <FormErrorMessage>Resident is required.</FormErrorMessage>
+                                    </FormControl>
+                                </Col>
+                            </Row>
 
-                        <Row>
-                            <Col>
-                                <FormControl isRequired isInvalid={notesError} mt={4}>
-                                    <FormLabel>Notes</FormLabel>
-                                    <Textarea
-                                        value={notes}
-                                        onChange={handleNotesChange}
-                                        placeholder="Enter log notes here..."
-                                        size="lg"
-                                        style={{ resize: "none" }}
-                                    />
-                                    <FormErrorMessage>Notes are required.</FormErrorMessage>
-                                </FormControl>
-                            </Col>
-                        </Row>
+                            <Row>
+                                <Col>
+                                    <FormControl mt={4}>
+                                        <FormLabel>Tags</FormLabel>
+                                        <Select
+                                            options={TAGS}
+                                            isMulti
+                                            closeMenuOnSelect={false}
+                                            placeholder="Select Tags"
+                                            onChange={handleTagsChange}
+                                        />
+                                    </FormControl>
+                                </Col>
+                                <Col>
+                                    <FormControl mt={4}>
+                                        <FormLabel>Attention To</FormLabel>
+                                        <Select
+                                            options={EMPLOYEES}
+                                            placeholder="Select Employee"
+                                            onChange={handleAttnToChange}
+                                        />
+                                    </FormControl>
+                                </Col>
+                            </Row>
 
-                        <Checkbox style={{ paddingTop: "1rem" }}>
-                            Flag this Report
-                        </Checkbox>
+                            <Row>
+                                <Col>
+                                    <FormControl isRequired isInvalid={notesError} mt={4}>
+                                        <FormLabel>Notes</FormLabel>
+                                        <Textarea
+                                            value={notes}
+                                            onChange={handleNotesChange}
+                                            placeholder="Enter log notes here..."
+                                            size="lg"
+                                            style={{ resize: "none" }}
+                                        />
+                                        <FormErrorMessage>Notes are required.</FormErrorMessage>
+                                    </FormControl>
+                                </Col>
+                            </Row>
 
-                        <Row
-                            style={{
-                                textAlign: "right",
-                                alignItems: "center",
-                                paddingBottom: "1rem"
-                            }}
-                        >
-                            <Col>
-                                <Button onClick={handleCreateClose} variant="link">
+                            <Checkbox style={{ paddingTop: "1rem" }}>
+                                Flag this Report
+                            </Checkbox>
+
+                            <Box
+                                textAlign="right"
+                                marginTop="12px"
+                                marginBottom="12px"
+                            >
+                                <Button onClick={handleCreateClose} className="button alt-button" variant="ghost" marginRight="8px">
                                     Cancel
                                 </Button>
-                            </Col>
-                            <Col xs="auto">
-                                <Button onClick={handleSubmit} color="#285E61" type="submit">
+                                <Button onClick={handleSubmit} className="button main-button" type="submit">
                                     Submit
                                 </Button>
-                            </Col>
-                        </Row>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+                            </Box>
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
+            </Box>
         </div >
     );
 };

@@ -43,3 +43,18 @@ code {
   font-size: 28px;
   font-weight: 500;
 }
+
+.button {
+  font-family: 'DM Sans';
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.main-button {
+  color: #FFFFFF;
+  background-color: #285E61 !important;
+}
+
+.alt-button {
+  color: #285E61 !important;
+}
