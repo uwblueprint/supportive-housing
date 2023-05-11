@@ -23,20 +23,17 @@ import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherCo
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import LogRecords from "./components/pages/LogRecords";
+import TeamMembers from "./components/pages/TeamMembers";
 import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
-
 import { AuthenticatedUser } from "./types/AuthTypes";
 
 const App = (): React.ReactElement => {
-  const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
-    AUTHENTICATED_USER_KEY,
-  );
+  const currentUser: AuthenticatedUser | null =
+    getLocalStorageObj<AuthenticatedUser>(AUTHENTICATED_USER_KEY);
 
-  const [
-    authenticatedUser,
-    setAuthenticatedUser,
-  ] = useState<AuthenticatedUser | null>(currentUser);
+  const [authenticatedUser, setAuthenticatedUser] =
+    useState<AuthenticatedUser | null>(currentUser);
 
   // Some sort of global state. Context API replaces redux.
   // Split related states into different contexts as necessary.
@@ -63,6 +60,11 @@ const App = (): React.ReactElement => {
                   exact
                   path={Routes.HOME_PAGE}
                   component={LogRecords}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.TEAM_MEMBERS}
+                  component={TeamMembers}
                 />
                 <PrivateRoute
                   exact
