@@ -53,6 +53,18 @@ code {
 .main-button {
   color: #FFFFFF;
   background-color: #285E61 !important;
+  transition: background-color 0.25s ease !important;
+}
+
+.main-button:hover {
+  background-color: #1B2A2C !important;
+  transition: background-color 0.5s ease !important;
+}
+
+.main-button:active {
+  background-color: #285E61 !important;
+  box-shadow: inset 0px 0px 10px #ffffff !important;
+  transition: background-color 0.1s ease, box-shadow 0.1s ease !important;
 }
 
 .alt-button {
