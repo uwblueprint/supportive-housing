@@ -72,6 +72,7 @@ const CreateLog = () => {
     const [tags, setTags] = useState<string[]>([]);
     const [attnTo, setAttnTo] = useState("");
     const [notes, setNotes] = useState("");
+    const [flagged, setFlagged] = useState(false);
 
     // error states for non-nullable inputs
     const [employeeError, setEmployeeError] = useState(false);
@@ -146,6 +147,7 @@ const CreateLog = () => {
 
         // reset all states
         setDate(new Date());
+        setTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }));
         setBuilding("");
         setResident("");
         setTags([]);
@@ -164,16 +166,17 @@ const CreateLog = () => {
 
     const handleSubmit = () => {
         // log the state values for testing
-        console.log({
-            employee,
-            date,
-            time,
-            building,
-            resident,
-            tags,
-            attnTo,
-            notes,
-        });
+        // console.log({
+        //     employee,
+        //     date,
+        //     time,
+        //     building,
+        //     resident,
+        //     tags,
+        //     attnTo,
+        //     notes,
+        //     flagged,
+        // });
 
         // Check if required fields are filled out
         setEmployeeError(employee === "");
@@ -184,14 +187,14 @@ const CreateLog = () => {
         setNotesError(notes === "");
 
         // log the error state values for testing
-        console.log({
-            employeeError: employee === "",
-            dateError: date === null,
-            timeError: time === "",
-            buildingError: building === "",
-            residentError: resident === "",
-            notesError: notes === "",
-        });
+        // console.log({
+        //     employeeError: employee === "",
+        //     dateError: date === null,
+        //     timeError: time === "",
+        //     buildingError: building === "",
+        //     residentError: resident === "",
+        //     notesError: notes === "",
+        // });
 
         // If any required fields are empty, prevent form submission
         if (employee === "" || date === null || time === "" || building === "" || resident === "" || notes === "") {
@@ -364,7 +367,7 @@ const CreateLog = () => {
                                 </Col>
                             </Row>
 
-                            <Checkbox style={{ paddingTop: "1rem" }}>
+                            <Checkbox style={{ paddingTop: "1rem" }} onChange={ () => setFlagged(!flagged)}>
                                 Flag this Report
                             </Checkbox>
 
