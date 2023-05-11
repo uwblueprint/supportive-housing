@@ -215,7 +215,7 @@ const CreateLog = () => {
             <Box textAlign="right">
                 <Button
                     onClick={handleCreateOpen}
-                    className="button main-button"
+                    className="button solid-button"
                     marginBottom="16px"
                 >
                     <AddIcon boxSize="16px" marginRight="8px" />
@@ -373,10 +373,10 @@ const CreateLog = () => {
                                 marginTop="12px"
                                 marginBottom="12px"
                             >
-                                <Button onClick={handleCreateClose} className="button alt-button" variant="ghost" marginRight="8px">
+                                <Button onClick={handleCreateClose} className="button ghost-button" variant="ghost" marginRight="8px">
                                     Cancel
                                 </Button>
-                                <Button onClick={handleSubmit} className="button main-button" type="submit">
+                                <Button onClick={handleSubmit} className="button solid-button" type="submit">
                                     Submit
                                 </Button>
                             </Box>
