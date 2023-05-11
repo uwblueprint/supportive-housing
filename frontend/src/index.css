@@ -69,4 +69,16 @@ code {
 
 .alt-button {
   color: #285E61 !important;
+  transition: color 0.25s ease !important;
+}
+
+.alt-button:hover {
+  color: #1B2A2C !important;
+  background-color: #FFFFFF !important;
+  transition: color 0.5s ease !important;
+}
+
+.alt-button:active {
+  color: #285E61 !important;
+  transition: color 0.1s ease !important;
 }
