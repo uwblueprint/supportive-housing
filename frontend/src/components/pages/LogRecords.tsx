@@ -54,7 +54,7 @@ const mockRecords = [
   },
 ];
 
-const LogRecords = () => {
+const LogRecords = (): React.ReactElement => {
   return (
     <div className="page-container">
       <NavigationBar />
