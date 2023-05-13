@@ -113,7 +113,7 @@ def create_user():
 
 
 @blueprint.route("/<int:user_id>", methods=["PUT"], strict_slashes=False)
-@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Admin"})
 @validate_request("UpdateUserDTO")
 def update_user(user_id):
     """
