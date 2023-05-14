@@ -1,13 +1,6 @@
 import { TeamMember } from "../types/TeamMembersTypes";
 import baseAPIClient from "./BaseAPIClient";
 
-type TeamMemberSnakeCase = {
-  id: number;
-  first_name: string;
-  last_name: string;
-  role: "PM" | "Designer" | "PL" | "Developer";
-};
-
 const getTeamMembers = async (): Promise<[TeamMember] | null> => {
   try {
     const { data } = await baseAPIClient.get("/team_members", {});
