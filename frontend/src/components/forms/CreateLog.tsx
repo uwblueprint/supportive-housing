@@ -16,7 +16,6 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    Text,
     Textarea,
 } from "@chakra-ui/react";
 
@@ -140,10 +139,6 @@ const CreateLog = () => {
     const [isCreateOpen, setCreateOpen] = React.useState(false);
     const handleCreateOpen = () => {
         setCreateOpen(true);
-    };
-
-    const handleCreateClose = () => {
-        setCreateOpen(false);
 
         // reset all states
         setDate(new Date());
@@ -153,7 +148,6 @@ const CreateLog = () => {
         setTags([]);
         setAttnTo("");
         setNotes("");
-        setCreateOpen(false);
 
         // reset all error states
         setEmployeeError(false);
@@ -162,6 +156,10 @@ const CreateLog = () => {
         setBuildingError(false);
         setResidentError(false);
         setNotesError(false);
+    };
+
+    const handleCreateClose = () => {
+        setCreateOpen(false);
     };
 
     const handleSubmit = () => {
@@ -178,7 +176,7 @@ const CreateLog = () => {
         //     flagged,
         // });
 
-        // Check if required fields are filled out
+        // Update error states
         setEmployeeError(employee === "");
         setDateError(date === null);
         setTimeError(time === "");
@@ -202,15 +200,10 @@ const CreateLog = () => {
         }
 
         // Create a log in the db with this data
+        setCreateOpen(false); 
 
-        // Clear the form fields after submission
-        setDate(new Date());
-        setBuilding("");
-        setResident("");
-        setTags([]);
-        setAttnTo("");
-        setNotes("");
-        setCreateOpen(false);
+        // once the log is created, display a toast message
+        // update the table with the new log
     };
 
     return (
@@ -367,7 +360,7 @@ const CreateLog = () => {
                                 </Col>
                             </Row>
 
-                            <Checkbox style={{ paddingTop: "1rem" }} onChange={ () => setFlagged(!flagged)}>
+                            <Checkbox style={{ paddingTop: "1rem" }} onChange={() => setFlagged(!flagged)}>
                                 Flag this Report
                             </Checkbox>
 
