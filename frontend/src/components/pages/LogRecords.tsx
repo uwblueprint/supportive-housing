@@ -64,10 +64,9 @@ const LogRecords = (): React.ReactElement => {
   return (
     <div className="page-container">
       <NavigationBar />
-      <SearchAndFilters setLogRecords={setLogRecords} />
       <div className="records">
         <CreateLog />
-
+        <SearchAndFilters setLogRecords={setLogRecords} />
         <TableContainer>
           <Table
             variant="simple"
