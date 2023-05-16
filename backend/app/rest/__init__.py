@@ -5,7 +5,7 @@ def init_app(app):
         entity_routes,
         documentation_routes,
         logs_routes,
-        log_records_routes
+        log_records_routes,
     )
 
     app.register_blueprint(user_routes.blueprint)

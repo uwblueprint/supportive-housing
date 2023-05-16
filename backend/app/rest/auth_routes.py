@@ -93,9 +93,7 @@ def two_fa():
 
     if not passcode:
         return (
-            jsonify(
-                {"error": "Must supply passcode as a query parameter.t"}
-            ),
+            jsonify({"error": "Must supply passcode as a query parameter.t"}),
             400,
         )
 
