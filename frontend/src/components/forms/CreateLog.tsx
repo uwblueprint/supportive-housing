@@ -1,7 +1,10 @@
 /* eslint-disable prettier/prettier */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select, { MultiValue, SingleValue } from 'react-select'
 import {
+    Alert,
+    AlertDescription,
+    AlertIcon,
     Box,
     Button,
     Checkbox,
@@ -16,12 +19,13 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
+    SlideFade,
     Textarea,
 } from "@chakra-ui/react";
 
 import { AddIcon } from '@chakra-ui/icons'
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Col, Row } from "react-bootstrap";
+import { Card, Col, Row } from "react-bootstrap";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -80,6 +84,8 @@ const CreateLog = () => {
     const [buildingError, setBuildingError] = useState(false);
     const [residentError, setResidentError] = useState(false);
     const [notesError, setNotesError] = useState(false);
+
+    const [showAlert, setShowAlert] = useState(false);
 
     // if we need functionality to change the selected employee, handle should go here
 
@@ -156,6 +162,9 @@ const CreateLog = () => {
         setBuildingError(false);
         setResidentError(false);
         setNotesError(false);
+
+        // reset alert state
+        setShowAlert(false);
     };
 
     const handleCreateClose = () => {
@@ -200,11 +209,18 @@ const CreateLog = () => {
         }
 
         // Create a log in the db with this data
-        setCreateOpen(false); 
-
-        // once the log is created, display a toast message
+        setCreateOpen(false);
+        setShowAlert(true);
         // update the table with the new log
     };
+
+    useEffect(() => {
+        if (showAlert) {
+            setTimeout(() => {
+                setShowAlert(false);
+            }, 3000);
+        }
+    }, [showAlert]);
 
     return (
         <div>
@@ -380,6 +396,26 @@ const CreateLog = () => {
                     </ModalContent>
                 </Modal>
             </Box>
+
+            <Box
+                position="fixed"
+                bottom="20px"
+                right="20px"
+                width="25%"
+                zIndex={9999}
+            >
+                <SlideFade in={showAlert} unmountOnExit>
+                    <Alert
+                        status="success"
+                        variant="left-accent"
+                        borderRadius="6px"
+                    >
+                        <AlertIcon />
+                        <AlertDescription>Log successfully created.</AlertDescription>
+                    </Alert>
+                </SlideFade>
+            </Box>
+
         </div >
     );
 };
