@@ -19,7 +19,7 @@ import {
     ModalContent,
     ModalHeader,
     ModalOverlay,
-    SlideFade,
+    ScaleFade,
     Textarea,
 } from "@chakra-ui/react";
 
@@ -404,7 +404,7 @@ const CreateLog = () => {
                 width="25%"
                 zIndex={9999}
             >
-                <SlideFade in={showAlert} unmountOnExit>
+                <ScaleFade in={showAlert} unmountOnExit>
                     <Alert
                         status="success"
                         variant="left-accent"
@@ -413,7 +413,7 @@ const CreateLog = () => {
                         <AlertIcon />
                         <AlertDescription>Log successfully created.</AlertDescription>
                     </Alert>
-                </SlideFade>
+                </ScaleFade>
             </Box>
 
         </div >
