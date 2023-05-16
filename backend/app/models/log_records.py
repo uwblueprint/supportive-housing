@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 
+
 class LogRecords(db.Model):
     __tablename__ = "log_records"
     log_id = db.Column(db.Integer, primary_key=True, nullable=False)
