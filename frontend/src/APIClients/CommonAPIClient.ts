@@ -1,3 +1,5 @@
+import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 const filterLogRecords = async (
@@ -9,6 +11,10 @@ const filterLogRecords = async (
   flagged: boolean,
 ): Promise<any> => {
   try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
     const { data } = await baseAPIClient.get("/log_records", {
       params: {
         filters: {
@@ -20,6 +26,7 @@ const filterLogRecords = async (
           flagged,
         },
       },
+      headers: { Authorization: bearerToken },
     });
     return data;
   } catch (error) {
