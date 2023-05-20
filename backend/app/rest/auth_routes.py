@@ -13,10 +13,11 @@ from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
 from ..services.implementations.sign_in_logs_service import SignInLogService
-
+from ..services.implementations.invite_users_service import InviteUserService
 
 user_service = UserService(current_app.logger)
 sign_in_logs_service = SignInLogService(current_app.logger)
+invited_user_service = InviteUserService(current_app.logger)
 email_service = EmailService(
     current_app.logger,
     {
@@ -149,7 +150,8 @@ def register():
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     try:
-        request.json["role"] = "Relief Staff"
+        invited_user = invited_user_service.get_user_by_email(request.json["email"])
+        request.json["role"] = invited_user.role
         user = CreateUserDTO(**request.json)
         user_service.create_user(user)
         auth_dto = auth_service.generate_token(

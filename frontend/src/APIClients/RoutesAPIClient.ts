@@ -1,3 +1,5 @@
+import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 const inviteUser = async (email: string, role = "Admin"): Promise<boolean> => {
@@ -5,10 +7,14 @@ const inviteUser = async (email: string, role = "Admin"): Promise<boolean> => {
     if (email === "") {
       return false;
     }
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
     await baseAPIClient.post(
       "/invite-users",
       { email, role },
-      { withCredentials: true },
+      { headers: { Authorization: bearerToken } },
     );
     return true;
   } catch (error) {
