@@ -4,15 +4,12 @@ from sqlalchemy.orm.properties import ColumnProperty
 from . import db
 
 
-class Tag(db.Model):
-    __tablename__ = "tags"
+class LogRecordTag(db.Model):
+    __tablename__ = "log_record_tag"
 
-    tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    name = db.Column(db.String, nullable=False)
-    status = db.Column(
-        db.Enum("Deleted", "Active", name="status"), nullable=False
-    )
-    log_records = db.relationship("LogRecords", secondary="log_record_tag", back_populates="tags")
+    log_record_tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    log_record_id = db.Column(db.Integer, db.ForeignKey("log_records.log_id"), nullable=False)
+    tag_id = db.Column(db.Integer, db.ForeignKey("tags.tag_id"), nullable=False)
 
     def to_dict(self, include_relationships=False):
         # define the entities table

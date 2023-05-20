@@ -14,8 +14,8 @@ class LogRecords(db.Model):
     attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     # TODO: replace open String fields with VarChar(NUM_CHARS)
     note = db.Column(db.String, nullable=True)
-    tags = db.Column(db.ARRAY(db.String), nullable=True)
     building = db.Column(db.String, nullable=False)
+    tags = db.relationship("Tag", secondary="log_record_tag", back_populates="log_records")
 
     def to_dict(self, include_relationships=False):
         # define the entities table
