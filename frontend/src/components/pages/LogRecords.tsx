@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import {
   Table,
   Thead,
@@ -10,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 
 import NavigationBar from "../common/NavigationBar";
+import CreateLog from "../forms/CreateLog";
 
 // Replace the mock data with data from API, JSON response
 const mockRecords = [
@@ -45,7 +47,8 @@ const mockRecords = [
     Date: "Jan 21",
     Time: "3:20 AM",
     Resident: "MB404",
-    Note: "During security check, MB404 was making some noise. TSW warned her to be quiet. She yelled on TSW behind the door, yelled, and swore (f..uck of......). TSW told her that I will call the police if she continues. Then she came down for laundry.",
+    Note:
+      "During security check, MB404 was making some noise. TSW warned her to be quiet. She yelled on TSW behind the door, yelled, and swore (f..uck of......). TSW told her that I will call the police if she continues. Then she came down for laundry.",
     Employee: "Huseyin",
     Attn_To: "John Doe",
   },
@@ -56,6 +59,9 @@ const LogRecords = (): React.ReactElement => {
     <div className="page-container">
       <NavigationBar />
       <div className="records">
+
+        <CreateLog />
+
         <TableContainer>
           <Table
             variant="simple"

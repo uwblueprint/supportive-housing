@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 
+
 class LogRecords(db.Model):
     __tablename__ = "log_records"
     log_id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -13,7 +14,7 @@ class LogRecords(db.Model):
     flagged = db.Column(db.Boolean, nullable=False)
     attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     # TODO: replace open String fields with VarChar(NUM_CHARS)
-    note = db.Column(db.String, nullable=True)
+    note = db.Column(db.String, nullable=False)
     tags = db.Column(db.ARRAY(db.String), nullable=True)
     building = db.Column(db.String, nullable=False)
 

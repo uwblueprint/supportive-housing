@@ -38,3 +38,47 @@ code {
   color: #FFFFFF !important;
   text-decoration: none
 }
+
+.log-entry h1 {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.button {
+  font-family: 'DM Sans';
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.solid-button {
+  color: #FFFFFF;
+  background-color: #285E61 !important;
+  transition: background-color 0.25s ease !important;
+}
+
+.solid-button:hover {
+  background-color: #1B2A2C !important;
+  transition: background-color 0.5s ease !important;
+}
+
+.solid-button:active {
+  background-color: #285E61 !important;
+  box-shadow: inset 0px 0px 10px #ffffff !important;
+  transition: background-color 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.ghost-button {
+  color: #285E61 !important;
+  transition: color 0.25s ease !important;
+}
+
+.ghost-button:hover {
+  color: #1B2A2C !important;
+  background-color: #FFFFFF !important;
+  transition: color 0.5s ease !important;
+}
+
+.ghost-button:active {
+  color: #285E61 !important;
+  transition: color 0.1s ease !important;
+}
