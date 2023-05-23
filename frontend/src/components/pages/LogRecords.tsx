@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4fc85fa95d005c9266052e8752df6480ea05509a
 import {
   Table,
   Thead,
@@ -10,6 +14,10 @@ import {
 } from "@chakra-ui/react";
 
 import NavigationBar from "../common/NavigationBar";
+<<<<<<< HEAD
+=======
+import CreateLog from "../forms/CreateLog";
+>>>>>>> 4fc85fa95d005c9266052e8752df6480ea05509a
 import SearchAndFilters from "../common/SearchAndFilters";
 import { LogRecord } from "../common/types/LogRecord";
 
@@ -63,8 +71,14 @@ const LogRecords = (): React.ReactElement => {
     <div className="page-container">
       <NavigationBar />
       <div className="records">
+<<<<<<< HEAD
         <SearchAndFilters setLogRecords={setLogRecords} />
         <TableContainer>
+=======
+        <CreateLog />
+        <SearchAndFilters setLogRecords={setLogRecords} />
+        <TableContainer paddingTop="12px">
+>>>>>>> 4fc85fa95d005c9266052e8752df6480ea05509a
           <Table
             variant="simple"
             style={{ minHeight: "400px", verticalAlign: "middle" }}

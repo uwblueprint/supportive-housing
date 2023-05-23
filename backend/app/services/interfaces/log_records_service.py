@@ -28,9 +28,9 @@ class ILogRecordsService(ABC):
         pass
 
     @abstractmethod
-    def get_log_records(self, page_number,filters=None):
+    def get_log_records(self, page_number, filters=None):
         """
-        Get all log records 
+        Get all log records
 
         :param start_index: start index of logs that are returned
         :type start_index: int
