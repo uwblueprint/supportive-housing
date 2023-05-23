@@ -30,10 +30,7 @@ const filterLogRecords = async (
     });
     return data;
   } catch (error) {
-<<<<<<< HEAD
-=======
     // TODO: more descriptive error / throw an exception potentially?
->>>>>>> 4fc85fa95d005c9266052e8752df6480ea05509a
     return null;
   }
 };
