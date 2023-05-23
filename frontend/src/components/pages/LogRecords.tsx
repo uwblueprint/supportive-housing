@@ -67,7 +67,7 @@ const LogRecords = (): React.ReactElement => {
       <div className="records">
         <CreateLog />
         <SearchAndFilters setLogRecords={setLogRecords} />
-        <TableContainer>
+        <TableContainer paddingTop="12px">
           <Table
             variant="simple"
             style={{ minHeight: "400px", verticalAlign: "middle" }}

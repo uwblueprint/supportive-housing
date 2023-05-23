@@ -164,8 +164,8 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
         </FormControl>
       </Box>
 
-      <Accordion allowToggle marginBottom="12px">
-        <AccordionItem>
+      <Accordion allowToggle>
+        <AccordionItem borderBottom="none">
           {({ isExpanded }) => (
             <>
               <AccordionPanel>
@@ -215,7 +215,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
                         <option value="Building C">Building C</option>
                       </Select>
                     </GridItem>
-                    <GridItem colSpan={1}>
+                    <GridItem colSpan={1} justifySelf="left">
                       <FormLabel fontWeight="700">Flagged</FormLabel>
                       <Checkbox onChange={(e) => setFlagged(e.target.checked)}>
                         Flagged
@@ -225,7 +225,9 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
                 </FormControl>
               </AccordionPanel>
               <h2>
-                <AccordionButton>
+                <AccordionButton
+                  borderTop={isExpanded ? "1px solid #EAF0EF" : "none"}
+                >
                   <Box as="span" flex="1" textAlign="center">
                     {isExpanded ? "CLOSE FILTERS" : "OPEN FILTERS"}
                   </Box>
