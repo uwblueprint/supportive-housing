@@ -13,3 +13,4 @@ alembic
 pytest
 black
 twilio
+urllib3==1.26.15
