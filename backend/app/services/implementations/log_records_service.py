@@ -137,11 +137,17 @@ class LogRecordsService(ILogRecordsService):
                 for filter in filters:
                     if filters.get(filter):
                         if is_first_filter:
-                            sql = sql + "\nWHERE " + options[filter](filters.get(filter))
+                            sql = (
+                                sql + "\nWHERE " + options[filter](filters.get(filter))
+                            )
                             is_first_filter = False
-                        else: 
+                        else:
                             if filters.get(filter):
-                                sql = sql + "\nAND " + options[filter](filters.get(filter))
+                                sql = (
+                                    sql
+                                    + "\nAND "
+                                    + options[filter](filters.get(filter))
+                                )
 
             sql = sql + "\nORDER BY datetime DESC"
             log_records = db.session.execute(text(sql))
