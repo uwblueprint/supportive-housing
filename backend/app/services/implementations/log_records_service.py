@@ -98,11 +98,13 @@ class LogRecordsService(ILogRecordsService):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
 
-    def get_log_records(self, page_number, filters=None):
+    def get_log_records(self, page_number=0, export_type="", filters=None):
         try:
             results_per_page = int(os.getenv("RESULTS_PER_PAGE"))
-            start_index = (page_number - 1) * results_per_page
-            end_index = start_index + results_per_page
+
+            if not export_type:
+                start_index = (page_number - 1) * results_per_page
+                end_index = start_index + results_per_page
 
             sql = "SELECT\n \
                 logs.log_id,\n \
@@ -153,10 +155,18 @@ class LogRecordsService(ILogRecordsService):
             log_records = db.session.execute(text(sql))
             json_list = self.to_json_list(log_records)
             num_results = len(json_list)
-            return {
+
+            if not export_type:
+                return {
                 "log_records": json_list[start_index:end_index],
                 "num_results": num_results,
-            }
+                }   
+            else:
+                return {
+                    "log_records": json_list,
+                    "num_results": num_results,
+                    "export_type": export_type
+                }
 
         except Exception as postgres_error:
             raise postgres_error

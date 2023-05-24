@@ -34,18 +34,31 @@ def get_log_records():
     Get RESULTS_PER_PAGE log records. Will return the log records of corresponding to the page you're on. Can optionally add filters.
     """
     page_number = 1
+    export_type = ""
     try:
         page_number = int(request.args.get("page_number"))
     except:
+        export_type = request.args.get("export_type")
         pass
 
     try:
         filters = json.loads(request.args.get("filters"))
-        log_records = log_records_service.get_log_records(page_number, filters)
+
+        log_records = []
+
+        if export_type:
+            log_records = log_records_service.get_log_records(filters=filters, export_type=export_type)
+        else:
+            log_records = log_records_service.get_log_records(page_number, filters)
+            
         return jsonify(log_records), 201
     except Exception as e:
         try:
-            log_records = log_records_service.get_log_records(page_number)
+            if export_type:
+                log_records = log_records_service.get_log_records(export_type=export_type)
+            else:
+                log_records = log_records_service.get_log_records(page_number)
+
             return jsonify(log_records), 201
         except Exception as e:
             error_message = getattr(e, "message", None)
