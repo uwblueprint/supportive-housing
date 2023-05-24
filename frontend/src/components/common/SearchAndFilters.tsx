@@ -155,7 +155,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
                 </GridItem>
               </Grid>
             </GridItem>
-            <GridItem colSpan={1} paddingTop="32px">
+            <GridItem colSpan={1} paddingTop="32px" justifySelf="left">
               <Button background="#FFFFFF" borderColor="#285E61" border="1px">
                 Clear all
               </Button>
