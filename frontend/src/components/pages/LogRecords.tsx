@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   Table,
   Thead,
@@ -12,8 +11,10 @@ import {
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
+import SearchAndFilters from "../common/SearchAndFilters";
+import { LogRecord } from "../common/types/LogRecord";
 
-// Replace the mock data with data from API, JSON response
+// TODO: Replace the mock data with data from API, JSON response with type below
 const mockRecords = [
   {
     id: 1,
@@ -55,14 +56,17 @@ const mockRecords = [
 ];
 
 const LogRecords = (): React.ReactElement => {
+  // TODO: use this instead of mockRecords & remove console.log
+  const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
+  console.log(logRecords);
+
   return (
     <div className="page-container">
       <NavigationBar />
       <div className="records">
-
         <CreateLog />
-
-        <TableContainer>
+        <SearchAndFilters setLogRecords={setLogRecords} />
+        <TableContainer paddingTop="12px">
           <Table
             variant="simple"
             style={{ minHeight: "400px", verticalAlign: "middle" }}
@@ -79,6 +83,7 @@ const LogRecords = (): React.ReactElement => {
             </Thead>
 
             <Tbody>
+              {/* TODO: replace mockRecords with logRecords */}
               {mockRecords.map((record) => {
                 return (
                   <Tr key={record.id} style={{ verticalAlign: "middle" }}>

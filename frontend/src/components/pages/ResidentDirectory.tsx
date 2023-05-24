@@ -3,9 +3,7 @@ import React from "react";
 import NavigationBar from "../common/NavigationBar";
 
 const ResidentDirectory = (): React.ReactElement => {
-  return (
-    <NavigationBar/>
-  );
+  return <NavigationBar />;
 };
 
 export default ResidentDirectory;
