@@ -98,11 +98,11 @@ class LogRecordsService(ILogRecordsService):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
 
-    def get_log_records(self, page_number=0, export_type="", filters=None):
+    def get_log_records(self, page_number=1, return_all=False, filters=None):
         try:
             results_per_page = int(os.getenv("RESULTS_PER_PAGE"))
 
-            if not export_type:
+            if not return_all:
                 start_index = (page_number - 1) * results_per_page
                 end_index = start_index + results_per_page
 
@@ -156,17 +156,15 @@ class LogRecordsService(ILogRecordsService):
             json_list = self.to_json_list(log_records)
             num_results = len(json_list)
 
-            if not export_type:
-                return {
-                "log_records": json_list[start_index:end_index],
+            # overwrite json_list to be the subset of data to return if return_all is false
+            if not return_all:
+                json_list = json_list[start_index:end_index]
+
+            return {
+                "log_records": json_list,
                 "num_results": num_results,
-                }   
-            else:
-                return {
-                    "log_records": json_list,
-                    "num_results": num_results,
-                    "export_type": export_type
-                }
+                "return_all": return_all,
+            }
 
         except Exception as postgres_error:
             raise postgres_error
