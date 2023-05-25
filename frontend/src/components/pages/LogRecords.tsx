@@ -48,8 +48,7 @@ const mockRecords = [
     Date: "Jan 21",
     Time: "3:20 AM",
     Resident: "MB404",
-    Note:
-      "During security check, MB404 was making some noise. TSW warned her to be quiet. She yelled on TSW behind the door, yelled, and swore (f..uck of......). TSW told her that I will call the police if she continues. Then she came down for laundry.",
+    Note: "During security check, MB404 was making some noise. TSW warned her to be quiet. She yelled on TSW behind the door, yelled, and swore (f..uck of......). TSW told her that I will call the police if she continues. Then she came down for laundry.",
     Employee: "Huseyin",
     Attn_To: "John Doe",
   },
@@ -68,10 +67,10 @@ const LogRecords = (): React.ReactElement => {
         <SearchAndFilters setLogRecords={setLogRecords} />
         <TableContainer paddingTop="12px">
           <Table
-            variant="simple"
+            variant="logRecordsTable"
             style={{ minHeight: "400px", verticalAlign: "middle" }}
           >
-            <Thead className="table-header">
+            <Thead>
               <Tr>
                 <Th>Date</Th>
                 <Th>Time</Th>
