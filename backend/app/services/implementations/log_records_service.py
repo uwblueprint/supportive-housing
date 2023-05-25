@@ -98,7 +98,7 @@ class LogRecordsService(ILogRecordsService):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
 
-    def get_log_records(self, page_number=1, return_all=False, filters=None):
+    def get_log_records(self, page_number, return_all, filters=None):
         try:
             results_per_page = int(os.getenv("RESULTS_PER_PAGE"))
 
