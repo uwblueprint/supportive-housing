@@ -7,12 +7,14 @@ import {
   Th,
   Td,
   TableContainer,
+  Flex,
 } from "@chakra-ui/react";
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
 import SearchAndFilters from "../common/SearchAndFilters";
 import { LogRecord } from "../common/types/LogRecord";
+import PrintCSVButton from "../common/PrintCSVButton";
 
 // TODO: Replace the mock data with data from API, JSON response with type below
 const mockRecords = [
@@ -64,7 +66,10 @@ const LogRecords = (): React.ReactElement => {
     <div className="page-container">
       <NavigationBar />
       <div className="records">
-        <CreateLog />
+        <Flex justify="end" gap="12px">
+          <CreateLog />
+          <PrintCSVButton />
+        </Flex>
         <SearchAndFilters setLogRecords={setLogRecords} />
         <TableContainer paddingTop="12px">
           <Table

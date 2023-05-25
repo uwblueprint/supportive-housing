@@ -47,6 +47,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
   const [attentionTo, setAttentionTo] = useState("");
   const [building, setBuilding] = useState("");
   const [flagged, setFlagged] = useState(false);
+  const [returnAll, setReturnAll] = useState(false);
 
   useEffect(() => {
     const getLogRecordsAfterFiltering = async () => {
@@ -65,6 +66,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
         dateRange,
         tags ? [tags] : [],
         flagged,
+        returnAll,
       );
       setLogRecords(data);
     };

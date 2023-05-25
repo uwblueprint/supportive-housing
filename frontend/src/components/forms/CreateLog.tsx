@@ -224,7 +224,7 @@ const CreateLog = () => {
 
     return (
         <div>
-            <Box textAlign="right">
+            <Box>
                 <Button
                     onClick={handleCreateOpen}
                     className="button solid-button"
