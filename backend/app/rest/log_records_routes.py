@@ -13,7 +13,7 @@ blueprint = Blueprint("log_records", __name__, url_prefix="/log_records")
 
 
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
-#@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def add_log_record():
     """
     Add a log record
@@ -28,7 +28,7 @@ def add_log_record():
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-#@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_log_records():
     """
     Get RESULTS_PER_PAGE log records. Will return the log records of corresponding to the page you're on. Can optionally add filters.
