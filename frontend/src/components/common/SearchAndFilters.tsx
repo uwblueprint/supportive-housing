@@ -17,7 +17,6 @@ import {
   Icon,
   InputGroup,
   Select,
-  Divider,
   Text,
 } from "@chakra-ui/react";
 import { Card } from "react-bootstrap";
@@ -47,7 +46,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
   const [attentionTo, setAttentionTo] = useState("");
   const [building, setBuilding] = useState("");
   const [flagged, setFlagged] = useState(false);
-  const [returnAll, setReturnAll] = useState(false);
+  const returnAll = false;
 
   useEffect(() => {
     const getLogRecordsAfterFiltering = async () => {
@@ -81,6 +80,7 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
     tags,
     flagged,
     setLogRecords,
+    returnAll,
   ]);
 
   // console.log("data", data);

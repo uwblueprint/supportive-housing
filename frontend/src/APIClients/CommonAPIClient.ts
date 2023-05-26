@@ -3,13 +3,13 @@ import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 const filterLogRecords = async (
-  building: string,
-  employeeId: string[],
-  attnTo: string[],
-  dateRange: string[],
-  tags: string[],
-  flagged: boolean,
-  return_all: boolean,
+  building?: string,
+  employeeId?: string[],
+  attnTo?: string[],
+  dateRange?: string[],
+  tags?: string[],
+  flagged?: boolean,
+  return_all?: boolean,
 ): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
