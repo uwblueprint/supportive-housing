@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Icon,
   IconButton,
@@ -12,13 +12,19 @@ import {
   Button,
   FormHelperText,
   Flex,
+  ScaleFade,
+  Alert,
+  AlertDescription,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { AiFillPrinter } from "react-icons/ai";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
+import CSVConverter from "../../helper/CSVConverter";
 
 const PrintCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleClear = () => {
     setSelectedDates([]);
@@ -36,7 +42,6 @@ const PrintCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
-
     // Use YYYY-MM-DD format
     const dateRange = selectedDates.map((date) =>
       date.toISOString().substring(0, 10),
@@ -49,9 +54,19 @@ const PrintCSVButton = (): React.ReactElement => {
       dateRange,
       undefined,
       undefined,
-      undefined,
+      true, // return all data
     );
+
+    setShowAlert(CSVConverter(data.logRecords) === "error");
   };
+
+  useEffect(() => {
+    if (showAlert) {
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+    }
+  }, [showAlert]);
 
   return (
     <>
@@ -108,6 +123,21 @@ const PrintCSVButton = (): React.ReactElement => {
             </ModalBody>
           </ModalContent>
         </Modal>
+      </Box>
+
+      <Box
+        position="fixed"
+        bottom="20px"
+        right="20px"
+        width="25%"
+        zIndex={9999}
+      >
+        <ScaleFade in={showAlert} unmountOnExit>
+          <Alert status="error" variant="left-accent" borderRadius="6px">
+            <AlertIcon />
+            <AlertDescription>No Log Records Found.</AlertDescription>
+          </Alert>
+        </ScaleFade>
       </Box>
     </>
   );
