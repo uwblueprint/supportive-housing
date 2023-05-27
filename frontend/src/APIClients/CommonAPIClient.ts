@@ -9,6 +9,8 @@ const filterLogRecords = async (
   dateRange: string[],
   tags: string[],
   flagged: boolean,
+  results_per_page: number,
+  page_number: number,
 ): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -25,6 +27,8 @@ const filterLogRecords = async (
           tags,
           flagged,
         },
+        page_number,
+        results_per_page,
       },
       headers: { Authorization: bearerToken },
     });

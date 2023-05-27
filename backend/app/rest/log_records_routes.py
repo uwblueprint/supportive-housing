@@ -41,7 +41,8 @@ def get_log_records():
 
     try:
         filters = json.loads(request.args.get("filters"))
-        log_records = log_records_service.get_log_records(page_number, filters)
+        results_per_page = int(request.args.get("results_per_page"))
+        log_records = log_records_service.get_log_records(page_number, results_per_page, filters)
         return jsonify(log_records), 201
     except Exception as e:
         try:
