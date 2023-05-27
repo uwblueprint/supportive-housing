@@ -26,9 +26,17 @@ import { LogRecord } from "./types/LogRecord";
 
 type Props = {
   setLogRecords: React.Dispatch<React.SetStateAction<LogRecord[]>>;
+  setNumRecords: React.Dispatch<React.SetStateAction<number>>;
+  pageNum: number;
+  resultsPerPage: number;
 };
 
-const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
+const SearchAndFilters = ({
+  setLogRecords,
+  setNumRecords,
+  pageNum,
+  resultsPerPage,
+}: Props): React.ReactElement => {
   /* TODO: change inputs to correct types
   - this is possible when the data in LogRecords comes from the API since the API will have the employees/attnTos names + userId
     names + userId and we can query using the /users route based on that
@@ -48,27 +56,30 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
   const [building, setBuilding] = useState("");
   const [flagged, setFlagged] = useState(false);
 
+  const getLogRecordsAfterFiltering = async (page_number = 1) => {
+    const employeeIds = employees
+      ? employees.replaceAll(`"`, "").split(",")
+      : [];
+    const attentionTos = attentionTo
+      ? attentionTo.replaceAll(`"`, "").split(",")
+      : [];
+    const dateRange = startDate && endDate ? [startDate, endDate] : [];
+
+    const data = await commonAPIClient.filterLogRecords(
+      building,
+      employeeIds,
+      attentionTos,
+      dateRange,
+      tags ? [tags] : [],
+      flagged,
+      resultsPerPage,
+      page_number,
+    );
+    setLogRecords(data.logRecords);
+    setNumRecords(data.numResults);
+  };
+
   useEffect(() => {
-    const getLogRecordsAfterFiltering = async () => {
-      const employeeIds = employees
-        ? employees.replaceAll(`"`, "").split(",")
-        : [];
-      const attentionTos = attentionTo
-        ? attentionTo.replaceAll(`"`, "").split(",")
-        : [];
-      const dateRange = startDate && endDate ? [startDate, endDate] : [];
-
-      const data = await commonAPIClient.filterLogRecords(
-        building,
-        employeeIds,
-        attentionTos,
-        dateRange,
-        tags ? [tags] : [],
-        flagged,
-      );
-      setLogRecords(data);
-    };
-
     getLogRecordsAfterFiltering();
   }, [
     building,
@@ -79,7 +90,12 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
     tags,
     flagged,
     setLogRecords,
+    resultsPerPage,
   ]);
+
+  useEffect(() => {
+    getLogRecordsAfterFiltering(pageNum);
+  }, [pageNum]);
 
   // console.log("data", data);
   return (

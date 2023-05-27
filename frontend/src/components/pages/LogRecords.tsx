@@ -9,6 +9,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 
+import Pagination from "../common/Pagination";
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
 import SearchAndFilters from "../common/SearchAndFilters";
@@ -58,14 +59,25 @@ const mockRecords = [
 const LogRecords = (): React.ReactElement => {
   // TODO: use this instead of mockRecords & remove console.log
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
+  const [numRecords, setNumRecords] = useState<number>(0);
+  const [resultsPerPage, setResultsPerPage] = useState<number>(25);
+  const [pageNum, setPageNum] = useState<number>(1);
+
   console.log(logRecords);
+  console.log(numRecords);
+  console.log("results per page: ", resultsPerPage);
 
   return (
     <div className="page-container">
       <NavigationBar />
       <div className="records">
         <CreateLog />
-        <SearchAndFilters setLogRecords={setLogRecords} />
+        <SearchAndFilters
+          pageNum={pageNum}
+          resultsPerPage={resultsPerPage}
+          setLogRecords={setLogRecords}
+          setNumRecords={setNumRecords}
+        />
         <TableContainer paddingTop="12px">
           <Table
             variant="simple"
@@ -84,23 +96,42 @@ const LogRecords = (): React.ReactElement => {
 
             <Tbody>
               {/* TODO: replace mockRecords with logRecords */}
-              {mockRecords.map((record) => {
+              {logRecords.map((record) => {
+                // TODO: Investigate alternative methods for date storage + creation
+                const dateObj = new Date(record.datetime);
+
                 return (
-                  <Tr key={record.id} style={{ verticalAlign: "middle" }}>
-                    <Td width="5%">{record.Date}</Td>
-                    <Td width="5%">{record.Time}</Td>
-                    <Td width="5%">{record.Resident}</Td>
-                    <Td whiteSpace="normal" width="75%">
-                      {record.Note}
+                  <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
+                    <Td width="5%">
+                      {`${dateObj.getMonth()} ${dateObj.getDate()} ${dateObj.getFullYear()}`}
                     </Td>
-                    <Td width="5%">{record.Employee}</Td>
-                    <Td width="5%">{record.Attn_To}</Td>
+                    <Td width="5%">
+                      {`${dateObj.getHours()}:${dateObj.getMinutes()}`}
+                    </Td>
+                    {
+                      // TODO: Resolve the resident record at some point
+                    }
+                    <Td width="5%">{record.residentFirstName}</Td>
+                    <Td whiteSpace="normal" width="75%">
+                      {record.note}
+                    </Td>
+                    <Td width="5%">{record.employeeFirstName}</Td>
+                    <Td width="5%">
+                      {`${record.attnToFirstName} ${record.attnToLastName}`}
+                    </Td>
                   </Tr>
                 );
               })}
             </Tbody>
           </Table>
         </TableContainer>
+        <Pagination
+          numRecords={numRecords}
+          pageNum={pageNum}
+          resultsPerPage={resultsPerPage}
+          setResultsPerPage={setResultsPerPage}
+          setPageNum={setPageNum}
+        />
       </div>
     </div>
   );
