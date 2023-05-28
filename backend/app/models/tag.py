@@ -9,9 +9,7 @@ class Tag(db.Model):
 
     tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, nullable=False)
-    status = db.Column(
-        db.Enum("Deleted", "Active", name="status"), nullable=False
-    )
+    status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
 
     def to_dict(self, include_relationships=False):
         # define the entities table
