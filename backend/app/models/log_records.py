@@ -5,10 +5,8 @@ from sqlalchemy.orm.properties import ColumnProperty
 class LogRecords(db.Model):
     __tablename__ = "log_records"
     log_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    employee_id = db.Column(db.Integer, db.ForeignKey("residents.id"), nullable=False)
-    # TODO: Add in with resident ID once that PR is made
-    resident_id = db.Column(db.Integer,db.ForeignKey("users.id"), nullable=False)
-    resident_last_name = db.Column(db.String, nullable=False)
+    employee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    resident_id = db.Column(db.Integer,db.ForeignKey("residents.id"), nullable=False)
     datetime = db.Column(db.DateTime(timezone=True), nullable=False)
     flagged = db.Column(db.Boolean, nullable=False)
     attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)

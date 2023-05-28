@@ -26,7 +26,7 @@ def add_resident():
 @require_authorization_by_role({"Admin"})
 def update_resident(resident_id):
     """
-    Update an existing resident record
+    Update an existing resident record based on the id 
     """
     updated_resident = request.json
     try:
@@ -55,8 +55,7 @@ def get_resident():
     Get residents.
     """ 
     try:
-        resident_id = None
-        resident_id = request.json["resident_id"]
+        resident_id = request.args.get("resident_id")
         residents_results = residents_service.get_resident(resident_id)  
         return jsonify(residents_results), 201
     except Exception as e:
