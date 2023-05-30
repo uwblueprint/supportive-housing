@@ -4,19 +4,13 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
   Button,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   IconButton,
   Flex,
-  Grid,
+  Box,
+  Text,
   GridItem,
 } from "@chakra-ui/react";
 
@@ -24,6 +18,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronDownIcon,
+  TriangleDownIcon,
 } from "@chakra-ui/icons";
 
 type Props = {
@@ -31,7 +26,7 @@ type Props = {
   resultsPerPage: number;
   pageNum: number;
   setResultsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  setPageNum: React.Dispatch<React.SetStateAction<number>>;
+  getLogRecords: (page_number: number) => Promise<void>;
 };
 
 const RESULTS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -41,73 +36,94 @@ const Pagination = ({
   resultsPerPage,
   pageNum,
   setResultsPerPage,
-  setPageNum,
+  getLogRecords,
 }: Props): React.ReactElement => {
   const numPages = Math.ceil(numRecords / resultsPerPage);
 
-  const handleChange = (newPageVal: number) => {
-    setPageNum(newPageVal);
+  const handleNumberInputChange = (
+    newPageNumString: string,
+    newPageNum: number,
+  ) => {
+    if (newPageNum !== pageNum && newPageNum >= 1 && newPageNum <= numPages) {
+      getLogRecords(newPageNum);
+    }
   };
 
   return (
-    <div>
-      <Grid templateColumns="repeat(3, 1fr)" gap={100}>
-        <GridItem>
-          <h1>{numRecords} items</h1>
-        </GridItem>
-        <GridItem>
-          <Flex flexDirection="row">
+    <Box padding="12px 0px 33px">
+      <Flex justifyContent="space-between" alignItems="center">
+        <Box>
+          <Text color="#6D8788">{numRecords} items</Text>
+        </Box>
+        <Box>
+          <Flex alignItems="center" justifyContent="space-evenly">
             <IconButton
+              className="icon-button"
+              variant="ghost"
               aria-label="Previous page"
-              icon={<ChevronLeftIcon />}
-              disabled={pageNum === 1}
-              onClick={() => (pageNum > 1 ? setPageNum(pageNum - 1) : null)}
+              icon={<ChevronLeftIcon boxSize={7} color="#6D8788" />}
+              disabled={pageNum <= 1}
+              onClick={() => (pageNum > 1 ? getLogRecords(pageNum - 1) : null)}
             />
-            <h1>Page</h1>
-            <NumberInput
-              maxW="64px"
-              value={pageNum}
-              min={1}
-              max={numPages}
-              size="xs"
-              onChange={handleChange}
+            <Flex
+              alignItems="center"
+              justifyContent="space-evenly"
+              padding="0px 25px 0px"
+              width="210px"
             >
-              <NumberInputField />
-            </NumberInput>
-            <h1>of {numPages}</h1>
+              <Text>Page</Text>
+              <NumberInput
+                maxW="60px"
+                value={pageNum}
+                size="sm"
+                onChange={handleNumberInputChange}
+              >
+                <NumberInputField fontWeight="bold" />
+              </NumberInput>
+              <Text>of {numPages}</Text>
+            </Flex>
             <IconButton
+              className="icon-button"
+              variant="ghost"
               aria-label="Next page"
-              disabled={pageNum === numPages}
-              icon={<ChevronRightIcon />}
+              disabled={pageNum >= numPages}
+              icon={<ChevronRightIcon boxSize={7} color="#6D8788" />}
               onClick={() =>
-                pageNum < numPages ? setPageNum(pageNum + 1) : null
+                pageNum < numPages ? getLogRecords(pageNum + 1) : null
               }
             />
           </Flex>
-        </GridItem>
-        <GridItem>
-          <Menu>
-            <MenuButton as={Button}>
-              {resultsPerPage} <ChevronDownIcon />
-            </MenuButton>
-            <MenuList>
-              {RESULTS_PER_PAGE_OPTIONS.map((opt, ind) => (
-                <MenuItem
-                  key={ind}
-                  onClick={() => {
-                    // TO-DO - Confirm that resetting to page 1 is what's ideal
-                    setPageNum(1);
-                    setResultsPerPage(opt);
-                  }}
-                >
-                  {opt}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </GridItem>
-      </Grid>
-    </div>
+        </Box>
+        <Box>
+          <Flex alignItems="center" justifyContent="space-evenly">
+            <Text paddingRight="8px">Show</Text>
+            <Menu>
+              <MenuButton
+                as={Button}
+                variant="outline"
+                width="73px"
+                rightIcon={<ChevronDownIcon color="#6D8788" />}
+              >
+                {resultsPerPage}
+              </MenuButton>
+              <MenuList>
+                {RESULTS_PER_PAGE_OPTIONS.map((opt, ind) => (
+                  <MenuItem
+                    key={ind}
+                    onClick={() => {
+                      // TO-DO - Confirm that resetting to page 1 is what's ideal
+                      setResultsPerPage(opt);
+                    }}
+                  >
+                    {opt}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </Menu>
+          </Flex>
+        </Box>
+      </Flex>
+    </Box>
   );
 };
 
