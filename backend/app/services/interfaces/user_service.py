@@ -83,9 +83,34 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def create_user(self, user, auth_id=None, signup_method="PASSWORD"):
+    def get_user_status_by_email(self, email):
         """
-        Create a user, email verification configurable
+        Get a user's user_status using their email
+
+        :return: user_status, one of "INVITED", "ACTIVE", "DEACTIVATED"
+        :rtype: string
+        :type email: string
+        :param email: email of the user
+        :raises Exception: if user retrieval fails
+        """
+        pass
+
+    @abstractmethod
+    def create_invited_user(self, user):
+        """
+        Create a row in the user table with user_status = "INVITED"
+
+        :param user: the user to be created
+        :type user: CreateUserDTO
+        :return: the created user
+        :rtype: UserDTO
+        """
+        pass
+
+    @abstractmethod
+    def activate_user(self, user, auth_id=None, signup_method="PASSWORD"):
+        """
+        If a user is invited, update the user's status and auth id, otherwise throw an error
 
         :param user: the user to be created
         :type user: CreateUserDTO

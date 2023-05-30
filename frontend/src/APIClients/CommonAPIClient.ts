@@ -35,6 +35,60 @@ const filterLogRecords = async (
   }
 };
 
+const inviteUser = async (
+  email: string,
+  role: string,
+  firstName: string,
+  lastName: string,
+): Promise<boolean> => {
+  try {
+    if (email === "") {
+      return false;
+    }
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.post(
+      "/users/invite-user",
+      { email, role, firstName, lastName },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const isUserInvited = async (email: string): Promise<boolean> => {
+  try {
+    if (email === "") {
+      return false;
+    }
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get("/users/user-status", {
+      params: {
+        email,
+      },
+      headers: { Authorization: bearerToken },
+    });
+    if (
+      data?.email === email &&
+      (data.userStatus === "INVITED" || data.userStatus === "ACTIVE")
+    ) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default {
   filterLogRecords,
+  inviteUser,
+  isUserInvited,
 };

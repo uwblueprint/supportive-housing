@@ -10,10 +10,12 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
-    auth_id = db.Column(db.String, nullable=False)
+    auth_id = db.Column(db.String, nullable=True)
     role = db.Column(
         db.Enum("Admin", "Regular Staff", "Relief Staff", name="roles"), nullable=False
     )
+    user_status = db.Column(db.Enum("INVITED", "ACTIVE", "DEACTIVATED", name="user_statuses"), nullable=False)
+    email = db.Column(db.String, nullable=False)
 
     def to_dict(self, include_relationships=False):
         # define the entities table

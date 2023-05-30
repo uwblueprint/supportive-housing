@@ -12,13 +12,14 @@ import {
   Box,
   Text,
   Badge,
+  Select,
 } from "@chakra-ui/react";
-import routesAPIClient from "../../APIClients/RoutesAPIClient";
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
 import SearchAndFilters from "../common/SearchAndFilters";
 import { LogRecord } from "../common/types/LogRecord";
+import commonApiClient from "../../APIClients/CommonAPIClient";
 
 // TODO: Replace the mock data with data from API, JSON response with type below
 const mockRecords = [
@@ -68,13 +69,22 @@ const LogRecords = (): React.ReactElement => {
 
   const [email, setEmail] = useState<string>("");
   const [invitedEmail, setInvitedEmail] = useState<string>("");
+  const [invitedFirstName, setInvitedFirstName] = useState<string>("");
+  const [invitedLastName, setInvitedLastName] = useState<string>("");
+
+  const [userRole, setUserRole] = useState<string>("");
   const [isInvited, setIsInvited] = useState<boolean>(false);
 
   const inviteUser = async () => {
-    await routesAPIClient.inviteUser(email);
+    await commonApiClient.inviteUser(
+      email,
+      userRole,
+      invitedFirstName,
+      invitedLastName,
+    );
   };
   const checkInvitedUser = async () => {
-    const res = await routesAPIClient.isUserInvited(invitedEmail);
+    const res = await commonApiClient.isUserInvited(invitedEmail);
     setIsInvited(res);
   };
   return (
@@ -82,6 +92,29 @@ const LogRecords = (): React.ReactElement => {
       <NavigationBar />
       <Box padding="20px">
         <Text>Invite User:</Text>
+        <Input
+          type="text"
+          width="50%"
+          value={invitedFirstName}
+          onChange={(event) => setInvitedFirstName(event.target.value)}
+          placeholder="Enter first name"
+        />
+        <Input
+          type="text"
+          width="50%"
+          value={invitedLastName}
+          onChange={(event) => setInvitedLastName(event.target.value)}
+          placeholder="Enter last name"
+        />
+        <Select
+          placeholder="Enter role"
+          value={userRole}
+          onChange={(e) => setUserRole(e.target.value)}
+        >
+          <option value="Relief Staff">Relief Staff</option>
+          <option value="Admin">Admin</option>
+          <option value="Regular Staff">Regular Staff</option>
+        </Select>
         <Input
           type="email"
           width="70%"

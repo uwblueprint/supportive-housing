@@ -5,7 +5,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-import routesAPIClient from "../../APIClients/RoutesAPIClient";
+import commonApiClient from "../../APIClients/CommonAPIClient";
 
 const Signup = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -15,7 +15,7 @@ const Signup = (): React.ReactElement => {
   const [password, setPassword] = useState("");
 
   const onSignupClick = async () => {
-    const isInvited = await routesAPIClient.isUserInvited(email);
+    const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
       const user: AuthenticatedUser | null = await authAPIClient.register(
         firstName,

@@ -150,10 +150,8 @@ def register():
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     try:
-        invited_user = invited_user_service.get_user_by_email(request.json["email"])
-        request.json["role"] = invited_user.role
         user = CreateUserDTO(**request.json)
-        user_service.create_user(user)
+        user_service.activate_user(user)
         auth_dto = auth_service.generate_token(
             request.json["email"], request.json["password"]
         )

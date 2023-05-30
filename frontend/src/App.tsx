@@ -27,6 +27,7 @@ import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
+import InviteUsers from "./components/pages/InviteUsers";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -59,6 +60,11 @@ const App = (): React.ReactElement => {
               <Switch>
                 <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                 <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
+                <PrivateRoute
+                  exact
+                  path={Routes.INVITE_USERS}
+                  component={InviteUsers}
+                />
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}

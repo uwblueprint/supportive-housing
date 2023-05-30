@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -9,8 +9,8 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser, LoginResponse } from "../../types/AuthTypes";
-import routesAPIClient from "../../APIClients/RoutesAPIClient";
+import { LoginResponse } from "../../types/AuthTypes";
+import commonApiClient from "../../APIClients/CommonAPIClient";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
@@ -42,7 +42,7 @@ const Credentials = ({
   const history = useHistory();
 
   const onLogInClick = async () => {
-    const isInvited = await routesAPIClient.isUserInvited(email);
+    const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
       const loginResponse: LoginResponse = await authAPIClient.login(
         email,
