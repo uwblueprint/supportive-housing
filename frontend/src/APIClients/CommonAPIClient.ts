@@ -1,4 +1,5 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -11,7 +12,7 @@ const filterLogRecords = async (
   flagged: boolean,
   results_per_page: number,
   page_number: number,
-): Promise<any> => {
+): Promise<GetLogRecordsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
