@@ -50,8 +50,8 @@ const Pagination = ({
   };
 
   const getNumRecordsStr = () => {
-    return `${numRecords} ${numRecords === 1 ? 'item' : 'items'}`
-  }
+    return `${numRecords} ${numRecords === 1 ? "item" : "items"}`;
+  };
 
   return (
     <Box padding="12px 0px 33px">
