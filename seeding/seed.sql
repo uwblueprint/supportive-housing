@@ -19,6 +19,6 @@ SELECT
   1, 
   (ARRAY['Amazing note','This is a note','Bad note','Decent Note','Cool note'])[floor(random() * 5 + 1)], 
   ARRAY['tag1', 'tag2'], 
-  (ARRAY['Building A','Building B','Building C'])[floor(random() * 3 + 1)]
+  (ARRAY['144', '362', '402'])[floor(random() * 3 + 1)]
 
 FROM generate_series(1, 50); -- Change this to get a different amount of rows
