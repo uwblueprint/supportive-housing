@@ -48,6 +48,12 @@ cd e2e-tests
 python3 -m pytest --lang python --auth --fs
 ```
 ## The Team
+### Term 2 (S23):
+**Project Lead:** Safwaan Chowdhury<br>
+**Product Managers:** Hiba Altaf<br>
+**Developers:** Connor Bechthold, Helen Guan, Kelly Pham, Daniel Kim, Kevin Pierce, Owen Sellner<br>
+**Designers:** Lauren Fearn, Yousuf Zia<br>
+
 ### Term 1 (W23):
 **Project Lead:** Dinu Wijetunga<br>
 **Product Managers:** Rachel Scott & Maitry Mistry<br>
