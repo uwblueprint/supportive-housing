@@ -96,12 +96,9 @@ def get_users():
                 )
 
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
-@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_user_status():
     try:
         email = request.args.get("email")
-        print("routes")
-        print(email)
         user_status = user_service.get_user_status_by_email(email)
         return jsonify({"user_status": user_status, "email": email}), 201
     except Exception as e:
@@ -109,7 +106,7 @@ def get_user_status():
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 @blueprint.route("/invite-user", methods=["POST"], strict_slashes=False)
-# @require_authorization_by_role({"Admin"})
+@require_authorization_by_role({"Admin"})
 @validate_request("CreateInvitedUserDTO")
 def create_user():
     """

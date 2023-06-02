@@ -77,7 +77,7 @@ const isUserInvited = async (email: string): Promise<boolean> => {
     });
     if (
       data?.email === email &&
-      (data.userStatus === "INVITED" || data.userStatus === "ACTIVE")
+      (data.userStatus === "Invited" || data.userStatus === "Active")
     ) {
       return true;
     }

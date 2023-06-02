@@ -9,8 +9,8 @@ class CreateInvitedUserDTO:
         error_list = []
         if type(self.email) is not str:
             error_list.append("The email supplied is not a string.")
-        if type(self.role) is not str:
-            error_list.append("The role supplied is not a string.")
+        if self.role not in ["Admin", "Relief Staff", "Regular Staff"]:
+            error_list.append("The role supplied is not valid.")
         if type(self.first_name) is not str:
             error_list.append("The first_name supplied is not a string.")
         if type(self.last_name) is not str:

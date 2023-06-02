@@ -87,7 +87,7 @@ class IUserService(ABC):
         """
         Get a user's user_status using their email
 
-        :return: user_status, one of "INVITED", "ACTIVE", "DEACTIVATED"
+        :return: user_status, one of "Invited", "Active", "Deactivated"
         :rtype: string
         :type email: string
         :param email: email of the user
@@ -98,7 +98,7 @@ class IUserService(ABC):
     @abstractmethod
     def create_invited_user(self, user):
         """
-        Create a row in the user table with user_status = "INVITED"
+        Create a row in the user table with user_status = "Invited"
 
         :param user: the user to be created
         :type user: CreateUserDTO

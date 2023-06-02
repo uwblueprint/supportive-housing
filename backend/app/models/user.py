@@ -14,7 +14,7 @@ class User(db.Model):
     role = db.Column(
         db.Enum("Admin", "Regular Staff", "Relief Staff", name="roles"), nullable=False
     )
-    user_status = db.Column(db.Enum("INVITED", "ACTIVE", "DEACTIVATED", name="user_statuses"), nullable=False)
+    user_status = db.Column(db.Enum("Invited", "Active", "Deactivated", name="user_statuses"), nullable=False)
     email = db.Column(db.String, nullable=False)
 
     def to_dict(self, include_relationships=False):

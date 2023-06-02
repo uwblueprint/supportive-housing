@@ -157,7 +157,7 @@ class UserService(IUserService):
                     "role": user.role,
                     "first_name": user.first_name,
                     "last_name": user.last_name,
-                    "user_status": "INVITED",
+                    "user_status": "Invited",
                     "email": user.email,
                 }
 
@@ -185,7 +185,7 @@ class UserService(IUserService):
         try:
             print(user.email)
             print(self.get_user_status_by_email(user.email))
-            if(self.get_user_status_by_email(user.email) == "INVITED"):
+            if(self.get_user_status_by_email(user.email) == "Invited"):
                 if signup_method == "PASSWORD":
                     firebase_user = firebase_admin.auth.create_user(
                         email=user.email, password=user.password
