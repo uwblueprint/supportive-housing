@@ -60,10 +60,10 @@ const inviteUser = async (
   }
 };
 
-const isUserInvited = async (email: string): Promise<boolean> => {
+const getUserStatus = async (email: string): Promise<string> => {
   try {
     if (email === "") {
-      return false;
+      return "";
     }
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -75,20 +75,17 @@ const isUserInvited = async (email: string): Promise<boolean> => {
       },
       headers: { Authorization: bearerToken },
     });
-    if (
-      data?.email === email &&
-      (data.userStatus === "Invited" || data.userStatus === "Active")
-    ) {
-      return true;
+    if (data?.email === email) {
+      return data.userStatus;
     }
-    return false;
+    return "Not invited";
   } catch (error) {
-    return false;
+    return "Not invited";
   }
 };
 
 export default {
   filterLogRecords,
   inviteUser,
-  isUserInvited,
+  isUserInvited: getUserStatus,
 };

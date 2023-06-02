@@ -200,7 +200,7 @@ class UserService(IUserService):
                     User.query.filter_by(email=user.email).update(
                         {
                             User.auth_id: firebase_user.uid,
-                            User.user_status: "ACTIVE"
+                            User.user_status: "Active"
                         }
                     )
                     db.session.commit()

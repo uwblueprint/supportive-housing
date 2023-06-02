@@ -11,7 +11,7 @@ const InviteUsers = (): React.ReactElement => {
   const [invitedLastName, setInvitedLastName] = useState<string>("");
 
   const [userRole, setUserRole] = useState<string>("");
-  const [isInvited, setIsInvited] = useState<boolean>(false);
+  const [userStatus, setUserStatus] = useState<string>("");
 
   const inviteUser = async () => {
     await commonApiClient.inviteUser(
@@ -23,7 +23,7 @@ const InviteUsers = (): React.ReactElement => {
   };
   const checkInvitedUser = async () => {
     const res = await commonApiClient.isUserInvited(invitedEmail);
-    setIsInvited(res);
+    setUserStatus(res);
   };
   return (
     <div className="page-container">
@@ -64,9 +64,9 @@ const InviteUsers = (): React.ReactElement => {
           Invite user
         </Button>
         <Text>
-          Check if user is invited:
-          <Badge colorScheme={isInvited ? "green" : "red"}>
-            {isInvited ? "true" : "false"}
+          Check user status
+          <Badge colorScheme={userStatus !== "Not invited" ? "green" : "red"}>
+            {userStatus}
           </Badge>
         </Text>
         <Input
