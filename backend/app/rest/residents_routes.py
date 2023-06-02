@@ -21,7 +21,7 @@ def add_resident():
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
     
-
+#resident_id is the primary key in the table
 @blueprint.route("/<int:resident_id>", methods=["PUT"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def update_resident(resident_id):
@@ -56,7 +56,8 @@ def get_resident():
     """ 
     try:
         resident_id = request.args.get("resident_id")
-        residents_results = residents_service.get_resident(resident_id)  
+        id = request.args.get("id")
+        residents_results = residents_service.get_resident(resident_id, id)  
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)

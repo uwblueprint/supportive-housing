@@ -9,9 +9,6 @@ class Residents(db.Model):
     room_num = db.Column(db.Integer, nullable=False)
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
-    status = db.Column(
-        db.Enum("Current", "Past", name="statuses"), nullable=False
-        )
     building = db.Column(
         db.Enum("144", "402", "362", name="buildings"), nullable=False
         )

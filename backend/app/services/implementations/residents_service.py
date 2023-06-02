@@ -30,7 +30,6 @@ class ResidentsService(IResidentsService):
                        "room_num": resident.room_num,
                        "date_joined": str(resident.date_joined),
                        "date_left": str(resident.date_left),
-                       "status": resident.status,
                        "building": resident.building,
                        "resident_id": resident.resident_id
                     }
@@ -61,9 +60,7 @@ class ResidentsService(IResidentsService):
                 Residents.initial: updated_resident["initial"],
                 Residents.room_num: updated_resident["room_num"],
                 Residents.date_joined: updated_resident["date_joined"],
-                Residents.status: updated_resident["status"],
                 Residents.building: updated_resident["building"],
-
             }
         )
         if not updated_resident:
@@ -84,14 +81,17 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_resident(self, resident_id=None):
+    def get_resident(self, resident_id=None, id=None ):
         try:
-            if resident_id:
-                residents_results = Residents.query.filter_by(resident_id = resident_id )
+            if id and resident_id:
+                raise Exception("Cannot filter by id and resident id at the same time")
+            elif resident_id:
+                residents_results = Residents.query.filter_by(resident_id = resident_id)
+            elif id:
+                residents_results = Residents.query.filter_by(id = id)
             else:
                 residents_results = Residents.query.all()
             
-            #returns one resident
             return self.to_json_list(residents_results)
         except Exception as postgres_error:
             raise postgres_error
