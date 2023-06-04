@@ -1,4 +1,4 @@
-from sqlalchemy import inspect
+from sqlalchemy import inspect, case, null
 from sqlalchemy.orm.properties import ColumnProperty
 
 from . import db
@@ -16,6 +16,13 @@ class User(db.Model):
     )
     user_status = db.Column(db.Enum("Invited", "Active", "Deactivated", name="user_statuses"), nullable=False)
     email = db.Column(db.String, nullable=False)
+
+    __table_args__ = (
+        db.CheckConstraint(
+            "(user_status = 'Invited' AND auth_id IS NULL) OR (user_status != 'Invited' AND auth_id IS NOT NULL)",
+            name="check_auth_id_nullable"
+        ),
+    )
 
     def to_dict(self, include_relationships=False):
         # define the entities table
