@@ -1,6 +1,6 @@
 from ..interfaces.log_records_service import ILogRecordsService
 from ...models.log_records import LogRecords
-from ...models.user import User
+from ...models.tag import Tag
 from ...models import db
 from datetime import datetime
 from pytz import timezone
@@ -25,13 +25,26 @@ class LogRecordsService(ILogRecordsService):
         new_log_record = log_record
         new_log_record["datetime"] = datetime.now()
 
+        tag_names = new_log_record["tags"]
+        del new_log_record["tags"]
+
         try:
             new_log_record = LogRecords(**new_log_record)
+            self.construct_tags(new_log_record, tag_names)
+
             db.session.add(new_log_record)
             db.session.commit()
             return log_record
         except Exception as postgres_error:
             raise postgres_error
+        
+    def construct_tags(self, log_record, tag_names):
+        for tag_name in tag_names:
+            tag = Tag.query.filter_by(name=tag_name).first()
+
+            if not tag: 
+                raise Exception(f"Tag with name {tag_name} does not exist")
+            log_record.tags.append(tag)
 
     def to_json_list(self, logs):
         try:
@@ -86,9 +99,9 @@ class LogRecordsService(ILogRecordsService):
         return f"\ndatetime>='{start_date}' AND datetime<='{end_date}'"
 
     def filter_by_tags(self, tags):
-        sql_statement = f"\n'{tags[0]}'=ANY (tags)"
+        sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
         for i in range (1, len(tags)):
-            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tags)"
+            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tag_names)"
         return sql_statement
     
     def filter_by_flagged(self, flagged):
@@ -101,7 +114,7 @@ class LogRecordsService(ILogRecordsService):
             start_index = (page_number - 1) * results_per_page
             end_index = start_index + results_per_page
 
-            sql = 'SELECT\n \
+            sql = "SELECT\n \
                 logs.log_id,\n \
                 logs.employee_id,\n \
                 logs.resident_first_name,\n \
@@ -110,17 +123,23 @@ class LogRecordsService(ILogRecordsService):
                 logs.flagged,\n \
                 logs.attn_to,\n \
                 logs.note,\n \
-                logs.tags,\n \
                 logs.building,\n \
+                t.tag_names, \n \
                 employees.first_name AS employee_first_name,\n \
                 employees.last_name AS employee_last_name,\n \
                 attn_tos.first_name AS attn_to_first_name,\n \
                 attn_tos.last_name AS attn_to_last_name\n \
                 FROM log_records logs\n \
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-                JOIN users employees ON logs.employee_id = employees.id'
-        
-            if filters:   
+                JOIN users employees ON logs.employee_id = employees.id\n \
+                LEFT JOIN\n \
+                    (SELECT logs.log_id, string_to_array(string_agg(tags.name, ','), ',') AS tag_names FROM log_records logs\n \
+                    JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
+                    JOIN tags ON lrt.tag_id = tags.tag_id\n \
+                    GROUP BY logs.log_id \n \
+                ) t ON logs.log_id = t.log_id"
+            
+            if filters: 
                 is_first_filter = True
 
                 options = {
@@ -137,7 +156,6 @@ class LogRecordsService(ILogRecordsService):
                         is_first_filter = False
                     else: 
                         sql = sql + "\nAND " + options[filter](filters.get(filter))
-
             sql = sql + "\nORDER BY datetime DESC"
             log_records = db.session.execute(text(sql))
             json_list = self.to_json_list(log_records)
@@ -148,13 +166,15 @@ class LogRecordsService(ILogRecordsService):
             raise postgres_error
         
     def delete_log_record(self, log_id):
-        deleted_log_record = LogRecords.query.filter_by(log_id=log_id).delete()
-        if not deleted_log_record:
+        log_record_to_delete = LogRecords.query.filter_by(log_id=log_id).first()
+        if not log_record_to_delete:
             raise Exception(
                 "Log record with id {log_id} not found".format(
                     log_id=log_id
                 )
             )
+        log_record_to_delete.tags = []
+        db.session.delete(log_record_to_delete)
         db.session.commit()
 
     def update_log_record(self, log_id, updated_log_record):
@@ -183,11 +203,10 @@ class LogRecordsService(ILogRecordsService):
                 }
             )
         if "tags" in updated_log_record:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {
-                    LogRecords.tags: updated_log_record["tags"]
-                }
-            )
+            logRecord = LogRecords.query.filter_by(log_id=log_id).first()
+            if (logRecord):
+                logRecord.tags = []
+                self.construct_tags(logRecord, updated_log_record["tags"])
         else: 
             LogRecords.query.filter_by(log_id=log_id).update(
                 {
