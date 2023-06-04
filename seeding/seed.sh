@@ -1,6 +1,12 @@
 #!/bin/bash
+
+#If you're on Windows, run bash seed.sh -w
+#Otherwise, run bash seed.sh
+
+#Import root env file variables
 source ../.env
 
+#Get flag if exists
 bin_bash="/bin/bash"
 
 while getopts ":w" option; do
@@ -15,7 +21,7 @@ while getopts ":w" option; do
   esac
 done
 
-#Get absolute path to seeding dir
+#Run SQL script in docker container
 cat << EOF | docker exec -i SHOW-database $bin_bash -c 'psql -U postgres -d show_db'
 
 INSERT INTO log_records (
