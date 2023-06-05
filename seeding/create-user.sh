@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#If you're on Windows, run bash create-user.sh -w
+#Otherwise, run bash create-user.sh
+
 # Import common functions
 source ./seed.sh
 

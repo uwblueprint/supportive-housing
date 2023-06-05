@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#If you're on Windows, run bash create-log-records.sh -w
+#Otherwise, run bash create-log-records.sh
+
 # Import common functions
 source ./seed.sh
 
