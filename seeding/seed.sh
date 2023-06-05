@@ -4,7 +4,7 @@
 #Otherwise, run bash seed.sh
 
 #Import root env file variables
-source ../.env
+source ./.env
 
 #Get flag if exists
 bin_bash="/bin/bash"
