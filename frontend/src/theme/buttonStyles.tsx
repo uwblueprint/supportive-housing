@@ -5,7 +5,7 @@ const Button: ComponentStyleConfig = {
   baseStyle: {
     color: "white.default",
     width: "auto",
-    ...textStyles["button-medium"]
+    ...textStyles["button-medium"],
   },
   variants: {
     primary: {
@@ -32,6 +32,10 @@ const Button: ComponentStyleConfig = {
         color: "cyan.300",
         transition: "color 0.1s ease !important",
       },
+    },
+    navbar: {
+      color: "white.default",
+      ...textStyles["button-navbar"],
     },
   },
 };

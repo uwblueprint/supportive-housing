@@ -25,13 +25,6 @@ import textStyles from "./textStyles";
 // TODO: separate out each component into different files
 
 const Table: ComponentStyleConfig = {
-  parts: ["thead"],
-  baseStyle: {
-    thead: {
-      textTransform: "none",
-      ...textStyles["header-medium"],
-    },
-  },
   variants: {
     logRecordsTable: {
       thead: {
@@ -41,6 +34,13 @@ const Table: ComponentStyleConfig = {
         background: "blue.50",
         color: "blue.600",
         textTransform: "none",
+      },
+      th: {
+        textTransform: "none",
+        ...textStyles["header-medium"],
+      },
+      td: {
+        ...textStyles["body-medium"],
       },
     },
   },

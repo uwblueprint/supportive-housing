@@ -5,7 +5,7 @@ const textStyles = {
   },
   "header-medium": {
     fontFamily: "DM Sans",
-    fontWeight: "400",
+    fontWeight: "800",
     fontSize: "16px",
   },
   "header-large": {
@@ -17,6 +17,12 @@ const textStyles = {
     fontFamily: "DM Sans",
     fontWeight: "800",
     fontSize: "18px",
+  },
+  "button-navbar": {
+    fontFamily: "DM Sans",
+    fontSize: "16px !important",
+    fontWeight: 400,
+    textDecoration: "none",
   },
 };
 

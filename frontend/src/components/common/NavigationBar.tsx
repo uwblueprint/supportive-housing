@@ -33,7 +33,7 @@ const NavigationBar = (): React.ReactElement => {
   };
 
   return (
-    <div className="Navigation Bar">
+    <div>
       <Box
         bg="#1B2A2C"
         h="71px"
@@ -62,36 +62,29 @@ const NavigationBar = (): React.ReactElement => {
             spacing={6}
             alignItems="center"
           >
-            <Button
-              variant="link"
-              className="navbar-text"
-              onClick={navigateToHome}
-            >
+            <Button variant="link button-navbar" onClick={navigateToHome}>
               Home
             </Button>
 
             <Button
-              variant="link"
+              variant="link button-navbar"
               marginLeft="48px"
-              className="navbar-text"
               onClick={navigateToResidentDirectory}
             >
               Resident Directory
             </Button>
 
             <Button
-              variant="link"
+              variant="link button-navbar"
               marginLeft="48px"
-              className="navbar-text"
               onClick={navigateToEmployeeDirectory}
             >
               Employee Directory
             </Button>
 
             <Button
-              variant="link"
+              variant="link button-navbar"
               marginLeft="48px"
-              className="navbar-text"
               onClick={handleLogout}
             >
               Logout
@@ -99,7 +92,7 @@ const NavigationBar = (): React.ReactElement => {
           </Stack>
         </Box>
       </Box>
-    </div>
+    </div >
   );
 };
 
