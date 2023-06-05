@@ -9,27 +9,44 @@ const Button: ComponentStyleConfig = {
   },
   variants: {
     primary: {
-      background: "cyan.300",
+      background: "teal.400",
       transition: "background-color 0.25s ease !important",
       _hover: {
-        background: "cyan.600",
+        background: "teal.500",
         transition: "transition: background-color 0.5s ease !important",
       },
       _active: {
-        background: "cyan.300",
+        background: "teal.400",
         boxShadow: "inset 0px 0px 10px #ffffff !important",
       },
     },
     secondary: {
-      background: "cyan.300",
+      background: "white.default",
+      color: "teal.400",
+      border: "1px solid",
+      borderColor: "teal.400",
       transition: "transition: color 0.25s ease !important",
       _hover: {
-        color: "cyan.600",
+        color: "teal.500",
         background: "white.default",
         transition: " color 0.5s ease !important",
       },
       _active: {
-        color: "cyan.300",
+        color: "teal.400",
+        transition: "color 0.1s ease !important",
+      },
+    },
+    tertiary: {
+      background: "white.default",
+      color: "teal.400",
+      transition: "transition: color 0.25s ease !important",
+      _hover: {
+        color: "teal.500",
+        background: "white.default",
+        transition: " color 0.5s ease !important",
+      },
+      _active: {
+        color: "teal.400",
         transition: "color 0.1s ease !important",
       },
     },

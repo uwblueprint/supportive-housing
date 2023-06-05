@@ -296,6 +296,13 @@ const CreateLog = () => {
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
+                          propsConfigs={{
+                            popoverCompProps: {
+                              popoverContentProps: {
+                                background: "white",
+                              },
+                            },
+                          }}
                         />
                       </FormControl>
                     </GridItem>
@@ -413,7 +420,7 @@ const CreateLog = () => {
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
                   onClick={handleCreateClose}
-                  variant="secondary"
+                  variant="tertiary"
                   marginRight="8px"
                 >
                   Cancel
