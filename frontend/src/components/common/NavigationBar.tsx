@@ -92,7 +92,7 @@ const NavigationBar = (): React.ReactElement => {
           </Stack>
         </Box>
       </Box>
-    </div >
+    </div>
   );
 };
 
