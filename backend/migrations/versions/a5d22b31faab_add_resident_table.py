@@ -24,15 +24,14 @@ def upgrade():
     sa.Column('room_num', sa.Integer(), nullable=False),
     sa.Column('date_joined', sa.Date(), nullable=False),
     sa.Column('date_left', sa.Date(), nullable=True),
-    sa.Column('status', sa.Enum('Current', 'Past', name='statuses'), nullable=False),
     sa.Column('building', sa.Enum('144', '402', '362', name='buildings'), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('log_records', schema=None) as batch_op:
         batch_op.add_column(sa.Column('resident_id', sa.Integer(), nullable=False))
         batch_op.drop_constraint('log_records_employee_id_fkey', type_='foreignkey')
-        batch_op.create_foreign_key(None, 'users', ['resident_id'], ['id'])
-        batch_op.create_foreign_key(None, 'residents', ['employee_id'], ['id'])
+        batch_op.create_foreign_key(None, 'users', ['employee_id'], ['id'])
+        batch_op.create_foreign_key(None, 'residents', ['resident_id'], ['id'])
         batch_op.drop_column('resident_first_name')
         batch_op.drop_column('resident_last_name')
 
