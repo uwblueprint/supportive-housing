@@ -57,7 +57,7 @@ const LogRecordsTable = ({ logRecords }: Props): React.ReactElement => {
                   <Td whiteSpace="normal" width="75%">
                     {record.note}
                   </Td>
-                  <Td width="5%">{record.employeeFirstName}</Td>
+                  <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
                   <Td width="5%">
                     {`${record.attnToFirstName} ${record.attnToLastName}`}
                   </Td>
