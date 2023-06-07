@@ -27,8 +27,10 @@ const filterLogRecords = async (
             dateRange,
             tags,
             flagged,
-            return_all,
           },
+          return_all: {
+            return_all,
+          }
         },
         headers: { Authorization: bearerToken },
       });

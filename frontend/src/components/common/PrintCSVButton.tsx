@@ -26,11 +26,11 @@ const PrintCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [showAlert, setShowAlert] = useState(false);
 
+  const [isOpen, setOpen] = useState(false);
+
   const handleClear = () => {
     setSelectedDates([]);
   };
-
-  const [isOpen, setOpen] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -57,7 +57,7 @@ const PrintCSVButton = (): React.ReactElement => {
       true, // return all data
     );
 
-    setShowAlert(CSVConverter(data.logRecords) === "error");
+    setShowAlert(!data || CSVConverter(data.logRecords) === "error");
   };
 
   useEffect(() => {
@@ -89,6 +89,11 @@ const PrintCSVButton = (): React.ReactElement => {
                   <RangeDatepicker
                     selectedDates={selectedDates}
                     onDateChange={setSelectedDates}
+                    propsConfigs={{
+                      inputProps: {
+                        placeholder: 'MM/DD/YYYY - MM/DD/YYYY'
+                      },
+                    }}
                   />
                   <Button
                     onClick={handleClear}
