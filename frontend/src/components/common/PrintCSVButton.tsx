@@ -57,7 +57,7 @@ const PrintCSVButton = (): React.ReactElement => {
       true, // return all data
     );
 
-    setShowAlert(!data || CSVConverter(data.logRecords) === "error");
+    setShowAlert(!data || !CSVConverter(data.logRecords));
   };
 
   useEffect(() => {

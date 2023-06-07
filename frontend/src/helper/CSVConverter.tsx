@@ -1,6 +1,6 @@
 import { LogRecord } from "../components/common/types/LogRecord";
 
-const CSVConverter = (data: any): string => {
+const CSVConverter = (data: any): boolean => {
   // Convert JSON to CSV
   try {
     const csvRows = [];
@@ -28,9 +28,9 @@ const CSVConverter = (data: any): string => {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    return "success";
+    return true;
   } catch {
-    return "error";
+    return false;
   }
 };
 
