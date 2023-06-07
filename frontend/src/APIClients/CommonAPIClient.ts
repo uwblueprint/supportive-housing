@@ -17,7 +17,7 @@ const filterLogRecords = async (
       "accessToken",
     )}`;
     const { data } = await baseAPIClient.get(
-      `/log_records?return_all=${return_all}`,
+      `/log_records`,
       {
         params: {
           filters: {
@@ -27,7 +27,7 @@ const filterLogRecords = async (
             dateRange,
             tags,
             flagged,
-          }, 
+          }, return_all 
         },
         headers: { Authorization: bearerToken },
       });
