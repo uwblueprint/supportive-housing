@@ -4,12 +4,14 @@ import textStyles from "./textStyles";
 const Button: ComponentStyleConfig = {
   baseStyle: {
     color: "white.default",
+    background: "grey.50",
     width: "auto",
     ...textStyles["button-medium"],
   },
   variants: {
     primary: {
       background: "teal.400",
+      fontWeight: "bold",
       transition: "background-color 0.25s ease !important",
       _hover: {
         background: "teal.500",
@@ -22,6 +24,7 @@ const Button: ComponentStyleConfig = {
     },
     secondary: {
       background: "white.default",
+      fontWeight: "bold",
       color: "teal.400",
       border: "1px solid",
       borderColor: "teal.400",
@@ -38,6 +41,7 @@ const Button: ComponentStyleConfig = {
     },
     tertiary: {
       background: "white.default",
+      fontWeight: "bold",
       color: "teal.400",
       transition: "transition: color 0.25s ease !important",
       _hover: {

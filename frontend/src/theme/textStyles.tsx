@@ -1,4 +1,4 @@
-const font = "DM Sans"
+const font = "DM Sans";
 
 const textStyles = {
   "body-medium": {
@@ -22,7 +22,7 @@ const textStyles = {
   },
   "button-navbar": {
     fontFamily: font,
-    fontSize: "16px !important",
+    fontSize: "16px",
     fontWeight: 400,
     textDecoration: "none",
   },
