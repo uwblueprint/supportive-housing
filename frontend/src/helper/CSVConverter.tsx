@@ -1,6 +1,6 @@
 import { LogRecord } from "../components/common/types/LogRecord";
 
-const CSVConverter = (data: any): boolean => {
+const CSVConverter = (data: LogRecord[]): boolean => {
   // Convert JSON to CSV
   try {
     const csvRows = [];
