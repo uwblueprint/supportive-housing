@@ -163,7 +163,6 @@ class LogRecordsService(ILogRecordsService):
             return {
                 "log_records": json_list,
                 "num_results": num_results,
-                "return_all": return_all,
             }
 
         except Exception as postgres_error:
