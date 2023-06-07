@@ -43,16 +43,16 @@ class LogRecordsService(ILogRecordsService):
                         "log_id": log[0],
                         "employee_id": log[1],
                         "resident_id": log[2],
-                        "datetime": str(log[4].astimezone(timezone("US/Eastern"))),
-                        "flagged": log[5],
-                        "attn_to": log[6],
-                        "note": log[7],
-                        "tags": log[8],
-                        "building": log[9],
-                        "employee_first_name": log[10],
-                        "employee_last_name": log[11],
-                        "attn_to_first_name": log[12],
-                        "attn_to_last_name": log[13],
+                        "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
+                        "flagged": log[4],
+                        "attn_to": log[5],
+                        "note": log[6],
+                        "tags": log[7],
+                        "building": log[8],
+                        "employee_first_name": log[9],
+                        "employee_last_name": log[10],
+                        "attn_to_first_name": log[11],
+                        "attn_to_last_name": log[12],
                     }
                 )
             return logs_list
@@ -69,7 +69,7 @@ class LogRecordsService(ILogRecordsService):
                 sql_statement = sql_statement + f"\nOR employee_id={employee_id[i]}"
             return sql_statement
         return f"\nemployee_id={employee_id}"
-    
+
     def filter_by_resident_id(self, resident_id):
         if type(resident_id) == list:
             sql_statement = f"\nresident_id={resident_id[0]}"

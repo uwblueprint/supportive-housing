@@ -56,8 +56,7 @@ def get_resident():
     """ 
     try:
         resident_id = request.args.get("resident_id")
-        id = request.args.get("id")
-        residents_results = residents_service.get_resident(resident_id, id)  
+        residents_results = residents_service.get_resident(resident_id)  
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)

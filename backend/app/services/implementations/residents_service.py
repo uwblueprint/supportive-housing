@@ -81,14 +81,10 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_resident(self, resident_id=None, id=None ):
+    def get_resident(self, resident_id=None):
         try:
-            if id and resident_id:
-                raise Exception("Cannot filter by id and resident id at the same time")
-            elif resident_id:
+            if resident_id:
                 residents_results = Residents.query.filter_by(resident_id = resident_id)
-            elif id:
-                residents_results = Residents.query.filter_by(id = id)
             else:
                 residents_results = Residents.query.all()
             
