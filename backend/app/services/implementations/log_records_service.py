@@ -42,18 +42,17 @@ class LogRecordsService(ILogRecordsService):
                     {
                         "log_id": log[0],
                         "employee_id": log[1],
-                        "resident_first_name": log[2],
-                        "resident_last_name": log[3],
-                        "datetime": str(log[4].astimezone(timezone("US/Eastern"))),
-                        "flagged": log[5],
-                        "attn_to": log[6],
-                        "note": log[7],
-                        "tags": log[8],
-                        "building": log[9],
-                        "employee_first_name": log[10],
-                        "employee_last_name": log[11],
-                        "attn_to_first_name": log[12],
-                        "attn_to_last_name": log[13],
+                        "resident_id": log[2],
+                        "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
+                        "flagged": log[4],
+                        "attn_to": log[5],
+                        "note": log[6],
+                        "tags": log[7],
+                        "building": log[8],
+                        "employee_first_name": log[9],
+                        "employee_last_name": log[10],
+                        "attn_to_first_name": log[11],
+                        "attn_to_last_name": log[12],
                     }
                 )
             return logs_list
@@ -70,6 +69,14 @@ class LogRecordsService(ILogRecordsService):
                 sql_statement = sql_statement + f"\nOR employee_id={employee_id[i]}"
             return sql_statement
         return f"\nemployee_id={employee_id}"
+
+    def filter_by_resident_id(self, resident_id):
+        if type(resident_id) == list:
+            sql_statement = f"\nresident_id={resident_id[0]}"
+            for i in range(1, len(resident_id)):
+                sql_statement = sql_statement + f"\nOR resident_id={resident_id[i]}"
+            return sql_statement
+        return f"\nresident_id={resident_id}"
 
     def filter_by_attn_to(self, attn_to):
         if type(attn_to) == list:
@@ -107,8 +114,7 @@ class LogRecordsService(ILogRecordsService):
             sql = "SELECT\n \
                 logs.log_id,\n \
                 logs.employee_id,\n \
-                logs.resident_first_name,\n \
-                logs.resident_last_name,\n \
+                logs.resident_id,\n \
                 logs.datetime,\n \
                 logs.flagged,\n \
                 logs.attn_to,\n \
@@ -129,6 +135,7 @@ class LogRecordsService(ILogRecordsService):
                 options = {
                     "building": self.filter_by_building,
                     "employee_id": self.filter_by_employee_id,
+                    "resident_id": self.filter_by_resident_id,
                     "attn_to": self.filter_by_attn_to,
                     "date_range": self.filter_by_date_range,
                     "tags": self.filter_by_tags,
@@ -205,10 +212,7 @@ class LogRecordsService(ILogRecordsService):
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
                 LogRecords.employee_id: updated_log_record["employee_id"],
-                LogRecords.resident_first_name: updated_log_record[
-                    "resident_first_name"
-                ],
-                LogRecords.resident_last_name: updated_log_record["resident_last_name"],
+                LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
                 LogRecords.building: updated_log_record["building"],
             }
