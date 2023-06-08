@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   AccordionButton,
@@ -56,6 +56,9 @@ const LogRecords = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
+  // Table reference
+  const tableRef = useRef<HTMLDivElement>(null);
+
   const getLogRecords = async (page_number: number) => {
     const employeeIds = employees
       ? employees.replaceAll(`"`, "").split(",")
@@ -75,6 +78,10 @@ const LogRecords = (): React.ReactElement => {
       resultsPerPage,
       page_number,
     );
+
+    // Reset table scroll
+    tableRef.current?.scrollTo(0, 0);
+
     setLogRecords(data ? data.logRecords : []);
     setNumRecords(data ? data.numResults : 0);
 
@@ -269,7 +276,7 @@ const LogRecords = (): React.ReactElement => {
           </Accordion>
         </Card>
 
-        <LogRecordsTable logRecords={logRecords} />
+        <LogRecordsTable logRecords={logRecords} tableRef={tableRef} />
 
         <Pagination
           numRecords={numRecords}

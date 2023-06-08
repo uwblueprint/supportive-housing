@@ -1,4 +1,4 @@
-import React from "react";
+import React, { RefObject } from "react";
 import {
   Table,
   TableContainer,
@@ -13,12 +13,21 @@ import getFormattedDateAndTime from "../../utils/DateUtils";
 
 type Props = {
   logRecords: LogRecord[];
+  tableRef: RefObject<HTMLDivElement>;
 };
 
-const LogRecordsTable = ({ logRecords }: Props): React.ReactElement => {
+const LogRecordsTable = ({
+  logRecords,
+  tableRef,
+}: Props): React.ReactElement => {
   return (
     <div>
-      <TableContainer marginTop="12px" height="70vh" overflowY="scroll">
+      <TableContainer
+        marginTop="12px"
+        height="70vh"
+        overflowY="scroll"
+        ref={tableRef}
+      >
         <Table
           variant="simple"
           style={{ minHeight: "400px", verticalAlign: "middle" }}
