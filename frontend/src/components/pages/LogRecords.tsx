@@ -54,6 +54,7 @@ const LogRecords = (): React.ReactElement => {
   const [numRecords, setNumRecords] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
+  const [userPageNum, setUserPageNum] = useState(pageNum);
 
   const getLogRecords = async (page_number: number) => {
     const employeeIds = employees
@@ -78,6 +79,7 @@ const LogRecords = (): React.ReactElement => {
     setNumRecords(data ? data.numResults : 0);
 
     if (data?.numResults === 0) {
+      setUserPageNum(0);
       setPageNum(0);
     } else {
       setPageNum(page_number);
@@ -272,6 +274,8 @@ const LogRecords = (): React.ReactElement => {
         <Pagination
           numRecords={numRecords}
           pageNum={pageNum}
+          userPageNum={userPageNum}
+          setUserPageNum={setUserPageNum}
           resultsPerPage={resultsPerPage}
           setResultsPerPage={setResultsPerPage}
           getLogRecords={getLogRecords}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Menu,
   MenuButton,
@@ -20,11 +20,14 @@ import {
   ChevronDownIcon,
   TriangleDownIcon,
 } from "@chakra-ui/icons";
+import { getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 
 type Props = {
   numRecords: number;
   resultsPerPage: number;
   pageNum: number;
+  userPageNum: number;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   setResultsPerPage: React.Dispatch<React.SetStateAction<number>>;
   getLogRecords: (page_number: number) => Promise<void>;
 };
@@ -35,18 +38,36 @@ const Pagination = ({
   numRecords,
   resultsPerPage,
   pageNum,
+  userPageNum,
+  setUserPageNum,
   setResultsPerPage,
   getLogRecords,
 }: Props): React.ReactElement => {
   const numPages = Math.ceil(numRecords / resultsPerPage);
 
   const handleNumberInputChange = (
-    newPageNumString: string,
-    newPageNum: number,
+    newUserPageNumString: string,
+    newUserPageNum: number,
   ) => {
-    if (newPageNum !== pageNum && newPageNum >= 1 && newPageNum <= numPages) {
-      getLogRecords(newPageNum);
+    setUserPageNum(newUserPageNum);
+    if (
+      newUserPageNum !== pageNum &&
+      newUserPageNum >= 1 &&
+      newUserPageNum <= numPages
+    ) {
+      getLogRecords(newUserPageNum);
     }
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (Number.isNaN(userPageNum)) {
+      setUserPageNum(pageNum);
+    }
+  };
+
+  const handlePageArrowPress = (newUserPageNum: number) => {
+    setUserPageNum(newUserPageNum);
+    getLogRecords(newUserPageNum);
   };
 
   const getNumRecordsStr = () => {
@@ -66,8 +87,8 @@ const Pagination = ({
               variant="ghost"
               aria-label="Previous page"
               icon={<ChevronLeftIcon boxSize={7} color="#6D8788" />}
-              disabled={pageNum <= 1}
-              onClick={() => (pageNum > 1 ? getLogRecords(pageNum - 1) : null)}
+              disabled={userPageNum <= 1}
+              onClick={() => handlePageArrowPress(userPageNum - 1)}
             />
             <Flex
               alignItems="center"
@@ -78,9 +99,11 @@ const Pagination = ({
               <Text>Page</Text>
               <NumberInput
                 maxW="60px"
-                value={pageNum}
+                value={!Number.isNaN(userPageNum) ? userPageNum : ""}
+                max={numPages}
                 size="sm"
                 onChange={handleNumberInputChange}
+                onBlur={(e) => handleBlur(e)}
               >
                 <NumberInputField fontWeight="bold" />
               </NumberInput>
@@ -90,11 +113,9 @@ const Pagination = ({
               className="icon-button"
               variant="ghost"
               aria-label="Next page"
-              disabled={pageNum >= numPages}
+              disabled={userPageNum >= numPages}
               icon={<ChevronRightIcon boxSize={7} color="#6D8788" />}
-              onClick={() =>
-                pageNum < numPages ? getLogRecords(pageNum + 1) : null
-              }
+              onClick={() => handlePageArrowPress(userPageNum + 1)}
             />
           </Flex>
         </Box>
