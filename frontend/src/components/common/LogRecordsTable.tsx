@@ -9,6 +9,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { LogRecord } from "../../types/LogRecordTypes";
+import getFormattedDateAndTime from "../../utils/DateUtils";
 
 type Props = {
   logRecords: LogRecord[];
@@ -39,14 +40,12 @@ const LogRecordsTable = ({ logRecords }: Props): React.ReactElement => {
               // TODO: Investigate alternative methods for date storage + creation
               const dateObj = new Date(record.datetime);
 
+              const { date, time } = getFormattedDateAndTime(dateObj);
+
               return (
                 <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
-                  <Td width="5%">
-                    {`${dateObj.getMonth()} ${dateObj.getDate()} ${dateObj.getFullYear()}`}
-                  </Td>
-                  <Td width="5%">
-                    {`${dateObj.getHours()}:${dateObj.getMinutes()}`}
-                  </Td>
+                  <Td width="5%">{date}</Td>
+                  <Td width="5%">{time}</Td>
                   {
                     // TODO: Resolve the resident record at some point
                   }
@@ -54,7 +53,7 @@ const LogRecordsTable = ({ logRecords }: Props): React.ReactElement => {
                   <Td whiteSpace="normal" width="75%">
                     {record.note}
                   </Td>
-                  <Td width="5%">{record.employeeFirstName}</Td>
+                  <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
                   <Td width="5%">
                     {`${record.attnToFirstName} ${record.attnToLastName}`}
                   </Td>

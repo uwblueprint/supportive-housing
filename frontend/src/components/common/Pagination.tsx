@@ -49,11 +49,15 @@ const Pagination = ({
     }
   };
 
+  const getNumRecordsStr = () => {
+    return `${numRecords} ${numRecords === 1 ? "item" : "items"}`;
+  };
+
   return (
     <Box padding="12px 0px 33px">
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          <Text color="#6D8788">{numRecords} items</Text>
+          <Text color="#6D8788">{getNumRecordsStr()}</Text>
         </Box>
         <Box>
           <Flex alignItems="center" justifyContent="space-evenly">
