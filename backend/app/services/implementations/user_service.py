@@ -183,15 +183,11 @@ class UserService(IUserService):
         firebase_user = None
 
         try:
-            print(user.email)
-            print(self.get_user_status_by_email(user.email))
             if(self.get_user_status_by_email(user.email) == "Invited"):
                 if signup_method == "PASSWORD":
                     firebase_user = firebase_admin.auth.create_user(
                         email=user.email, password=user.password
                     )
-                    print("password")
-                    print(firebase_user.uid)
                 elif signup_method == "GOOGLE":
                     # If they signup with Google OAuth, a Firebase user is automatically created
                     firebase_user = firebase_admin.auth.get_user(uid=auth_id)

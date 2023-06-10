@@ -7,19 +7,12 @@ import {
   Th,
   Td,
   TableContainer,
-  Button,
-  Input,
-  Box,
-  Text,
-  Badge,
-  Select,
 } from "@chakra-ui/react";
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
 import SearchAndFilters from "../common/SearchAndFilters";
 import { LogRecord } from "../common/types/LogRecord";
-import commonApiClient from "../../APIClients/CommonAPIClient";
 
 // TODO: Replace the mock data with data from API, JSON response with type below
 const mockRecords = [

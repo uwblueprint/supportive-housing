@@ -3,6 +3,7 @@ import { Button, Input, Box, Text, Badge, Select } from "@chakra-ui/react";
 
 import NavigationBar from "../common/NavigationBar";
 import commonApiClient from "../../APIClients/CommonAPIClient";
+import RoleOptions from "../common/types/Roles";
 
 const InviteUsers = (): React.ReactElement => {
   const [email, setEmail] = useState<string>("");
@@ -49,6 +50,11 @@ const InviteUsers = (): React.ReactElement => {
           value={userRole}
           onChange={(e) => setUserRole(e.target.value)}
         >
+          {RoleOptions.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
           <option value="Relief Staff">Relief Staff</option>
           <option value="Admin">Admin</option>
           <option value="Regular Staff">Regular Staff</option>
@@ -77,7 +83,7 @@ const InviteUsers = (): React.ReactElement => {
           placeholder="username@domain.com"
         />
         <Button width="30%" onClick={() => checkInvitedUser()}>
-          Check if invited
+          Check user status
         </Button>
       </Box>
     </div>
