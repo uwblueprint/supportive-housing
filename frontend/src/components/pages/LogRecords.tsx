@@ -94,6 +94,7 @@ const LogRecords = (): React.ReactElement => {
   };
 
   useEffect(() => {
+    setUserPageNum(1);
     getLogRecords(1);
   }, [
     building,
