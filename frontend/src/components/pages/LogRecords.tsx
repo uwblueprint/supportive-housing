@@ -85,7 +85,7 @@ const LogRecords = (): React.ReactElement => {
     setLogRecords(data ? data.logRecords : []);
     setNumRecords(data ? data.numResults : 0);
 
-    if (data?.numResults === 0) {
+    if (!data || data.numResults === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
