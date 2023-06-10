@@ -1,20 +1,19 @@
 from . import db
-from sqlalchemy import inspect
+from sqlalchemy import inspect, cast, String
 from sqlalchemy.orm.properties import ColumnProperty
 
-
-class LogRecords(db.Model):
-    __tablename__ = "log_records"
-    log_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    employee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    resident_id = db.Column(db.Integer,db.ForeignKey("residents.id"), nullable=False)
-    datetime = db.Column(db.DateTime(timezone=True), nullable=False)
-    flagged = db.Column(db.Boolean, nullable=False)
-    attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    # TODO: replace open String fields with VarChar(NUM_CHARS)
-    note = db.Column(db.String, nullable=False)
-    tags = db.Column(db.ARRAY(db.String), nullable=True)
-    building = db.Column(db.String, nullable=False)
+class Residents(db.Model):
+    __tablename__ = "residents"
+    id = db.Column(db.Integer, primary_key=True, nullable=False)
+    initial = db.Column(db.String, nullable=False)
+    room_num = db.Column(db.Integer, nullable=False)
+    date_joined = db.Column(db.Date, nullable=False)
+    date_left = db.Column(db.Date, nullable=True)
+    building = db.Column(
+        db.Enum("144", "402", "362", name="buildings"), nullable=False
+        )
+    
+    resident_id = db.column_property(initial + cast(room_num, String))
 
     def to_dict(self, include_relationships=False):
         # define the entities table
@@ -34,4 +33,4 @@ class LogRecords(db.Model):
                 # recursively format the relationship
                 # don't format the relationship's relationships
                 formatted[field] = [obj.to_dict() for obj in attr]
-        return formatted
+        return formatted  
