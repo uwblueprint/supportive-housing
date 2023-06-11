@@ -228,7 +228,6 @@ const CreateLog = () => {
                 <Button
                     onClick={handleCreateOpen}
                     className="button solid-button"
-                    marginBottom="16px"
                 >
                     <AddIcon boxSize="16px" marginRight="8px" />
                     Add Log

@@ -10,6 +10,7 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
+  Flex,
   Grid,
   GridItem,
   Icon,
@@ -18,8 +19,9 @@ import {
   InputLeftElement,
   Select,
   Text,
+  Spacer,
 } from "@chakra-ui/react";
-import { Card } from "react-bootstrap";
+import { Card, Container } from "react-bootstrap";
 
 import Pagination from "../common/Pagination";
 import NavigationBar from "../common/NavigationBar";
@@ -112,7 +114,11 @@ const LogRecords = (): React.ReactElement => {
     <div className="page-container">
       <NavigationBar />
       <div className="records">
-        <CreateLog />
+        <Flex marginBottom="16px">
+          <h1 className="records-hero">Day Logs</h1>
+          <Spacer/>
+          <CreateLog />
+        </Flex>
 
         {/* Filtering dropdown */}
         <Card>
