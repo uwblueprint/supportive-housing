@@ -55,9 +55,6 @@ const InviteUsers = (): React.ReactElement => {
               {role}
             </option>
           ))}
-          <option value="Relief Staff">Relief Staff</option>
-          <option value="Admin">Admin</option>
-          <option value="Regular Staff">Regular Staff</option>
         </Select>
         <Input
           type="email"
