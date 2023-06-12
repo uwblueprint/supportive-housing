@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -9,7 +9,8 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser, LoginResponse } from "../../types/AuthTypes";
+import { LoginResponse } from "../../types/AuthTypes";
+import commonApiClient from "../../APIClients/CommonAPIClient";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
@@ -41,20 +42,29 @@ const Credentials = ({
   const history = useHistory();
 
   const onLogInClick = async () => {
-    const loginResponse: LoginResponse = await authAPIClient.login(
-      email,
-      password,
-    );
-    if (loginResponse) {
-      const { requiresTwoFa, authUser } = loginResponse;
-      if (requiresTwoFa) {
-        setToggle(!toggle);
-      } else {
-        localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-        setAuthenticatedUser(authUser);
+    const isInvited = await commonApiClient.isUserInvited(email);
+    if (isInvited) {
+      const loginResponse: LoginResponse = await authAPIClient.login(
+        email,
+        password,
+      );
+      if (loginResponse) {
+        const { requiresTwoFa, authUser } = loginResponse;
+        if (requiresTwoFa) {
+          setToggle(!toggle);
+        } else {
+          localStorage.setItem(
+            AUTHENTICATED_USER_KEY,
+            JSON.stringify(authUser),
+          );
+          setAuthenticatedUser(authUser);
+        }
       }
+      // Otherwise we can display some sort of error
+    } else {
+      // eslint-disable-next-line no-alert
+      window.alert("user not invited");
     }
-    // Otherwise we can display some sort of error
   };
 
   const onSignUpClick = () => {
