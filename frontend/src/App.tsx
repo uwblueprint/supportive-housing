@@ -23,7 +23,6 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-import LogRecords from "./components/pages/LogRecords";
 import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 

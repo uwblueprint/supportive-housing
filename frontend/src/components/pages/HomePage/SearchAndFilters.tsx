@@ -17,7 +17,6 @@ import {
   Icon,
   InputGroup,
   Select,
-  Divider,
   Text,
 } from "@chakra-ui/react";
 import { Card } from "react-bootstrap";

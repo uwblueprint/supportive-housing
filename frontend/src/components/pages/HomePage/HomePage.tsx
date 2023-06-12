@@ -1,33 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Button,
-  Checkbox,
-  FormControl,
-  FormLabel,
   Flex,
-  Grid,
-  GridItem,
-  Icon,
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Select,
-  Text,
   Spacer,
 } from "@chakra-ui/react";
-import { Card, Container } from "react-bootstrap";
 
-import Pagination from "../common/Pagination";
-import NavigationBar from "../common/NavigationBar";
-import CreateLog from "../forms/CreateLog";
-import commonAPIClient from "../../APIClients/CommonAPIClient";
-import { LogRecord } from "../../types/LogRecordTypes";
+import Pagination from "../../common/Pagination";
+import NavigationBar from "../../common/NavigationBar";
+import CreateLog from "../../forms/CreateLog";
+import commonAPIClient from "../../../APIClients/CommonAPIClient";
+import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
 
