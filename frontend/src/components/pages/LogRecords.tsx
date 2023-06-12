@@ -28,7 +28,7 @@ import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../types/LogRecordTypes";
-import LogRecordsTable from "../common/LogRecordsTable";
+import LogRecordsTable from "./Homepage/LogRecordsTable";
 
 const LogRecords = (): React.ReactElement => {
   /* TODO: change inputs to correct types

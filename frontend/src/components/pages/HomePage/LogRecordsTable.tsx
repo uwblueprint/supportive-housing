@@ -8,8 +8,8 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { LogRecord } from "../../types/LogRecordTypes";
-import getFormattedDateAndTime from "../../utils/DateUtils";
+import { LogRecord } from "../../../types/LogRecordTypes";
+import getFormattedDateAndTime from "../../../utils/DateUtils";
 
 type Props = {
   logRecords: LogRecord[];

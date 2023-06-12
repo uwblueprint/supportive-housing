@@ -9,6 +9,7 @@ import Signup from "./components/auth/Signup";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
 import DisplayPage from "./components/pages/DisplayPage";
+import HomePage from './components/pages/HomePage/HomePage';
 import NotFound from "./components/pages/NotFound";
 import UpdatePage from "./components/pages/UpdatePage";
 import * as Routes from "./constants/Routes";
@@ -62,7 +63,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
-                  component={LogRecords}
+                  component={HomePage}
                 />
                 <PrivateRoute
                   exact
