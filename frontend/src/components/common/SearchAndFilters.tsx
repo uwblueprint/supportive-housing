@@ -57,15 +57,14 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
         : [];
       const dateRange = startDate && endDate ? [startDate, endDate] : [];
 
-      const data = await commonAPIClient.filterLogRecords(
+      const data = await commonAPIClient.filterLogRecords({
         building,
-        employeeIds,
-        attentionTos,
+        employeeId: employeeIds,
+        attnTo: attentionTos,
         dateRange,
-        tags ? [tags] : [],
+        tags: tags ? [tags] : [],
         flagged,
-        false, // do not return all data
-      );
+    });
       setLogRecords(data);
     };
 

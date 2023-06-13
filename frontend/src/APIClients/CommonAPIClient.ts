@@ -2,14 +2,17 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-const filterLogRecords = async (
-  building?: string,
-  employeeId?: string[],
-  attnTo?: string[],
-  dateRange?: string[],
-  tags?: string[],
-  flagged?: boolean,
-  return_all?: boolean,
+import { Filters } from "../components/common/types/Filters";
+
+const filterLogRecords = async ({
+  building = "",
+  employeeId = [],
+  attnTo = [],
+  dateRange = [],
+  tags = [],
+  flagged = false,
+  return_all = false,
+  }: Filters
 ): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(

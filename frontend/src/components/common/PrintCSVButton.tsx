@@ -47,15 +47,10 @@ const PrintCSVButton = (): React.ReactElement => {
       date.toISOString().substring(0, 10),
     );
 
-    const data = await commonAPIClient.filterLogRecords(
-      undefined,
-      undefined,
-      undefined,
+    const data = await commonAPIClient.filterLogRecords({
       dateRange,
-      undefined,
-      undefined,
-      true, // return all data
-    );
+      return_all: true, // return all data
+  });
 
     setShowAlert(!data || !CSVConverter(data.logRecords));
   };
