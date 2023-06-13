@@ -5,10 +5,11 @@
 
 # NOTE: 
 # this script will fail if a user with $EMPLOYEE_ID as an id does not exist
-# it will also fail if three residents with ids 1, 2, and 3 do not exist
+# it will also fail if residents don't exist in the db
 
 # Import common functions
-source ./seed.sh
+SEEDING_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SEEDING_DIR/seed.sh
 
 # Run SQL script in docker container
 run_sql_script "

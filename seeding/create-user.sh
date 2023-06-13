@@ -4,7 +4,8 @@
 # Otherwise, run bash create-user.sh
 
 # Import common functions
-source ./seed.sh
+SEEDING_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SEEDING_DIR/seed.sh
 
 # Run SQL script in docker container
 run_sql_script "

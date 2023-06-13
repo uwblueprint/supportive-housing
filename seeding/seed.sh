@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Import root env file variables
-source ./.env
+# Import seeding directory file variables
+SEEDING_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source $SEEDING_DIR/.env
 
 # Get flag if exists
 bin_bash="/bin/bash"
