@@ -9,6 +9,8 @@ source $SEEDING_DIR/seed.sh
 
 # Run SQL script in docker container
 run_sql_script "
+DELETE FROM residents;
+
 ALTER SEQUENCE residents_id_seq RESTART WITH 1;
 
 INSERT INTO residents (
