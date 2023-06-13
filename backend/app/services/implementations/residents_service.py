@@ -65,7 +65,7 @@ class ResidentsService(IResidentsService):
         )
         if not updated_resident:
             raise Exception(
-                "Log record with id {resident_id} not found".format(
+                "Resident with id {resident_id} not found".format(
                     resident_id=resident_id
                 )
             )
