@@ -30,13 +30,12 @@ const Button: ComponentStyleConfig = {
       borderColor: "teal.400",
       transition: "transition: color 0.25s ease !important",
       _hover: {
-        color: "teal.500",
-        background: "white.default",
+        background: "teal.50",
         transition: " color 0.5s ease !important",
       },
       _active: {
-        color: "teal.400",
-        transition: "color 0.1s ease !important",
+        boxShadow:
+          "inset 0px 0px 10px var(--chakra-colors-teal-100) !important",
       },
     },
     tertiary: {
