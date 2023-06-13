@@ -7,6 +7,7 @@ import json
 residents_service = ResidentsService(current_app.logger)
 blueprint = Blueprint("residents", __name__, url_prefix="/residents")
 
+
 def is_date_left_invalid_resident(resident):
     """
     Validates if date_left is greater than date_joined given a payload for a resident
@@ -19,6 +20,7 @@ def is_date_left_invalid_resident(resident):
 
     return False
 
+
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def add_resident():
@@ -26,8 +28,11 @@ def add_resident():
     Add a resident
     """
     resident = request.json
-    if (is_date_left_invalid_resident(resident)): 
-        return jsonify({"date_left_error": "date_left cannot be less than date_joined"}), 400
+    if is_date_left_invalid_resident(resident):
+        return (
+            jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
+            400,
+        )
 
     try:
         created_resident = residents_service.add_resident(resident)
@@ -35,48 +40,72 @@ def add_resident():
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-    
+
+
 @blueprint.route("/<int:resident_id>", methods=["PUT"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def update_resident(resident_id):
     """
-    Update an existing resident record based on the id 
+    Update an existing resident record based on the id
     """
     updated_resident = request.json
-    if (is_date_left_invalid_resident(updated_resident)): 
-        return jsonify({"date_left_error": "date_left cannot be less than date_joined"}), 400
+    if is_date_left_invalid_resident(updated_resident):
+        return (
+            jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
+            400,
+        )
 
     try:
-     updated_resident = residents_service.update_resident(resident_id, updated_resident)
-     return jsonify({"message": "Resident record with id {resident_id} updated sucessfully".format(resident_id=resident_id)}), 201 
+        updated_resident = residents_service.update_resident(
+            resident_id, updated_resident
+        )
+        return (
+            jsonify(
+                {
+                    "message": "Resident record with id {resident_id} updated sucessfully".format(
+                        resident_id=resident_id
+                    )
+                }
+            ),
+            201,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-    
+
+
 @blueprint.route("/<int:resident_id>", methods=["DELETE"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def delete_resident(resident_id):
     """
-    Delete a resident record based on id 
+    Delete a resident record based on id
     """
     try:
         residents_service.delete_resident(resident_id)
-        return jsonify({"message": "Resident with id {resident_id} deleted sucessfully".format(resident_id=resident_id)}), 201
+        return (
+            jsonify(
+                {
+                    "message": "Resident with id {resident_id} deleted sucessfully".format(
+                        resident_id=resident_id
+                    )
+                }
+            ),
+            201,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500     
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 def get_resident():
     """
     Get residents.
-    """ 
+    """
     try:
         resident_id = request.args.get("resident_id")
-        residents_results = residents_service.get_resident(resident_id)  
+        residents_results = residents_service.get_resident(resident_id)
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-
-    
