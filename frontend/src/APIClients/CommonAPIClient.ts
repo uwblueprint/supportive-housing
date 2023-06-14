@@ -2,7 +2,7 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-import { Filters } from "../components/common/types/Filters";
+import { LogRecordFilters } from "../components/common/types/Filters";
 
 const filterLogRecords = async ({
   building = "",
@@ -12,7 +12,7 @@ const filterLogRecords = async ({
   tags = [],
   flagged = false,
   return_all = false,
-  }: Filters
+  }: LogRecordFilters
 ): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(

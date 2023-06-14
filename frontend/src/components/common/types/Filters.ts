@@ -1,4 +1,4 @@
-export type Filters = {
+export type LogRecordFilters = {
     building?: string,
     employeeId?: string[],
     attnTo?: string[],
