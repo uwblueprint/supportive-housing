@@ -42,9 +42,8 @@ const PrintCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
-    // Use YYYY-MM-DD format
     const dateRange = selectedDates.map((date) =>
-      date.toISOString().substring(0, 10),
+      date.toLocaleString("fr-CA", {timeZone: "America/Toronto"}).substring(0, 10),
     );
 
     const data = await commonAPIClient.filterLogRecords({
