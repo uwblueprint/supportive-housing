@@ -34,22 +34,26 @@ def get_log_records():
     Get RESULTS_PER_PAGE log records. Will return the log records of corresponding to the page you're on. Can optionally add filters.
     """
     page_number = 1
+    return_all = False
     try:
         page_number = int(request.args.get("page_number"))
     except:
-        pass
+        try: 
+            return_all = True if request.args.get("return_all").casefold() == "true" else False
+        except:
+            pass
 
     try:
         filters = json.loads(request.args.get("filters"))
-        log_records = log_records_service.get_log_records(page_number, filters)
+    except: 
+        filters = None
+
+    try:
+        log_records = log_records_service.get_log_records(page_number, return_all, filters)            
         return jsonify(log_records), 201
     except Exception as e:
-        try:
-            log_records = log_records_service.get_log_records(page_number)
-            return jsonify(log_records), 201
-        except Exception as e:
-            error_message = getattr(e, "message", None)
-            return jsonify({"error": (error_message if error_message else str(e))}), 500
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
 @blueprint.route("/<int:delete_id>", methods=["DELETE"], strict_slashes=False)

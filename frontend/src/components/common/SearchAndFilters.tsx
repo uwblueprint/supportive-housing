@@ -17,7 +17,6 @@ import {
   Icon,
   InputGroup,
   Select,
-  Divider,
   Text,
 } from "@chakra-ui/react";
 import { Card } from "react-bootstrap";
@@ -58,14 +57,14 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
         : [];
       const dateRange = startDate && endDate ? [startDate, endDate] : [];
 
-      const data = await commonAPIClient.filterLogRecords(
+      const data = await commonAPIClient.filterLogRecords({
         building,
-        employeeIds,
-        attentionTos,
+        employeeId: employeeIds,
+        attnTo: attentionTos,
         dateRange,
-        tags ? [tags] : [],
+        tags: tags ? [tags] : [],
         flagged,
-      );
+    });
       setLogRecords(data);
     };
 
