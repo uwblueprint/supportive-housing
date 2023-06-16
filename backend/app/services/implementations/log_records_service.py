@@ -106,10 +106,6 @@ class LogRecordsService(ILogRecordsService):
         try:
             results_per_page = int(os.getenv("RESULTS_PER_PAGE"))
 
-            if not return_all:
-                start_index = (page_number - 1) * results_per_page
-                end_index = start_index + results_per_page
-
             sql = "SELECT\n \
                 logs.log_id,\n \
                 logs.employee_id,\n \
@@ -156,13 +152,14 @@ class LogRecordsService(ILogRecordsService):
                                 )
 
             sql = sql + "\nORDER BY datetime DESC"
+
+            if not return_all:
+                start_index = (page_number - 1) * results_per_page
+                sql = sql + f"\nLIMIT {results_per_page} OFFSET {start_index}"
+
             log_records = db.session.execute(text(sql))
             json_list = self.to_json_list(log_records)
             num_results = len(json_list)
-
-            # overwrite json_list to be the subset of data to return if return_all is false
-            if not return_all:
-                json_list = json_list[start_index:end_index]
 
             return {
                 "log_records": json_list,
