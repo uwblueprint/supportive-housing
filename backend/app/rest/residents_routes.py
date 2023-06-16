@@ -98,13 +98,14 @@ def delete_resident(resident_id):
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-def get_resident():
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+def get_residents():
     """
     Get residents.
     """
     try:
         resident_id = request.args.get("resident_id")
-        residents_results = residents_service.get_resident(resident_id)
+        residents_results = residents_service.get_residents(resident_id)
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
