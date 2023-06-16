@@ -13,8 +13,8 @@ const filterLogRecords = async ({
   tags = [],
   flagged = false,
   returnAll = false,
-  pageNumber = 1,
-  resultsPerPage = 10,
+  pageNumber,
+  resultsPerPage,
 }: LogRecordFilters): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
