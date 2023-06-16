@@ -49,15 +49,11 @@ const Pagination = ({
     newUserPageNumString: string,
     newUserPageNum: number,
   ) => {
-    if (
-      newUserPageNum === pageNum ||
-      newUserPageNum < 1 ||
-      newUserPageNum > numPages
-    ) {
+    if (newUserPageNum < 1 || newUserPageNum > numPages) {
       return;
     }
     setUserPageNum(newUserPageNum);
-    if (!Number.isNaN(newUserPageNum)) {
+    if (!Number.isNaN(newUserPageNum) && newUserPageNum !== pageNum) {
       getLogRecords(newUserPageNum);
     }
   };
