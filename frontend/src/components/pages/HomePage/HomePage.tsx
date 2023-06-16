@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  Flex,
-  Spacer,
-} from "@chakra-ui/react";
+import { Flex, Spacer } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -11,6 +8,7 @@ import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
+import PrintCSVButton from "../../common/PrintCSVButton";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -43,7 +41,7 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const getLogRecords = async (page_number: number) => {
+  const getLogRecords = async (pageNumber: number) => {
     const employeeIds = employees
       ? employees.replaceAll(`"`, "").split(",")
       : [];
@@ -52,16 +50,16 @@ const HomePage = (): React.ReactElement => {
       : [];
     const dateRange = startDate && endDate ? [startDate, endDate] : [];
 
-    const data = await commonAPIClient.filterLogRecords(
+    const data = await commonAPIClient.filterLogRecords({
       building,
-      employeeIds,
-      attentionTos,
+      employeeId: employeeIds,
+      attnTo: attentionTos,
       dateRange,
-      tags ? [tags] : [],
+      tags: tags ? [tags] : [],
       flagged,
       resultsPerPage,
-      page_number,
-    );
+      pageNumber,
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
@@ -73,7 +71,7 @@ const HomePage = (): React.ReactElement => {
       setUserPageNum(0);
       setPageNum(0);
     } else {
-      setPageNum(page_number);
+      setPageNum(pageNumber);
     }
   };
 
@@ -99,7 +97,10 @@ const HomePage = (): React.ReactElement => {
         <Flex marginBottom="16px">
           <h1 className="records-hero">Day Logs</h1>
           <Spacer />
-          <CreateLog />
+          <Flex justify="end" gap="12px">
+            <CreateLog />
+            <PrintCSVButton />
+          </Flex>
         </Flex>
 
         <SearchAndFilters

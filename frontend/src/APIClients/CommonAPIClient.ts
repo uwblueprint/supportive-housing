@@ -3,22 +3,25 @@ import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-const filterLogRecords = async (
-  building: string,
-  employeeId: string[],
-  attnTo: string[],
-  dateRange: string[],
-  tags: string[],
-  flagged: boolean,
-  results_per_page: number,
-  page_number: number,
-): Promise<GetLogRecordsReponse> => {
+import { LogRecordFilters } from "../components/common/types/Filters";
+
+const filterLogRecords = async ({
+  building = "",
+  employeeId = [],
+  attnTo = [],
+  dateRange = [],
+  tags = [],
+  flagged = false,
+  returnAll = false,
+  pageNumber = 1,
+  resultsPerPage = 10,
+}: LogRecordFilters): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-    const { data } = await baseAPIClient.get("/log_records", {
+    const { data } = await baseAPIClient.get(`/log_records`, {
       params: {
         filters: {
           building,
@@ -28,8 +31,9 @@ const filterLogRecords = async (
           tags,
           flagged,
         },
-        page_number,
-        results_per_page,
+        returnAll,
+        pageNumber,
+        resultsPerPage,
       },
       headers: { Authorization: bearerToken },
     });
@@ -40,6 +44,57 @@ const filterLogRecords = async (
   }
 };
 
+const inviteUser = async (
+  email: string,
+  role: string,
+  firstName: string,
+  lastName: string,
+): Promise<boolean> => {
+  try {
+    if (email === "") {
+      return false;
+    }
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.post(
+      "/users/invite-user",
+      { email, role, firstName, lastName },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const getUserStatus = async (email: string): Promise<string> => {
+  try {
+    if (email === "") {
+      return "";
+    }
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get("/users/user-status", {
+      params: {
+        email,
+      },
+      headers: { Authorization: bearerToken },
+    });
+    if (data?.email === email) {
+      return data.userStatus;
+    }
+    return "Not invited";
+  } catch (error) {
+    return "Not invited";
+  }
+};
+
 export default {
   filterLogRecords,
+  inviteUser,
+  isUserInvited: getUserStatus,
 };

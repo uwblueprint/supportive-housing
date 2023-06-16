@@ -1,7 +1,7 @@
 """add resident table
 
 Revision ID: a5d22b31faab
-Revises: 82f36cdf325f
+Revises: a2a0a16b6d51
 Create Date: 2023-05-19 01:25:31.068941
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'a5d22b31faab'
-down_revision = '82f36cdf325f'
+down_revision = 'a2a0a16b6d51'
 branch_labels = None
 depends_on = None
 

@@ -25,7 +25,7 @@ class ILogRecordsService(ABC):
         pass
 
     @abstractmethod
-    def get_log_records(self, page_number, results_per_page=10, filters=None):
+    def get_log_records(self, page_number, return_all, results_per_page=10, filters=None):
         """
         Get all log records
 

@@ -27,16 +27,16 @@ import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
+import InviteUsers from "./components/pages/InviteUsers";
+
+import customTheme from "./theme";
 
 const App = (): React.ReactElement => {
-  const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
-    AUTHENTICATED_USER_KEY,
-  );
+  const currentUser: AuthenticatedUser | null =
+    getLocalStorageObj<AuthenticatedUser>(AUTHENTICATED_USER_KEY);
 
-  const [
-    authenticatedUser,
-    setAuthenticatedUser,
-  ] = useState<AuthenticatedUser | null>(currentUser);
+  const [authenticatedUser, setAuthenticatedUser] =
+    useState<AuthenticatedUser | null>(currentUser);
 
   // Some sort of global state. Context API replaces redux.
   // Split related states into different contexts as necessary.
@@ -47,7 +47,7 @@ const App = (): React.ReactElement => {
   );
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={customTheme}>
       <SampleContext.Provider value={sampleContext}>
         <SampleContextDispatcherContext.Provider
           value={dispatchSampleContextUpdate}
@@ -59,6 +59,11 @@ const App = (): React.ReactElement => {
               <Switch>
                 <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                 <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
+                <PrivateRoute
+                  exact
+                  path={Routes.INVITE_USERS}
+                  component={InviteUsers}
+                />
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
