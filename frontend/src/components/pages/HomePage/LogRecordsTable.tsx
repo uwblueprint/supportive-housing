@@ -1,5 +1,6 @@
 import React, { RefObject } from "react";
 import {
+  Box,
   Table,
   TableContainer,
   Tbody,
@@ -21,7 +22,7 @@ const LogRecordsTable = ({
   tableRef,
 }: Props): React.ReactElement => {
   return (
-    <div>
+    <Box>
       <TableContainer
         marginTop="12px"
         height="70vh"
@@ -72,7 +73,7 @@ const LogRecordsTable = ({
           </Tbody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 };
 
