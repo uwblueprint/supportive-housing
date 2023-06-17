@@ -19,7 +19,7 @@ code {
   font-size: 28px;
   text-transform: none;
   font-weight: 700;
-  color: #1B2A2C;
+  color: #1b2a2c;
   text-align: center;
 }
 
@@ -33,14 +33,6 @@ code {
   width: 75%;
   padding-top: 2%;
   margin: 0px auto;
-}
-
-.table-header th {
-  font-family: "DM Sans";
-  font-size: 16px;
-  text-transform: none;
-  color: #2d3748;
-  background-color: #edf2f7;
 }
 
 .navbar-text {

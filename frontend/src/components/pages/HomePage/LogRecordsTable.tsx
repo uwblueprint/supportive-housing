@@ -29,10 +29,10 @@ const LogRecordsTable = ({
         ref={tableRef}
       >
         <Table
-          variant="simple"
+          variant="logRecordsTable"
           style={{ minHeight: "400px", verticalAlign: "middle" }}
         >
-          <Thead className="table-header">
+          <Thead>
             <Tr>
               <Th>Date</Th>
               <Th>Time</Th>

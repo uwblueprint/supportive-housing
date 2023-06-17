@@ -26,6 +26,11 @@ const textStyles = {
     fontWeight: 400,
     textDecoration: "none",
   },
+  "table-header": {
+    fontFamily: font,
+    fontWeight: 700,
+    fontSize: "16px",
+  },
 };
 
 export default textStyles;
