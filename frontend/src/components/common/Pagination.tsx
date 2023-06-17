@@ -11,16 +11,13 @@ import {
   Flex,
   Box,
   Text,
-  GridItem,
 } from "@chakra-ui/react";
 
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronDownIcon,
-  TriangleDownIcon,
 } from "@chakra-ui/icons";
-import { getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 
 type Props = {
   numRecords: number;
@@ -29,7 +26,7 @@ type Props = {
   userPageNum: number;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   setResultsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  getLogRecords: (page_number: number) => Promise<void>;
+  getRecords: (page_number: number) => Promise<void>;
 };
 
 const RESULTS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -41,7 +38,7 @@ const Pagination = ({
   userPageNum,
   setUserPageNum,
   setResultsPerPage,
-  getLogRecords,
+  getRecords,
 }: Props): React.ReactElement => {
   const numPages = Math.ceil(numRecords / resultsPerPage);
 
@@ -54,7 +51,7 @@ const Pagination = ({
     }
     setUserPageNum(newUserPageNum);
     if (!Number.isNaN(newUserPageNum) && newUserPageNum !== pageNum) {
-      getLogRecords(newUserPageNum);
+      getRecords(newUserPageNum);
     }
   };
 
@@ -66,7 +63,7 @@ const Pagination = ({
 
   const handlePageArrowPress = (newUserPageNum: number) => {
     setUserPageNum(newUserPageNum);
-    getLogRecords(newUserPageNum);
+    getRecords(newUserPageNum);
   };
 
   const getNumRecordsStr = () => {
@@ -77,15 +74,14 @@ const Pagination = ({
     <Box padding="12px 0px 33px">
       <Flex justifyContent="space-between" alignItems="center">
         <Box>
-          <Text color="#6D8788">{getNumRecordsStr()}</Text>
+          <Text color="teal.200">{getNumRecordsStr()}</Text>
         </Box>
         <Box>
           <Flex alignItems="center" justifyContent="space-evenly">
             <IconButton
-              className="icon-button"
               variant="ghost"
               aria-label="Previous page"
-              icon={<ChevronLeftIcon boxSize={7} color="#6D8788" />}
+              icon={<ChevronLeftIcon boxSize={7} color="teal.200" />}
               disabled={userPageNum <= 1}
               onClick={() => handlePageArrowPress(userPageNum - 1)}
             />
@@ -104,16 +100,15 @@ const Pagination = ({
                 onChange={handleNumberInputChange}
                 onBlur={(e) => handleBlur(e)}
               >
-                <NumberInputField fontWeight="bold" />
+                <NumberInputField fontWeight="700" />
               </NumberInput>
               <Text>of {numPages}</Text>
             </Flex>
             <IconButton
-              className="icon-button"
               variant="ghost"
               aria-label="Next page"
               disabled={userPageNum >= numPages}
-              icon={<ChevronRightIcon boxSize={7} color="#6D8788" />}
+              icon={<ChevronRightIcon boxSize={7} color="teal.200" />}
               onClick={() => handlePageArrowPress(userPageNum + 1)}
             />
           </Flex>
@@ -126,7 +121,8 @@ const Pagination = ({
                 as={Button}
                 variant="outline"
                 width="73px"
-                rightIcon={<ChevronDownIcon color="#6D8788" />}
+                fontWeight="700"
+                rightIcon={<ChevronDownIcon color="teal.200" />}
               >
                 {resultsPerPage}
               </MenuButton>

@@ -14,27 +14,6 @@ code {
     monospace;
 }
 
-.records-hero {
-  font-family: "DM Sans";
-  font-size: 28px;
-  text-transform: none;
-  font-weight: 700;
-  color: #1b2a2c;
-  text-align: center;
-}
-
-.page-container {
-  font-family: "DM Sans";
-}
-.records {
-  font-family: "DM Sans";
-  text-align: center;
-  color: #2d3748;
-  width: 75%;
-  padding-top: 2%;
-  margin: 0px auto;
-}
-
 .navbar-text {
   font-family: "DM Sans";
   font-size: 16px !important;

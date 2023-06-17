@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -91,11 +91,17 @@ const HomePage = (): React.ReactElement => {
   ]);
 
   return (
-    <div className="page-container">
+    <Box>
       <NavigationBar />
-      <div className="records">
+      <Box
+        textStyle="dm-sans-font"
+        textAlign="center"
+        width="75%"
+        paddingTop="2%"
+        margin="0px auto"
+      >
         <Flex marginBottom="16px">
-          <h1 className="records-hero">Day Logs</h1>
+          <Box textStyle="hero-records">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
             <CreateLog />
@@ -129,10 +135,10 @@ const HomePage = (): React.ReactElement => {
           setUserPageNum={setUserPageNum}
           resultsPerPage={resultsPerPage}
           setResultsPerPage={setResultsPerPage}
-          getLogRecords={getLogRecords}
+          getRecords={getLogRecords}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

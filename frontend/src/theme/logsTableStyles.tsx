@@ -8,7 +8,7 @@ const Table: ComponentStyleConfig = {
         color: "teal.500",
         backgroundColor: "teal.50",
         textTransform: "none",
-        ...textStyles["table-header"],
+        ...textStyles["header-table"],
       },
       tr: {
         borderBottom: "1px",
