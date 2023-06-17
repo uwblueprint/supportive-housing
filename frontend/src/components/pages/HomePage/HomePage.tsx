@@ -99,6 +99,7 @@ const HomePage = (): React.ReactElement => {
         width="75%"
         paddingTop="2%"
         margin="0px auto"
+        color="blue.600"
       >
         <Flex marginBottom="16px">
           <Box textStyle="hero-records">Day Logs</Box>
