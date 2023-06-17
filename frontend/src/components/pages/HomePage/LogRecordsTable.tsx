@@ -31,7 +31,8 @@ const LogRecordsTable = ({
       >
         <Table
           variant="logRecordsTable"
-          style={{ minHeight: "400px", verticalAlign: "middle" }}
+          minHeight="400px"
+          verticalAlign="middle"
         >
           <Thead>
             <Tr>
