@@ -26,6 +26,8 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
+import NewLogAPIClient from "../../APIClients/NewLogAPIClient";
+import { Resident, JSONResident } from "../../types/ResidentTypes";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -66,6 +68,11 @@ function getBorderStyle(state: any, error: boolean): string {
   return "1px solid #cbd5e0";
 }
 
+type SelectOptionType = {
+  label: string;
+  value: string;
+}
+
 const CreateLog = () => {
   const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
@@ -82,6 +89,11 @@ const CreateLog = () => {
   const [attnTo, setAttnTo] = useState("");
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
+
+  const [residents, setResidentsData] = useState<Resident[]>([]);
+
+  const [userOptions, setUserOptions] = useState([]);
+  const [residentOptions, setResidentOptions] = useState<SelectOptionType[]>([]);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -249,6 +261,24 @@ const CreateLog = () => {
     }
   }, [showAlert]);
 
+  const getLogEntryOptions = async () => {
+    const residentsData = await NewLogAPIClient.getResidents()
+
+    if (residentsData) {
+      const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
+      ({label: r.resident_id, value: r.resident_id}));
+      setResidentOptions(residentLabels)
+    }
+
+    const usersData = await NewLogAPIClient.getUsers()
+
+    console.log(usersData)
+  }
+
+  useEffect(() => {
+    getLogEntryOptions()
+  }, [])
+
   return (
     <div>
       <Box textAlign="right">
@@ -349,7 +379,7 @@ const CreateLog = () => {
                   <FormControl isRequired isInvalid={residentError} mt={4}>
                     <FormLabel>Resident</FormLabel>
                     <Select
-                      options={RESIDENTS}
+                      options={residentOptions.length ? residentOptions : []}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={{

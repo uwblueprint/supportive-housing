@@ -60,7 +60,6 @@ const mockRecords = [
 const LogRecords = (): React.ReactElement => {
   // TODO: use this instead of mockRecords & remove console.log
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
-  console.log(logRecords);
 
   return (
     <div className="page-container">

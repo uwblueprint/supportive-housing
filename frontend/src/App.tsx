@@ -32,11 +32,14 @@ import InviteUsers from "./components/pages/InviteUsers";
 import customTheme from "./theme";
 
 const App = (): React.ReactElement => {
-  const currentUser: AuthenticatedUser | null =
-    getLocalStorageObj<AuthenticatedUser>(AUTHENTICATED_USER_KEY);
+  const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
+    AUTHENTICATED_USER_KEY,
+  );
 
-  const [authenticatedUser, setAuthenticatedUser] =
-    useState<AuthenticatedUser | null>(currentUser);
+  const [
+    authenticatedUser,
+    setAuthenticatedUser,
+  ] = useState<AuthenticatedUser | null>(currentUser);
 
   // Some sort of global state. Context API replaces redux.
   // Split related states into different contexts as necessary.
