@@ -43,18 +43,6 @@ const TAGS = [
   { label: "Tag C", value: "C" },
 ];
 
-// Replace this with the residents from the db
-const RESIDENTS = [
-  { label: "DE307", value: "DE307" },
-  { label: "AH206", value: "AH206" },
-  { label: "MB404", value: "MB404" },
-];
-
-// Replace this with the users from the db
-const EMPLOYEES = [
-  { label: "Huseyin", value: "Huseyin" },
-  { label: "John Doe", value: "John Doe" },
-];
 
 // Changes the border of the Select components if the input is invalid
 function getBorderStyle(state: any, error: boolean): string {
@@ -92,7 +80,7 @@ const CreateLog = () => {
 
   const [residents, setResidentsData] = useState<Resident[]>([]);
 
-  const [userOptions, setUserOptions] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState<SelectOptionType[]>([]);
   const [residentOptions, setResidentOptions] = useState<SelectOptionType[]>([]);
 
   // error states for non-nullable inputs
@@ -104,6 +92,7 @@ const CreateLog = () => {
   const [notesError, setNotesError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
+  const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // if we need functionality to change the selected employee, handle should go here
 
@@ -168,8 +157,27 @@ const CreateLog = () => {
     setNotesError(inputValue === "");
   };
 
-  const [isCreateOpen, setCreateOpen] = React.useState(false);
+  const getLogEntryOptions = async () => {
+    const residentsData = await NewLogAPIClient.getResidents()
+
+    if (residentsData) {
+      const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
+      ({label: r.resident_id, value: r.resident_id}));
+      setResidentOptions(residentLabels)
+    }
+
+    const usersData = await NewLogAPIClient.getUsers()
+
+    if (usersData) {
+      const userLabels: SelectOptionType[] = usersData.map((user: any) => 
+      ({label: user.firstName, value: user.id}));
+
+      setEmployeeOptions(userLabels);
+    }
+  }
+
   const handleCreateOpen = () => {
+    getLogEntryOptions()
     setCreateOpen(true);
 
     // reset all states
@@ -260,24 +268,6 @@ const CreateLog = () => {
       }, 3000);
     }
   }, [showAlert]);
-
-  const getLogEntryOptions = async () => {
-    const residentsData = await NewLogAPIClient.getResidents()
-
-    if (residentsData) {
-      const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
-      ({label: r.resident_id, value: r.resident_id}));
-      setResidentOptions(residentLabels)
-    }
-
-    const usersData = await NewLogAPIClient.getUsers()
-
-    console.log(usersData)
-  }
-
-  useEffect(() => {
-    getLogEntryOptions()
-  }, [])
 
   return (
     <div>
@@ -404,6 +394,7 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
+                      isDisabled    // TODO: Integrate actual tags once implemented
                       options={TAGS}
                       isMulti
                       closeMenuOnSelect={false}
@@ -416,7 +407,7 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
-                      options={EMPLOYEES}
+                      options={employeeOptions.length > 0 ? employeeOptions : []}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                     />
