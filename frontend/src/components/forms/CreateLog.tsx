@@ -26,6 +26,9 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
+import colors from "../../theme/colors";
+import selectStyle from "../../theme/selectStyle";
+import singleDatePickerStyle from "../../theme/singleDatePickerStyles";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -53,18 +56,6 @@ const EMPLOYEES = [
   { label: "Huseyin", value: "Huseyin" },
   { label: "John Doe", value: "John Doe" },
 ];
-
-// Changes the border of the Select components if the input is invalid
-function getBorderStyle(state: any, error: boolean): string {
-  if (state.isFocused) {
-    return "2px solid #3182ce";
-  }
-  if (error) {
-    return "2px solid #e53e3e";
-  }
-
-  return "1px solid #cbd5e0";
-}
 
 const CreateLog = () => {
   const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
@@ -276,44 +267,44 @@ const CreateLog = () => {
                       options={EMPLOYEES}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
-                      styles={{
-                        control: (provided, state) => ({
-                          ...provided,
-                          border: getBorderStyle(state, employeeError),
-
-                          borderRadius: "4px",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
                     <GridItem>
-                      <FormControl isRequired>
+                      <FormControl
+                        isRequired
+                        style={{
+                          borderColor: colors.gray[200],
+                        }}
+                      >
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
-                          propsConfigs={{
-                            popoverCompProps: {
-                              popoverContentProps: {
-                                background: "white",
-                              },
-                            },
-                          }}
+                          propsConfigs={singleDatePickerStyle}
                         />
                       </FormControl>
                     </GridItem>
                     <GridItem>
-                      <FormControl isRequired isInvalid={timeError}>
+                      <FormControl
+                        isRequired
+                        isInvalid={timeError}
+                        style={{ color: colors.gray[500] }}
+                      >
                         <FormLabel>Time</FormLabel>
                         <Input
                           size="md"
                           type="time"
                           defaultValue={time}
                           onChange={handleTimeChange}
+                          style={{
+                            boxShadow: "none",
+                            borderColor: colors.gray[200],
+                          }}
                         />
                         <FormErrorMessage>Time is invalid.</FormErrorMessage>
                       </FormControl>
@@ -331,14 +322,17 @@ const CreateLog = () => {
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={{
-                        control: (provided, state) => ({
+                        ...selectStyle,
+                        control: (provided) => ({
                           ...provided,
-                          border: getBorderStyle(state, buildingError),
                           "&:hover": {
-                            borderColor: buildingError ? "#e53e3e" : "#B1B1B1",
+                            border: `1px solid ${colors.gray[200]}`,
                             cursor: "pointer",
                           },
-                          borderRadius: "4px",
+                          border: buildingError
+                            ? `1px solid ${colors.red[50]}`
+                            : `1px solid ${colors.gray[200]}`,
+                          boxShadow: "none",
                         }),
                       }}
                     />
@@ -353,14 +347,17 @@ const CreateLog = () => {
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={{
-                        control: (provided, state) => ({
+                        ...selectStyle,
+                        control: (provided) => ({
                           ...provided,
-                          border: getBorderStyle(state, residentError),
                           "&:hover": {
-                            borderColor: residentError ? "#e53e3e" : "#B1B1B1",
+                            border: `1px solid ${colors.gray[200]}`,
                             cursor: "pointer",
                           },
-                          borderRadius: "4px",
+                          border: residentError
+                            ? `1px solid ${colors.red[50]}`
+                            : `1px solid ${colors.gray[200]}`,
+                          boxShadow: "none",
                         }),
                       }}
                     />
@@ -379,6 +376,7 @@ const CreateLog = () => {
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
                       onChange={handleTagsChange}
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
@@ -389,6 +387,18 @@ const CreateLog = () => {
                       options={EMPLOYEES}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
+                      styles={{
+                        ...selectStyle,
+                        control: (provided) => ({
+                          ...provided,
+                          "&:hover": {
+                            border: `1px solid ${colors.gray[200]}`,
+                            cursor: "pointer",
+                          },
+                          border: `1px solid ${colors.gray[200]}`,
+                          boxShadow: "none",
+                        }),
+                      }}
                     />
                   </FormControl>
                 </Col>
@@ -403,7 +413,14 @@ const CreateLog = () => {
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
                       size="lg"
-                      style={{ resize: "none" }}
+                      style={{
+                        resize: "none",
+                        color: colors.gray[500],
+                        boxShadow: "none",
+                        border: notesError
+                          ? `1px solid ${colors.red[50]}`
+                          : `1px solid ${colors.gray[200]}`,
+                      }}
                     />
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
@@ -411,6 +428,7 @@ const CreateLog = () => {
               </Row>
 
               <Checkbox
+                colorScheme="gray"
                 style={{ paddingTop: "1rem" }}
                 onChange={() => setFlagged(!flagged)}
               >
@@ -418,7 +436,6 @@ const CreateLog = () => {
               </Checkbox>
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
-
                 <Button
                   onClick={handleCreateClose}
                   variant="tertiary"
