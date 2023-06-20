@@ -43,13 +43,15 @@ const PrintCSVButton = (): React.ReactElement => {
 
   const handleSubmit = async () => {
     const dateRange = selectedDates.map((date) =>
-      date.toLocaleString("fr-CA", {timeZone: "America/Toronto"}).substring(0, 10),
+      date
+        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+        .substring(0, 10),
     );
 
     const data = await commonAPIClient.filterLogRecords({
       dateRange,
       return_all: true, // return all data
-  });
+    });
 
     setShowAlert(!data || !CSVConverter(data.logRecords));
   };
@@ -85,7 +87,7 @@ const PrintCSVButton = (): React.ReactElement => {
                     onDateChange={setSelectedDates}
                     propsConfigs={{
                       inputProps: {
-                        placeholder: 'MM/DD/YYYY - MM/DD/YYYY'
+                        placeholder: "MM/DD/YYYY - MM/DD/YYYY",
                       },
                     }}
                   />

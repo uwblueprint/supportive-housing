@@ -28,6 +28,8 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import NewLogAPIClient from "../../APIClients/NewLogAPIClient";
 import { Resident, JSONResident } from "../../types/ResidentTypes";
+import { getLocalStorageObj, getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -62,7 +64,7 @@ type SelectOptionType = {
 }
 
 const CreateLog = () => {
-  const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState(""); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -167,9 +169,8 @@ const CreateLog = () => {
     }
 
     const usersData = await NewLogAPIClient.getUsers()
-
     if (usersData) {
-      const userLabels: SelectOptionType[] = usersData.map((user: any) => 
+      const userLabels: SelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
 
       setEmployeeOptions(userLabels);
@@ -269,6 +270,13 @@ const CreateLog = () => {
     }
   }, [showAlert]);
 
+  useEffect(() => {
+    const curUser = getLocalStorageObj(
+      AUTHENTICATED_USER_KEY,
+    );
+    setEmployee(curUserName as string)
+  }, [])
+
   return (
     <div>
       <Box textAlign="right">
@@ -293,7 +301,7 @@ const CreateLog = () => {
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={EMPLOYEES}
+                      options={employeeOptions}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
                       styles={{
