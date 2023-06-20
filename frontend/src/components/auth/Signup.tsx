@@ -5,6 +5,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
+import commonApiClient from "../../APIClients/CommonAPIClient";
 
 const Signup = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -14,13 +15,21 @@ const Signup = (): React.ReactElement => {
   const [password, setPassword] = useState("");
 
   const onSignupClick = async () => {
-    const user: AuthenticatedUser | null = await authAPIClient.register(
-      firstName,
-      lastName,
-      email,
-      password,
-    );
-    setAuthenticatedUser(user);
+    const isInvited = await commonApiClient.isUserInvited(email);
+    if (isInvited) {
+      const user: AuthenticatedUser | null = await authAPIClient.register(
+        firstName,
+        lastName,
+        email,
+        password,
+      );
+      setAuthenticatedUser(user);
+    } else {
+      // TODO: make this alert better and also differentiate between
+      // when a user is not invited and when a user's account already exists
+      // eslint-disable-next-line no-alert
+      window.alert("user not invited");
+    }
   };
 
   if (authenticatedUser) {

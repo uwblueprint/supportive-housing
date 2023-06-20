@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+
 class IResidentsService(ABC):
     """
     ResidentsService interface with residents methods
     """
+
     @abstractmethod
     def to_json_list(self, residents_results):
         """
@@ -11,7 +13,7 @@ class IResidentsService(ABC):
         :param residents_results: residents retrieved from resident table
         :type id: objects from resident table
         """
-        
+
         pass
 
     @abstractmethod
@@ -24,11 +26,11 @@ class IResidentsService(ABC):
         :type initial: string
         :param room_num: room number which the resident resides in
         :type room_num: integer
-        :param date_joined: the date the resident joined 
+        :param date_joined: the date the resident joined
         :type date_joined: date
-        :param date_left: the date the resident left, if exists 
+        :param date_left: the date the resident left, if exists
         :type date_left: date
-        :param building: the building in which the resident is staying 
+        :param building: the building in which the resident is staying
         :type building: Enum("144", "402", "362)
         :raises Exception: if resident creation fails
         """
@@ -61,8 +63,8 @@ class IResidentsService(ABC):
         """
         Gets residents in json format.
         :param resident_id: id of resident to be deleted in the format of initial+room_num
-        :type resident_id: string 
+        :type resident_id: string
         :param id: id of resident to be deleted, the primary key of the resident
-        :type resident_id: initial 
+        :type resident_id: initial
         """
         pass

@@ -14,7 +14,6 @@ from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
 from ..services.implementations.sign_in_logs_service import SignInLogService
 
-
 user_service = UserService(current_app.logger)
 sign_in_logs_service = SignInLogService(current_app.logger)
 email_service = EmailService(
@@ -149,9 +148,8 @@ def register():
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     try:
-        request.json["role"] = "Relief Staff"
         user = CreateUserDTO(**request.json)
-        user_service.create_user(user)
+        user_service.activate_user(user)
         auth_dto = auth_service.generate_token(
             request.json["email"], request.json["password"]
         )
