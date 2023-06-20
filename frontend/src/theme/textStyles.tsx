@@ -26,6 +26,21 @@ const textStyles = {
     fontWeight: 400,
     textDecoration: "none",
   },
+  "header-table": {
+    fontFamily: font,
+    fontWeight: 700,
+    fontSize: "16px",
+  },
+  "hero-records": {
+    fontFamily: font,
+    fontSize: "28px",
+    textTransform: "none",
+    fontWeight: 700,
+    color: "teal.500",
+  },
+  "dm-sans-font": {
+    fontFamily: font,
+  },
 };
 
 export default textStyles;

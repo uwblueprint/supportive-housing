@@ -128,15 +128,13 @@ class UserService(IUserService):
                 raise e
 
         return user_dtos
-    
+
     def get_user_status_by_email(self, email):
         try:
             user = User.query.filter_by(email=email).first()
 
             if not user:
-                raise Exception(
-                    "user with email {email} not found".format(email)
-                )
+                raise Exception("user with email {email} not found".format(email))
 
             return user.user_status
         except Exception as e:
@@ -147,7 +145,7 @@ class UserService(IUserService):
                 )
             )
             raise e
-        
+
     def create_invited_user(self, user):
         try:
             user_entry = User.query.filter_by(email=user.email).first()
@@ -164,7 +162,7 @@ class UserService(IUserService):
                 user_entry = User(**postgres_invited_user)
                 db.session.add(user_entry)
                 db.session.commit()
-            
+
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user_entry)
 
             return UserDTO(**user_dict)
@@ -177,13 +175,12 @@ class UserService(IUserService):
                 )
             )
             raise e
-    
 
     def activate_user(self, user, auth_id=None, signup_method="PASSWORD"):
         firebase_user = None
 
         try:
-            if(self.get_user_status_by_email(user.email) == "Invited"):
+            if self.get_user_status_by_email(user.email) == "Invited":
                 if signup_method == "PASSWORD":
                     firebase_user = firebase_admin.auth.create_user(
                         email=user.email, password=user.password
@@ -194,10 +191,7 @@ class UserService(IUserService):
 
                 try:
                     User.query.filter_by(email=user.email).update(
-                        {
-                            User.auth_id: firebase_user.uid,
-                            User.user_status: "Active"
-                        }
+                        {User.auth_id: firebase_user.uid, User.user_status: "Active"}
                     )
                     db.session.commit()
                     user_entry = User.query.filter_by(email=user.email).first()

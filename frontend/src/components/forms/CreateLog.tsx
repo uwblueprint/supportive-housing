@@ -418,7 +418,6 @@ const CreateLog = () => {
               </Checkbox>
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
-
                 <Button
                   onClick={handleCreateClose}
                   variant="tertiary"

@@ -20,67 +20,42 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { Card } from "react-bootstrap";
-import commonAPIClient from "../../APIClients/CommonAPIClient";
-import { LogRecord } from "./types/LogRecord";
 
 type Props = {
-  setLogRecords: React.Dispatch<React.SetStateAction<LogRecord[]>>;
+  residents: string;
+  employees: string;
+  startDate: string;
+  endDate: string;
+  tags: string;
+  attentionTo: string;
+  building: string;
+  setResidents: React.Dispatch<React.SetStateAction<string>>;
+  setEmployees: React.Dispatch<React.SetStateAction<string>>;
+  setStartDate: React.Dispatch<React.SetStateAction<string>>;
+  setEndDate: React.Dispatch<React.SetStateAction<string>>;
+  setTags: React.Dispatch<React.SetStateAction<string>>;
+  setAttentionTo: React.Dispatch<React.SetStateAction<string>>;
+  setBuilding: React.Dispatch<React.SetStateAction<string>>;
+  setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
-  /* TODO: change inputs to correct types
-  - this is possible when the data in LogRecords comes from the API since the API will have the employees/attnTos names + userId
-    names + userId and we can query using the /users route based on that
-    e.g.:
-      - for employee -> we'll need to get an employee's ID by their name to pass into the route
-      - for attention to -> same as above
-      - for startDate & endDate the date format should be 'YYYY-MM-DD'
-       - for tags -> change to an actual array of strings instead of a string
-  */
-  // TODO: search by resident
-  const [residents, setResidents] = useState("");
-  const [employees, setEmployees] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [tags, setTags] = useState("");
-  const [attentionTo, setAttentionTo] = useState("");
-  const [building, setBuilding] = useState("");
-  const [flagged, setFlagged] = useState(false);
-
-  useEffect(() => {
-    const getLogRecordsAfterFiltering = async () => {
-      const employeeIds = employees
-        ? employees.replaceAll(`"`, "").split(",")
-        : [];
-      const attentionTos = attentionTo
-        ? attentionTo.replaceAll(`"`, "").split(",")
-        : [];
-      const dateRange = startDate && endDate ? [startDate, endDate] : [];
-
-      const data = await commonAPIClient.filterLogRecords({
-        building,
-        employeeId: employeeIds,
-        attnTo: attentionTos,
-        dateRange,
-        tags: tags ? [tags] : [],
-        flagged,
-    });
-      setLogRecords(data);
-    };
-
-    getLogRecordsAfterFiltering();
-  }, [
-    building,
-    employees,
-    attentionTo,
-    startDate,
-    endDate,
-    tags,
-    flagged,
-    setLogRecords,
-  ]);
-
-  // console.log("data", data);
+const SearchAndFilters = ({
+  residents,
+  employees,
+  startDate,
+  endDate,
+  tags,
+  attentionTo,
+  building,
+  setResidents,
+  setEmployees,
+  setStartDate,
+  setEndDate,
+  setTags,
+  setAttentionTo,
+  setBuilding,
+  setFlagged,
+}: Props): React.ReactElement => {
   return (
     <Card>
       <Box padding="8px 16px 20px">
@@ -162,7 +137,6 @@ const SearchAndFilters = ({ setLogRecords }: Props): React.ReactElement => {
           </Grid>
         </FormControl>
       </Box>
-
       <Accordion allowToggle>
         <AccordionItem borderBottom="none">
           {({ isExpanded }) => (

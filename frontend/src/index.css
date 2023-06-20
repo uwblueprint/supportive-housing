@@ -14,26 +14,6 @@ code {
     monospace;
 }
 
-.page-container {
-  font-family: "DM Sans";
-}
-.records {
-  font-family: "DM Sans";
-  text-align: center;
-  color: #2d3748;
-  width: 75%;
-  padding-top: 10%;
-  margin: 0px auto;
-}
-
-.table-header th {
-  font-family: "DM Sans";
-  font-size: 16px;
-  text-transform: none;
-  color: #2d3748;
-  background-color: #edf2f7;
-}
-
 .navbar-text {
   font-family: "DM Sans";
   font-size: 16px !important;
