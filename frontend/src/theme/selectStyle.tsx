@@ -1,6 +1,6 @@
 import colors from "./colors";
 
-const optionBackgroundColor = (isSelected, isFocused) => {
+const optionBackgroundColor = (isSelected: boolean, isFocused: boolean) => {
   if (isSelected) {
     return colors.teal[100];
   }
@@ -10,14 +10,14 @@ const optionBackgroundColor = (isSelected, isFocused) => {
   return colors.white.default;
 };
 
-const selectStyle: StylesConfig<ColourOption> = {
-  singleValue: (provided) => ({
+const selectStyle: any = {
+  singleValue: (provided: any) => ({
     ...provided,
     color: colors.gray[500],
     borderColor: colors.gray[200],
     boxShadow: "none",
   }),
-  control: (provided, state) => ({
+  control: (provided: any, state: any) => ({
     ...provided,
     backgroundColor: state.isDisabled ? colors.teal[50] : colors.white.default,
     borderColor: colors.gray[200],
@@ -28,7 +28,7 @@ const selectStyle: StylesConfig<ColourOption> = {
       cursor: "pointer",
     },
   }),
-  option: (provided, state) => {
+  option: (provided: any, state: any) => {
     return {
       ...provided,
       backgroundColor: optionBackgroundColor(state.isSelected, state.isFocused),
@@ -38,7 +38,7 @@ const selectStyle: StylesConfig<ColourOption> = {
       },
     };
   },
-  multiValue: (provided) => {
+  multiValue: (provided: any) => {
     return {
       ...provided,
       backgroundColor: colors.teal[50],
