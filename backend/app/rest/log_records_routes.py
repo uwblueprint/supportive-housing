@@ -38,14 +38,16 @@ def get_log_records():
     try:
         page_number = int(request.args.get("page_number"))
     except:
-        try: 
-            return_all = True if request.args.get("return_all").casefold() == "true" else False
+        try:
+            return_all = (
+                True if request.args.get("return_all").casefold() == "true" else False
+            )
         except:
             pass
 
     try:
         filters = json.loads(request.args.get("filters"))
-    except: 
+    except:
         filters = None
 
     results_per_page = 10
@@ -55,7 +57,9 @@ def get_log_records():
         pass
 
     try:
-        log_records = log_records_service.get_log_records(page_number, return_all, results_per_page, filters)            
+        log_records = log_records_service.get_log_records(
+            page_number, return_all, results_per_page, filters
+        )
         return jsonify(log_records), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
