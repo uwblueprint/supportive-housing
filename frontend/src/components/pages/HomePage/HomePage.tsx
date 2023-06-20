@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Flex, Spacer } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
@@ -41,39 +41,51 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const getLogRecords = async (pageNumber: number) => {
-    const employeeIds = employees
-      ? employees.replaceAll(`"`, "").split(",")
-      : [];
-    const attentionTos = attentionTo
-      ? attentionTo.replaceAll(`"`, "").split(",")
-      : [];
-    const dateRange = startDate && endDate ? [startDate, endDate] : [];
+  const getLogRecords = useCallback(
+    async (pageNumber: number) => {
+      const employeeIds = employees
+        ? employees.replaceAll(`"`, "").split(",")
+        : [];
+      const attentionTos = attentionTo
+        ? attentionTo.replaceAll(`"`, "").split(",")
+        : [];
+      const dateRange = startDate && endDate ? [startDate, endDate] : [];
 
-    const data = await commonAPIClient.filterLogRecords({
+      const data = await commonAPIClient.filterLogRecords({
+        building,
+        employeeId: employeeIds,
+        attnTo: attentionTos,
+        dateRange,
+        tags: tags ? [tags] : [],
+        flagged,
+        resultsPerPage,
+        pageNumber,
+      });
+
+      // Reset table scroll
+      tableRef.current?.scrollTo(0, 0);
+
+      setLogRecords(data ? data.logRecords : []);
+      setNumRecords(data ? data.numResults : 0);
+
+      if (!data || data.numResults === 0) {
+        setUserPageNum(0);
+        setPageNum(0);
+      } else {
+        setPageNum(pageNumber);
+      }
+    },
+    [
+      attentionTo,
       building,
-      employeeId: employeeIds,
-      attnTo: attentionTos,
-      dateRange,
-      tags: tags ? [tags] : [],
+      employees,
+      endDate,
       flagged,
       resultsPerPage,
-      pageNumber,
-    });
-
-    // Reset table scroll
-    tableRef.current?.scrollTo(0, 0);
-
-    setLogRecords(data ? data.logRecords : []);
-    setNumRecords(data ? data.numResults : 0);
-
-    if (!data || data.numResults === 0) {
-      setUserPageNum(0);
-      setPageNum(0);
-    } else {
-      setPageNum(pageNumber);
-    }
-  };
+      startDate,
+      tags,
+    ],
+  );
 
   useEffect(() => {
     setUserPageNum(1);
@@ -87,6 +99,7 @@ const HomePage = (): React.ReactElement => {
     tags,
     flagged,
     setLogRecords,
+    getLogRecords,
     resultsPerPage,
   ]);
 

@@ -1,5 +1,4 @@
 export type LogRecord = {
-  logId: number;
   attnTo: number;
   attnToFirstName: string;
   attnToLastName: string;
@@ -9,9 +8,9 @@ export type LogRecord = {
   employeeFirstName: string;
   employeeLastName: string;
   flagged: boolean;
+  logId: number;
   note: string;
-  residentFirstName: string;
-  residentLastName: string;
+  residentId: number;
   tags: string[];
 };
 

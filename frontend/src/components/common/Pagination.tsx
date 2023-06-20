@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Menu,
   MenuButton,
@@ -55,6 +55,7 @@ const Pagination = ({
     }
   };
 
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (Number.isNaN(userPageNum)) {
       setUserPageNum(pageNum);

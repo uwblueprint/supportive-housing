@@ -25,7 +25,7 @@ import {
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -55,6 +55,7 @@ const EMPLOYEES = [
 ];
 
 // Changes the border of the Select components if the input is invalid
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 function getBorderStyle(state: any, error: boolean): string {
   if (state.isFocused) {
     return "2px solid #3182ce";
@@ -66,7 +67,8 @@ function getBorderStyle(state: any, error: boolean): string {
   return "1px solid #cbd5e0";
 }
 
-const CreateLog = () => {
+const CreateLog = (): React.ReactElement => {
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
@@ -78,13 +80,16 @@ const CreateLog = () => {
   );
   const [building, setBuilding] = useState("");
   const [resident, setResident] = useState("");
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [tags, setTags] = useState<string[]>([]);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [attnTo, setAttnTo] = useState("");
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);

@@ -1,9 +1,9 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 import { LogRecordFilters } from "../components/common/types/Filters";
+import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 
 const filterLogRecords = async ({
   building = "",
@@ -15,7 +15,7 @@ const filterLogRecords = async ({
   returnAll = false,
   pageNumber,
   resultsPerPage,
-}: LogRecordFilters): Promise<any> => {
+}: LogRecordFilters): Promise<GetLogRecordsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

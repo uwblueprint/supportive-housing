@@ -1,8 +1,3 @@
-import {
-  FetchResult,
-  MutationFunctionOptions,
-  OperationVariables,
-} from "@apollo/client";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser, LoginResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
