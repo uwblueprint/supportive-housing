@@ -50,15 +50,22 @@ const Pagination = ({
       return;
     }
     setUserPageNum(newUserPageNum);
-    if (!Number.isNaN(newUserPageNum) && newUserPageNum !== pageNum) {
-      getRecords(newUserPageNum);
-    }
   };
+  
+  const fetchRecords = () => {
+    if (!Number.isNaN(userPageNum) && userPageNum !== pageNum) {
+      getRecords(userPageNum);
+    }
+  }
+
+  const handleKeyUp = (event: any) => {
+    if (event.keyCode === 13) {
+      fetchRecords()
+    }
+  }
 
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (Number.isNaN(userPageNum)) {
-      setUserPageNum(pageNum);
-    }
+    fetchRecords()
   };
 
   const handlePageArrowPress = (newUserPageNum: number) => {
