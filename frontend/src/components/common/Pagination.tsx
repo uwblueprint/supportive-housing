@@ -64,7 +64,7 @@ const Pagination = ({
     }
   }
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = () => {
     fetchRecords()
   };
 
@@ -105,7 +105,7 @@ const Pagination = ({
                 max={numPages}
                 size="sm"
                 onChange={handleNumberInputChange}
-                onBlur={(e) => handleBlur(e)}
+                onBlur={() => handleBlur()}
               >
                 <NumberInputField 
                   fontWeight="700" 
