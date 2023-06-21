@@ -107,7 +107,10 @@ const Pagination = ({
                 onChange={handleNumberInputChange}
                 onBlur={(e) => handleBlur(e)}
               >
-                <NumberInputField fontWeight="700" />
+                <NumberInputField 
+                  fontWeight="700" 
+                  onKeyUp={(e) => handleKeyUp(e)}
+                />
               </NumberInput>
               <Text>of {numPages}</Text>
             </Flex>
