@@ -9,3 +9,6 @@
 .vscode
 **/*.cache
 **/*.egg-info
+
+!.vscode/extensions.json
+!.vscode/settings.json
