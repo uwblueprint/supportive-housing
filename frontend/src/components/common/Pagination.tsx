@@ -52,6 +52,7 @@ const Pagination = ({
     setUserPageNum(newUserPageNum);
   };
   
+  // Only fetch records if a valid page num is present AND the page num has changed
   const fetchRecords = () => {
     if (!Number.isNaN(userPageNum) && userPageNum !== pageNum) {
       getRecords(userPageNum);
@@ -65,6 +66,10 @@ const Pagination = ({
   }
 
   const handleBlur = () => {
+    if (Number.isNaN(userPageNum)) {
+      setUserPageNum(pageNum);
+      return;
+    }
     fetchRecords()
   };
 
