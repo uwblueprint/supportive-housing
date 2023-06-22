@@ -51,27 +51,27 @@ const Pagination = ({
     }
     setUserPageNum(newUserPageNum);
   };
-  
+
   // Only fetch records if a valid page num is present AND the page num has changed
   const fetchRecords = () => {
     if (!Number.isNaN(userPageNum) && userPageNum !== pageNum) {
       getRecords(userPageNum);
     }
-  }
+  };
 
   // Treat the enter key as an alt method of triggering onBlur (lose focus)
   const handleKeyUp = (event: any) => {
     if (event.keyCode === 13) {
       event.target.blur();
     }
-  }
+  };
 
   const handleBlur = () => {
     if (Number.isNaN(userPageNum)) {
       setUserPageNum(pageNum);
       return;
     }
-    fetchRecords()
+    fetchRecords();
   };
 
   const handlePageArrowPress = (newUserPageNum: number) => {
@@ -113,8 +113,8 @@ const Pagination = ({
                 onChange={handleNumberInputChange}
                 onBlur={() => handleBlur()}
               >
-                <NumberInputField 
-                  fontWeight="700" 
+                <NumberInputField
+                  fontWeight="700"
                   onKeyUp={(e) => handleKeyUp(e)}
                 />
               </NumberInput>
