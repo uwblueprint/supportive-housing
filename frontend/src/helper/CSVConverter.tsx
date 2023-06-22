@@ -37,7 +37,11 @@ const CSVConverter = (data: LogRecord[]): boolean => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "log_records.csv");
+    
+    const dateToday = new Date();
+    const dateTodayString = dateToday.toLocaleString("fr-CA", {timeZone: "America/Toronto"}).substring(0, 10);
+
+    link.setAttribute("download", `log_records ${dateTodayString}.csv`);
     document.body.appendChild(link);
     link.click();
 
