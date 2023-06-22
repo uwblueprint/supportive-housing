@@ -59,9 +59,10 @@ const Pagination = ({
     }
   }
 
+  // Treat the enter key as an alt method of triggering onBlur (lose focus)
   const handleKeyUp = (event: any) => {
     if (event.keyCode === 13) {
-      fetchRecords()
+      event.target.blur();
     }
   }
 
