@@ -12,9 +12,9 @@ import PrintCSVButton from "../../common/PrintCSVButton";
 
 type TransformedFilters = {
   employeeIds: any[];
-  attentionTos: any[]; 
+  attentionTos: any[];
   dateRange: any[];
-}
+};
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -56,12 +56,11 @@ const HomePage = (): React.ReactElement => {
       : [];
     const dateRange = startDate && endDate ? [startDate, endDate] : [];
 
-    return {employeeIds, attentionTos, dateRange}
+    return { employeeIds, attentionTos, dateRange };
   };
 
   const getLogRecords = async (pageNumber: number) => {
-
-    const {employeeIds, attentionTos, dateRange} = transformFilters();
+    const { employeeIds, attentionTos, dateRange } = transformFilters();
 
     const data = await commonAPIClient.filterLogRecords({
       building,
@@ -79,7 +78,7 @@ const HomePage = (): React.ReactElement => {
 
     setLogRecords(data ? data.logRecords : []);
 
-    if (!data) {
+    if (!data || data.logRecords.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
@@ -88,8 +87,7 @@ const HomePage = (): React.ReactElement => {
   };
 
   const countLogRecords = async () => {
-    
-    const {employeeIds, attentionTos, dateRange} = transformFilters();
+    const { employeeIds, attentionTos, dateRange } = transformFilters();
 
     const data = await commonAPIClient.countLogRecords({
       building,
@@ -120,15 +118,7 @@ const HomePage = (): React.ReactElement => {
 
   useEffect(() => {
     countLogRecords();
-  }, [
-    building,
-    employees,
-    attentionTo,
-    startDate,
-    endDate,
-    tags,
-    flagged,
-  ]);
+  }, [building, employees, attentionTo, startDate, endDate, tags, flagged]);
 
   return (
     <Box>

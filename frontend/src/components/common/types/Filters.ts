@@ -5,7 +5,7 @@ export type CountLogRecordFilters = {
   dateRange?: string[];
   tags?: string[];
   flagged?: boolean;
-}
+};
 
 export type LogRecordFilters = CountLogRecordFilters & {
   returnAll?: boolean;

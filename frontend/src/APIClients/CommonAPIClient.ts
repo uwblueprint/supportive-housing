@@ -1,9 +1,15 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetLogRecordsReponse, GetLogRecordCountResponse } from "../types/LogRecordTypes";
+import {
+  GetLogRecordsReponse,
+  GetLogRecordCountResponse,
+} from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-import { LogRecordFilters, CountLogRecordFilters } from "../components/common/types/Filters";
+import {
+  LogRecordFilters,
+  CountLogRecordFilters,
+} from "../components/common/types/Filters";
 
 const filterLogRecords = async ({
   building = "",
@@ -50,7 +56,7 @@ const countLogRecords = async ({
   attnTo = [],
   dateRange = [],
   tags = [],
-  flagged = false
+  flagged = false,
 }: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(

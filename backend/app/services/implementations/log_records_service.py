@@ -105,7 +105,7 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_flagged(self, flagged):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
-    
+
     def filter_log_records(self, filters=None):
         sql = ""
 
@@ -124,17 +124,11 @@ class LogRecordsService(ILogRecordsService):
             for filter in filters:
                 if filters.get(filter):
                     if is_first_filter:
-                        sql = (
-                            sql + "\nWHERE " + options[filter](filters.get(filter))
-                        )
+                        sql = sql + "\nWHERE " + options[filter](filters.get(filter))
                         is_first_filter = False
                     else:
                         if filters.get(filter):
-                            sql = (
-                                sql
-                                + "\nAND "
-                                + options[filter](filters.get(filter))
-                            )
+                            sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
 
     def get_log_records(
@@ -158,7 +152,7 @@ class LogRecordsService(ILogRecordsService):
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id"
-        
+
             sql += self.filter_log_records(filters)
 
             sql += "\nORDER BY datetime DESC"
@@ -176,7 +170,7 @@ class LogRecordsService(ILogRecordsService):
 
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def count_log_records(self, filters=None):
         try:
             sql = "SELECT\n \
@@ -192,7 +186,7 @@ class LogRecordsService(ILogRecordsService):
             return {
                 "num_results": num_results.fetchone()[0],
             }
-        
+
         except Exception as postgres_error:
             raise postgres_error
 
