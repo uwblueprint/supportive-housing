@@ -135,7 +135,6 @@ class LogRecordsService(ILogRecordsService):
                                 + "\nAND "
                                 + options[filter](filters.get(filter))
                             )
-        sql += "\nORDER BY datetime DESC"
         return sql
 
     def get_log_records(
@@ -161,6 +160,8 @@ class LogRecordsService(ILogRecordsService):
             JOIN users employees ON logs.employee_id = employees.id"
         
             sql += self.filter_log_records(filters)
+
+            sql += "\nORDER BY datetime DESC"
 
             if not return_all:
                 sql += f"\nLIMIT {results_per_page}"
@@ -189,7 +190,7 @@ class LogRecordsService(ILogRecordsService):
             num_results = db.session.execute(text(sql))
 
             return {
-                "num_results": num_results[0][0],
+                "num_results": num_results.fetchone()[0],
             }
         
         except Exception as postgres_error:

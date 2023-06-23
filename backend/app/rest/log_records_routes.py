@@ -78,7 +78,7 @@ def count_log_records():
         filters = None
 
     try:
-        log_records = log_records_service.get_log_records(filters)
+        log_records = log_records_service.count_log_records(filters)
         return jsonify(log_records), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
