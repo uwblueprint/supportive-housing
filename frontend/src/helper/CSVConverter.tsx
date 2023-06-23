@@ -12,8 +12,7 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
     employee,
     flagged: logRecord.flagged,
     note: logRecord.note,
-    residentFirstName: logRecord.residentFirstName,
-    residentLastName: logRecord.residentLastName,
+    residentId: logRecord.residentId,
     tags: logRecord.tags.join("; "),
   };
 };
@@ -23,7 +22,7 @@ const CSVConverter = (data: LogRecord[]): boolean => {
   try {
     const csvRows = [];
 
-    const headers = ["attnTo", "building", "datetime", "employee", "flagged", "note", "residentFirstName", "residentLastName", "tags"];
+    const headers = ["attnTo", "building", "datetime", "employee", "flagged", "note", "residentId", "tags"];
     csvRows.push(headers.join(","));
     data.forEach((log: LogRecord) => {
       const logCSV = convertToCSVLog(log); 
