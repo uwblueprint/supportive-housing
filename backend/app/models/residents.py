@@ -2,6 +2,7 @@ from . import db
 from sqlalchemy import inspect, cast, String
 from sqlalchemy.orm.properties import ColumnProperty
 
+
 class Residents(db.Model):
     __tablename__ = "residents"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -9,10 +10,8 @@ class Residents(db.Model):
     room_num = db.Column(db.Integer, nullable=False)
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
-    building = db.Column(
-        db.Enum("144", "402", "362", name="buildings"), nullable=False
-        )
-    
+    building = db.Column(db.Enum("144", "402", "362", name="buildings"), nullable=False)
+
     resident_id = db.column_property(initial + cast(room_num, String))
 
     def to_dict(self, include_relationships=False):
@@ -33,4 +32,4 @@ class Residents(db.Model):
                 # recursively format the relationship
                 # don't format the relationship's relationships
                 formatted[field] = [obj.to_dict() for obj in attr]
-        return formatted  
+        return formatted
