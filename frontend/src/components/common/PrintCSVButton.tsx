@@ -50,7 +50,7 @@ const PrintCSVButton = (): React.ReactElement => {
 
     const data = await commonAPIClient.filterLogRecords({
       dateRange,
-      return_all: true, // return all data
+      returnAll: true, // return all data
     });
 
     setShowAlert(!data || !CSVConverter(data.logRecords));

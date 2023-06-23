@@ -14,3 +14,8 @@ export type LogRecord = {
   residentLastName: string;
   tags: string[];
 };
+
+export type GetLogRecordsReponse = {
+  logRecords: LogRecord[];
+  numResults: number;
+} | null;

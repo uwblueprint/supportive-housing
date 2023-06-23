@@ -9,6 +9,7 @@ import Signup from "./components/auth/Signup";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
 import DisplayPage from "./components/pages/DisplayPage";
+import HomePage from "./components/pages/HomePage/HomePage";
 import NotFound from "./components/pages/NotFound";
 import UpdatePage from "./components/pages/UpdatePage";
 import * as Routes from "./constants/Routes";
@@ -22,7 +23,6 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-import LogRecords from "./components/pages/LogRecords";
 import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
@@ -70,7 +70,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
-                  component={LogRecords}
+                  component={HomePage}
                 />
                 <PrivateRoute
                   exact

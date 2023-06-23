@@ -5,5 +5,7 @@ export type LogRecordFilters = {
   dateRange?: string[];
   tags?: string[];
   flagged?: boolean;
-  return_all?: boolean;
+  returnAll?: boolean;
+  pageNumber?: number;
+  resultsPerPage?: number;
 };

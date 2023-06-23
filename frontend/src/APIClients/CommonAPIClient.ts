@@ -1,4 +1,5 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -11,7 +12,9 @@ const filterLogRecords = async ({
   dateRange = [],
   tags = [],
   flagged = false,
-  return_all = false,
+  returnAll = false,
+  pageNumber,
+  resultsPerPage,
 }: LogRecordFilters): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -28,7 +31,9 @@ const filterLogRecords = async ({
           tags,
           flagged,
         },
-        return_all,
+        returnAll,
+        pageNumber,
+        resultsPerPage,
       },
       headers: { Authorization: bearerToken },
     });
