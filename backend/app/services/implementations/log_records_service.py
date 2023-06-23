@@ -105,75 +105,93 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_flagged(self, flagged):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
+    
+    def filter_log_records(self, filters=None):
+        sql = ""
+
+        if filters:
+            is_first_filter = True
+
+            options = {
+                "building": self.filter_by_building,
+                "employee_id": self.filter_by_employee_id,
+                "resident_id": self.filter_by_resident_id,
+                "attn_to": self.filter_by_attn_to,
+                "date_range": self.filter_by_date_range,
+                "tags": self.filter_by_tags,
+                "flagged": self.filter_by_flagged,
+            }
+            for filter in filters:
+                if filters.get(filter):
+                    if is_first_filter:
+                        sql = (
+                            sql + "\nWHERE " + options[filter](filters.get(filter))
+                        )
+                        is_first_filter = False
+                    else:
+                        if filters.get(filter):
+                            sql = (
+                                sql
+                                + "\nAND "
+                                + options[filter](filters.get(filter))
+                            )
+        sql += "\nORDER BY datetime DESC"
+        return sql
 
     def get_log_records(
         self, page_number, return_all, results_per_page=10, filters=None
     ):
         try:
-            if not return_all:
-                start_index = (page_number - 1) * results_per_page
-                end_index = start_index + results_per_page
-
             sql = "SELECT\n \
-                logs.log_id,\n \
-                logs.employee_id,\n \
-                logs.resident_id,\n \
-                logs.datetime,\n \
-                logs.flagged,\n \
-                logs.attn_to,\n \
-                logs.note,\n \
-                logs.tags,\n \
-                logs.building,\n \
-                employees.first_name AS employee_first_name,\n \
-                employees.last_name AS employee_last_name,\n \
-                attn_tos.first_name AS attn_to_first_name,\n \
-                attn_tos.last_name AS attn_to_last_name\n \
-                FROM log_records logs\n \
-                LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-                JOIN users employees ON logs.employee_id = employees.id"
-
-            if filters:
-                is_first_filter = True
-
-                options = {
-                    "building": self.filter_by_building,
-                    "employee_id": self.filter_by_employee_id,
-                    "resident_id": self.filter_by_resident_id,
-                    "attn_to": self.filter_by_attn_to,
-                    "date_range": self.filter_by_date_range,
-                    "tags": self.filter_by_tags,
-                    "flagged": self.filter_by_flagged,
-                }
-                for filter in filters:
-                    if filters.get(filter):
-                        if is_first_filter:
-                            sql = (
-                                sql + "\nWHERE " + options[filter](filters.get(filter))
-                            )
-                            is_first_filter = False
-                        else:
-                            if filters.get(filter):
-                                sql = (
-                                    sql
-                                    + "\nAND "
-                                    + options[filter](filters.get(filter))
-                                )
-
-            sql = sql + "\nORDER BY datetime DESC"
+            logs.log_id,\n \
+            logs.employee_id,\n \
+            logs.resident_id,\n \
+            logs.datetime,\n \
+            logs.flagged,\n \
+            logs.attn_to,\n \
+            logs.note,\n \
+            logs.tags,\n \
+            logs.building,\n \
+            employees.first_name AS employee_first_name,\n \
+            employees.last_name AS employee_last_name,\n \
+            attn_tos.first_name AS attn_to_first_name,\n \
+            attn_tos.last_name AS attn_to_last_name\n \
+            FROM log_records logs\n \
+            LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
+            JOIN users employees ON logs.employee_id = employees.id"
+        
+            sql += self.filter_log_records(filters)
 
             if not return_all:
-                start_index = (page_number - 1) * results_per_page
-                sql = sql + f"\nLIMIT {results_per_page} OFFSET {start_index}"
+                sql += f"\nLIMIT {results_per_page}"
+                sql += f"\nOFFSET {(page_number - 1) * results_per_page}"
 
             log_records = db.session.execute(text(sql))
             json_list = self.to_json_list(log_records)
-            num_results = len(json_list)
 
             return {
                 "log_records": json_list,
-                "num_results": num_results,
             }
 
+        except Exception as postgres_error:
+            raise postgres_error
+        
+    def count_log_records(self, filters=None):
+        try:
+            sql = "SELECT\n \
+            COUNT(*)\n \
+            FROM log_records logs\n \
+            LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
+            JOIN users employees ON logs.employee_id = employees.id"
+
+            sql += self.filter_log_records(filters)
+
+            num_results = db.session.execute(text(sql))
+
+            return {
+                "num_results": num_results[0][0],
+            }
+        
         except Exception as postgres_error:
             raise postgres_error
 
