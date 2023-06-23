@@ -1,9 +1,9 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetLogRecordsReponse } from "../types/LogRecordTypes";
+import { GetLogRecordsReponse, GetLogRecordCountResponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-import { LogRecordFilters } from "../components/common/types/Filters";
+import { LogRecordFilters, CountLogRecordFilters } from "../components/common/types/Filters";
 
 const filterLogRecords = async ({
   building = "",
@@ -15,7 +15,7 @@ const filterLogRecords = async ({
   returnAll = false,
   pageNumber,
   resultsPerPage,
-}: LogRecordFilters): Promise<any> => {
+}: LogRecordFilters): Promise<GetLogRecordsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -34,6 +34,39 @@ const filterLogRecords = async ({
         returnAll,
         pageNumber,
         resultsPerPage,
+      },
+      headers: { Authorization: bearerToken },
+    });
+    return data;
+  } catch (error) {
+    // TODO: more descriptive error / throw an exception potentially?
+    return null;
+  }
+};
+
+const countLogRecords = async ({
+  building = "",
+  employeeId = [],
+  attnTo = [],
+  dateRange = [],
+  tags = [],
+  flagged = false
+}: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get(`/log_records/count`, {
+      params: {
+        filters: {
+          building,
+          employeeId,
+          attnTo,
+          dateRange,
+          tags,
+          flagged,
+        },
       },
       headers: { Authorization: bearerToken },
     });
@@ -95,6 +128,7 @@ const getUserStatus = async (email: string): Promise<string> => {
 
 export default {
   filterLogRecords,
+  countLogRecords,
   inviteUser,
   isUserInvited: getUserStatus,
 };
