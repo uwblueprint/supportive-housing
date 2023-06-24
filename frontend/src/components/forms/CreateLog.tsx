@@ -271,10 +271,10 @@ const CreateLog = () => {
   }, [showAlert]);
 
   useEffect(() => {
-    const curUser = getLocalStorageObj(
-      AUTHENTICATED_USER_KEY,
-    );
-    setEmployee(curUserName as string)
+    // const curUserName = getLocalStorageObj(
+    //   AUTHENTICATED_USER_KEY,
+    // );
+    // setEmployee(curUserName as string)
   }, [])
 
   return (
