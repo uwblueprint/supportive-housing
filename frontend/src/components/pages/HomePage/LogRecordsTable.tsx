@@ -60,7 +60,7 @@ const LogRecordsTable = ({
                   {
                     // TODO: Resolve the resident record at some point
                   }
-                  <Td width="5%">{record.residentFirstName}</Td>
+                  <Td width="5%">{record.residentId}</Td>
                   <Td whiteSpace="normal" width="75%">
                     {record.note}
                   </Td>
