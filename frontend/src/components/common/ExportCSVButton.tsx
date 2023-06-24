@@ -23,7 +23,7 @@ import { RangeDatepicker } from "chakra-dayzed-datepicker";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
 import CSVConverter from "../../helper/CSVConverter";
 
-const PrintCSVButton = (): React.ReactElement => {
+const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -69,6 +69,7 @@ const PrintCSVButton = (): React.ReactElement => {
     <>
       <Tooltip label="Export to CSV">
         <IconButton
+          aria-label="Export to CSV"
           icon={<Icon boxSize="32px" as={ExternalLinkIcon} />}
           variant="tertiary"
           onClick={handleOpen}
@@ -143,4 +144,4 @@ const PrintCSVButton = (): React.ReactElement => {
   );
 };
 
-export default PrintCSVButton;
+export default ExportCSVButton;
