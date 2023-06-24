@@ -59,7 +59,7 @@ class IResidentsService(ABC):
         pass
 
     @abstractmethod
-    def get_resident(self, resident_id, id):
+    def get_residents(self, resident_id, id):
         """
         Gets residents in json format.
         :param resident_id: id of resident to be deleted in the format of initial+room_num
