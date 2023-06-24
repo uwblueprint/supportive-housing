@@ -1,16 +1,41 @@
 import { LogRecord } from "../types/LogRecordTypes";
+import { CSVLog } from "../types/CSVLog";
+
+const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
+  const attnTo = `${logRecord.attnToFirstName} ${logRecord.attnToLastName}`;
+  const employee = `${logRecord.employeeFirstName} ${logRecord.employeeLastName}`;
+
+  return {
+    attnTo,
+    building: logRecord.building,
+    datetime: logRecord.datetime,
+    employee,
+    flagged: logRecord.flagged,
+    note: logRecord.note,
+    residentId: logRecord.residentId,
+    tags: logRecord.tags.join("; "),
+  };
+};
 
 const CSVConverter = (data: LogRecord[]): boolean => {
   // Convert JSON to CSV
   try {
     const csvRows = [];
 
-    const headers = Object.keys(data[0]);
+    const headers = [
+      "attnTo",
+      "building",
+      "datetime",
+      "employee",
+      "flagged",
+      "note",
+      "residentId",
+      "tags",
+    ];
     csvRows.push(headers.join(","));
     data.forEach((log: LogRecord) => {
-      const tags = log.tags.join("; ");
-      const CSVLog = { ...log, tags };
-      const values = Object.values(CSVLog).join(",");
+      const logCSV = convertToCSVLog(log);
+      const values = Object.values(logCSV).join(",");
       csvRows.push(values);
     });
     const csvContent = csvRows.join("\n");
@@ -20,7 +45,15 @@ const CSVConverter = (data: LogRecord[]): boolean => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "log_records.csv");
+
+    // Get date for file name
+    // "fr-CA" formats the date into YYYY-MM-DD
+    const dateToday = new Date();
+    const dateTodayString = dateToday
+      .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+      .substring(0, 10);
+
+    link.setAttribute("download", `log_records ${dateTodayString}.csv`);
     document.body.appendChild(link);
     link.click();
 

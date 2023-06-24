@@ -14,6 +14,12 @@ class Residents(db.Model):
 
     resident_id = db.column_property(initial + cast(room_num, String))
 
+    __table_args__ = (
+        db.CheckConstraint(
+            "date_left IS NULL OR date_left > date_joined", name="check_date_left_valid"
+        ),
+    )
+
     def to_dict(self, include_relationships=False):
         # define the entities table
         cls = type(self)
