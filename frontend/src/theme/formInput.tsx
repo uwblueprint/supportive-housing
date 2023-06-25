@@ -13,13 +13,13 @@ const singleDatePickerStyle = {
   },
   inputProps: {
     boxShadow: "none",
-    borderColor: colors.gray[200],
-    color: colors.gray[500],
+    borderColor: colors.teal[100],
+    color: colors.teal[300],
     _hover: {
-      borderColor: colors.gray[200],
+      borderColor: colors.teal[400],
     },
     _focus: {
-      borderColor: colors.gray[200],
+      borderColor: colors.teal[100],
     },
   },
   popoverCompProps: {
@@ -41,4 +41,22 @@ const singleDatePickerStyle = {
   },
 };
 
-export default singleDatePickerStyle;
+const timeInputStyle = {
+  boxShadow: "none",
+  color: colors.teal[300],
+  borderColor: colors.teal[100],
+  _hover: {
+    borderColor: colors.teal[400],
+  },
+  _focus: {
+    borderColor: colors.teal[400],
+  },
+};
+
+const textAreaStyle = {
+  border: "none",
+  color: colors.teal[300],
+  boxShadow: "none",
+};
+
+export { singleDatePickerStyle, timeInputStyle, textAreaStyle };

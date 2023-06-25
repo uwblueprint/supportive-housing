@@ -13,43 +13,40 @@ const optionBackgroundColor = (isSelected: boolean, isFocused: boolean) => {
 const selectStyle: any = {
   singleValue: (provided: any) => ({
     ...provided,
-    color: colors.gray[500],
-    borderColor: colors.gray[200],
+    color: colors.teal[300],
+    border: "none",
     boxShadow: "none",
   }),
   control: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isDisabled ? colors.teal[50] : colors.white.default,
-    borderColor: colors.gray[200],
-    boxShadow: "none",
-    borderRadius: "4px",
     "&:hover": {
-      border: `1px solid ${colors.gray[200]}`,
+      border: `1px solid ${colors.teal[300]}`,
+      cursor: "pointer",
+    },
+    border: `1px solid ${colors.teal[100]}`,
+    borderColor: state.isFocused ? colors.teal[400] : colors.teal[100],
+    boxShadow: "none",
+  }),
+  option: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: optionBackgroundColor(state.isSelected, state.isFocused),
+    color: colors.teal[300],
+    ":active": {
+      backgroundColor: colors.teal[100],
+    },
+  }),
+  multiValue: (provided: any, state: any) => ({
+    ...provided,
+    backgroundColor: colors.teal[50],
+    border: `1px solid ${colors.teal[100]}`,
+    borderColor: state.isFocused ? colors.teal[400] : colors.teal[100],
+    boxShadow: "none",
+    color: state.isFocused ? colors.teal[400] : colors.teal[300],
+    "&:hover": {
+      border: `1px solid ${colors.teal[300]}`,
       cursor: "pointer",
     },
   }),
-  option: (provided: any, state: any) => {
-    return {
-      ...provided,
-      backgroundColor: optionBackgroundColor(state.isSelected, state.isFocused),
-      color: colors.gray[500],
-      ":active": {
-        backgroundColor: colors.teal[100],
-      },
-    };
-  },
-  multiValue: (provided: any) => {
-    return {
-      ...provided,
-      backgroundColor: colors.teal[50],
-      border: `1px solid ${colors.gray[200]}`,
-      boxShadow: "none",
-      "&:hover": {
-        border: `1px solid ${colors.gray[200]}`,
-        cursor: "pointer",
-      },
-    };
-  },
 };
 
 export default selectStyle;

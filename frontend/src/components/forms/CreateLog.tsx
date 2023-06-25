@@ -28,8 +28,11 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import colors from "../../theme/colors";
 import selectStyle from "../../theme/selectStyle";
-import singleDatePickerStyle from "../../theme/singleDatePickerStyles";
-
+import {
+  singleDatePickerStyle,
+  timeInputStyle,
+  textAreaStyle,
+} from "../../theme/formInput";
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },
@@ -274,12 +277,7 @@ const CreateLog = () => {
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
                     <GridItem>
-                      <FormControl
-                        isRequired
-                        style={{
-                          borderColor: colors.gray[200],
-                        }}
-                      >
+                      <FormControl isRequired>
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
                           name="date-input"
@@ -290,21 +288,15 @@ const CreateLog = () => {
                       </FormControl>
                     </GridItem>
                     <GridItem>
-                      <FormControl
-                        isRequired
-                        isInvalid={timeError}
-                        style={{ color: colors.gray[500] }}
-                      >
+                      <FormControl isRequired isInvalid={timeError}>
                         <FormLabel>Time</FormLabel>
                         <Input
+                          _hover={{ borderColor: colors.teal[400] }}
                           size="md"
                           type="time"
                           defaultValue={time}
                           onChange={handleTimeChange}
-                          style={{
-                            boxShadow: "none",
-                            borderColor: colors.gray[200],
-                          }}
+                          style={timeInputStyle}
                         />
                         <FormErrorMessage>Time is invalid.</FormErrorMessage>
                       </FormControl>
@@ -321,20 +313,7 @@ const CreateLog = () => {
                       options={BUILDINGS}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
-                      styles={{
-                        ...selectStyle,
-                        control: (provided) => ({
-                          ...provided,
-                          "&:hover": {
-                            border: `1px solid ${colors.gray[200]}`,
-                            cursor: "pointer",
-                          },
-                          border: buildingError
-                            ? `1px solid ${colors.red[50]}`
-                            : `1px solid ${colors.gray[200]}`,
-                          boxShadow: "none",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -346,20 +325,7 @@ const CreateLog = () => {
                       options={RESIDENTS}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
-                      styles={{
-                        ...selectStyle,
-                        control: (provided) => ({
-                          ...provided,
-                          "&:hover": {
-                            border: `1px solid ${colors.gray[200]}`,
-                            cursor: "pointer",
-                          },
-                          border: residentError
-                            ? `1px solid ${colors.red[50]}`
-                            : `1px solid ${colors.gray[200]}`,
-                          boxShadow: "none",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -387,18 +353,7 @@ const CreateLog = () => {
                       options={EMPLOYEES}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
-                      styles={{
-                        ...selectStyle,
-                        control: (provided) => ({
-                          ...provided,
-                          "&:hover": {
-                            border: `1px solid ${colors.gray[200]}`,
-                            cursor: "pointer",
-                          },
-                          border: `1px solid ${colors.gray[200]}`,
-                          boxShadow: "none",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
@@ -408,20 +363,21 @@ const CreateLog = () => {
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
                     <FormLabel>Notes</FormLabel>
-                    <Textarea
-                      value={notes}
-                      onChange={handleNotesChange}
-                      placeholder="Enter log notes here..."
-                      size="lg"
-                      style={{
-                        resize: "none",
-                        color: colors.gray[500],
-                        boxShadow: "none",
-                        border: notesError
-                          ? `1px solid ${colors.red[50]}`
-                          : `1px solid ${colors.gray[200]}`,
-                      }}
-                    />
+                    <Box
+                      _hover={{ borderColor: colors.teal[400] }} // Change the border color on hover
+                      borderWidth={1}
+                      borderRadius="md"
+                    >
+                      <Textarea
+                        value={notes}
+                        onChange={handleNotesChange}
+                        placeholder="Enter log notes here..."
+                        size="lg"
+                        resize="none"
+                        style={textAreaStyle}
+                      />
+                    </Box>
+
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
                 </Col>
