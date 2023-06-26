@@ -1,0 +1,1 @@
+docker exec -it SHOW-database /bin/bash -c "psql -U postgres -d show_db"

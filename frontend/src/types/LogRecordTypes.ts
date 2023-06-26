@@ -10,7 +10,7 @@ export type LogRecord = {
   flagged: boolean;
   logId: number;
   note: string;
-  residentId: number;
+  residentId: string;
   tags: string[];
 };
 

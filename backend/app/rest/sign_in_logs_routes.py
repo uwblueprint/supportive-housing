@@ -19,13 +19,13 @@ def filter_logs():
     start_date = None
     end_date = None
     try:
-        email = request.json["email"]
+        email = request.args.get("email")
     except:
         pass
 
     try:
-        start_date = request.json["start_date"]
-        end_date = request.json["end_date"]
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
     except:
         pass
 

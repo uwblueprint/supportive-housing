@@ -50,16 +50,28 @@ const Pagination = ({
       return;
     }
     setUserPageNum(newUserPageNum);
-    if (!Number.isNaN(newUserPageNum) && newUserPageNum !== pageNum) {
-      getRecords(newUserPageNum);
+  };
+
+  // Only fetch records if a valid page num is present AND the page num has changed
+  const fetchRecords = () => {
+    if (!Number.isNaN(userPageNum) && userPageNum !== pageNum) {
+      getRecords(userPageNum);
     }
   };
 
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+  // Treat the enter key as an alt method of triggering onBlur (lose focus)
+  const handleKeyUp = (event: any) => {
+    if (event.keyCode === 13) {
+      event.target.blur();
+    }
+  };
+
+  const handleBlur = () => {
     if (Number.isNaN(userPageNum)) {
       setUserPageNum(pageNum);
+      return;
     }
+    fetchRecords();
   };
 
   const handlePageArrowPress = (newUserPageNum: number) => {
@@ -99,9 +111,12 @@ const Pagination = ({
                 max={numPages}
                 size="sm"
                 onChange={handleNumberInputChange}
-                onBlur={(e) => handleBlur(e)}
+                onBlur={() => handleBlur()}
               >
-                <NumberInputField fontWeight="700" />
+                <NumberInputField
+                  fontWeight="700"
+                  onKeyUp={(e) => handleKeyUp(e)}
+                />
               </NumberInput>
               <Text>of {numPages}</Text>
             </Flex>
