@@ -22,10 +22,15 @@ import {
   ScaleFade,
   Textarea,
 } from "@chakra-ui/react";
-
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import type { Resident, JSONResident } from "../../types/ResidentTypes";
+import { getLocalStorageObj, getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -54,6 +59,11 @@ const EMPLOYEES = [
   { label: "John Doe", value: "John Doe" },
 ];
 
+type SelectOptionType = {
+  label: string;
+  value: string;
+}
+
 // Changes the border of the Select components if the input is invalid
 function getBorderStyle(state: any, error: boolean): string {
   if (state.isFocused) {
@@ -67,7 +77,8 @@ function getBorderStyle(state: any, error: boolean): string {
 }
 
 const CreateLog = () => {
-  const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  // const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState(""); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -82,6 +93,13 @@ const CreateLog = () => {
   const [attnTo, setAttnTo] = useState("");
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
+
+  const [residents, setResidentsData] = useState<Resident[]>([]);
+
+  const [employeeOptions, setEmployeeOptions] = useState<SelectOptionType[]>([]);
+  const [residentOptions, setResidentOptions] = useState<SelectOptionType[]>([]);
+  
+  const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -156,8 +174,26 @@ const CreateLog = () => {
     setNotesError(inputValue === "");
   };
 
-  const [isCreateOpen, setCreateOpen] = React.useState(false);
+  const getLogEntryOptions = async () => {
+    const residentsData = await ResidentAPIClient.getResidents()
+
+    if (residentsData) {
+      const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
+      ({label: r.resident_id, value: r.resident_id}));
+      setResidentOptions(residentLabels)
+    }
+
+    const usersData = await UserAPIClient.getUsers()
+    if (usersData) {
+      const userLabels: SelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
+      ({label: user.firstName, value: user.id}));
+
+      setEmployeeOptions(userLabels);
+    }
+  }
+
   const handleCreateOpen = () => {
+    getLogEntryOptions()
     setCreateOpen(true);
 
     // reset all states
@@ -249,6 +285,13 @@ const CreateLog = () => {
     }
   }, [showAlert]);
 
+  useEffect(() => {
+    // const curUserName = getLocalStorageObj(
+    //   AUTHENTICATED_USER_KEY,
+    // );
+    // setEmployee(curUserName as string)
+  }, [])
+
   return (
     <div>
       <Box textAlign="right">
@@ -273,7 +316,7 @@ const CreateLog = () => {
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={EMPLOYEES}
+                      options={employeeOptions}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
                       styles={{
@@ -349,7 +392,7 @@ const CreateLog = () => {
                   <FormControl isRequired isInvalid={residentError} mt={4}>
                     <FormLabel>Resident</FormLabel>
                     <Select
-                      options={RESIDENTS}
+                      options={residentOptions.length ? residentOptions : []}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={{
@@ -386,7 +429,7 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
-                      options={EMPLOYEES}
+                      options={employeeOptions.length > 0 ? employeeOptions : []}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                     />
