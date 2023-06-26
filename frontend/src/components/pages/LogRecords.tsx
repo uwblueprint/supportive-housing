@@ -12,8 +12,8 @@ import {
 
 import NavigationBar from "../common/NavigationBar";
 import CreateLog from "../forms/CreateLog";
-import SearchAndFilters from "../common/SearchAndFilters";
-import { LogRecord } from "../common/types/LogRecord";
+import SearchAndFilters from "./HomePage/SearchAndFilters";
+import { LogRecord } from "../../types/LogRecordTypes";
 import PrintCSVButton from "../common/PrintCSVButton";
 
 // TODO: Replace the mock data with data from API, JSON response with type below

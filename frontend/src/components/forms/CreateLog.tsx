@@ -26,7 +26,8 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
-import NewLogAPIClient from "../../APIClients/NewLogAPIClient";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident, JSONResident } from "../../types/ResidentTypes";
 import { getLocalStorageObj, getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -160,7 +161,7 @@ const CreateLog = () => {
   };
 
   const getLogEntryOptions = async () => {
-    const residentsData = await NewLogAPIClient.getResidents()
+    const residentsData = await ResidentAPIClient.getResidents()
 
     if (residentsData) {
       const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
@@ -168,7 +169,7 @@ const CreateLog = () => {
       setResidentOptions(residentLabels)
     }
 
-    const usersData = await NewLogAPIClient.getUsers()
+    const usersData = await UserAPIClient.getUsers()
     if (usersData) {
       const userLabels: SelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
