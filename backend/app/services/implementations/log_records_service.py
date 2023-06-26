@@ -48,7 +48,7 @@ class LogRecordsService(ILogRecordsService):
                         "attn_to": log[5],
                         "note": log[6],
                         "tags": log[7],
-                        "building": log[8],
+                        "building_id": log[8],
                         "employee_first_name": log[9],
                         "employee_last_name": log[10],
                         "attn_to_first_name": log[11],
@@ -59,8 +59,8 @@ class LogRecordsService(ILogRecordsService):
         except Exception as postgres_error:
             raise postgres_error
 
-    def filter_by_building(self, building):
-        return f"\nbuilding='{building}'"
+    def filter_by_building_id(self, building_id):
+        return f"\nbuilding_id='{building_id}'"
 
     def filter_by_employee_id(self, employee_id):
         if type(employee_id) == list:
@@ -88,8 +88,12 @@ class LogRecordsService(ILogRecordsService):
 
     def filter_by_date_range(self, date_range):
         if len(date_range) > 0:
-            start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(hour=0, minute=0)
-            end_date = datetime.strptime(date_range[len(date_range) - 1], "%Y-%m-%d").replace(hour=23, minute=59)
+            start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
+                hour=0, minute=0
+            )
+            end_date = datetime.strptime(
+                date_range[len(date_range) - 1], "%Y-%m-%d"
+            ).replace(hour=23, minute=59)
         return f"\ndatetime>='{start_date}' AND datetime<='{end_date}'"
 
     def filter_by_tags(self, tags):
@@ -119,7 +123,7 @@ class LogRecordsService(ILogRecordsService):
                 logs.attn_to,\n \
                 logs.note,\n \
                 logs.tags,\n \
-                logs.building,\n \
+                logs.building_id,\n \
                 employees.first_name AS employee_first_name,\n \
                 employees.last_name AS employee_last_name,\n \
                 attn_tos.first_name AS attn_to_first_name,\n \
@@ -132,7 +136,7 @@ class LogRecordsService(ILogRecordsService):
                 is_first_filter = True
 
                 options = {
-                    "building": self.filter_by_building,
+                    "building_id": self.filter_by_building_id,
                     "employee_id": self.filter_by_employee_id,
                     "resident_id": self.filter_by_resident_id,
                     "attn_to": self.filter_by_attn_to,
@@ -218,7 +222,7 @@ class LogRecordsService(ILogRecordsService):
                 LogRecords.employee_id: updated_log_record["employee_id"],
                 LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
-                LogRecords.building: updated_log_record["building"],
+                LogRecords.building_id: updated_log_record["building_is"],
             }
         )
         if not updated_log_record:

@@ -12,6 +12,7 @@ def init_app(app):
     from .log_records import LogRecords
     from .tag import Tag
     from .residents import Residents
+    from .buildings import Buildings
 
     app.app_context().push()
     db.init_app(app)
@@ -26,3 +27,11 @@ def init_app(app):
 
         # recreate tables
         db.create_all()
+
+        building1 = Buildings(id=1, address="144 Erb St. East", name="Seniors")
+        building2 = Buildings(id=2, address="362 Erb St. West", name="Permanent")
+        building3 = Buildings(id=3, address="402 Erb St. West", name="Adults")
+        db.session.add(building1)
+        db.session.add(building2)
+        db.session.add(building3)
+        db.session.commit()

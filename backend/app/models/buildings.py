@@ -1,31 +1,13 @@
-from sqlalchemy import inspect, case, null
+from . import db
+from sqlalchemy import inspect, cast, String
 from sqlalchemy.orm.properties import ColumnProperty
 
-from . import db
 
-
-class User(db.Model):
-    __tablename__ = "users"
-
+class Buildings(db.Model):
+    __tablename__ = "buildings"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    first_name = db.Column(db.String, nullable=False)
-    last_name = db.Column(db.String, nullable=False)
-    auth_id = db.Column(db.String, nullable=True)
-    role = db.Column(
-        db.Enum("Admin", "Regular Staff", "Relief Staff", name="roles"), nullable=False
-    )
-    user_status = db.Column(
-        db.Enum("Invited", "Active", "Deactivated", name="user_statuses"),
-        nullable=False,
-    )
-    email = db.Column(db.String, nullable=False)
-
-    __table_args__ = (
-        db.CheckConstraint(
-            "(user_status = 'Invited' AND auth_id IS NULL) OR (user_status != 'Invited' AND auth_id IS NOT NULL)",
-            name="check_auth_id_nullable",
-        ),
-    )
+    address = db.Column(db.String, nullable=False)
+    name = db.Column(db.String, nullable=False)
 
     def to_dict(self, include_relationships=False):
         # define the entities table

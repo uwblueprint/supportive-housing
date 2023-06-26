@@ -95,6 +95,7 @@ def get_users():
                     500,
                 )
 
+
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
 def get_user_status():
     try:
@@ -104,6 +105,7 @@ def get_user_status():
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
+
 
 @blueprint.route("/invite-user", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
@@ -119,6 +121,7 @@ def create_user():
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
+
 
 @blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
