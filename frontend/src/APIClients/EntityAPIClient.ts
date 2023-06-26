@@ -41,7 +41,8 @@ const create = async ({
       headers: { Authorization: bearerToken },
     });
     return data;
-  } catch (error) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  } catch (error: any) {
     return error;
   }
 };
@@ -56,7 +57,8 @@ const get = async (): Promise<EntityResponse[]> => {
       headers: { Authorization: bearerToken },
     });
     return data;
-  } catch (error) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  } catch (error: any) {
     return error;
   }
 };
@@ -72,7 +74,8 @@ const getFile = async (uuid: string): Promise<string> => {
     });
 
     return data.fileUrl;
-  } catch (error) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  } catch (error: any) {
     return error;
   }
 };
@@ -91,7 +94,8 @@ const getCSV = async (): Promise<string> => {
     });
 
     return data;
-  } catch (error) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  } catch (error: any) {
     return error;
   }
 };
@@ -113,7 +117,8 @@ const update = async (
       headers: { Authorization: bearerToken },
     });
     return data;
-  } catch (error) {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+  } catch (error: any) {
     return error;
   }
 };

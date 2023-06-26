@@ -60,9 +60,9 @@ const Pagination = ({
   };
 
   // Treat the enter key as an alt method of triggering onBlur (lose focus)
-  const handleKeyUp = (event: any) => {
-    if (event.keyCode === 13) {
-      event.target.blur();
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      (event.target as HTMLElement).blur();
     }
   };
 
