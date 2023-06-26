@@ -116,8 +116,6 @@ class UserService(IUserService):
         for user in user_list:
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user)
             try:
-                firebase_user = firebase_admin.auth.get_user(user.auth_id)
-                user_dict["email"] = firebase_user.email
                 user_dtos.append(UserDTO(**user_dict))
             except Exception as e:
                 self.logger.error(
@@ -244,7 +242,8 @@ class UserService(IUserService):
             db.session.commit()
 
             try:
-                firebase_admin.auth.update_user(old_user.auth_id, email=user.email)
+                if old_user.auth_id is not None:
+                    firebase_admin.auth.update_user(old_user.auth_id, email=user.email)
             except Exception as firebase_error:
                 try:
                     old_user_dict = {
@@ -306,7 +305,8 @@ class UserService(IUserService):
             db.session.commit()
 
             try:
-                firebase_admin.auth.delete_user(deleted_user.auth_id)
+                if (deleted_user.auth_id is not None):
+                    firebase_admin.auth.delete_user(deleted_user.auth_id)
             except Exception as firebase_error:
                 # rollback Postgres user deletion
                 try:
@@ -347,35 +347,35 @@ class UserService(IUserService):
 
     def delete_user_by_email(self, email):
         try:
-            firebase_user = firebase_admin.auth.get_user_by_email(email)
-            deleted_user = User.query.filter_by(auth_id=firebase_user.uid).first()
+            deleted_user = User.query.filter_by(email=email).first()
+            firebase_user = None
 
             if not deleted_user:
-                raise Exception(
-                    "auth_id (Firebase uid) {auth_id} not found".format(
-                        auth_id=firebase_user.uid
-                    )
-                )
+                raise Exception("email {email} not found".format(email=email))
 
-            delete_count = User.query.filter_by(auth_id=firebase_user.uid).delete(
+            if deleted_user.auth_id is not None:
+                firebase_user = firebase_admin.auth.get_user_by_email(email)
+
+            delete_count = User.query.filter_by(email=email).delete(
                 synchronize_session="fetch"
             )
 
             if delete_count < 1:
                 raise Exception(
-                    "user_id {user_id} was not deleted".format(user_id=user_id)
+                    "email {email} was not deleted".format(email=email)
                 )
             elif delete_count > 1:
                 raise Exception(
-                    "user_id {user_id} had multiple instances. Delete not committed.".format(
-                        user_id=user_id
+                    "email {email} had multiple instances. Delete not committed.".format(
+                        email=email
                     )
                 )
 
             db.session.commit()
 
             try:
-                firebase_admin.auth.delete_user(firebase_user.uid)
+                if (firebase_user is not None):
+                    firebase_admin.auth.delete_user(firebase_user.uid)
             except Exception as firebase_error:
                 try:
                     deleted_user_dict = {
