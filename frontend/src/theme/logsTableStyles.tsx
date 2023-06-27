@@ -4,17 +4,15 @@ import textStyles from "./textStyles";
 const Table: ComponentStyleConfig = {
   variants: {
     logRecordsTable: {
-      thead: {
-        background: "teal.50",
-        color: "teal.500",
-        textTransform: "none",
-      },
       th: {
+        color: "teal.500",
+        backgroundColor: "teal.50",
         textTransform: "none",
-        ...textStyles["header-medium"],
+        ...textStyles["header-table"],
       },
-      td: {
-        ...textStyles["body-medium"],
+      tr: {
+        borderBottom: "1px",
+        borderColor: "gray.100",
       },
     },
   },

@@ -1,0 +1,1 @@
+docker exec -it SHOW-backend /bin/bash -c "flask db upgrade"

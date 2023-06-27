@@ -40,6 +40,11 @@ def upgrade():
         batch_op.drop_column("resident_first_name")
         batch_op.drop_column("resident_last_name")
 
+    op.create_check_constraint(
+        "check_date_left_valid",
+        "residents",
+        "(date_left IS NULL OR date_left > date_joined)",
+    )
     # ### end Alembic commands ###
 
 

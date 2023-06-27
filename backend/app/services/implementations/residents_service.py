@@ -66,7 +66,7 @@ class ResidentsService(IResidentsService):
         )
         if not updated_resident:
             raise Exception(
-                "Log record with id {resident_id} not found".format(
+                "Resident with id {resident_id} not found".format(
                     resident_id=resident_id
                 )
             )
@@ -82,7 +82,7 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_resident(self, resident_id=None):
+    def get_residents(self, resident_id=None):
         try:
             if resident_id:
                 residents_results = Residents.query.filter_by(resident_id=resident_id)

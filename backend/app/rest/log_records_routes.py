@@ -50,9 +50,15 @@ def get_log_records():
     except:
         filters = None
 
+    results_per_page = 10
+    try:
+        results_per_page = int(request.args.get("results_per_page"))
+    except:
+        pass
+
     try:
         log_records = log_records_service.get_log_records(
-            page_number, return_all, filters
+            page_number, return_all, results_per_page, filters
         )
         return jsonify(log_records), 201
     except Exception as e:

@@ -106,10 +106,10 @@ class LogRecordsService(ILogRecordsService):
         print(flagged)
         return f"\nflagged={bool(flagged)}"
 
-    def get_log_records(self, page_number, return_all, filters=None):
+    def get_log_records(
+        self, page_number, return_all, results_per_page=10, filters=None
+    ):
         try:
-            results_per_page = int(os.getenv("RESULTS_PER_PAGE"))
-
             if not return_all:
                 start_index = (page_number - 1) * results_per_page
                 end_index = start_index + results_per_page
