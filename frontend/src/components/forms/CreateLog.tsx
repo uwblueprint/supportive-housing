@@ -25,6 +25,7 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
+import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import type { Resident, JSONResident } from "../../types/ResidentTypes";
@@ -46,19 +47,6 @@ const TAGS = [
   { label: "Tag C", value: "C" },
 ];
 
-// Replace this with the residents from the db
-const RESIDENTS = [
-  { label: "DE307", value: "DE307" },
-  { label: "AH206", value: "AH206" },
-  { label: "MB404", value: "MB404" },
-];
-
-// Replace this with the users from the db
-const EMPLOYEES = [
-  { label: "Huseyin", value: "Huseyin" },
-  { label: "John Doe", value: "John Doe" },
-];
-
 type SelectOptionType = {
   label: string;
   value: string;
@@ -77,7 +65,7 @@ function getBorderStyle(state: any, error: boolean): string {
 }
 
 const CreateLog = () => {
-  // const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState(""); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
@@ -286,10 +274,12 @@ const CreateLog = () => {
   }, [showAlert]);
 
   useEffect(() => {
-    // const curUserName = getLocalStorageObj(
-    //   AUTHENTICATED_USER_KEY,
-    // );
-    // setEmployee(curUserName as string)
+    const curUser: AuthenticatedUser | null = getLocalStorageObj(
+      AUTHENTICATED_USER_KEY,
+    );
+    if (curUser && curUser.firstName) {
+      setEmployee(curUser.firstName)
+    }
   }, [])
 
   return (
@@ -316,7 +306,7 @@ const CreateLog = () => {
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={employeeOptions}
+                      options={employeeOptions.length > 0 ? employeeOptions : []}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
                       styles={{
@@ -417,6 +407,8 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
+                      // TODO: Integrate actual tags once implemented 
+                      isDisabled
                       options={TAGS}
                       isMulti
                       closeMenuOnSelect={false}
