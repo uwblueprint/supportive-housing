@@ -31,6 +31,7 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import type { Resident, JSONResident } from "../../types/ResidentTypes";
 import { getLocalStorageObj, getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 
 
 // Ideally we should be storing this information in the database
@@ -46,6 +47,11 @@ const TAGS = [
   { label: "Tag B", value: "B" },
   { label: "Tag C", value: "C" },
 ];
+
+type NewSelectOptionType = {
+  label: string;
+  value: number;
+}
 
 type SelectOptionType = {
   label: string;
@@ -66,7 +72,7 @@ function getBorderStyle(state: any, error: boolean): string {
 
 const CreateLog = () => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState(""); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState<NewSelectOptionType>({label: "", value: -1}); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -76,16 +82,16 @@ const CreateLog = () => {
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState("");
+  const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
-  const [attnTo, setAttnTo] = useState("");
+  const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
   const [residents, setResidentsData] = useState<Resident[]>([]);
 
-  const [employeeOptions, setEmployeeOptions] = useState<SelectOptionType[]>([]);
-  const [residentOptions, setResidentOptions] = useState<SelectOptionType[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<NewSelectOptionType[]>([]);
+  const [residentOptions, setResidentOptions] = useState<NewSelectOptionType[]>([]);
   
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -132,7 +138,7 @@ const CreateLog = () => {
   };
 
   const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
@@ -149,7 +155,7 @@ const CreateLog = () => {
   };
 
   const handleAttnToChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
       setAttnTo(selectedOption.value);
@@ -166,14 +172,15 @@ const CreateLog = () => {
     const residentsData = await ResidentAPIClient.getResidents()
 
     if (residentsData) {
-      const residentLabels: SelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
-      ({label: r.resident_id, value: r.resident_id}));
+      const residentLabels: NewSelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
+      ({label: r.resident_id, value: r.id}));
       setResidentOptions(residentLabels)
     }
 
     const usersData = await UserAPIClient.getUsers()
     if (usersData) {
-      const userLabels: SelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
+      console.log(usersData)
+      const userLabels: NewSelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
 
       setEmployeeOptions(userLabels);
@@ -194,9 +201,9 @@ const CreateLog = () => {
       }),
     );
     setBuilding("");
-    setResident("");
+    setResident(-1);
     setTags([]);
-    setAttnTo("");
+    setAttnTo(-1);
     setNotes("");
 
     // reset all error states
@@ -230,11 +237,11 @@ const CreateLog = () => {
     // });
 
     // Update error states
-    setEmployeeError(employee === "");
+    setEmployeeError(employee.label === "" && employee.value === -1);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === "");
+    setResidentError(resident === -1);
     setNotesError(notes === "");
 
     // log the error state values for testing
@@ -249,11 +256,11 @@ const CreateLog = () => {
 
     // If any required fields are empty, prevent form submission
     if (
-      employee === "" ||
+      (employee.label === "" && employee.value === -1) ||
       date === null ||
       time === "" ||
       building === "" ||
-      resident === "" ||
+      resident === -1 ||
       notes === ""
     ) {
       return;
@@ -263,6 +270,7 @@ const CreateLog = () => {
     setCreateOpen(false);
     setShowAlert(true);
     // update the table with the new log
+    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo)
   };
 
   useEffect(() => {
@@ -277,8 +285,9 @@ const CreateLog = () => {
     const curUser: AuthenticatedUser | null = getLocalStorageObj(
       AUTHENTICATED_USER_KEY,
     );
-    if (curUser && curUser.firstName) {
-      setEmployee(curUser.firstName)
+    if (curUser && curUser.firstName && curUser.id) {
+      console.log(curUser)
+      setEmployee({label: curUser.firstName, value: parseInt(curUser.id, 10)})
     }
   }, [])
 
@@ -308,7 +317,7 @@ const CreateLog = () => {
                     <Select
                       options={employeeOptions.length > 0 ? employeeOptions : []}
                       isDisabled
-                      defaultValue={{ label: employee, value: employee }} // needs to be the current user
+                      defaultValue={{ label: employee.label, value: employee.value }} // needs to be the current user
                       styles={{
                         control: (provided, state) => ({
                           ...provided,
