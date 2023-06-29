@@ -38,6 +38,11 @@ type Props = {
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
+type NewSelectOptionType = {
+  label: string;
+  value: number;
+}
+
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },
@@ -51,12 +56,6 @@ const TAGS = [
   { label: "Tag B", value: "B" },
   { label: "Tag C", value: "C" },
 ];
-
-type NewSelectOptionType = {
-  label: string;
-  value: number;
-}
-
 
 // Changes the border of the Select components if the input is invalid
 function getBorderStyle(state: any, error: boolean): string {
@@ -90,8 +89,6 @@ const CreateLog = ({
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
-
-  const [residents, setResidentsData] = useState<Resident[]>([]);
 
   const [employeeOptions, setEmployeeOptions] = useState<NewSelectOptionType[]>([]);
   const [residentOptions, setResidentOptions] = useState<NewSelectOptionType[]>([]);
@@ -234,19 +231,6 @@ const CreateLog = ({
   };
 
   const handleSubmit = () => {
-    // log the state values for testing
-    // console.log({
-    //     employee,
-    //     date,
-    //     time,
-    //     building,
-    //     resident,
-    //     tags,
-    //     attnTo,
-    //     notes,
-    //     flagged,
-    // });
-
     // Update error states
     setEmployeeError(employee.label === "" && employee.value === -1);
     setDateError(date === null);
@@ -254,16 +238,6 @@ const CreateLog = ({
     setBuildingError(building === "");
     setResidentError(resident === -1);
     setNotesError(notes === "");
-
-    // log the error state values for testing
-    // console.log({
-    //     employeeError: employee === "",
-    //     dateError: date === null,
-    //     timeError: time === "",
-    //     buildingError: building === "",
-    //     residentError: resident === "",
-    //     notesError: notes === "",
-    // });
 
     // If any required fields are empty, prevent form submission
     if (
