@@ -22,6 +22,7 @@ import {
   ScaleFade,
   Textarea,
 } from "@chakra-ui/react";
+import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
@@ -43,12 +44,36 @@ type NewSelectOptionType = {
   value: number;
 }
 
+type AlertData = {
+  status: AlertStatus;
+  description: string;
+}
+
+type AlertDataOptions = {
+  [key: string]: AlertData;
+}
+
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },
   { label: "362", value: "362 Erb St. West" },
   { label: "402", value: "402 Erb St. West" },
 ];
+
+const ALERT_DATA: AlertDataOptions = {
+  DEFAULT: {
+    status: 'info',
+    description: ''
+  },
+  SUCCESS: {
+    status: 'success',
+    description: 'Log successfully created.'
+  },
+  ERROR: {
+    status: 'error',
+    description: 'Error creating log.'
+  }
+}
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS = [
@@ -104,6 +129,7 @@ const CreateLog = ({
   const [notesError, setNotesError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
+  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT)
 
   // if we need functionality to change the selected employee, handle should go here
 
@@ -256,10 +282,14 @@ const CreateLog = ({
     // update the table with the new log
     LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
       if (res != null) {
-        setShowAlert(true);
+        setAlertData(ALERT_DATA.SUCCESS)
         getRecords(1);
         setUserPageNum(1)
       }
+      else {
+        setAlertData(ALERT_DATA.ERROR)
+      }
+      setShowAlert(true);
     })
   };
 
@@ -267,6 +297,7 @@ const CreateLog = ({
     if (showAlert) {
       setTimeout(() => {
         setShowAlert(false);
+        setAlertData(ALERT_DATA.DEFAULT)
       }, 3000);
     }
   }, [showAlert]);
@@ -466,9 +497,9 @@ const CreateLog = ({
         zIndex={9999}
       >
         <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="success" variant="left-accent" borderRadius="6px">
+          <Alert status={alertData.status} variant="left-accent" borderRadius="6px">
             <AlertIcon />
-            <AlertDescription>Log successfully created.</AlertDescription>
+            <AlertDescription>{alertData.description}</AlertDescription>
           </Alert>
         </ScaleFade>
       </Box>
