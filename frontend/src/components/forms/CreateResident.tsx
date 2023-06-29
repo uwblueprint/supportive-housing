@@ -23,12 +23,13 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
+import CommonAPIClient from "../../APIClients/CommonAPIClient";
 
 // TODO: Connect to Buidings table 
 const BUILDINGS = [
-    { label: "144", value: "144 Erb St. West" },
-    { label: "362", value: "362 Erb St. West" },
-    { label: "402", value: "402 Erb St. West" },
+    { label: "144", value: "144" },
+    { label: "362", value: "362" },
+    { label: "402", value: "402" },
 ];
 
 const CreateResident = (): React.ReactElement => {
@@ -46,10 +47,19 @@ const CreateResident = (): React.ReactElement => {
     const [isOpen, setIsOpen] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
 
+    const addResident = async () => {
+        await CommonAPIClient.createResident({
+            initial: initials.toLowerCase(),
+            roomNum: parseInt(roomNumber, 10),
+            dateJoined: moveInDate,
+            building,
+        });
+    };
+
     const handleInitialsChange = (e: { target: { value: unknown } }) => {
         const inputValue: string = e.target.value as string;
-        if (inputValue.length === 2 && /^[a-z]+$/i.test(inputValue)) {
-            setInitials(inputValue);
+        if (/^[a-z]{0,2}$/i.test(inputValue)) {
+            setInitials(inputValue.toUpperCase());
             setInitialsError(false);
         } else {
             setInitialsError(true);
@@ -58,7 +68,7 @@ const CreateResident = (): React.ReactElement => {
 
     const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
         const inputValue: string = e.target.value as string;
-        if (inputValue !== null && /^[0-9]+$/.test(inputValue)) {
+        if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
             setRoomNumber(inputValue);
             setRoomNumberError(false);
         } else {
@@ -110,12 +120,16 @@ const CreateResident = (): React.ReactElement => {
     };
 
     const handleSubmit = () => {
+        setInitialsError(initials === "");
+        setRoomNumberError(roomNumber === "");
+        setBuildingError(building === "");
+
         //  Prevents form submission if any required values are missing
         if (initials === "" || roomNumber === "" || building === "") {
             return;
         }
 
-        // TODO: Integrate with API
+        addResident();
 
         setIsOpen(false);
         setShowAlert(true);
@@ -231,7 +245,7 @@ const CreateResident = (): React.ReactElement => {
                 <ScaleFade in={showAlert} unmountOnExit>
                     <Alert status="success" variant="left-accent" borderRadius="6px">
                         <AlertIcon />
-                        <AlertDescription>Log successfully created.</AlertDescription>
+                        <AlertDescription>Resident successfully added.</AlertDescription>
                     </Alert>
                 </ScaleFade>
             </Box>
