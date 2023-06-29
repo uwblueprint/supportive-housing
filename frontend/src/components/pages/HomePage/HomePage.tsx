@@ -105,7 +105,7 @@ const HomePage = (): React.ReactElement => {
           <Box textStyle="hero-records">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-            <CreateLog />
+            <CreateLog getRecords={getLogRecords} setUserPageNum={setUserPageNum}/>
             <PrintCSVButton />
           </Flex>
         </Flex>

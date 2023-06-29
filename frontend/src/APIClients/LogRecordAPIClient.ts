@@ -8,6 +8,7 @@ const createLog = async(
     flagged: boolean,
     note: string,
     attentionTo: number,
+    building: string,
 ) : Promise<any> => {
     try {
         const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -17,14 +18,19 @@ const createLog = async(
 
         const { data } = await baseAPIClient.post(
             "/log_records/",
-            { userId, residentId, flagged, note, attentionTo },
+            { 
+                employee_id: userId, 
+                resident_id: residentId,
+                flagged,
+                note,
+                attn_to: attentionTo,
+                building,
+            },
             { headers: { Authorization: bearerToken } },
         );
-        console.log(data)
         return data;
       } catch (error) {
-        console.log(error);
-        return false;
+        return null;
       }
 }
 

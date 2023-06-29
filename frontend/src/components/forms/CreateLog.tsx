@@ -29,10 +29,14 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import type { Resident, JSONResident } from "../../types/ResidentTypes";
-import { getLocalStorageObj, getLocalStorageObjProperty } from "../../utils/LocalStorageUtils";
+import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 
+type Props = {
+  getRecords: (page_number: number) => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+};
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -53,10 +57,6 @@ type NewSelectOptionType = {
   value: number;
 }
 
-type SelectOptionType = {
-  label: string;
-  value: string;
-}
 
 // Changes the border of the Select components if the input is invalid
 function getBorderStyle(state: any, error: boolean): string {
@@ -70,7 +70,10 @@ function getBorderStyle(state: any, error: boolean): string {
   return "1px solid #cbd5e0";
 }
 
-const CreateLog = () => {
+const CreateLog = ({
+  getRecords,
+  setUserPageNum
+}: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<NewSelectOptionType>({label: "", value: -1}); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
@@ -168,6 +171,7 @@ const CreateLog = () => {
     setNotesError(inputValue === "");
   };
 
+  // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
     const residentsData = await ResidentAPIClient.getResidents()
 
@@ -179,7 +183,6 @@ const CreateLog = () => {
 
     const usersData = await UserAPIClient.getUsers()
     if (usersData) {
-      console.log(usersData)
       const userLabels: NewSelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
 
@@ -205,6 +208,14 @@ const CreateLog = () => {
     setTags([]);
     setAttnTo(-1);
     setNotes("");
+
+    // set current user
+    const curUser: AuthenticatedUser | null = getLocalStorageObj(
+      AUTHENTICATED_USER_KEY,
+    );
+    if (curUser && curUser.firstName && curUser.id) {
+      setEmployee({label: curUser.firstName, value: parseInt(curUser.id, 10)})
+    }
 
     // reset all error states
     setEmployeeError(false);
@@ -268,9 +279,14 @@ const CreateLog = () => {
 
     // Create a log in the db with this data
     setCreateOpen(false);
-    setShowAlert(true);
     // update the table with the new log
-    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo)
+    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
+      if (res != null) {
+        setShowAlert(true);
+        getRecords(1);
+        setUserPageNum(1)
+      }
+    })
   };
 
   useEffect(() => {
@@ -280,16 +296,6 @@ const CreateLog = () => {
       }, 3000);
     }
   }, [showAlert]);
-
-  useEffect(() => {
-    const curUser: AuthenticatedUser | null = getLocalStorageObj(
-      AUTHENTICATED_USER_KEY,
-    );
-    if (curUser && curUser.firstName && curUser.id) {
-      console.log(curUser)
-      setEmployee({label: curUser.firstName, value: parseInt(curUser.id, 10)})
-    }
-  }, [])
 
   return (
     <div>
