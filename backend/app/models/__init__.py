@@ -20,6 +20,17 @@ def init_app(app):
 
     erase_db_and_sync = app.config["TESTING"]
 
+    if Buildings.query.count() == 0:
+        buildings_array = [
+            Buildings(id=1, address="144 Erb St. East", name="144"),
+            Buildings(id=2, address="362 Erb St. West", name="362"),
+            Buildings(id=3, address="402 Erb St. West", name="402"),
+        ]
+        for building in buildings_array:
+            db.session.add(building)
+
+    db.session.commit()
+
     if erase_db_and_sync:
         # drop tables
         db.reflect()
@@ -27,11 +38,3 @@ def init_app(app):
 
         # recreate tables
         db.create_all()
-
-        building1 = Buildings(id=1, address="144 Erb St. East", name="Seniors")
-        building2 = Buildings(id=2, address="362 Erb St. West", name="Permanent")
-        building3 = Buildings(id=3, address="402 Erb St. West", name="Adults")
-        db.session.add(building1)
-        db.session.add(building2)
-        db.session.add(building3)
-        db.session.commit()
