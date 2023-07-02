@@ -19,13 +19,13 @@ def filter_logs():
     start_date = None
     end_date = None
     try:
-        email = request.json["email"]
+        email = request.args.get("email")
     except:
         pass
 
     try:
-        start_date = request.json["start_date"]
-        end_date = request.json["end_date"]
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
     except:
         pass
 
@@ -60,7 +60,7 @@ def filter_logs():
 
     if email and start_date and end_date:
         try:
-            logs = sign_in_logs_service.get_logs_by_date_range_and_id(
+            logs = sign_in_logs_service.get_sign_in_logs_by_date_range_and_id(
                 start_date, end_date, user_id
             )
             return logs, 200
@@ -72,7 +72,7 @@ def filter_logs():
             )
     elif email and not (start_date and end_date):
         try:
-            logs = sign_in_logs_service.get_logs_by_id(user_id)
+            logs = sign_in_logs_service.get_sign_in_logs_by_id(user_id)
             return logs, 200
         except Exception as e:
             error_message = getattr(e, "message", None)
@@ -83,7 +83,7 @@ def filter_logs():
     elif start_date and end_date:
         try:
             # return as json object
-            logs = sign_in_logs_service.get_logs_by_date_range(start_date, end_date)
+            logs = sign_in_logs_service.get_sign_in_logs_by_date_range(start_date, end_date)
             return logs, 200
 
         except Exception as e:

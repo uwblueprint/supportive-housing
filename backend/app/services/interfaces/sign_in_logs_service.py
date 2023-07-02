@@ -7,7 +7,7 @@ class ISignInLogService(ABC):
     """
 
     @abstractmethod
-    def create_log(self, user_id):
+    def create_sign_in_log(self, user_id):
         """
         Create a user, email verification configurable
 

@@ -10,7 +10,11 @@ export type LogRecord = {
   employeeLastName: string;
   flagged: boolean;
   note: string;
-  residentFirstName: string;
-  residentLastName: string;
+  residentId: string;
   tags: string[];
 };
+
+export type GetLogRecordsReponse = {
+  logRecords: LogRecord[];
+  numResults: number;
+} | null;
