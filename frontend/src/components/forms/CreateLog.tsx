@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -262,7 +263,8 @@ const CreateLog = () => {
           <ModalContent>
             <ModalHeader>New Log Entry Details</ModalHeader>
             <ModalBody>
-              <Row>
+              <Divider />
+              <Row style={{marginTop: "10px"}}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
@@ -393,6 +395,8 @@ const CreateLog = () => {
               >
                 Flag this Report
               </Checkbox>
+
+              <Divider />
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button

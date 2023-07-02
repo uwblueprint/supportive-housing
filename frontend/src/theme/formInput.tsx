@@ -42,15 +42,15 @@ const singleDatePickerStyle = {
 };
 
 const timeInputStyle = {
-  // boxShadow: "none",
-  // color: colors.teal[300],
-  // borderColor: colors.teal[100],
-  // _hover: {
-  //   borderColor: colors.teal[400],
-  // },
-  // _focus: {
-  //   borderColor: colors.gray[200],
-  // },
+  boxShadow: "none",
+  color: colors.teal[300],
+  borderColor: colors.teal[100],
+  _hover: {
+    borderColor: colors.teal[400],
+  },
+  _focus: {
+    borderColor: colors.gray[200],
+  },
 };
 
 const textAreaStyle = {
