@@ -296,7 +296,7 @@ const CreateLog = () => {
                           type="time"
                           defaultValue={time}
                           onChange={handleTimeChange}
-                          style={timeInputStyle}
+                          styles={timeInputStyle}
                         />
                         <FormErrorMessage>Time is invalid.</FormErrorMessage>
                       </FormControl>
@@ -365,6 +365,9 @@ const CreateLog = () => {
                     <FormLabel>Notes</FormLabel>
                     <Box
                       _hover={{ borderColor: colors.teal[400] }} // Change the border color on hover
+                      _focus={{
+                        borderColor: colors.teal[400],
+                      }}
                       borderWidth={1}
                       borderRadius="md"
                     >

@@ -23,6 +23,9 @@ const selectStyle: any = {
       border: `1px solid ${colors.teal[300]}`,
       cursor: "pointer",
     },
+    "&:focus": {
+      border: `1px solid ${colors.teal[300]}`,
+    },
     border: `1px solid ${colors.teal[100]}`,
     borderColor: state.isFocused ? colors.teal[400] : colors.teal[100],
     boxShadow: "none",
