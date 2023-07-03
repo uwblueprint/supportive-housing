@@ -18,7 +18,7 @@ import {
   AlertIcon,
   Tooltip,
 } from "@chakra-ui/react";
-import { ExternalLinkIcon } from "@chakra-ui/icons";
+import { TiExport } from "react-icons/ti";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
 import CSVConverter from "../../helper/CSVConverter";
@@ -70,7 +70,7 @@ const ExportCSVButton = (): React.ReactElement => {
       <Tooltip label="Export to CSV">
         <IconButton
           aria-label="Export to CSV"
-          icon={<Icon boxSize="32px" as={ExternalLinkIcon} />}
+          icon={<Icon boxSize="36px" as={TiExport} />}
           variant="tertiary"
           onClick={handleOpen}
         />
