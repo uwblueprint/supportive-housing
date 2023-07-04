@@ -1,5 +1,5 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
-import textStyles from "../fontStyles";
+import fontStyles from "../fontStyles";
 
 const Input: ComponentStyleConfig = {
   sizes: {
@@ -31,7 +31,7 @@ const Input: ComponentStyleConfig = {
         _focus: {
           borderColor: "teal.400",
         },
-        ...textStyles["body-medium"],
+        ...fontStyles["body-medium"],
       },
     },
   },
@@ -69,7 +69,7 @@ const Textarea: ComponentStyleConfig = {
       _focus: {
         borderColor: "teal.400",
       },
-      ...textStyles["body-medium"],
+      ...fontStyles["body-medium"],
     },
   },
   defaultProps: {
