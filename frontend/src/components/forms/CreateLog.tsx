@@ -28,10 +28,10 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
-import colors from "../../theme/common/colors";
-import selectStyle from "../../theme/fields/selectStyles";
-import { singleDatePickerStyle } from "../../theme/fields/datePickerStyles";
-import textStyles from "../../theme/common/textStyles";
+import colors from "../../theme/colors";
+import selectStyle from "../../theme/forms/selectStyles";
+import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import textStyles from "../../theme/textStyles";
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },

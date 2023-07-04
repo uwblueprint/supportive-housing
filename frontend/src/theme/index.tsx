@@ -1,11 +1,10 @@
 import { extendTheme } from "@chakra-ui/react";
 
-import colors from "./common/colors";
-import textStyles from "./common/textStyles";
-import Button from "./buttonStyles";
-import Table from "./logsTableStyles";
-import Input from "./fields/inputStyles";
-import Textarea from "./fields/textAreaStyles";
+import colors from "./colors";
+import textStyles from "./textStyles";
+import Button from "./common/buttonStyles";
+import Table from "./common/logsTableStyles";
+import { Input, Textarea } from "./forms/inputStyles";
 
 const customTheme = extendTheme({
   config: {

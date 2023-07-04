@@ -1,5 +1,5 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
-import textStyles from "../common/textStyles";
+import textStyles from "../textStyles";
 
 const Input: ComponentStyleConfig = {
   sizes: {
@@ -41,4 +41,41 @@ const Input: ComponentStyleConfig = {
   },
 };
 
-export default Input;
+const Textarea: ComponentStyleConfig = {
+  sizes: {
+    sm: {
+      fontSize: "sm",
+    },
+    md: {
+      fontSize: "md",
+    },
+    lg: {
+      fontSize: "lg",
+    },
+  },
+  variants: {
+    default: {
+      border: "1px solid",
+      borderColor: "teal.100",
+      borderRadius: "4px",
+      color: "teal.300",
+      height: "36px",
+      _placeholder: {
+        color: "gray.600",
+      },
+      _hover: {
+        borderColor: "teal.400",
+      },
+      _focus: {
+        borderColor: "teal.400",
+      },
+      ...textStyles["body-medium"],
+    },
+  },
+  defaultProps: {
+    variant: "default",
+    size: "sm",
+  },
+};
+
+export { Input, Textarea };

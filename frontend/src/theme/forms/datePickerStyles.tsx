@@ -1,4 +1,4 @@
-import colors from "../common/colors";
+import colors from "../colors";
 
 export const singleDatePickerStyle = {
   dateNavBtnProps: {

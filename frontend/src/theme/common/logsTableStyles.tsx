@@ -1,5 +1,5 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
-import textStyles from "./common/textStyles";
+import textStyles from "../textStyles";
 
 const Table: ComponentStyleConfig = {
   variants: {

@@ -1,5 +1,5 @@
-import colors from "../common/colors";
-import textStyles from "../common/textStyles";
+import colors from "../colors";
+import textStyles from "../textStyles";
 
 const optionBackgroundColor = (isSelected: boolean, isFocused: boolean) => {
   if (isSelected) {
