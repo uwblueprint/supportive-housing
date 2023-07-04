@@ -1,4 +1,5 @@
-import colors from "./colors";
+import colors from "../common/colors";
+import textStyles from "../common/textStyles";
 
 const optionBackgroundColor = (isSelected: boolean, isFocused: boolean) => {
   if (isSelected) {
@@ -19,6 +20,7 @@ const selectStyle: any = {
   }),
   control: (provided: any, state: any) => ({
     ...provided,
+    ...textStyles["body-medium"],
     "&:hover": {
       border: `1px solid ${colors.teal[300]}`,
       cursor: "pointer",
@@ -32,6 +34,7 @@ const selectStyle: any = {
   }),
   option: (provided: any, state: any) => ({
     ...provided,
+    ...textStyles["body-medium"],
     backgroundColor: optionBackgroundColor(state.isSelected, state.isFocused),
     color: colors.teal[300],
     ":active": {

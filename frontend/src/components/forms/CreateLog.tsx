@@ -21,19 +21,17 @@ import {
   ModalHeader,
   ModalOverlay,
   ScaleFade,
+  Text,
   Textarea,
 } from "@chakra-ui/react";
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
-import colors from "../../theme/colors";
-import selectStyle from "../../theme/selectStyle";
-import {
-  singleDatePickerStyle,
-  timeInputStyle,
-  textAreaStyle,
-} from "../../theme/formInput";
+import colors from "../../theme/common/colors";
+import selectStyle from "../../theme/fields/selectStyles";
+import { singleDatePickerStyle } from "../../theme/fields/datePickerStyles";
+import textStyles from "../../theme/common/textStyles";
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },
@@ -264,7 +262,7 @@ const CreateLog = () => {
             <ModalHeader>New Log Entry Details</ModalHeader>
             <ModalBody>
               <Divider />
-              <Row style={{marginTop: "10px"}}>
+              <Row style={{marginTop: "16px"}}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
@@ -278,7 +276,7 @@ const CreateLog = () => {
                 </Col>
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
-                    <GridItem>
+                    <GridItem minWidth="100%">
                       <FormControl isRequired>
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
@@ -289,16 +287,14 @@ const CreateLog = () => {
                         />
                       </FormControl>
                     </GridItem>
-                    <GridItem>
+                    <GridItem minWidth="100%">
                       <FormControl isRequired isInvalid={timeError}>
                         <FormLabel>Time</FormLabel>
                         <Input
-                          _hover={{ borderColor: colors.teal[400] }}
                           size="md"
                           type="time"
                           defaultValue={time}
                           onChange={handleTimeChange}
-                          styles={timeInputStyle}
                         />
                         <FormErrorMessage>Time is invalid.</FormErrorMessage>
                       </FormControl>
@@ -365,23 +361,12 @@ const CreateLog = () => {
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
                     <FormLabel>Notes</FormLabel>
-                    <Box
-                      _hover={{ borderColor: colors.teal[400] }} // Change the border color on hover
-                      _focus={{
-                        borderColor: colors.teal[400],
-                      }}
-                      borderWidth={1}
-                      borderRadius="md"
-                    >
                       <Textarea
                         value={notes}
                         onChange={handleNotesChange}
                         placeholder="Enter log notes here..."
-                        size="lg"
                         resize="none"
-                        style={textAreaStyle}
                       />
-                    </Box>
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
@@ -392,8 +377,9 @@ const CreateLog = () => {
                 colorScheme="gray"
                 style={{ paddingTop: "1rem" }}
                 onChange={() => setFlagged(!flagged)}
+                marginBottom="16px"
               >
-                Flag this Report
+                <Text>Flag this Report</Text>
               </Checkbox>
 
               <Divider />

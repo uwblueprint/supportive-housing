@@ -1,6 +1,6 @@
-import colors from "./colors";
+import colors from "../common/colors";
 
-const singleDatePickerStyle = {
+export const singleDatePickerStyle = {
   dateNavBtnProps: {
     colorScheme: "gray",
     variant: "outline",
@@ -41,22 +41,4 @@ const singleDatePickerStyle = {
   },
 };
 
-const timeInputStyle = {
-  boxShadow: "none",
-  color: colors.teal[300],
-  borderColor: colors.teal[100],
-  _hover: {
-    borderColor: colors.teal[400],
-  },
-  _focus: {
-    borderColor: colors.gray[200],
-  },
-};
-
-const textAreaStyle = {
-  border: "none",
-  color: colors.teal[300],
-  boxShadow: "none",
-};
-
-export { singleDatePickerStyle, timeInputStyle, textAreaStyle };
+export default singleDatePickerStyle;

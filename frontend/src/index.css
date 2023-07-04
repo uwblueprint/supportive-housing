@@ -85,8 +85,3 @@ code {
   font-size: 14px;
   color: #285e61;
 }
-
-*:focus {
-  box-shadow: none !important;
-  border-color: #aaaab4 !important;
-}
