@@ -31,7 +31,7 @@ import { Card, Col, Row } from "react-bootstrap";
 import colors from "../../theme/colors";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import textStyles from "../../theme/textStyles";
+import textStyles from "../../theme/fontStyles";
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },

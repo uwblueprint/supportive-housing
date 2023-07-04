@@ -1,7 +1,7 @@
 import { extendTheme } from "@chakra-ui/react";
 
 import colors from "./colors";
-import textStyles from "./textStyles";
+import textStyles from "./fontStyles";
 import Button from "./common/buttonStyles";
 import Table from "./common/logsTableStyles";
 import { Input, Textarea } from "./forms/inputStyles";
