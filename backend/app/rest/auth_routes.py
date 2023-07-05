@@ -133,7 +133,7 @@ def two_fa():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
-        sign_in_logs_service.create_log(auth_dto.id)
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
         return response, 200
 
     except Exception as e:
