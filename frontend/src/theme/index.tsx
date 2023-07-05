@@ -8,7 +8,6 @@ import Text from "./common/textStyles";
 import { Input, Textarea } from "./forms/inputStyles";
 import { FormLabel, Modal } from "./forms/formTextStyles";
 
-
 const customTheme = extendTheme({
   config: {
     useSystemColorMode: false,
@@ -23,7 +22,7 @@ const customTheme = extendTheme({
     Textarea,
     FormLabel,
     Modal,
-    Text
+    Text,
   },
 });
 

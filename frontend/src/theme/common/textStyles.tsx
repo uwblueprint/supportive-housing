@@ -5,6 +5,7 @@ const Text: ComponentStyleConfig = {
   variants: {
     default: {
       ...fontStyles["body-medium"],
+      color: "teal.300",
     },
   },
   defaultProps: {

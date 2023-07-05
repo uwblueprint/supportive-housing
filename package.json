@@ -15,12 +15,5 @@
   "bugs": {
     "url": "https://github.com/uwblueprint/supportive-housing/issues"
   },
-  "homepage": "https://github.com/uwblueprint/supportive-housing#readme",
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  },
-  "dependencies": {
-    "@chakra-ui/styled-system": "^2.9.1",
-    "@chakra-ui/utils": "^2.0.14"
-  }
+  "homepage": "https://github.com/uwblueprint/supportive-housing#readme"
 }
