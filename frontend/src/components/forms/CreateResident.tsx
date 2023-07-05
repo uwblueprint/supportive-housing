@@ -18,12 +18,16 @@ import {
     ModalOverlay,
     ModalFooter,
     ScaleFade,
+    Divider,
 } from "@chakra-ui/react";
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import CommonAPIClient from "../../APIClients/CommonAPIClient";
+
+import selectStyle from "../../theme/forms/selectStyles";
+import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 // TODO: Connect to Buidings table 
 const BUILDINGS = [
@@ -164,7 +168,8 @@ const CreateResident = (): React.ReactElement => {
                         <ModalHeader>Add Resident</ModalHeader>
                         <ModalCloseButton size="lg" />
                         <ModalBody>
-                            <Row>
+                            <Divider />
+                            <Row style={{ marginTop: "16px" }}>
                                 <Col>
                                     <FormControl isRequired isInvalid={initialsError}>
                                         <FormLabel>Resident Initials</FormLabel>
@@ -189,7 +194,7 @@ const CreateResident = (): React.ReactElement => {
                                     <FormErrorMessage>Room Number is required and must only contain numbers.</FormErrorMessage>
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row style={{ marginTop: "16px" }}>
                                 <Col>
                                     <FormControl isRequired isInvalid={moveInDateError}>
                                         <FormLabel>Move In Date</FormLabel>
@@ -197,22 +202,13 @@ const CreateResident = (): React.ReactElement => {
                                             name="date-input"
                                             date={moveInDate}
                                             onDateChange={handleMoveInDateChange}
-                                            propsConfigs={{
-                                                inputProps: {
-                                                    placeholder: "Select move in date",
-                                                },
-                                                popoverCompProps: {
-                                                    popoverContentProps: {
-                                                        background: "white",
-                                                    },
-                                                },
-                                            }}
+                                            propsConfigs={singleDatePickerStyle}
                                         />
                                         <FormErrorMessage>Move In Date is required.</FormErrorMessage>
                                     </FormControl>
                                 </Col>
                             </Row>
-                            <Row>
+                            <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
                                 <Col>
                                     <FormControl isRequired isInvalid={buildingError}>
                                         <FormLabel>Building</FormLabel>
@@ -220,11 +216,13 @@ const CreateResident = (): React.ReactElement => {
                                             options={BUILDINGS}
                                             placeholder="Select building"
                                             onChange={handleBuildingChange}
+                                            styles={selectStyle}
                                         />
                                         <FormErrorMessage>Building is required.</FormErrorMessage>
                                     </FormControl>
                                 </Col>
                             </Row>
+                            <Divider />
                         </ModalBody>
                         <ModalFooter>
                             <Button onClick={handleSubmit} variant="primary" type="submit">
