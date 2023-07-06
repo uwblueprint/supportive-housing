@@ -1,12 +1,12 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
-import textStyles from "./textStyles";
+import fontStyles from "../fontStyles";
 
 const Button: ComponentStyleConfig = {
   baseStyle: {
     color: "white.default",
     background: "grey.50",
     width: "auto",
-    ...textStyles["button-medium"],
+    ...fontStyles["button-medium"],
   },
   variants: {
     primary: {
@@ -55,7 +55,7 @@ const Button: ComponentStyleConfig = {
     },
     navbar: {
       color: "white.default",
-      ...textStyles["button-navbar"],
+      ...fontStyles["button-navbar"],
     },
   },
 };

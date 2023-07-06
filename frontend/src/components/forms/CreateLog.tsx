@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -20,6 +21,7 @@ import {
   ModalHeader,
   ModalOverlay,
   ScaleFade,
+  Text,
   Textarea,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
@@ -32,6 +34,8 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
+import selectStyle from "../../theme/forms/selectStyles";
+import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 type Props = {
   getRecords: (page_number: number) => Promise<void>;
@@ -320,45 +324,33 @@ const CreateLog = ({
           <ModalContent>
             <ModalHeader>New Log Entry Details</ModalHeader>
             <ModalBody>
-              <Row>
+              <Divider />
+              <Row style={{marginTop: "16px"}}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
                       options={employeeOptions.length > 0 ? employeeOptions : []}
                       isDisabled
-                      defaultValue={{ label: employee.label, value: employee.value }} // needs to be the current user
-                      styles={{
-                        control: (provided, state) => ({
-                          ...provided,
-                          border: getBorderStyle(state, employeeError),
-
-                          borderRadius: "4px",
-                        }),
-                      }}
+                      defaultValue={{ label: employee, value: employee }} // needs to be the current user
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
-                    <GridItem>
+                    <GridItem minWidth="100%">
                       <FormControl isRequired>
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
-                          propsConfigs={{
-                            popoverCompProps: {
-                              popoverContentProps: {
-                                background: "white",
-                              },
-                            },
-                          }}
+                          propsConfigs={singleDatePickerStyle}
                         />
                       </FormControl>
                     </GridItem>
-                    <GridItem>
+                    <GridItem minWidth="100%">
                       <FormControl isRequired isInvalid={timeError}>
                         <FormLabel>Time</FormLabel>
                         <Input
@@ -382,17 +374,7 @@ const CreateLog = ({
                       options={BUILDINGS}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
-                      styles={{
-                        control: (provided, state) => ({
-                          ...provided,
-                          border: getBorderStyle(state, buildingError),
-                          "&:hover": {
-                            borderColor: buildingError ? "#e53e3e" : "#B1B1B1",
-                            cursor: "pointer",
-                          },
-                          borderRadius: "4px",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -404,17 +386,7 @@ const CreateLog = ({
                       options={residentOptions.length ? residentOptions : []}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
-                      styles={{
-                        control: (provided, state) => ({
-                          ...provided,
-                          border: getBorderStyle(state, residentError),
-                          "&:hover": {
-                            borderColor: residentError ? "#e53e3e" : "#B1B1B1",
-                            cursor: "pointer",
-                          },
-                          borderRadius: "4px",
-                        }),
-                      }}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -433,6 +405,7 @@ const CreateLog = ({
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
                       onChange={handleTagsChange}
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
@@ -443,6 +416,7 @@ const CreateLog = ({
                       options={employeeOptions.length > 0 ? employeeOptions : []}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
+                      styles={selectStyle}
                     />
                   </FormControl>
                 </Col>
@@ -452,24 +426,28 @@ const CreateLog = ({
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
                     <FormLabel>Notes</FormLabel>
-                    <Textarea
-                      value={notes}
-                      onChange={handleNotesChange}
-                      placeholder="Enter log notes here..."
-                      size="lg"
-                      style={{ resize: "none" }}
-                    />
+                      <Textarea
+                        value={notes}
+                        onChange={handleNotesChange}
+                        placeholder="Enter log notes here..."
+                        resize="none"
+                      />
+
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
 
               <Checkbox
+                colorScheme="gray"
                 style={{ paddingTop: "1rem" }}
                 onChange={() => setFlagged(!flagged)}
+                marginBottom="16px"
               >
-                Flag this Report
+                <Text>Flag this Report</Text>
               </Checkbox>
+
+              <Divider />
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
