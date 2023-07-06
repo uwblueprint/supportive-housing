@@ -97,13 +97,13 @@ const NavigationBar = (): React.ReactElement => {
                 >
                   Admin Controls
                 </MenuButton>
-                <MenuList isOpen={isMenuOpen} onClose={() => setMenuOpen(false)}>
-                  <MenuItem onClick={navigateToEmployeeDirectory}>
-                    Employee Directory
-                  </MenuItem>
-                  <MenuItem>Log Record Tags</MenuItem>
-                  <MenuItem>Platform Access Logs</MenuItem>
-                </MenuList>
+                {isMenuOpen && (
+                  <MenuList>
+                    <MenuItem onClick={navigateToEmployeeDirectory}>
+                      Employee Directory
+                    </MenuItem>
+                  </MenuList>
+                )}
               </Menu>
             )}
 
