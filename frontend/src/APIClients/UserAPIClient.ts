@@ -17,7 +17,6 @@ const getUsers = async (): Promise<any> => {
     }
     return userData;
   } catch (error) {
-    console.log(error);
     return userData;
   }
 };

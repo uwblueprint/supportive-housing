@@ -19,7 +19,6 @@ const getResidents = async (): Promise<any> => {
     }
     return residentData;
   } catch (error) {
-    console.log(error);
     return residentData;
   }
 };
