@@ -19,11 +19,11 @@ const createLog = async(
         const { data } = await baseAPIClient.post(
             "/log_records/",
             { 
-                employee_id: userId, 
-                resident_id: residentId,
+                employeeId: userId, 
+                residentId,
                 flagged,
                 note,
-                attn_to: attentionTo,
+                attnTo: attentionTo,
                 building,
             },
             { headers: { Authorization: bearerToken } },
