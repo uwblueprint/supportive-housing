@@ -330,7 +330,7 @@ const CreateLog = ({
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={employeeOptions.length > 0 ? employeeOptions : []}
+                      options={employeeOptions}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
                       styles={selectStyle}
@@ -383,7 +383,7 @@ const CreateLog = ({
                   <FormControl isRequired isInvalid={residentError} mt={4}>
                     <FormLabel>Resident</FormLabel>
                     <Select
-                      options={residentOptions.length ? residentOptions : []}
+                      options={residentOptions}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
@@ -413,7 +413,7 @@ const CreateLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
-                      options={employeeOptions.length > 0 ? employeeOptions : []}
+                      options={employeeOptions}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
