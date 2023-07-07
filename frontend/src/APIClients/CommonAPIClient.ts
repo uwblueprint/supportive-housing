@@ -109,7 +109,7 @@ const createResident = async ({
       "/residents",
       { initial, roomNum, dateJoined, building },
       { headers: { Authorization: bearerToken } },
-    )
+    );
     return true;
   } catch (error) {
     return false;
@@ -120,5 +120,5 @@ export default {
   filterLogRecords,
   inviteUser,
   isUserInvited: getUserStatus,
-  createResident
+  createResident,
 };
