@@ -53,7 +53,7 @@ const CreateResident = (): React.ReactElement => {
 
     const addResident = async () => {
         await CommonAPIClient.createResident({
-            initial: initials.toLowerCase(),
+            initial: initials.toUpperCase(),
             roomNum: parseInt(roomNumber, 10),
             dateJoined: moveInDate,
             building,
@@ -124,12 +124,12 @@ const CreateResident = (): React.ReactElement => {
     };
 
     const handleSubmit = () => {
-        setInitialsError(initials === "");
-        setRoomNumberError(roomNumber === "");
+        setInitialsError(initials.length !== 2);
+        setRoomNumberError(roomNumber.length !== 3);
         setBuildingError(building === "");
 
-        //  Prevents form submission if any required values are missing
-        if (initials === "" || roomNumber === "" || building === "") {
+        //  Prevents form submission if any required values are incorrect
+        if (initials.length !== 2 || roomNumber.length !== 3 || moveInDateError || building === "") {
             return;
         }
 
@@ -178,8 +178,8 @@ const CreateResident = (): React.ReactElement => {
                                             value={initials}
                                             onChange={handleInitialsChange}
                                         />
+                                        <FormErrorMessage>Resident Initials are required and must contain 2 letters.</FormErrorMessage>
                                     </FormControl>
-                                    <FormErrorMessage>Resident Initials are required and must contain 2 letters.</FormErrorMessage>
                                 </Col>
                                 <Col>
                                     <FormControl isRequired isInvalid={roomNumberError}>
@@ -190,8 +190,8 @@ const CreateResident = (): React.ReactElement => {
                                             onChange={handleRoomNumberChange}
                                             type="number"
                                         />
+                                        <FormErrorMessage>Room Number is required and must only contain numbers.</FormErrorMessage>
                                     </FormControl>
-                                    <FormErrorMessage>Room Number is required and must only contain numbers.</FormErrorMessage>
                                 </Col>
                             </Row>
                             <Row style={{ marginTop: "16px" }}>
