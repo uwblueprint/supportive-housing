@@ -64,8 +64,6 @@ const CreateResident = (): React.ReactElement => {
     if (/^[a-z]{0,2}$/i.test(inputValue)) {
       setInitials(inputValue.toUpperCase());
       setInitialsError(false);
-    } else {
-      setInitialsError(true);
     }
   };
 
@@ -74,8 +72,6 @@ const CreateResident = (): React.ReactElement => {
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
       setRoomNumber(inputValue);
       setRoomNumberError(false);
-    } else {
-      setRoomNumberError(true);
     }
   };
 
@@ -83,8 +79,6 @@ const CreateResident = (): React.ReactElement => {
     if (inputValue !== null) {
       setMoveInDate(inputValue);
       setMoveInDateError(false);
-    } else {
-      setMoveInDateError(true);
     }
   };
 
@@ -94,8 +88,6 @@ const CreateResident = (): React.ReactElement => {
     if (selectedOption !== null) {
       setBuilding(selectedOption.value);
       setBuildingError(false);
-    } else {
-      setBuildingError(true);
     }
   };
 
