@@ -1,6 +1,7 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
+import { PostLogRecordsResponse } from "../types/LogRecordTypes";
 
 const createLog = async(
     userId: number,
@@ -9,7 +10,7 @@ const createLog = async(
     note: string,
     attentionTo: number,
     building: string,
-) : Promise<any> => {
+) : Promise<PostLogRecordsResponse> => {
     try {
         const bearerToken = `Bearer ${getLocalStorageObjProperty(
           AUTHENTICATED_USER_KEY,
@@ -28,6 +29,7 @@ const createLog = async(
             },
             { headers: { Authorization: bearerToken } },
         );
+        console.log(data)
         return data;
       } catch (error) {
         return null;

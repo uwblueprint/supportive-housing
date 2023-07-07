@@ -18,3 +18,5 @@ export type GetLogRecordsReponse = {
   logRecords: LogRecord[];
   numResults: number;
 } | null;
+
+export type PostLogRecordsResponse = any | null;
