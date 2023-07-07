@@ -4,6 +4,9 @@ import {
   Button,
   Checkbox,
   Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Input,
   Heading,
   Modal,
@@ -16,6 +19,8 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
+import commonApiClient from "../../APIClients/CommonAPIClient";
+import RoleOptions from "../common/types/Roles";
 
 interface InviteEmployeesModalProps {
   isOpen: boolean;
@@ -34,6 +39,57 @@ const InviteEmployeesModal = ({
     isTwoFactorAuthenticated,
     setIsTwoFactorAuthenticated,
   ] = useState<boolean>(false);
+
+  const onInviteEmployee = async () => {
+    console.log("invitedEmail", invitedEmail);
+    console.log("invitedFirstName", invitedFirstName);
+    console.log("invitedLastName", invitedLastName);
+    console.log("invitedAdminStatus", invitedAdminStatus);
+    console.log("isTwoFactorAuthenticated", isTwoFactorAuthenticated);
+
+    if (
+      invitedEmail !== "" &&
+      invitedFirstName !== "" &&
+      invitedLastName !== "" &&
+      invitedAdminStatus !== ""
+    ) {
+      let hasInvitedUser = false;
+      if (invitedAdminStatus === "1") {
+        hasInvitedUser = await commonApiClient.inviteUser(
+          invitedEmail,
+          RoleOptions[1],
+          invitedFirstName,
+          invitedLastName,
+        );
+      } else if (invitedAdminStatus === "2" && isTwoFactorAuthenticated) {
+        hasInvitedUser = await commonApiClient.inviteUser(
+          invitedEmail,
+          RoleOptions[0],
+          invitedFirstName,
+          invitedLastName,
+        );
+      } else if (invitedAdminStatus === "2" && !isTwoFactorAuthenticated) {
+        hasInvitedUser = await commonApiClient.inviteUser(
+          invitedEmail,
+          RoleOptions[2],
+          invitedFirstName,
+          invitedLastName,
+        );
+      }
+      if (!hasInvitedUser) {
+        console.log("error");
+      } else {
+        onClose();
+        setInvitedEmail("");
+        setInvitedFirstName("");
+        setInvitedLastName("");
+        setinvitedAdminStatus("");
+        setIsTwoFactorAuthenticated(false);
+        console.log("done");
+      }
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -81,6 +137,9 @@ const InviteEmployeesModal = ({
               <Box w="46%">
                 <Box display="flex" flexDirection="row">
                   <Heading size="xsm">Last Name</Heading>
+                  <Text color="red" ml={1} mt={-2} fontSize="1em">
+                    *
+                  </Text>
                 </Box>
                 <Input
                   mt="8px"
@@ -94,6 +153,9 @@ const InviteEmployeesModal = ({
             </Box>
             <Box display="flex" flexDirection="row" mt="16px">
               <Heading size="xsm">SHOW Email</Heading>
+              <Text color="red" ml={1} mt={-2} fontSize="1em">
+                *
+              </Text>
             </Box>
             <Input
               mt="8px"
@@ -103,6 +165,7 @@ const InviteEmployeesModal = ({
               value={invitedEmail}
               onChange={(event) => setInvitedEmail(event.target.value)}
             />
+            <FormErrorMessage>Resident is required.</FormErrorMessage>
           </Box>
           <Box
             pt="17px"
@@ -118,12 +181,12 @@ const InviteEmployeesModal = ({
             >
               <Flex>
                 <Box marginRight="24px">
-                  <Radio size="lg" colorScheme="gray" color="black" value="1">
+                  <Radio size="lg" colorScheme="teal" color="black" value="1">
                     Admin
                   </Radio>
                 </Box>
                 <Box>
-                  <Radio size="lg" colorScheme="gray" value="2">
+                  <Radio size="lg" colorScheme="teal" value="2">
                     Non Admin
                   </Radio>
                 </Box>
@@ -131,10 +194,12 @@ const InviteEmployeesModal = ({
             </RadioGroup>
             <Checkbox
               size="lg"
-              colorScheme="gray"
+              colorScheme="teal"
               borderRadius="40px"
-              value="isTwoFactorAuthenticated"
-              onChange={setIsTwoFactorAuthenticated}
+              isChecked={isTwoFactorAuthenticated}
+              onChange={(event) =>
+                setIsTwoFactorAuthenticated(event.target.checked)
+              }
             >
               Require Two Factor Authentication
             </Checkbox>
@@ -153,13 +218,11 @@ const InviteEmployeesModal = ({
             justifyContent="flex-end"
           >
             <Button
-              colorScheme="blue"
-              pt="12px"
-              pb="12px"
-              pl="16px"
-              pr="16px"
-              borderRadius="8px"
-              size="md"
+              variant="primary"
+              type="submit"
+              onClick={() => {
+                onInviteEmployee();
+              }}
             >
               Invite
             </Button>
