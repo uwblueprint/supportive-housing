@@ -60,7 +60,7 @@ const CreateResident = (): React.ReactElement => {
   };
 
   const handleInitialsChange = (e: { target: { value: unknown } }) => {
-    const inputValue: string = e.target.value as string;
+    const inputValue = e.target.value as string;
     if (/^[a-z]{0,2}$/i.test(inputValue)) {
       setInitials(inputValue.toUpperCase());
       setInitialsError(false);
@@ -70,7 +70,7 @@ const CreateResident = (): React.ReactElement => {
   };
 
   const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
-    const inputValue: string = e.target.value as string;
+    const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
       setRoomNumber(inputValue);
       setRoomNumberError(false);
