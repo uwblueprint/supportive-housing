@@ -330,7 +330,6 @@ const CreateLog = ({
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={employeeOptions}
                       isDisabled
                       defaultValue={{ label: employee, value: employee }} // needs to be the current user
                       styles={selectStyle}

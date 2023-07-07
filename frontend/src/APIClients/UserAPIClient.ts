@@ -12,9 +12,7 @@ const getUsers = async (): Promise<any> => {
     const { data } = await baseAPIClient.get("/users/", {
       headers: { Authorization: bearerToken },
     });
-    if (data) {
-      userData = data;
-    }
+    userData = data;
     return userData;
   } catch (error) {
     return userData;
