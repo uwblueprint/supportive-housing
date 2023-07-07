@@ -263,8 +263,8 @@ const InviteEmployeesModal = (): React.ReactElement => {
                       </Radio>
                     </Box>
                   </Flex>
+                  <FormErrorMessage>A selection is required.</FormErrorMessage>
                 </RadioGroup>
-                <FormErrorMessage>A selection is required.</FormErrorMessage>
               </FormControl>
               <Checkbox
                 size="lg"
