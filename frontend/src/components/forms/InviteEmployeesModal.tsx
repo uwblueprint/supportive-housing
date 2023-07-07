@@ -20,10 +20,13 @@ import {
 } from "@chakra-ui/react";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import RoleOptions from "../common/types/Roles";
+import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
+import CreateToast from "../common/Toasts";
 
 const InviteEmployeesModal = (): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const newToast = CreateToast();
 
   const [invitedEmail, setInvitedEmail] = useState<string>("");
   const [invitedFirstName, setInvitedFirstName] = useState<string>("");
@@ -86,7 +89,7 @@ const InviteEmployeesModal = (): React.ReactElement => {
 
   const handleAdminChange = (inputValue: string) => {
     setinvitedAdminStatus(inputValue);
-    if (invitedAdminStatus !== "") {
+    if (inputValue !== "") {
       setInvitedAdminStatusError(false);
     } else {
       setInvitedAdminStatusError(true);
@@ -143,8 +146,13 @@ const InviteEmployeesModal = (): React.ReactElement => {
       }
       // TO DO: add toast for error and success
       if (!hasInvitedUser) {
-        console.log("error");
+        newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
       } else {
+        newToast(
+          "Invite sent",
+          `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
+          "success",
+        );
         handleClose();
       }
     }
@@ -160,7 +168,7 @@ const InviteEmployeesModal = (): React.ReactElement => {
       !invitedEmailError &&
       !invitedFirstNameError &&
       !invitedLastNameError &&
-      !setInvitedAdminStatusError
+      !invitedAdminStatusError
     ) {
       onInviteEmployee();
     }
