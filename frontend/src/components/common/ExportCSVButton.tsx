@@ -16,13 +16,14 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
+  Tooltip,
 } from "@chakra-ui/react";
-import { AiFillPrinter } from "react-icons/ai";
+import { TiExport } from "react-icons/ti";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
 import CSVConverter from "../../helper/CSVConverter";
 
-const PrintCSVButton = (): React.ReactElement => {
+const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -66,19 +67,20 @@ const PrintCSVButton = (): React.ReactElement => {
 
   return (
     <>
-      <IconButton
-        aria-label="Print CSV"
-        className="ghost-button"
-        icon={<Icon boxSize="32px" as={AiFillPrinter} />}
-        variant="ghost"
-        onClick={handleOpen}
-      />
+      <Tooltip label="Export to CSV">
+        <IconButton
+          aria-label="Export to CSV"
+          icon={<Icon boxSize="36px" as={TiExport} />}
+          variant="tertiary"
+          onClick={handleOpen}
+        />
+      </Tooltip>
 
       <Box>
         <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Print CSV File</ModalHeader>
+            <ModalHeader>Export to CSV File</ModalHeader>
             <ModalBody>
               <FormControl>
                 <Flex gap="8px">
@@ -93,8 +95,7 @@ const PrintCSVButton = (): React.ReactElement => {
                   />
                   <Button
                     onClick={handleClear}
-                    className="button ghost-button"
-                    variant="ghost"
+                    variant="secondary"
                   >
                     Clear
                   </Button>
@@ -107,18 +108,17 @@ const PrintCSVButton = (): React.ReactElement => {
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
                   onClick={handleClose}
-                  className="button ghost-button"
-                  variant="ghost"
+                  variant="tertiary"
                   marginRight="8px"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className="button solid-button"
+                  variant="primary"
                   type="submit"
                 >
-                  Print
+                  Export
                 </Button>
               </Box>
             </ModalBody>
@@ -144,4 +144,4 @@ const PrintCSVButton = (): React.ReactElement => {
   );
 };
 
-export default PrintCSVButton;
+export default ExportCSVButton;
