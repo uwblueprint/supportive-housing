@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React, { RefObject, useState, useContext } from "react";
 import {
   Box,
   Table,
@@ -8,9 +8,18 @@ import {
   Th,
   Thead,
   Tr,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
 } from "@chakra-ui/react";
+import { VscKebabVertical } from "react-icons/vsc";
+
 import { LogRecord } from "../../../types/LogRecordTypes";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
+
+import AuthContext from "../../../contexts/AuthContext";
 
 type Props = {
   logRecords: LogRecord[];
@@ -21,6 +30,17 @@ const LogRecordsTable = ({
   logRecords,
   tableRef,
 }: Props): React.ReactElement => {
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  // Options menu state
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Handle options menu toggle
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
     <Box>
       <TableContainer
@@ -42,6 +62,7 @@ const LogRecordsTable = ({
               <Th>Note</Th>
               <Th>Employee</Th>
               <Th>Attn To</Th>
+              <Th>Options</Th>
             </Tr>
           </Thead>
 
@@ -61,12 +82,34 @@ const LogRecordsTable = ({
                     // TODO: Resolve the resident record at some point
                   }
                   <Td width="5%">{record.residentId}</Td>
-                  <Td whiteSpace="normal" width="75%">
+                  <Td whiteSpace="normal" width="70%">
                     {record.note}
                   </Td>
                   <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
                   <Td width="5%">
                     {`${record.attnToFirstName} ${record.attnToLastName}`}
+                  </Td>
+                  <Td width="5%">
+                    {(authenticatedUser?.role === "Admin" || authenticatedUser?.id === record.employeeId) && (
+                      <Menu>
+                        <MenuButton
+                          as={IconButton}
+                          aria-label='Options'
+                          icon={<VscKebabVertical />}
+                          w="36px"
+                          variant="ghost"
+                          onClick={handleMenuToggle}
+                        />
+                        <MenuList>
+                            <MenuItem>
+                              Delete
+                            </MenuItem>
+                            <MenuItem>
+                              Edit
+                            </MenuItem>
+                          </MenuList>
+                      </Menu>
+                    )}
                   </Td>
                 </Tr>
               );
