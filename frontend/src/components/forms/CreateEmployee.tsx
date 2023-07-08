@@ -18,12 +18,13 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
+import { AddIcon } from "@chakra-ui/icons";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import RoleOptions from "../common/types/Roles";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 
-const InviteEmployeesModal = (): React.ReactElement => {
+const CreateEmployee = (): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const newToast = CreateToast();
@@ -87,7 +88,7 @@ const InviteEmployeesModal = (): React.ReactElement => {
     }
   };
 
-  const handleAdminChange = (inputValue: string) => {
+  const handleAdminStatusChange = (inputValue: string) => {
     setinvitedAdminStatus(inputValue);
     if (inputValue !== "") {
       setInvitedAdminStatusError(false);
@@ -114,12 +115,17 @@ const InviteEmployeesModal = (): React.ReactElement => {
     setIsOpen(false);
   };
 
-  const onInviteEmployee = async () => {
+  const onInviteEmployee = async (
+    isEmailError: boolean,
+    isFirstNameError: boolean,
+    isLastNameError: boolean,
+    isAdminStatusError: boolean,
+  ) => {
     if (
-      invitedEmail !== "" &&
-      invitedFirstName !== "" &&
-      invitedLastName !== "" &&
-      invitedAdminStatus !== ""
+      !isEmailError &&
+      !isFirstNameError &&
+      !isLastNameError &&
+      !isAdminStatusError
     ) {
       let hasInvitedUser = false;
       if (invitedAdminStatus === "1") {
@@ -144,10 +150,7 @@ const InviteEmployeesModal = (): React.ReactElement => {
           invitedLastName,
         );
       }
-      // TO DO: add toast for error and success
-      if (!hasInvitedUser) {
-        newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
-      } else {
+      if (hasInvitedUser) {
         newToast(
           "Invite sent",
           `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
@@ -155,29 +158,35 @@ const InviteEmployeesModal = (): React.ReactElement => {
         );
         handleClose();
       }
+    } else {
+      newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
     }
   };
 
   const handleSubmit = () => {
-    setInvitedEmailError(invitedEmail === "");
-    setInvitedFirstNameError(invitedFirstName === "");
-    setInvitedLastNameError(invitedLastName === "");
-    setInvitedAdminStatusError(invitedAdminStatus === "");
-
-    if (
-      !invitedEmailError &&
-      !invitedFirstNameError &&
-      !invitedLastNameError &&
-      !invitedAdminStatusError
-    ) {
-      onInviteEmployee();
-    }
+    const isEmailError = !/^[-a-zA-Z0-9_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(
+      invitedEmail,
+    );
+    setInvitedEmailError(isEmailError);
+    const isFirstNameError = invitedFirstName === "";
+    setInvitedFirstNameError(isFirstNameError);
+    const isLastNameError = invitedLastName === "";
+    setInvitedLastNameError(isLastNameError);
+    const isAdminStatusError = invitedAdminStatus === "";
+    setInvitedAdminStatusError(isAdminStatusError);
+    onInviteEmployee(
+      isEmailError,
+      isFirstNameError,
+      isLastNameError,
+      isAdminStatusError,
+    );
   };
 
   return (
     <>
-      <Button size="lg" variant="solid" colorScheme="pink" onClick={handleOpen}>
-        Test Invite Employee Form Modal
+      <Button variant="primary" onClick={handleOpen}>
+        <AddIcon boxSize="16px" marginRight="8px" />
+        Add Employee
       </Button>
       <Modal isOpen={isOpen} onClose={handleClose} isCentered>
         <ModalOverlay />
@@ -234,10 +243,12 @@ const InviteEmployeesModal = (): React.ReactElement => {
                   <Input
                     placeholder="Enter SHOW email"
                     value={invitedEmail}
-                    onChange={handleEmailChange}
+                    onChange={(event) => setInvitedEmail(event.target.value)}
                     maxLength={254}
                   />
-                  <FormErrorMessage>A SHOW email is required.</FormErrorMessage>
+                  <FormErrorMessage>
+                    A validwh email is required.
+                  </FormErrorMessage>
                 </FormControl>
               </Box>
             </Box>
@@ -251,23 +262,18 @@ const InviteEmployeesModal = (): React.ReactElement => {
               <FormControl isRequired isInvalid={invitedAdminStatusError}>
                 <RadioGroup
                   value={invitedAdminStatus}
-                  onChange={handleAdminChange}
+                  onChange={handleAdminStatusChange}
                   pb="24px"
                 >
                   <Flex>
                     <Box marginRight="24px">
-                      <Radio
-                        size="lg"
-                        colorScheme="teal"
-                        color="black"
-                        value="1"
-                      >
-                        Admin
+                      <Radio size="lg" colorScheme="teal" value="1">
+                        <Text color="#1B2A2C">Admin</Text>
                       </Radio>
                     </Box>
                     <Box>
                       <Radio size="lg" colorScheme="teal" value="2">
-                        Non Admin
+                        <Text color="#1B2A2C">Non Admin</Text>
                       </Radio>
                     </Box>
                   </Flex>
@@ -284,9 +290,9 @@ const InviteEmployeesModal = (): React.ReactElement => {
                   setIsTwoFactorAuthenticated(event.target.checked)
                 }
               >
-                Require Two Factor Authentication
+                <Text color="#1B2A2C">Require Two Factor Authentication</Text>
               </Checkbox>
-              <Text fontSize="xs">
+              <Text fontSize="12px" color="#1B2A2C" fontWeight="bold">
                 Requiring Two Factor Authentication means the employee will only
                 be able to access the platform while physically in the main
                 building
@@ -311,4 +317,4 @@ const InviteEmployeesModal = (): React.ReactElement => {
   );
 };
 
-export default InviteEmployeesModal;
+export default CreateEmployee;

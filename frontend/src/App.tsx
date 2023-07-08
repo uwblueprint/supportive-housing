@@ -28,7 +28,7 @@ import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 import InviteUsers from "./components/pages/InviteUsers";
-import InviteEmployeesModal from "./components/forms/InviteEmployeesModal";
+import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
 
@@ -111,7 +111,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.INVITE_EMPLOYEES}
-                  component={InviteEmployeesModal}
+                  component={CreateEmployee}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
