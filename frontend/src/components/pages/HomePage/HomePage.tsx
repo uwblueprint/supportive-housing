@@ -8,7 +8,7 @@ import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
-import PrintCSVButton from "../../common/PrintCSVButton";
+import ExportCSVButton from "../../common/ExportCSVButton";
 
 type TransformedFilters = {
   employeeIds: any[];
@@ -136,7 +136,7 @@ const HomePage = (): React.ReactElement => {
           <Spacer />
           <Flex justify="end" gap="12px">
             <CreateLog />
-            <PrintCSVButton />
+            <ExportCSVButton />
           </Flex>
         </Flex>
 
