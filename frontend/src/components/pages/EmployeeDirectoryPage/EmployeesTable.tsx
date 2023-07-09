@@ -25,11 +25,7 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
         overflowY="scroll"
         ref={tableRef}
       >
-        <Table
-          variant="logRecordsTable"
-          minHeight="400px"
-          verticalAlign="middle"
-        >
+        <Table variant="showTable" minHeight="400px" verticalAlign="middle">
           <Thead>
             <Tr>
               <Th>Employee Name</Th>

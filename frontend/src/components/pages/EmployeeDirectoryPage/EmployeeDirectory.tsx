@@ -61,12 +61,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         color="blue.600"
       >
         <Flex marginBottom="16px">
-          <Box textStyle="hero-records">Day Logs</Box>
-          <Spacer />
-          <Flex justify="end" gap="12px">
-            <CreateLog />
-            <ExportCSVButton />
-          </Flex>
+          <Box textStyle="hero-table">Employee Directory</Box>
         </Flex>
 
         <EmployeesTable users={users} tableRef={tableRef} />

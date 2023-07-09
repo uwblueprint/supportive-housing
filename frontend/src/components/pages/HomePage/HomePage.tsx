@@ -132,7 +132,7 @@ const HomePage = (): React.ReactElement => {
         color="blue.600"
       >
         <Flex marginBottom="16px">
-          <Box textStyle="hero-records">Day Logs</Box>
+          <Box textStyle="hero-table">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
             <CreateLog />
