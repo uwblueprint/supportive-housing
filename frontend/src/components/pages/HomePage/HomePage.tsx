@@ -8,7 +8,13 @@ import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
-import PrintCSVButton from "../../common/PrintCSVButton";
+import ExportCSVButton from "../../common/ExportCSVButton";
+
+type TransformedFilters = {
+  employeeIds: any[];
+  attentionTos: any[];
+  dateRange: any[];
+};
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -41,7 +47,7 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const getLogRecords = async (pageNumber: number) => {
+  const transformFilters = (): TransformedFilters => {
     const employeeIds = employees
       ? employees.replaceAll(`"`, "").split(",")
       : [];
@@ -49,6 +55,12 @@ const HomePage = (): React.ReactElement => {
       ? attentionTo.replaceAll(`"`, "").split(",")
       : [];
     const dateRange = startDate && endDate ? [startDate, endDate] : [];
+
+    return { employeeIds, attentionTos, dateRange };
+  };
+
+  const getLogRecords = async (pageNumber: number) => {
+    const { employeeIds, attentionTos, dateRange } = transformFilters();
 
     const data = await commonAPIClient.filterLogRecords({
       building,
@@ -65,14 +77,28 @@ const HomePage = (): React.ReactElement => {
     tableRef.current?.scrollTo(0, 0);
 
     setLogRecords(data ? data.logRecords : []);
-    setNumRecords(data ? data.numResults : 0);
 
-    if (!data || data.numResults === 0) {
+    if (!data || data.logRecords.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
       setPageNum(pageNumber);
     }
+  };
+
+  const countLogRecords = async () => {
+    const { employeeIds, attentionTos, dateRange } = transformFilters();
+
+    const data = await commonAPIClient.countLogRecords({
+      building,
+      employeeId: employeeIds,
+      attnTo: attentionTos,
+      dateRange,
+      tags: tags ? [tags] : [],
+      flagged,
+    });
+
+    setNumRecords(data ? data.numResults : 0);
   };
 
   useEffect(() => {
@@ -90,6 +116,10 @@ const HomePage = (): React.ReactElement => {
     resultsPerPage,
   ]);
 
+  useEffect(() => {
+    countLogRecords();
+  }, [building, employees, attentionTo, startDate, endDate, tags, flagged]);
+
   return (
     <Box>
       <NavigationBar />
@@ -106,7 +136,7 @@ const HomePage = (): React.ReactElement => {
           <Spacer />
           <Flex justify="end" gap="12px">
             <CreateLog />
-            <PrintCSVButton />
+            <ExportCSVButton />
           </Flex>
         </Flex>
 

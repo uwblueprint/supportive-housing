@@ -1,6 +1,6 @@
 const font = "DM Sans";
 
-const textStyles = {
+const fontStyles = {
   "body-medium": {
     fontFamily: font,
     fontSize: "16px",
@@ -43,4 +43,4 @@ const textStyles = {
   },
 };
 
-export default textStyles;
+export default fontStyles;
