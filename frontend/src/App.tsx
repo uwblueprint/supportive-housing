@@ -24,7 +24,7 @@ import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherCo
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import ResidentDirectory from "./components/pages/ResidentDirectory";
-import EmployeeDirectory from "./components/pages/EmployeeDirectory";
+import EmployeeDirectory from "./components/pages/EmployeeDirectoryPage/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 import InviteUsers from "./components/pages/InviteUsers";
