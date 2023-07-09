@@ -3,7 +3,7 @@ import { extendTheme } from "@chakra-ui/react";
 import colors from "./colors";
 import fontStyles from "./fontStyles";
 import Button from "./common/buttonStyles";
-import Table from "./common/logsTableStyles";
+import Table from "./common/tableStyles";
 import Text from "./common/textStyles";
 import { Input, Textarea } from "./forms/inputStyles";
 import { FormLabel, Modal } from "./forms/formTextStyles";

@@ -112,27 +112,27 @@ class UserService(IUserService):
 
     def get_users(self, page_number, results_per_page):
         try:
-            users = User.query.limit(results_per_page).offset((page_number - 1) * results_per_page).all()
+            users = (
+                User.query.limit(results_per_page)
+                .offset((page_number - 1) * results_per_page)
+                .all()
+            )
             json_list = list(map(lambda user: user.to_dict(), users))
 
-            return {
-                "users": json_list
-            }
+            return {"users": json_list}
 
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def count_users(self):
         try:
             count = User.query.count()
 
-            return {
-                "num_results": count
-            }
+            return {"num_results": count}
 
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def get_user_status_by_email(self, email):
         try:
             user = User.query.filter_by(email=email).first()

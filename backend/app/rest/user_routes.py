@@ -56,11 +56,12 @@ def get_users():
     try:
         users = user_service.get_users(page_number, results_per_page)
         return jsonify(users), 201
-    
+
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-    
+
+
 @blueprint.route("/count", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def count_users():

@@ -42,7 +42,6 @@ def add_resident():
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
-
 @blueprint.route("/<int:resident_id>", methods=["PUT"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def update_resident(resident_id):
