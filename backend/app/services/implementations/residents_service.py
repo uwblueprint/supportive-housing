@@ -2,7 +2,7 @@ from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
 from ...models import db
 from datetime import datetime
-from sqlalchemy import select, cast, Date
+from sqlalchemy import select, cast, Date, text
 import json
 
 
@@ -82,13 +82,38 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_residents(self, resident_id=None):
+    def get_residents(self, return_all, page_number=1, results_per_page=10, resident_id=None):
         try:
             if resident_id:
+                num_results = 1
                 residents_results = Residents.query.filter_by(resident_id=resident_id)
-            else:
+            elif return_all:
                 residents_results = Residents.query.all()
+                residents_results = self.to_json_list(residents_results)
+                num_results = len(residents_results)
+            else: 
+                start_index = (page_number - 1) * results_per_page
+                end_index = start_index + results_per_page
 
-            return self.to_json_list(residents_results)
+                sql = "SELECT\n \
+                    id,\n \
+                    initial,\n \
+                    room_num,\n \
+                    date_joined,\n \
+                    date_left,\n \
+                    building\n \
+                    FROM residents"
+                
+                residents = db.session.execute(text(sql))
+                residents_results = self.to_json_list(residents)
+                num_results = len(residents_results)
+
+                residents_results = residents_results[start_index:end_index]
+
+            return {
+                "residents": residents_results,
+                "num_results": num_results,
+            }
+
         except Exception as postgres_error:
             raise postgres_error
