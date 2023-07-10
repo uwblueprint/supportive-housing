@@ -3,7 +3,7 @@ import fontStyles from "../fontStyles";
 
 const Table: ComponentStyleConfig = {
   variants: {
-    logRecordsTable: {
+    baseTable: {
       th: {
         color: "teal.500",
         backgroundColor: "teal.50",

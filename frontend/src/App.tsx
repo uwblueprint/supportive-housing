@@ -23,7 +23,7 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-import ResidentDirectory from "./components/pages/ResidentDirectory";
+import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";

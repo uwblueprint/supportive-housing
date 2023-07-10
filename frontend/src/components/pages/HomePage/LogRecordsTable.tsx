@@ -30,7 +30,7 @@ const LogRecordsTable = ({
         ref={tableRef}
       >
         <Table
-          variant="logRecordsTable"
+          variant="baseTable"
           minHeight="400px"
           verticalAlign="middle"
         >
@@ -57,9 +57,6 @@ const LogRecordsTable = ({
                 <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                   <Td width="5%">{date}</Td>
                   <Td width="5%">{time}</Td>
-                  {
-                    // TODO: Resolve the resident record at some point
-                  }
                   <Td width="5%">{record.residentId}</Td>
                   <Td whiteSpace="normal" width="75%">
                     {record.note}
