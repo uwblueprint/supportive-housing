@@ -120,8 +120,11 @@ def create_user():
         return jsonify(created_user.__dict__), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
-        print("error_message", error_message)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
+        status_code = None
+        if (str(e) == "User already exists"):
+            status_code = 409
+            
+        return jsonify({"error": (error_message if error_message else str(e))}), (status_code if status_code else 500)
 
 
 @blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)

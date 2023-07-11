@@ -143,7 +143,7 @@ const CreateEmployee = (): React.ReactElement => {
         );
       }
       console.log("hasInvitedUser", hasInvitedUser);
-      if (hasInvitedUser === "User already exists") {
+      if (hasInvitedUser === "Request failed with status code 409") {
         newToast("Employee already exists", INVITE_EMPLOYEE_ERROR, "error");
       } else if (hasInvitedUser === "Success") {
         newToast(
@@ -293,7 +293,7 @@ const CreateEmployee = (): React.ReactElement => {
               <Text fontSize="12px" color="#1B2A2C">
                 Requiring Two Factor Authentication means the employee will only
                 be able to access the platform while physically in the main
-                building
+                building.
               </Text>
             </Box>
             <Divider />
