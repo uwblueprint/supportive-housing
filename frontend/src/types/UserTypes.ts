@@ -16,13 +16,13 @@ export type CountUsersResponse = {
   numResults: number;
 } | null;
 
-enum UserRole {
+export enum UserRole {
   ADMIN = "Admin",
   REGULAR_STAFF = "Regular Staff",
   RELIEF_STAFF = "Relief Staff",
 }
 
-enum UserStatus {
+export enum UserStatus {
   INVITED = "Invited",
   ACTIVE = "Active",
   DEACTIVATED = "Deactivated",
