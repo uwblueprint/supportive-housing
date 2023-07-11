@@ -9,6 +9,10 @@ import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
+import { Building } from "../../../types/BuildingTypes";
+import { Resident } from "../../../types/ResidentTypes";
+import { Tag } from "../../../types/TagsTypes";
+import { User } from "../../../types/UserTypes";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -22,13 +26,13 @@ const HomePage = (): React.ReactElement => {
   */
   // TODO: search by resident
   // Filter state
-  const [residents, setResidents] = useState("");
-  const [employees, setEmployees] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [tags, setTags] = useState("");
-  const [attentionTo, setAttentionTo] = useState("");
-  const [building, setBuilding] = useState("");
+  const [residents, setResidents] = useState<Resident[]>([]);
+  const [employees, setEmployees] = useState<User[]>([]);
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [attentionTos, setAttentionTos] = useState<User[]>([]);
+  const [building, setBuilding] = useState<Building | null>(null);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
@@ -41,21 +45,27 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
+  const formatDate = (date: Date) => {
+    const isoString = date.toISOString(); // Get ISO string, e.g., "2023-07-09T00:00:00.000Z"
+    const formattedDate = isoString.slice(0, 10); // Extract "YYYY-MM-DD" from the ISO string
+    return formattedDate;
+  };
+
+
   const getLogRecords = async (pageNumber: number) => {
-    const employeeIds = employees
-      ? employees.replaceAll(`"`, "").split(",")
-      : [];
-    const attentionTos = attentionTo
-      ? attentionTo.replaceAll(`"`, "").split(",")
-      : [];
-    const dateRange = startDate && endDate ? [startDate, endDate] : [];
+    const buildingValue = building ? building.value : "";
+    const employeeIds = employees.map((employee) => employee.id);
+    const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
+    const dateRange =
+      startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
+    const tagsValues = tags.map((tag) => tag.value);
 
     const data = await commonAPIClient.filterLogRecords({
-      building,
+      building: buildingValue,
       employeeId: employeeIds,
-      attnTo: attentionTos,
+      attnTo: attentionToIds,
       dateRange,
-      tags: tags ? [tags] : [],
+      tags: tagsValues,
       flagged,
       resultsPerPage,
       pageNumber,
@@ -65,14 +75,33 @@ const HomePage = (): React.ReactElement => {
     tableRef.current?.scrollTo(0, 0);
 
     setLogRecords(data ? data.logRecords : []);
-    setNumRecords(data ? data.numResults : 0);
 
-    if (!data || data.numResults === 0) {
+    if (!data || data.logRecords.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
       setPageNum(pageNumber);
     }
+  };
+
+  const countLogRecords = async () => {
+    const buildingValue = building ? building.value : "";
+    const employeeIds = employees.map((employee) => employee.id);
+    const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
+    const dateRange =
+      startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
+    const tagsValues = tags.map((tag) => tag.value);
+
+    const data = await commonAPIClient.countLogRecords({
+      building: buildingValue,
+      employeeId: employeeIds,
+      attnTo: attentionToIds,
+      dateRange,
+      tags: tagsValues,
+      flagged,
+    });
+
+    setNumRecords(data ? data.numResults : 0);
   };
 
   useEffect(() => {
@@ -81,7 +110,7 @@ const HomePage = (): React.ReactElement => {
   }, [
     building,
     employees,
-    attentionTo,
+    attentionTos,
     startDate,
     endDate,
     tags,
@@ -89,6 +118,10 @@ const HomePage = (): React.ReactElement => {
     setLogRecords,
     resultsPerPage,
   ]);
+
+  useEffect(() => {
+    countLogRecords();
+  }, [building, employees, attentionTos, startDate, endDate, tags, flagged]);
 
   return (
     <Box>
@@ -116,14 +149,15 @@ const HomePage = (): React.ReactElement => {
           startDate={startDate}
           endDate={endDate}
           tags={tags}
-          attentionTo={attentionTo}
+          attentionTos={attentionTos}
           building={building}
+          flagged={flagged}
           setResidents={setResidents}
           setEmployees={setEmployees}
           setStartDate={setStartDate}
           setEndDate={setEndDate}
           setTags={setTags}
-          setAttentionTo={setAttentionTo}
+          setAttentionTos={setAttentionTos}
           setBuilding={setBuilding}
           setFlagged={setFlagged}
         />

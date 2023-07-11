@@ -5,6 +5,8 @@ export type Resident = {
   dateJoined: Date;
   dateLeft?: Date;
   building: string;
+  label?: string;
+  value?: number;
 };
 
 export type GetResidentsReponse = {

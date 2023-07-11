@@ -1,6 +1,15 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Image, Button, Stack } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Button,
+  Stack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/react";
 
 import {
   HOME_PAGE,
@@ -30,6 +39,12 @@ const NavigationBar = (): React.ReactElement => {
       setAuthenticatedUser(null);
       navigateToHome();
     }
+  };
+
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
+  const handleMenuToggle = () => {
+    setMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -68,25 +83,31 @@ const NavigationBar = (): React.ReactElement => {
 
             <Button
               variant="link button-navbar"
-              marginLeft="48px"
               onClick={navigateToResidentDirectory}
             >
               Resident Directory
             </Button>
 
-            <Button
-              variant="link button-navbar"
-              marginLeft="48px"
-              onClick={navigateToEmployeeDirectory}
-            >
-              Employee Directory
-            </Button>
+            {authenticatedUser?.role === "Admin" && (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  variant="link button-navbar"
+                  onClick={handleMenuToggle}
+                >
+                  Admin Controls
+                </MenuButton>
+                {isMenuOpen && (
+                  <MenuList>
+                    <MenuItem onClick={navigateToEmployeeDirectory}>
+                      Employee Directory
+                    </MenuItem>
+                  </MenuList>
+                )}
+              </Menu>
+            )}
 
-            <Button
-              variant="link button-navbar"
-              marginLeft="48px"
-              onClick={handleLogout}
-            >
+            <Button variant="link button-navbar" onClick={handleLogout}>
               Logout
             </Button>
           </Stack>
