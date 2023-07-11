@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Box,
     Modal,
@@ -8,10 +8,6 @@ import {
     ModalBody,
     ModalFooter,
     Button,
-    ScaleFade,
-    Alert,
-    AlertDescription,
-    AlertIcon,
     Text,
 } from "@chakra-ui/react";
 
@@ -24,22 +20,13 @@ type Props = {
 };
 
 const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Props): React.ReactElement => {
-    const [showAlert, setShowAlert] = useState(false);
-
+    
     const ITEM_NAME = itemName.toLowerCase();
 
     const handleSubmit = async () => {
         deleteAPI(itemId);
         onClose();
     };
-
-    useEffect(() => {
-        if (showAlert) {
-            setTimeout(() => {
-                setShowAlert(false);
-            }, 3000);
-        }
-    }, [showAlert]);
 
     return (
         <>
@@ -71,21 +58,6 @@ const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Pr
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-            </Box>
-
-            <Box
-                position="fixed"
-                bottom="20px"
-                right="20px"
-                width="25%"
-                zIndex={9999}
-            >
-                <ScaleFade in={showAlert} unmountOnExit>
-                    <Alert status="success" variant="left-accent" borderRadius="6px">
-                        <AlertIcon />
-                        <AlertDescription>No Log Records Found.</AlertDescription>
-                    </Alert>
-                </ScaleFade>
             </Box>
         </>
     );
