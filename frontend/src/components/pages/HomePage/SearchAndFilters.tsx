@@ -58,9 +58,24 @@ const TAGS: Tag[] = [
 
 // Replace this with the residents from the db
 const RESIDENTS: Resident[] = [
-  { id: "1", label: "DE307", value: "DE307" },
-  { id: "2", label: "AH206", value: "AH206" },
-  { id: "3", label: "MB404", value: "MB404" },
+  {
+    id: 1,
+    initial: "K",
+    roomNum: 111,
+    dateJoined: new Date(),
+    building: "144",
+    label: "K111",
+    value: 1,
+  },
+  {
+    id: 1,
+    initial: "P",
+    roomNum: 112,
+    dateJoined: new Date(),
+    building: "1362",
+    label: "P112",
+    value: 2,
+  },
 ];
 
 // Replace this with the users from the db
