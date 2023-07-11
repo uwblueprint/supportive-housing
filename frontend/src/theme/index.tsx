@@ -14,7 +14,7 @@ const customTheme = extendTheme({
     initialColorMode: "light",
   },
   colors,
-  fontStyles,
+  textStyles: fontStyles,
   components: {
     Button,
     Input,
