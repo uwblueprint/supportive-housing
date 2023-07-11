@@ -21,6 +21,7 @@ const getResidents = async (): Promise<GetResidentsReponse> => {
 };
 
 const paginatedGetResidents = async (
+  returnAll: boolean,
   pageNumber: number,
   resultsPerPage: number,
 ): Promise<any> => {
@@ -31,7 +32,7 @@ const paginatedGetResidents = async (
     )}`;
     const { data } = await baseAPIClient.get(`/residents/`, {
       params: {
-        returnAll: true,
+        returnAll,
         pageNumber,
         resultsPerPage,
       },
@@ -45,4 +46,5 @@ const paginatedGetResidents = async (
 
 export default {
   getResidents,
+  paginatedGetResidents
 };

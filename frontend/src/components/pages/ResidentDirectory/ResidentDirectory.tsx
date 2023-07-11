@@ -1,8 +1,10 @@
-import React, { useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
 import ResidentDirectoryTable from './ResidentDirectoryTable'
 import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
+import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import Pagination from "../../common/Pagination";
 
 const SAMPLE_RESIDENTS: Resident[] = [
   { id: 1, initial: 'AA', roomNum: 132, dateJoined: new Date(), building: "362"},
@@ -20,7 +22,41 @@ const SAMPLE_RESIDENTS: Resident[] = [
 ]
 
 const ResidentDirectory = (): React.ReactElement => {
+  // Record/page state
+  const [residents, setResidents] = useState<Resident[]>([]);
+  const [numResidents, setNumResidents] = useState<number>(0);
+  const [resultsPerPage, setResultsPerPage] = useState<number>(25);
+  const [pageNum, setPageNum] = useState<number>(1);
+  const [userPageNum, setUserPageNum] = useState(pageNum);
+
   const tableRef = useRef<HTMLDivElement>(null);
+
+  const getResidents = async (pageNumber: number) => {
+    const data = await ResidentAPIClient.paginatedGetResidents(
+      true,
+      resultsPerPage,
+      pageNumber,
+    );
+
+    // Reset table scroll
+    tableRef.current?.scrollTo(0, 0);
+
+    setResidents(data ? data.residents : []);
+    setNumResidents(data ? data.numResults : 0);
+
+    if (!data || data.numResults === 0) {
+      setUserPageNum(0);
+      setPageNum(0);
+    } else {
+      setPageNum(pageNumber);
+    }
+  }
+
+  useEffect(() => {
+    setUserPageNum(1);
+    getResidents(1);
+  }, [resultsPerPage])
+
   return (
     <Box>
       <NavigationBar />
@@ -33,18 +69,18 @@ const ResidentDirectory = (): React.ReactElement => {
         color="blue.600"
       >
         <ResidentDirectoryTable
-          residents={SAMPLE_RESIDENTS}
+          residents={residents}
           tableRef={tableRef }
         />
-        {/* <Pagination
-          numRecords={numRecords}
+        <Pagination
+          numRecords={numResidents}
           pageNum={pageNum}
           userPageNum={userPageNum}
           setUserPageNum={setUserPageNum}
           resultsPerPage={resultsPerPage}
           setResultsPerPage={setResultsPerPage}
-          getRecords={getLogRecords}
-        /> */}
+          getRecords={getResidents}
+        />
       </Box>
     </Box>
   )

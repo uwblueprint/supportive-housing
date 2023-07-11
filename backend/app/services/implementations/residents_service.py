@@ -82,7 +82,7 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_residents(self, return_all, page_number=1, results_per_page=10, resident_id=None):
+    def get_residents(self, return_all, page_number, results_per_page=10, resident_id=None):
         try:
             if resident_id:
                 num_results = 1
@@ -90,6 +90,7 @@ class ResidentsService(IResidentsService):
             elif return_all:
                 residents_results = Residents.query.all()
                 residents_results = self.to_json_list(residents_results)
+                print(residents_results)
                 num_results = len(residents_results)
             else: 
                 start_index = (page_number - 1) * results_per_page
@@ -105,6 +106,7 @@ class ResidentsService(IResidentsService):
                     FROM residents"
                 
                 residents = db.session.execute(text(sql))
+                print(residents)
                 residents_results = self.to_json_list(residents)
                 num_results = len(residents_results)
 

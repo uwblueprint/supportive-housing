@@ -104,9 +104,16 @@ def get_residents():
     """
     Get residents.
     """
+    page_number = 1
+    return_all = False
     try:
+        return_all = (
+            True if request.args.get("return_all").casefold() == "true" else False
+        )
+        page_number = int(request.args.get("page_number"))
         resident_id = request.args.get("resident_id")
-        residents_results = residents_service.get_residents(resident_id)
+        results_per_page = int(request.args.get("results_per_page"))
+        residents_results = residents_service.get_residents(return_all, page_number, results_per_page, resident_id)
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
