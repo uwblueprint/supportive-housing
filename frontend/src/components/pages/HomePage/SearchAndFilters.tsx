@@ -269,7 +269,7 @@ const SearchAndFilters = ({
                         isChecked={flagged}
                         onChange={(e) => setFlagged(e.target.checked)}
                       >
-                        Flagged
+                        <Text>Flagged</Text>
                       </Checkbox>
                     </GridItem>
                   </Grid>
@@ -280,7 +280,7 @@ const SearchAndFilters = ({
                   borderTop={isExpanded ? "1px solid #EAF0EF" : "none"}
                 >
                   <Box as="span" flex="1" textAlign="center">
-                    {isExpanded ? "CLOSE FILTERS" : "OPEN FILTERS"}
+                    <Text>{isExpanded ? "CLOSE FILTERS" : "OPEN FILTERS"}</Text>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
