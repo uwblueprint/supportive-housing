@@ -236,6 +236,8 @@ class UserService(IUserService):
                     User.first_name: user.first_name,
                     User.last_name: user.last_name,
                     User.role: user.role,
+                    User.email: user.email,
+                    User.user_status: user.user_status
                 }
             )
 
@@ -250,6 +252,8 @@ class UserService(IUserService):
                         User.first_name: old_user.first_name,
                         User.last_name: old_user.last_name,
                         User.role: old_user.role,
+                        User.email: old_user.email,
+                        User.user_status: old_user.user_status
                     }
                     User.query.filter_by(id=user_id).update(**old_user_dict)
                     db.session.commit()
