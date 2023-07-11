@@ -90,3 +90,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background: none;
   display: none;
 }
+
+.chakra-collapse {
+  overflow: visible !important;
+}
