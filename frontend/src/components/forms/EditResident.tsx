@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Select, { SingleValue } from "react-select";
+
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   Box,
   Button,
+  Checkbox,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -17,6 +19,7 @@ import {
   ModalCloseButton,
   ModalOverlay,
   ModalFooter,
+  Text,
   ScaleFade,
   Divider,
 } from "@chakra-ui/react";
@@ -25,6 +28,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import CommonAPIClient from "../../APIClients/CommonAPIClient";
+import { Resident } from "../../types/ResidentTypes"
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
@@ -36,26 +40,32 @@ const BUILDINGS = [
   { label: "402", value: "402" },
 ];
 
-const AddResident = (): React.ReactElement => {
-  const [initials, setInitials] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [moveInDate, setMoveInDate] = useState(new Date());
-  const [building, setBuilding] = useState("");
+
+const EditResident = (residentDetails: Resident ): React.ReactElement => {
+  const { id, initial, roomNum, dateJoined, dateLeft, building } = residentDetails;
+  const [initials, setInitials] = useState(initial);
+  const [roomNumber, setRoomNumber] = useState(roomNum);
+  const [moveInDate, setMoveInDate] = useState(dateJoined);
+  const [userBuilding, setUserBuilding] = useState(building);
+  const [moveOutDate, setMoveOutDate] = useState(new Date());
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
   const [moveInDateError, setMoveInDateError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
+  const [moveOutDateError, setMoveOutDateError] = useState(false);
+  const [flagged, setFlagged] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const addResident = async () => {
-    await CommonAPIClient.createResident({
+  const editRes = async () => {
+    await CommonAPIClient.editResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
       dateJoined: moveInDate,
-      building,
+      building: userBuilding,
+      dateLeft: moveOutDate,
     });
   };
 
@@ -65,6 +75,11 @@ const AddResident = (): React.ReactElement => {
       setInitials(inputValue.toUpperCase());
       setInitialsError(false);
     }
+  };
+
+  const handleFlagged = () => {
+    setFlagged(!flagged);
+    setMoveOutDate(new Date());
   };
 
   const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
@@ -82,11 +97,23 @@ const AddResident = (): React.ReactElement => {
     }
   };
   
+  const handleMoveOutDateChange = (inputValue: Date) => {
+    if (inputValue !== null) {
+      if (inputValue >= moveInDate) {
+        setMoveOutDate(inputValue);
+        setMoveOutDateError(false);
+      }
+      else {
+        setMoveOutDateError(true);
+      }
+    } 
+  };
+
   const handleBuildingChange = (
     selectedOption: SingleValue<{ label: string; value: string }>,
   ) => {
     if (selectedOption !== null) {
-      setBuilding(selectedOption.value);
+      setUserBuilding(selectedOption.value);
       setBuildingError(false);
     }
   };
@@ -95,15 +122,18 @@ const AddResident = (): React.ReactElement => {
     setIsOpen(true);
 
     // Reset the input states
-    setInitials("");
-    setRoomNumber("");
-    setMoveInDate(new Date());
-    setBuilding("");
+    setInitials(initial);
+    setRoomNumber(roomNum);
+    setMoveInDate(moveInDate);
+    setUserBuilding(building);
+    setFlagged(false);
+    setMoveOutDate(new Date());
 
     // Reset the error states
     setInitialsError(false);
     setRoomNumberError(false);
     setMoveInDateError(false);
+    setMoveOutDateError(false);
     setBuildingError(false);
 
     //  Reset alert state
@@ -117,19 +147,20 @@ const AddResident = (): React.ReactElement => {
   const handleSubmit = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.length !== 3);
-    setBuildingError(building === "");
+    setBuildingError(userBuilding === "");
 
     //  Prevents form submission if any required values are incorrect
     if (
       initials.length !== 2 ||
       roomNumber.length !== 3 ||
       moveInDateError ||
-      building === ""
+      userBuilding === "" ||
+      moveOutDateError
     ) {
       return;
     }
 
-    addResident();
+    editRes();
 
     setIsOpen(false);
     setShowAlert(true);
@@ -149,7 +180,7 @@ const AddResident = (): React.ReactElement => {
       <Box textAlign="right">
         <Button onClick={handleOpen} marginBottom="16px" variant="primary">
           <AddIcon boxSize="16px" marginRight="8px" />
-          Add Resident
+          Edit Resident
         </Button>
       </Box>
 
@@ -157,7 +188,7 @@ const AddResident = (): React.ReactElement => {
         <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Add Resident</ModalHeader>
+            <ModalHeader>Edit Resident</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
@@ -166,7 +197,7 @@ const AddResident = (): React.ReactElement => {
                   <FormControl isRequired isInvalid={initialsError}>
                     <FormLabel>Resident Initials</FormLabel>
                     <Input
-                      placeholder="AA"
+                      placeholder={initial}
                       value={initials}
                       onChange={handleInitialsChange}
                     />
@@ -179,7 +210,7 @@ const AddResident = (): React.ReactElement => {
                   <FormControl isRequired isInvalid={roomNumberError}>
                     <FormLabel>Room Number</FormLabel>
                     <Input
-                      placeholder="123"
+                      placeholder={roomNum}
                       value={roomNumber}
                       onChange={handleRoomNumberChange}
                       type="number"
@@ -195,6 +226,7 @@ const AddResident = (): React.ReactElement => {
                   <FormControl isRequired isInvalid={moveInDateError}>
                     <FormLabel>Move In Date</FormLabel>
                     <SingleDatepicker
+                      placeholder={dateJoined}
                       name="date-input"
                       date={moveInDate}
                       onDateChange={handleMoveInDateChange}
@@ -220,6 +252,26 @@ const AddResident = (): React.ReactElement => {
                   </FormControl>
                 </Col>
               </Row>
+              <Checkbox
+                colorScheme="gray"
+                style={{ paddingTop: "1rem" }}
+                onChange={() => handleFlagged()}
+                marginBottom="16px"
+              >
+                <Text>Edit Move out Date</Text>
+              </Checkbox>
+              <FormControl isRequired isInvalid={moveOutDateError} isDisabled={!flagged}>
+                    <FormLabel>Move out date</FormLabel>
+                    <SingleDatepicker
+                      name="date-input"
+                      date={moveOutDate}
+                      onDateChange={handleMoveOutDateChange}
+                      propsConfigs={singleDatePickerStyle}
+                    />
+                    <FormErrorMessage marginBottom="8px">
+                      Move out Date is required and must be after Move in Date
+                    </FormErrorMessage>
+                </FormControl>
               <Divider />
             </ModalBody>
             <ModalFooter>
@@ -241,7 +293,7 @@ const AddResident = (): React.ReactElement => {
         <ScaleFade in={showAlert} unmountOnExit>
           <Alert status="success" variant="left-accent" borderRadius="6px">
             <AlertIcon />
-            <AlertDescription>Resident successfully added.</AlertDescription>
+            <AlertDescription>Resident successfully Edited.</AlertDescription>
           </Alert>
         </ScaleFade>
       </Box>
@@ -249,4 +301,4 @@ const AddResident = (): React.ReactElement => {
   );
 };
 
-export default AddResident;
+export default EditResident;

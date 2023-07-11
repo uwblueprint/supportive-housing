@@ -3,7 +3,7 @@ import { Box, Flex, Spacer } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
-import CreateLog from "../../forms/CreateLog";
+import EditResident from "../../forms/EditResident";
 import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
@@ -105,7 +105,7 @@ const HomePage = (): React.ReactElement => {
           <Box textStyle="hero-records">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-            <CreateLog />
+            <EditResident />
             <ExportCSVButton />
           </Flex>
         </Flex>

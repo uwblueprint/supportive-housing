@@ -116,9 +116,33 @@ const createResident = async ({
   }
 };
 
+const editResident = async ({
+  initial,
+  roomNum,
+  dateJoined,
+  building,
+  dateLeft,
+}: Resident): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.put(
+      "/residents",
+      { initial, roomNum, dateJoined, building, dateLeft},
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default {
   filterLogRecords,
   inviteUser,
   isUserInvited: getUserStatus,
   createResident,
+  editResident,
 };
