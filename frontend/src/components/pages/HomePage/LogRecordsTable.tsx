@@ -35,24 +35,15 @@ const LogRecordsTable = ({
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
-  // Options menu state
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   // Delete confirmation state
-  const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
 
-  // Handle options menu toggle
-  const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  // Handle delete confirmation 
-  const handleDeleteOpen = () => {
-    setDeleteOpen(true);
-  };
-
-  const handleDeleteClose = () => {
-    setDeleteOpen(false);
+  // Handle delete confirmation toggle
+  const handleDeleteToggle = (logId: number) => {
+    setDeleteOpenMap((prevDeleteOpenMap) => ({
+      ...prevDeleteOpenMap,
+      [logId]: !prevDeleteOpenMap[logId],
+    }));
   };
 
   return (
@@ -89,7 +80,7 @@ const LogRecordsTable = ({
               const { date, time } = getFormattedDateAndTime(dateObj);
 
               const deleteLogRecord = (itemId: number) => {
-                console.log("DELETE LOG RECORD")
+                console.log(itemId);
               };
 
               return (
@@ -117,10 +108,9 @@ const LogRecordsTable = ({
                             icon={<VscKebabVertical />}
                             w="36px"
                             variant="ghost"
-                            onClick={handleMenuToggle}
                           />
                           <MenuList>
-                            <MenuItem onClick={handleDeleteOpen}>
+                            <MenuItem onClick={() => handleDeleteToggle(record.logId)}>
                               Delete
                             </MenuItem>
                             <MenuItem>
@@ -135,8 +125,8 @@ const LogRecordsTable = ({
                   <DeleteConfirmation 
                     itemName="log" 
                     itemId={record.logId} 
-                    isOpen={isDeleteOpen} 
-                    onClose={handleDeleteClose}
+                    isOpen={deleteOpenMap[record.logId]} 
+                    onClose={() => handleDeleteToggle(record.logId)}
                     deleteAPI={deleteLogRecord}
                   />
                 </>

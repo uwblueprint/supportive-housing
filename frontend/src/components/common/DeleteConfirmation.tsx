@@ -30,6 +30,7 @@ const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Pr
 
     const handleSubmit = async () => {
         deleteAPI(itemId);
+        onClose();
     };
 
     useEffect(() => {
@@ -44,7 +45,7 @@ const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Pr
         <>
             <Box>
                 <Modal isOpen={isOpen} onClose={onClose} size="xl">
-                    <ModalOverlay bg="blackAlpha.300" />
+                    <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Delete {ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)}</ModalHeader>
                         <ModalBody>
