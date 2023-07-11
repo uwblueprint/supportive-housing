@@ -30,12 +30,12 @@ class ResidentsService(IResidentsService):
                         "initial": resident.initial,
                         "room_num": resident.room_num,
                         "date_joined": str(resident.date_joined),
-                        "date_left": str(resident.date_left),
+                        "date_left": str(resident.date_left) if resident.date_left else None,
                         "building": resident.building,
                         "resident_id": resident.resident_id,
                     }
                 )
-            return json.dumps(residents_list)
+            return residents_list
         except Exception as postgres_error:
             raise postgres_error
 
