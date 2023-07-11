@@ -120,6 +120,7 @@ def create_user():
         return jsonify(created_user.__dict__), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
+        print("error_message", error_message)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
