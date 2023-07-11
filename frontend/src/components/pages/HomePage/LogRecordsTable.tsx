@@ -22,6 +22,7 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 
 import DeleteConfirmation from "../../common/DeleteConfirmation";
+import CommonAPIClient from "../../../APIClients/CommonAPIClient";
 
 type Props = {
   logRecords: LogRecord[];
@@ -79,8 +80,8 @@ const LogRecordsTable = ({
 
               const { date, time } = getFormattedDateAndTime(dateObj);
 
-              const deleteLogRecord = (itemId: number) => {
-                console.log(itemId);
+              const deleteLogRecord = async (itemId: number) => {
+                await CommonAPIClient.deleteLogRecord(itemId);
               };
 
               return (
