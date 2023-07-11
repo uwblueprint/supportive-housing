@@ -94,13 +94,15 @@ const SearchAndFilters = ({
   };
 
   const handleAttnToChange = (selectedAttnTos: MultiValue<User>) => {
-    setAttentionTos(selectedAttnTos);
+    const mutableSelectedAttnTos: User[] = Array.from(selectedAttnTos);
+    setAttentionTos(mutableSelectedAttnTos);
   };
 
   const handleEmployeesChange = (
     selectedEmployees: MultiValue<{ id: string; label: string; value: string }>,
   ) => {
-    setEmployees(selectedEmployees);
+    const mutableSelectedEmployees: User[] = Array.from(selectedEmployees);
+    setEmployees(mutableSelectedEmployees);
   };
 
   const handleEndDateChange = (newEndDate: Date) => {
@@ -108,7 +110,8 @@ const SearchAndFilters = ({
   };
 
   const handleResidentsChange = (selectedResidents: MultiValue<Resident>) => {
-    setResidents(selectedResidents);
+    const mutableSelectedResidents: Resident[] = Array.from(selectedResidents);
+    setResidents(mutableSelectedResidents);
   };
 
   const handleStartDateChange = (newStartDate: Date) => {
@@ -116,7 +119,8 @@ const SearchAndFilters = ({
   };
 
   const handleTagsChange = (selectedTags: MultiValue<Tag>) => {
-    setTags(selectedTags);
+    const mutableSelectedTags: Tag[] = Array.from(selectedTags);
+    setTags(mutableSelectedTags);
   };
 
   const handleClearAll = () => {
