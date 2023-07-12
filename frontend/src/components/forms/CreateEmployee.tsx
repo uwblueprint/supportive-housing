@@ -84,6 +84,11 @@ const CreateEmployee = (): React.ReactElement => {
 
   const handleAdminStatusChange = (inputValue: string) => {
     setinvitedAdminStatus(inputValue);
+
+    // If admin is selected, uncheck the 2FA checkbox
+    if (inputValue === "1") {
+      setIsTwoFactorAuthenticated(false);
+    }
     setInvitedAdminStatusError(false);
   };
 
