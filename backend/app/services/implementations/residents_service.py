@@ -90,24 +90,13 @@ class ResidentsService(IResidentsService):
             elif return_all:
                 residents_results = Residents.query.all()
                 residents_results = self.to_json_list(residents_results)
-                print(residents_results)
                 num_results = len(residents_results)
             else: 
                 start_index = (page_number - 1) * results_per_page
                 end_index = start_index + results_per_page
-
-                sql = "SELECT\n \
-                    id,\n \
-                    initial,\n \
-                    room_num,\n \
-                    date_joined,\n \
-                    date_left,\n \
-                    building\n \
-                    FROM residents"
                 
-                residents = db.session.execute(text(sql))
-                print(residents)
-                residents_results = self.to_json_list(residents)
+                residents_results = Residents.query.all()
+                residents_results = self.to_json_list(residents_results)
                 num_results = len(residents_results)
 
                 residents_results = residents_results[start_index:end_index]

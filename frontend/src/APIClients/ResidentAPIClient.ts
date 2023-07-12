@@ -3,24 +3,7 @@ import { GetResidentsReponse } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-const getResidents = async (): Promise<GetResidentsReponse> => {
-  let residentData = [];
-  try {
-    const bearerToken = `Bearer ${getLocalStorageObjProperty(
-      AUTHENTICATED_USER_KEY,
-      "accessToken",
-    )}`;
-    const { data } = await baseAPIClient.get("/residents/", {
-      headers: { Authorization: bearerToken },
-    });
-    residentData = data;
-    return residentData;
-  } catch (error) {
-    return residentData;
-  }
-};
-
-const paginatedGetResidents = async (
+const getResidents = async (
   returnAll: boolean,
   pageNumber: number,
   resultsPerPage: number,
@@ -45,6 +28,5 @@ const paginatedGetResidents = async (
 };
 
 export default {
-  getResidents,
-  paginatedGetResidents
+  getResidents
 };

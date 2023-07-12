@@ -22,11 +22,11 @@ const getFormattedDatesAndStatus = (resident: Resident) => {
     const startDate = getFormattedDateAndTime(startDateObj, true);
 
     let endDate;
-    if (resident.dateLeft) {
+    if (resident.dateLeft != null) {
         const endDateObj = new Date(resident.dateLeft)
         endDate = getFormattedDateAndTime(endDateObj, true)
     }
-    const status = resident.dateJoined !== undefined && resident.dateLeft !== undefined ? "Past" : "Current";
+    const status = resident.dateJoined !== null && resident.dateLeft !== null ? "Past" : "Current";
     return {
         startDate,
         endDate,
@@ -68,13 +68,13 @@ const ResidentDirectoryTable = ({
                 
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
-                  <Td width="5%">{residentId}</Td>
-                  <Td width="5%">{status}</Td>
-                  <Td width="5%">{resident.building}</Td>
-                  <Td width="5%">{startDate.date}</Td>
+                  <Td width="20%">{residentId}</Td>
+                  <Td width="15%">{status}</Td>
+                  <Td width="20%">{resident.building}</Td>
+                  <Td width="20%">{startDate.date}</Td>
                   {
                     endDate ?
-                    <Td width="5%">{endDate.date}</Td>
+                    <Td width="20%">{endDate.date}</Td>
                     :
                     null
                   }

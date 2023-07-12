@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Button, Flex, Spacer } from "@chakra-ui/react";
 import ResidentDirectoryTable from './ResidentDirectoryTable'
 import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
@@ -32,10 +32,10 @@ const ResidentDirectory = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getResidents = async (pageNumber: number) => {
-    const data = await ResidentAPIClient.paginatedGetResidents(
-      true,
-      resultsPerPage,
+    const data = await ResidentAPIClient.getResidents(
+      false,      
       pageNumber,
+      resultsPerPage,
     );
 
     // Reset table scroll
@@ -68,6 +68,15 @@ const ResidentDirectory = (): React.ReactElement => {
         margin="0px auto"
         color="blue.600"
       >
+        <Flex marginBottom="16px">
+          <Box textStyle="header-large">Resident Directory</Box>
+          <Spacer />
+          {/* TODO: INSERT RESIDENT-RELATED BUTTONS */}
+          <Flex justify="end" gap="12px">
+            <Button>PlaceHolder1</Button>
+            <Button>PlaceHolder2</Button>
+          </Flex>
+        </Flex>
         <ResidentDirectoryTable
           residents={residents}
           tableRef={tableRef }
