@@ -62,31 +62,29 @@ const CreateEmployee = (): React.ReactElement => {
 
   const handleFirstNameChange = (e: { target: { value: unknown } }) => {
     const inputValue = e.target.value as string;
-    setInvitedFirstName(inputValue);
     if (/^[a-z]{0,}$/i.test(inputValue)) {
+      setInvitedFirstName(inputValue);
       setInvitedFirstNameError(false);
-    } else {
-      setInvitedFirstNameError(true);
     }
   };
 
   const handleLastNameChange = (e: { target: { value: unknown } }) => {
     const inputValue = e.target.value as string;
-    setInvitedLastName(inputValue);
     if (/^[a-z]{0,}$/i.test(inputValue)) {
+      setInvitedLastName(inputValue);
       setInvitedLastNameError(false);
-    } else {
-      setInvitedLastNameError(true);
     }
+  };
+
+  const handleInvitedEmailChange = (e: { target: { value: unknown } }) => {
+    const inputValue = e.target.value as string;
+    setInvitedEmail(inputValue);
+    setInvitedEmailError(false);
   };
 
   const handleAdminStatusChange = (inputValue: string) => {
     setinvitedAdminStatus(inputValue);
-    if (inputValue !== "") {
-      setInvitedAdminStatusError(false);
-    } else {
-      setInvitedAdminStatusError(true);
-    }
+    setInvitedAdminStatusError(false);
   };
 
   const handleOpen = () => {
@@ -142,7 +140,6 @@ const CreateEmployee = (): React.ReactElement => {
           invitedLastName,
         );
       }
-      console.log("hasInvitedUser", hasInvitedUser);
       if (hasInvitedUser === "Request failed with status code 409") {
         newToast("Employee already exists", INVITE_EMPLOYEE_ERROR, "error");
       } else if (hasInvitedUser === "Success") {
@@ -211,9 +208,7 @@ const CreateEmployee = (): React.ReactElement => {
                     <Input
                       placeholder="Enter first name"
                       value={invitedFirstName}
-                      onChange={(event) =>
-                        setInvitedFirstName(event.target.value)
-                      }
+                      onChange={handleFirstNameChange}
                       maxLength={50}
                     />
                     <FormErrorMessage>First Name is required.</FormErrorMessage>
@@ -226,9 +221,7 @@ const CreateEmployee = (): React.ReactElement => {
                     <Input
                       placeholder="Enter last name"
                       value={invitedLastName}
-                      onChange={(event) =>
-                        setInvitedLastName(event.target.value)
-                      }
+                      onChange={handleLastNameChange}
                       maxLength={50}
                     />
                     <FormErrorMessage>Last Name is required.</FormErrorMessage>
@@ -241,7 +234,7 @@ const CreateEmployee = (): React.ReactElement => {
                   <Input
                     placeholder="Enter SHOW email"
                     value={invitedEmail}
-                    onChange={(event) => setInvitedEmail(event.target.value)}
+                    onChange={handleInvitedEmailChange}
                     maxLength={254}
                   />
                   <FormErrorMessage>
@@ -250,7 +243,7 @@ const CreateEmployee = (): React.ReactElement => {
                 </FormControl>
               </Box>
             </Box>
-            <Box pt="17px" pb="7px">
+            <Box pt="16px" pb="16px">
               <FormControl isRequired isInvalid={invitedAdminStatusError}>
                 <RadioGroup
                   value={invitedAdminStatus}

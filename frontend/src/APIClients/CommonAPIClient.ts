@@ -102,7 +102,6 @@ const inviteUser = async (
     );
     return "Success";
   } catch (error: any) {
-    console.log("error.message", error.message);
     return error.message;
   }
 };
