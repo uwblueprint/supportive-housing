@@ -160,7 +160,8 @@ class UserService(IUserService):
                 user_entry = User(**postgres_invited_user)
                 db.session.add(user_entry)
                 db.session.commit()
-
+            else:
+                raise Exception("User already exists")
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user_entry)
 
             return UserDTO(**user_dict)
