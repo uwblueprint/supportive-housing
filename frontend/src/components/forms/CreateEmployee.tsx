@@ -117,25 +117,21 @@ const CreateEmployee = (): React.ReactElement => {
       !isLastNameError &&
       !isAdminStatusError
     ) {
-      let hasInvitedUser;
+      let hasInvitedUser: string | undefined;
+      let roleOptionIndex: number | undefined;
+
       if (invitedAdminStatus === "1") {
-        hasInvitedUser = await commonApiClient.inviteUser(
-          invitedEmail,
-          RoleOptions[1],
-          invitedFirstName,
-          invitedLastName,
-        );
+        roleOptionIndex = 1;
       } else if (invitedAdminStatus === "2" && isTwoFactorAuthenticated) {
-        hasInvitedUser = await commonApiClient.inviteUser(
-          invitedEmail,
-          RoleOptions[0],
-          invitedFirstName,
-          invitedLastName,
-        );
+        roleOptionIndex = 0;
       } else if (invitedAdminStatus === "2" && !isTwoFactorAuthenticated) {
+        roleOptionIndex = 2;
+      }
+
+      if (roleOptionIndex !== undefined) {
         hasInvitedUser = await commonApiClient.inviteUser(
           invitedEmail,
-          RoleOptions[2],
+          RoleOptions[roleOptionIndex],
           invitedFirstName,
           invitedLastName,
         );
