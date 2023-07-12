@@ -18,6 +18,4 @@ export const RESIDENT_DIRECTORY_PAGE = "/resident-directory";
 
 export const EMPLOYEE_DIRECTORY_PAGE = "/employee-directory";
 
-export const INVITE_USERS = "/invite-users";
-
 export const INVITE_EMPLOYEES = "/invite-employees";
