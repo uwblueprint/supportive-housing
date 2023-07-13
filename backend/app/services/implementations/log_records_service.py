@@ -138,7 +138,7 @@ class LogRecordsService(ILogRecordsService):
             sql = "SELECT\n \
             logs.log_id,\n \
             logs.employee_id,\n \
-            logs.resident_id,\n \
+            residents.resident_id,\n \
             logs.datetime,\n \
             logs.flagged,\n \
             logs.attn_to,\n \
@@ -151,7 +151,8 @@ class LogRecordsService(ILogRecordsService):
             attn_tos.last_name AS attn_to_last_name\n \
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id"
+            JOIN users employees ON logs.employee_id = employees.id\n \
+            JOIN residents ON logs.resident_id = residents.id"
 
             sql += self.filter_log_records(filters)
 
