@@ -1,9 +1,9 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
+import { GetUsersResponse } from "../types/UserTypes"
 
-const getUsers = async (): Promise<any> => {
-  let userData = [];
+const getUsers = async (): Promise<GetUsersResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -12,10 +12,9 @@ const getUsers = async (): Promise<any> => {
     const { data } = await baseAPIClient.get("/users/", {
       headers: { Authorization: bearerToken },
     });
-    userData = data;
-    return userData;
+    return data;
   } catch (error) {
-    return userData;
+    return null
   }
 };
 

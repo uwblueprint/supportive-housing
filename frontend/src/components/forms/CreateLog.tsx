@@ -199,17 +199,17 @@ const CreateLog = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents()
+    const residentsData = await ResidentAPIClient.getResidents(true, 1, 1)
 
-    if (residentsData) {
-      const residentLabels: NewSelectOptionType[] = JSON.parse(residentsData).map((r: any) => 
+    if (residentsData && residentsData.residents.length !== 0) {
+      const residentLabels: NewSelectOptionType[] = residentsData.residents.map((r: any) => 
       ({label: r.resident_id, value: r.id}));
       setResidentOptions(residentLabels)
     }
 
     const usersData = await UserAPIClient.getUsers()
-    if (usersData) {
-      const userLabels: NewSelectOptionType[] = usersData.filter((user:any) => user.userStatus === 'Active').map((user: any) => 
+    if (usersData && usersData.users.length !== 0) {
+      const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
 
       setEmployeeOptions(userLabels);
@@ -286,8 +286,8 @@ const CreateLog = ({
     LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS)
-        getRecords(1);
         setUserPageNum(1)
+        getRecords(1);
       }
       else {
         setAlertData(ALERT_DATA.ERROR)
