@@ -94,7 +94,7 @@ class ResidentsService(IResidentsService):
             else: 
                 start_index = (page_number - 1) * results_per_page
                 end_index = start_index + results_per_page
-                
+
                 residents_results = Residents.query.all()
                 residents_results = self.to_json_list(residents_results)
                 num_results = len(residents_results)
@@ -106,5 +106,13 @@ class ResidentsService(IResidentsService):
                 "num_results": num_results,
             }
 
+        except Exception as postgres_error:
+            raise postgres_error
+        
+    def count_residents(self):
+        try:
+            count = Residents.query.count()
+            return {"num_results": count}
+        
         except Exception as postgres_error:
             raise postgres_error

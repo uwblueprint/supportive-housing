@@ -68,3 +68,13 @@ class IResidentsService(ABC):
         :type resident_id: initial
         """
         pass
+
+    @abstractmethod 
+    def count_residents(self):
+        """
+        Count the total number of residents
+        :return: count of residents
+        :rtype: int
+        :raises Exception: if resident count fails
+        """
+        pass
