@@ -83,7 +83,9 @@ def filter_logs():
     elif start_date and end_date:
         try:
             # return as json object
-            logs = sign_in_logs_service.get_sign_in_logs_by_date_range(start_date, end_date)
+            logs = sign_in_logs_service.get_sign_in_logs_by_date_range(
+                start_date, end_date
+            )
             return logs, 200
 
         except Exception as e:

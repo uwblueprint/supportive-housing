@@ -1,9 +1,15 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetLogRecordsReponse } from "../types/LogRecordTypes";
+import {
+  GetLogRecordsReponse,
+  GetLogRecordCountResponse,
+} from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-import { LogRecordFilters } from "../components/common/types/Filters";
+import {
+  LogRecordFilters,
+  CountLogRecordFilters,
+} from "../components/common/types/Filters";
 import { Resident } from "../types/ResidentTypes";
 
 const filterLogRecords = async ({
@@ -16,7 +22,7 @@ const filterLogRecords = async ({
   returnAll = false,
   pageNumber,
   resultsPerPage,
-}: LogRecordFilters): Promise<any> => {
+}: LogRecordFilters): Promise<GetLogRecordsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -45,16 +51,46 @@ const filterLogRecords = async ({
   }
 };
 
+const countLogRecords = async ({
+  building = "",
+  employeeId = [],
+  attnTo = [],
+  dateRange = [],
+  tags = [],
+  flagged = false,
+}: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get(`/log_records/count`, {
+      params: {
+        filters: {
+          building,
+          employeeId,
+          attnTo,
+          dateRange,
+          tags,
+          flagged,
+        },
+      },
+      headers: { Authorization: bearerToken },
+    });
+    return data;
+  } catch (error) {
+    // TODO: more descriptive error / throw an exception potentially?
+    return null;
+  }
+};
+
 const inviteUser = async (
   email: string,
   role: string,
   firstName: string,
   lastName: string,
-): Promise<boolean> => {
+): Promise<string> => {
   try {
-    if (email === "") {
-      return false;
-    }
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
@@ -64,9 +100,9 @@ const inviteUser = async (
       { email, role, firstName, lastName },
       { headers: { Authorization: bearerToken } },
     );
-    return true;
-  } catch (error) {
-    return false;
+    return "Success";
+  } catch (error: any) {
+    return error.message;
   }
 };
 
@@ -118,6 +154,7 @@ const createResident = async ({
 
 export default {
   filterLogRecords,
+  countLogRecords,
   inviteUser,
   isUserInvited: getUserStatus,
   createResident,

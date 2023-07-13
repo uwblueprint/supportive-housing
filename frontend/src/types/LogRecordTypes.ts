@@ -16,6 +16,9 @@ export type LogRecord = {
 
 export type GetLogRecordsReponse = {
   logRecords: LogRecord[];
+} | null;
+
+export type GetLogRecordCountResponse = {
   numResults: number;
 } | null;
 

@@ -4,6 +4,7 @@ class UpdateUserDTO:
         self.last_name = kwargs.get("last_name")
         self.email = kwargs.get("email")
         self.role = kwargs.get("role")
+        self.user_status = kwargs.get("user_status")
 
     def validate(self):
         error_list = []
@@ -15,4 +16,6 @@ class UpdateUserDTO:
             error_list.append("The email supplied is not a string.")
         if type(self.role) is not str:
             error_list.append("The role supplied is not a string.")
+        if type(self.user_status) is not str:
+            error_list.append("The user status supplied is not a string.")
         return error_list
