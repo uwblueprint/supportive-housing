@@ -213,8 +213,9 @@ const CreateLog = ({
     const residentsData = await ResidentAPIClient.getResidents(true, 1, 1)
 
     if (residentsData && residentsData.residents.length !== 0) {
+      // TODO: Remove the type assertions here
       const residentLabels: NewSelectOptionType[] = residentsData.residents.map((r) => 
-      ({label: r.residentId, value: r.id!}));
+      ({label: r.residentId!, value: r.id!}));
       setResidentOptions(residentLabels)
     }
 
