@@ -11,6 +11,7 @@ import {
   CountLogRecordFilters,
 } from "../components/common/types/Filters";
 import { Resident } from "../types/ResidentTypes";
+import { CountUsersResponse, GetUsersResponse } from "../types/UserTypes";
 
 const filterLogRecords = async ({
   building = "",
@@ -80,6 +81,46 @@ const countLogRecords = async ({
     return data;
   } catch (error) {
     // TODO: more descriptive error / throw an exception potentially?
+    return null;
+  }
+};
+
+const getUsers = async (
+  pageNumber: number,
+  resultsPerPage: number,
+): Promise<GetUsersResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get<GetUsersResponse>(`/users`, {
+      params: {
+        pageNumber,
+        resultsPerPage,
+      },
+      headers: { Authorization: bearerToken },
+    });
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
+const countUsers = async (): Promise<CountUsersResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get<CountUsersResponse>(
+      `/users/count`,
+      {
+        headers: { Authorization: bearerToken },
+      },
+    );
+    return data;
+  } catch (error) {
     return null;
   }
 };
@@ -155,6 +196,8 @@ const createResident = async ({
 export default {
   filterLogRecords,
   countLogRecords,
+  getUsers,
+  countUsers,
   inviteUser,
   isUserInvited: getUserStatus,
   createResident,
