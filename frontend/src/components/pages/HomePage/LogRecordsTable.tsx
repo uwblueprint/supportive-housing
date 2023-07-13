@@ -31,7 +31,6 @@ const LogRecordsTable = ({
       >
         <Table
           variant="logRecordsTable"
-          minHeight="400px"
           verticalAlign="middle"
         >
           <Thead>
