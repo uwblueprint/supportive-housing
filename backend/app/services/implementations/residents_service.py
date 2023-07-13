@@ -85,26 +85,18 @@ class ResidentsService(IResidentsService):
     def get_residents(self, return_all, page_number, results_per_page=10, resident_id=None):
         try:
             if resident_id:
-                num_results = 1
                 residents_results = Residents.query.filter_by(resident_id=resident_id)
             elif return_all:
                 residents_results = Residents.query.all()
-                residents_results = self.to_json_list(residents_results)
-                num_results = len(residents_results)
             else: 
-                start_index = (page_number - 1) * results_per_page
-                end_index = start_index + results_per_page
-
-                residents_results = Residents.query.all()
-                residents_results = self.to_json_list(residents_results)
-                num_results = len(residents_results)
-
-                residents_results = residents_results[start_index:end_index]
-
-            return {
-                "residents": residents_results,
-                "num_results": num_results,
-            }
+                residents_results = (
+                    Residents.query.limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
+                    .all()
+                )
+                
+            residents_results = list(map(lambda resident: resident.to_dict(), residents_results))
+            return {"residents": residents_results}
 
         except Exception as postgres_error:
             raise postgres_error

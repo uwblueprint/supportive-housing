@@ -11,5 +11,8 @@ export type Resident = {
 
 export type GetResidentsReponse = {
   residents: Resident[];
+} | null;
+
+export type CountResidentsResponse = {
   numResults: number;
 } | null;

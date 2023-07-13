@@ -26,9 +26,8 @@ const ResidentDirectory = (): React.ReactElement => {
     tableRef.current?.scrollTo(0, 0);
 
     setResidents(data ? data.residents : []);
-    setNumResidents(data ? data.numResults : 0);
 
-    if (!data || data.numResults === 0) {
+    if (!data || data.residents.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
@@ -36,10 +35,19 @@ const ResidentDirectory = (): React.ReactElement => {
     }
   }
 
+  const countResidents = async () => {
+    const data = await ResidentAPIClient.countResidents()
+    setNumResidents(data ? data.numResults : 0);
+  }
+
   useEffect(() => {
     setUserPageNum(1);
     getResidents(1);
   }, [resultsPerPage])
+
+  useEffect(() => {
+    countResidents()
+  }, [])
 
   return (
     <Box>
