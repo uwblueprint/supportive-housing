@@ -138,7 +138,7 @@ class LogRecordsService(ILogRecordsService):
             sql = "SELECT\n \
             logs.log_id,\n \
             logs.employee_id,\n \
-            residents.resident_id,\n \
+            residents.resident_id AS resident_id,\n \
             logs.datetime,\n \
             logs.flagged,\n \
             logs.attn_to,\n \
