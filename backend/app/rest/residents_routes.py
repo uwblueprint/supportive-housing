@@ -140,7 +140,7 @@ def count_residents():
     Get number of residents
     """
     try:
-        residents = residents_service.count_users()
+        residents = residents_service.count_residents()
         return jsonify(residents), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
