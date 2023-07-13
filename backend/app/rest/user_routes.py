@@ -39,62 +39,47 @@ DEFAULT_CSV_OPTIONS = {
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_users():
     """
-    Get all users, optionally filter by a user_id or email query parameter to retrieve a single user
+    Get RESULTS_PER_PAGE users. Will return the users of corresponding to the page you're on
     """
-    user_id = request.args.get("user_id")
-    email = request.args.get("email")
-    content_type = request.mimetype
+    return_all = False
+    try:
+        return_all = (
+            True if request.args.get("return_all").casefold() == "true" else False
+        )
+    except:
+        pass
 
-    if user_id and email:
-        return jsonify({"error": "Cannot query by both user_id and email"}), 400
+    page_number = 1
+    try:
+        page_number = int(request.args.get("page_number"))
+    except:
+        pass
 
-    if not (user_id or email):
-        try:
-            users = user_service.get_users()
+    results_per_page = 10
+    try:
+        results_per_page = int(request.args.get("results_per_page"))
+    except:
+        pass
 
-            if content_type == "text/csv":
-                return (
-                    jsonify(
-                        generate_csv_from_list(
-                            [user.__dict__ for user in users], **DEFAULT_CSV_OPTIONS
-                        )
-                    ),
-                    200,
-                )
+    try:
+        users = user_service.get_users(return_all, page_number, results_per_page)
+        return jsonify(users), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
 
-            return jsonify(list(map(lambda user: user.__dict__, users))), 200
-        except Exception as e:
-            error_message = getattr(e, "message", None)
-            return jsonify({"error": (error_message if error_message else str(e))}), 500
-
-    if user_id:
-        if type(user_id) is not str:
-            return jsonify({"error": "user_id query parameter must be a string"}), 400
-        else:
-            try:
-                user = user_service.get_user_by_id(user_id)
-                return jsonify(user.__dict__), 200
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    if email:
-        if type(email) is not str:
-            return jsonify({"error": "email query parameter must be a string"}), 400
-        else:
-            try:
-                user = user_service.get_user_by_email(email)
-                return jsonify(user.__dict__), 200
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
+@blueprint.route("/count", methods=["GET"], strict_slashes=False)
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+def count_users():
+    """
+    Get number of users
+    """
+    try:
+        log_records = user_service.count_users()
+        return jsonify(log_records), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
 def get_user_status():

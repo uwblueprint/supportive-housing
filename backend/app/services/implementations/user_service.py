@@ -110,22 +110,31 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
-        user_dtos = []
-        user_list = [result for result in User.query.all()]
-        for user in user_list:
-            user_dict = UserService.__user_to_dict_and_remove_auth_id(user)
-            try:
-                user_dtos.append(UserDTO(**user_dict))
-            except Exception as e:
-                self.logger.error(
-                    "User with auth_id {auth_id} could not be fetched from Firebase".format(
-                        auth_id=user.auth_id
-                    )
+    def get_users(self, return_all, page_number, results_per_page):
+        try:
+            if return_all:
+                users = User.query.all()
+            else:
+                users = (
+                    User.query.limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
+                    .all()
                 )
-                raise e
 
-        return user_dtos
+            json_list = list(map(lambda user: user.to_dict(), users))
+            return {"users": json_list}
+
+        except Exception as postgres_error:
+            raise postgres_error
+        
+    def count_users(self):
+        try:
+            count = User.query.count()
+
+            return {"num_results": count}
+
+        except Exception as postgres_error:
+            raise postgres_error
 
     def get_user_status_by_email(self, email):
         try:

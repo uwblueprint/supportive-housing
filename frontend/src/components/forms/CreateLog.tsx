@@ -18,11 +18,11 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
-  ScaleFade,
+  ModalHeader,
   Text,
-  Textarea,
+  ScaleFade,
+  Textarea
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -39,6 +39,7 @@ import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 type Props = {
   getRecords: (page_number: number) => Promise<void>;
+  countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
@@ -97,12 +98,24 @@ function getBorderStyle(state: any, error: boolean): string {
   return "1px solid #cbd5e0";
 }
 
+// Helper to get the currently logged in user
+const getCurUserSelectOption = () => {
+  const curUser: AuthenticatedUser | null = getLocalStorageObj(
+    AUTHENTICATED_USER_KEY,
+  );
+  if (curUser && curUser.firstName && curUser.id) {
+    return {label: curUser.firstName, value: parseInt(curUser.id, 10)}
+  }
+  return {label: "", value: -1}
+}
+
 const CreateLog = ({
   getRecords,
-  setUserPageNum
+  countRecords,
+  setUserPageNum,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<NewSelectOptionType>({label: "", value: -1}); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState<NewSelectOptionType>(getCurUserSelectOption()); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -133,8 +146,6 @@ const CreateLog = ({
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT)
-
-  // if we need functionality to change the selected employee, handle should go here
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -202,16 +213,15 @@ const CreateLog = ({
     const residentsData = await ResidentAPIClient.getResidents(true, 1, 1)
 
     if (residentsData && residentsData.residents.length !== 0) {
-      const residentLabels: NewSelectOptionType[] = residentsData.residents.map((r: any) => 
-      ({label: r.resident_id, value: r.id}));
+      const residentLabels: NewSelectOptionType[] = residentsData.residents.map((r) => 
+      ({label: r.residentId, value: r.id!}));
       setResidentOptions(residentLabels)
     }
 
-    const usersData = await UserAPIClient.getUsers()
+    const usersData = await UserAPIClient.getUsers(true, 1, 1)
     if (usersData && usersData.users.length !== 0) {
       const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user: any) => 
       ({label: user.firstName, value: user.id}));
-
       setEmployeeOptions(userLabels);
     }
   }
@@ -234,14 +244,6 @@ const CreateLog = ({
     setTags([]);
     setAttnTo(-1);
     setNotes("");
-
-    // set current user
-    const curUser: AuthenticatedUser | null = getLocalStorageObj(
-      AUTHENTICATED_USER_KEY,
-    );
-    if (curUser && curUser.firstName && curUser.id) {
-      setEmployee({label: curUser.firstName, value: parseInt(curUser.id, 10)})
-    }
 
     // reset all error states
     setEmployeeError(false);
@@ -286,8 +288,9 @@ const CreateLog = ({
     LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS)
-        setUserPageNum(1)
+        countRecords()
         getRecords(1);
+        setUserPageNum(1)
       }
       else {
         setAlertData(ALERT_DATA.ERROR)
@@ -331,7 +334,7 @@ const CreateLog = ({
                     <FormLabel>Employee</FormLabel>
                     <Select
                       isDisabled
-                      defaultValue={{ label: employee, value: employee }} // needs to be the current user
+                      defaultValue={getCurUserSelectOption()} 
                       styles={selectStyle}
                     />
                   </FormControl>

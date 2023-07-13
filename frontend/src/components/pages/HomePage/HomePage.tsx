@@ -51,7 +51,6 @@ const HomePage = (): React.ReactElement => {
     return formattedDate;
   };
 
-
   const getLogRecords = async (pageNumber: number) => {
     const buildingValue = building ? building.value : "";
     const employeeIds = employees.map((employee) => employee.id);
@@ -138,7 +137,10 @@ const HomePage = (): React.ReactElement => {
           <Box textStyle="hero-records">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-            <CreateLog getRecords={getLogRecords} setUserPageNum={setUserPageNum}/>
+            <CreateLog 
+              getRecords={getLogRecords} 
+              countRecords={countLogRecords}
+              setUserPageNum={setUserPageNum}/>
             <ExportCSVButton />
           </Flex>
         </Flex>

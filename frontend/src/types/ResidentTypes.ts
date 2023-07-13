@@ -1,5 +1,6 @@
 export type Resident = {
   id?: number;
+  residentId: string;
   initial: string;
   roomNum: number;
   dateJoined: Date;

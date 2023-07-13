@@ -81,10 +81,6 @@ const RESIDENTS: Resident[] = [
 // Replace this with the users from the db
 const EMPLOYEES: User[] = [];
 
-type MutliValueUser = {
-  id: string; label: string; value: string 
-}
-
 const SearchAndFilters = ({
   residents,
   employees,
@@ -115,7 +111,7 @@ const SearchAndFilters = ({
   };
 
   const handleEmployeesChange = (
-    selectedEmployees: MultiValue<MutliValueUser & User>,
+    selectedEmployees: MultiValue<User>,
   ) => {
     const mutableSelectedEmployees: User[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);
