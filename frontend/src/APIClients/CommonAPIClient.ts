@@ -130,11 +130,8 @@ const inviteUser = async (
   role: string,
   firstName: string,
   lastName: string,
-): Promise<boolean> => {
+): Promise<string> => {
   try {
-    if (email === "") {
-      return false;
-    }
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
@@ -144,9 +141,9 @@ const inviteUser = async (
       { email, role, firstName, lastName },
       { headers: { Authorization: bearerToken } },
     );
-    return true;
-  } catch (error) {
-    return false;
+    return "Success";
+  } catch (error: any) {
+    return error.message;
   }
 };
 

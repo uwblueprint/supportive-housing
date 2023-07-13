@@ -27,7 +27,7 @@ import ResidentDirectory from "./components/pages/ResidentDirectory";
 import EmployeeDirectory from "./components/pages/EmployeeDirectoryPage/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
-import InviteUsers from "./components/pages/InviteUsers";
+import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
 
@@ -62,11 +62,6 @@ const App = (): React.ReactElement => {
               <Switch>
                 <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                 <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
-                <PrivateRoute
-                  exact
-                  path={Routes.INVITE_USERS}
-                  component={InviteUsers}
-                />
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
@@ -106,6 +101,11 @@ const App = (): React.ReactElement => {
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
                   component={EmployeeDirectory}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.INVITE_EMPLOYEES}
+                  component={CreateEmployee}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
