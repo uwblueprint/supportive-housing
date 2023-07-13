@@ -1,7 +1,7 @@
 export type CountLogRecordFilters = {
   building?: string;
-  employeeId?: string[];
-  attnTo?: string[];
+  employeeId?: number[];
+  attnTo?: number[];
   dateRange?: string[];
   tags?: string[];
   flagged?: boolean;
