@@ -6,8 +6,6 @@ export type User = {
   role: UserRole;
   userStatus: UserStatus;
   authId: string;
-  label?: string;
-  value?: string;
 };
 
 export type GetUsersResponse = {
@@ -29,3 +27,9 @@ export enum UserStatus {
   ACTIVE = "Active",
   DEACTIVATED = "Deactivated",
 }
+
+export type UserLabel = {
+  id: string;
+  label: string;
+  value: string;
+};

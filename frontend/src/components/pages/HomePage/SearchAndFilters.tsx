@@ -22,23 +22,23 @@ import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import { Building } from "../../../types/BuildingTypes";
 import { Resident } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
-import { User } from "../../../types/UserTypes";
+import { User, UserLabel } from "../../../types/UserTypes";
 
 type Props = {
   residents: Resident[];
-  employees: User[];
+  employees: UserLabel[];
   startDate: Date | undefined;
   endDate: Date | undefined;
   tags: Tag[];
-  attentionTos: User[];
+  attentionTos: UserLabel[];
   building: Building | null;
   flagged: boolean;
   setResidents: React.Dispatch<React.SetStateAction<Resident[]>>;
-  setEmployees: React.Dispatch<React.SetStateAction<User[]>>;
+  setEmployees: React.Dispatch<React.SetStateAction<UserLabel[]>>;
   setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
-  setAttentionTos: React.Dispatch<React.SetStateAction<User[]>>;
+  setAttentionTos: React.Dispatch<React.SetStateAction<UserLabel[]>>;
   setBuilding: React.Dispatch<React.SetStateAction<Building | null>>;
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -79,7 +79,7 @@ const RESIDENTS: Resident[] = [
 ];
 
 // Replace this with the users from the db
-const EMPLOYEES: User[] = [
+const EMPLOYEES: UserLabel[] = [
   { id: "4", label: "Huseyin", value: "Huseyin" },
   { id: "5", label: "John Doe", value: "John Doe" },
 ];
@@ -108,15 +108,15 @@ const SearchAndFilters = ({
     }
   };
 
-  const handleAttnToChange = (selectedAttnTos: MultiValue<User>) => {
-    const mutableSelectedAttnTos: User[] = Array.from(selectedAttnTos);
+  const handleAttnToChange = (selectedAttnTos: MultiValue<UserLabel>) => {
+    const mutableSelectedAttnTos: UserLabel[] = Array.from(selectedAttnTos);
     setAttentionTos(mutableSelectedAttnTos);
   };
 
   const handleEmployeesChange = (
     selectedEmployees: MultiValue<{ id: string; label: string; value: string }>,
   ) => {
-    const mutableSelectedEmployees: User[] = Array.from(selectedEmployees);
+    const mutableSelectedEmployees: UserLabel[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);
   };
 

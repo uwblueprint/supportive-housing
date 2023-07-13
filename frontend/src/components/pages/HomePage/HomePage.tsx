@@ -12,7 +12,7 @@ import ExportCSVButton from "../../common/ExportCSVButton";
 import { Building } from "../../../types/BuildingTypes";
 import { Resident } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
-import { User } from "../../../types/UserTypes";
+import { User, UserLabel } from "../../../types/UserTypes";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -27,11 +27,11 @@ const HomePage = (): React.ReactElement => {
   // TODO: search by resident
   // Filter state
   const [residents, setResidents] = useState<Resident[]>([]);
-  const [employees, setEmployees] = useState<User[]>([]);
+  const [employees, setEmployees] = useState<UserLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [tags, setTags] = useState<Tag[]>([]);
-  const [attentionTos, setAttentionTos] = useState<User[]>([]);
+  const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
   const [building, setBuilding] = useState<Building | null>(null);
   const [flagged, setFlagged] = useState(false);
 
@@ -50,7 +50,6 @@ const HomePage = (): React.ReactElement => {
     const formattedDate = isoString.slice(0, 10); // Extract "YYYY-MM-DD" from the ISO string
     return formattedDate;
   };
-
 
   const getLogRecords = async (pageNumber: number) => {
     const buildingValue = building ? building.value : "";
