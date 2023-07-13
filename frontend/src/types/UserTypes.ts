@@ -5,7 +5,6 @@ export type User = {
   lastName: string;
   role: UserRole;
   userStatus: UserStatus;
-  authId: string;
 };
 
 export type GetUsersResponse = {

@@ -117,7 +117,7 @@ class UserService(IUserService):
                 .offset((page_number - 1) * results_per_page)
                 .all()
             )
-            json_list = list(map(lambda user: user.to_dict(), users))
+            json_list = list(map(lambda user: UserService.__user_to_dict_and_remove_auth_id(user), users))
 
             return {"users": json_list}
 
