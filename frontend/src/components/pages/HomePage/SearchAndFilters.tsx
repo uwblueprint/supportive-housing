@@ -139,7 +139,6 @@ const SearchAndFilters = ({
   };
 
   const handleClearAll = () => {
-    console.log(flagged);
     setAttentionTos([]);
     setBuilding(null);
     setEmployees([]);
