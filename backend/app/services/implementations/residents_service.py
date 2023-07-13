@@ -30,12 +30,12 @@ class ResidentsService(IResidentsService):
                         "initial": resident.initial,
                         "room_num": resident.room_num,
                         "date_joined": str(resident.date_joined),
-                        "date_left": str(resident.date_left),
+                        "date_left": str(resident.date_left) if resident.date_left else None,
                         "building": resident.building,
                         "resident_id": resident.resident_id,
                     }
                 )
-            return json.dumps(residents_list)
+            return residents_list
         except Exception as postgres_error:
             raise postgres_error
 
@@ -82,13 +82,28 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_residents(self, resident_id=None):
+    def get_residents(self, return_all, page_number, results_per_page, resident_id=None):
         try:
             if resident_id:
                 residents_results = Residents.query.filter_by(resident_id=resident_id)
-            else:
+            elif return_all:
                 residents_results = Residents.query.all()
+            else: 
+                residents_results = (
+                    Residents.query.limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
+                    .all()
+                )
 
-            return self.to_json_list(residents_results)
+            residents_results = list(map(lambda resident: resident.to_dict(), residents_results))
+            return {"residents": residents_results}
+        except Exception as postgres_error:
+            raise postgres_error
+    
+    def count_residents(self):
+        try:
+            count = Residents.query.count()
+            return {"num_results": count}
+
         except Exception as postgres_error:
             raise postgres_error

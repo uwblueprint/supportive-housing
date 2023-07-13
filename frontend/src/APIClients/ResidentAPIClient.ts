@@ -1,25 +1,50 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetResidentResponse } from "../types/ResidentTypes";
+import { GetResidentsReponse, CountResidentsResponse } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-const getResidents = async (): Promise<GetResidentResponse> => {
-  let residentData = [];
+const getResidents = async (
+  returnAll: boolean,
+  pageNumber: number,
+  resultsPerPage: number,
+): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-    const { data } = await baseAPIClient.get("/residents/", {
+    const { data } = await baseAPIClient.get<GetResidentsReponse>(`/residents/`, {
+      params: {
+        returnAll,
+        pageNumber,
+        resultsPerPage,
+      },
       headers: { Authorization: bearerToken },
     });
-    residentData = data;
-    return residentData;
+    return data;
   } catch (error) {
-    return residentData;
+    return null;
+  }
+};
+const countResidents = async (): Promise<CountResidentsResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get<CountResidentsResponse>(
+      `/residents/count`,
+      {
+        headers: { Authorization: bearerToken },
+      },
+    );
+    return data;
+  } catch (error) {
+    return null;
   }
 };
 
 export default {
   getResidents,
+  countResidents,
 };

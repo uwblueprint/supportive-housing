@@ -59,7 +59,7 @@ class IResidentsService(ABC):
         pass
 
     @abstractmethod
-    def get_residents(self, resident_id, id):
+    def get_residents(self, return_all, page_number, results_per_page, resident_id=None):
         """
         Gets residents in json format.
         :param resident_id: id of resident to be deleted in the format of initial+room_num
@@ -68,3 +68,14 @@ class IResidentsService(ABC):
         :type resident_id: initial
         """
         pass
+
+    @abstractmethod 
+    def count_residents(self):
+        """
+        Count the total number of residents
+        :return: count of residents
+        :rtype: int
+        :raises Exception: if resident count fails
+        """
+        pass
+

@@ -31,7 +31,7 @@ const fontStyles = {
     fontWeight: 700,
     fontSize: "16px",
   },
-  "hero-records": {
+  "hero-table": {
     fontFamily: font,
     fontSize: "28px",
     textTransform: "none",
