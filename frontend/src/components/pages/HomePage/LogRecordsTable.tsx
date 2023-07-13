@@ -30,7 +30,7 @@ const LogRecordsTable = ({
         ref={tableRef}
       >
         <Table
-          variant="baseTable"
+          variant="showTable"
           minHeight="400px"
           verticalAlign="middle"
         >
