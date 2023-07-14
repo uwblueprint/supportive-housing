@@ -110,22 +110,33 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self):
-        user_dtos = []
-        user_list = [result for result in User.query.all()]
-        for user in user_list:
-            user_dict = UserService.__user_to_dict_and_remove_auth_id(user)
-            try:
-                user_dtos.append(UserDTO(**user_dict))
-            except Exception as e:
-                self.logger.error(
-                    "User with auth_id {auth_id} could not be fetched from Firebase".format(
-                        auth_id=user.auth_id
-                    )
+    def get_users(self, page_number, results_per_page):
+        try:
+            users = (
+                User.query.limit(results_per_page)
+                .offset((page_number - 1) * results_per_page)
+                .all()
+            )
+            json_list = list(
+                map(
+                    lambda user: UserService.__user_to_dict_and_remove_auth_id(user),
+                    users,
                 )
-                raise e
+            )
 
-        return user_dtos
+            return {"users": json_list}
+
+        except Exception as postgres_error:
+            raise postgres_error
+
+    def count_users(self):
+        try:
+            count = User.query.count()
+
+            return {"num_results": count}
+
+        except Exception as postgres_error:
+            raise postgres_error
 
     def get_user_status_by_email(self, email):
         try:
@@ -238,7 +249,7 @@ class UserService(IUserService):
                     User.last_name: user.last_name,
                     User.role: user.role,
                     User.email: user.email,
-                    User.user_status: user.user_status
+                    User.user_status: user.user_status,
                 }
             )
 
@@ -254,7 +265,7 @@ class UserService(IUserService):
                         User.last_name: old_user.last_name,
                         User.role: old_user.role,
                         User.email: old_user.email,
-                        User.user_status: old_user.user_status
+                        User.user_status: old_user.user_status,
                     }
                     User.query.filter_by(id=user_id).update(**old_user_dict)
                     db.session.commit()
@@ -283,7 +294,14 @@ class UserService(IUserService):
             )
             raise e
 
-        return UserDTO(user_id, user.first_name, user.last_name, user.email, user.role, user.user_status)
+        return UserDTO(
+            user_id,
+            user.first_name,
+            user.last_name,
+            user.email,
+            user.role,
+            user.user_status,
+        )
 
     def delete_user_by_id(self, user_id):
         try:
@@ -310,7 +328,7 @@ class UserService(IUserService):
             db.session.commit()
 
             try:
-                if (deleted_user.auth_id is not None):
+                if deleted_user.auth_id is not None:
                     firebase_admin.auth.delete_user(deleted_user.auth_id)
             except Exception as firebase_error:
                 # rollback Postgres user deletion
@@ -366,9 +384,7 @@ class UserService(IUserService):
             )
 
             if delete_count < 1:
-                raise Exception(
-                    "email {email} was not deleted".format(email=email)
-                )
+                raise Exception("email {email} was not deleted".format(email=email))
             elif delete_count > 1:
                 raise Exception(
                     "email {email} had multiple instances. Delete not committed.".format(
@@ -379,7 +395,7 @@ class UserService(IUserService):
             db.session.commit()
 
             try:
-                if (firebase_user is not None):
+                if firebase_user is not None:
                     firebase_admin.auth.delete_user(firebase_user.uid)
             except Exception as firebase_error:
                 try:
