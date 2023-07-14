@@ -219,7 +219,7 @@ const CreateLog = ({
       setResidentOptions(residentLabels)
     }
 
-    const usersData = await UserAPIClient.getUsers(true, 1, 1)
+    const usersData = await UserAPIClient.getUsers(true)
     if (usersData && usersData.users.length !== 0) {
       const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
       ({label: user.firstName, value: user.id}));

@@ -4,9 +4,9 @@ import baseAPIClient from "./BaseAPIClient";
 import { GetUsersResponse, CountUsersResponse } from "../types/UserTypes"
 
 const getUsers = async (
-  returnAll: boolean,
-  pageNumber: number,
-  resultsPerPage: number,
+  returnAll = false,
+  pageNumber = 1,
+  resultsPerPage = 10
 ): Promise<GetUsersResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
