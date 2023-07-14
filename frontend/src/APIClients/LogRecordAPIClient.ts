@@ -17,7 +17,7 @@ const createLog = async(
           "accessToken",
         )}`;
 
-        const { data } = await baseAPIClient.post(
+        const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
             "/log_records/",
             { 
                 employeeId: userId, 
@@ -29,7 +29,6 @@ const createLog = async(
             },
             { headers: { Authorization: bearerToken } },
         );
-        console.log(data)
         return data;
       } catch (error) {
         return null;

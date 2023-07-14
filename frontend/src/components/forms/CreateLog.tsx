@@ -221,7 +221,7 @@ const CreateLog = ({
 
     const usersData = await UserAPIClient.getUsers(true, 1, 1)
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user: any) => 
+      const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
       ({label: user.firstName, value: user.id}));
       setEmployeeOptions(userLabels);
     }
