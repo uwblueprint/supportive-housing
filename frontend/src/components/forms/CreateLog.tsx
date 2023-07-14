@@ -115,7 +115,7 @@ const CreateLog = ({
   setUserPageNum,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<NewSelectOptionType>(getCurUserSelectOption()); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState<NewSelectOptionType>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
