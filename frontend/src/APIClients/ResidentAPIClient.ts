@@ -3,11 +3,11 @@ import { GetResidentsReponse, CountResidentsResponse } from "../types/ResidentTy
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
-const getResidents = async (
+const getResidents = async ({
   returnAll = false,
   pageNumber = 1,
   resultsPerPage = 10,
-): Promise<GetResidentsReponse> => {
+}): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

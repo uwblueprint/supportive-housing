@@ -3,11 +3,11 @@ import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import { GetUsersResponse, CountUsersResponse } from "../types/UserTypes"
 
-const getUsers = async (
+const getUsers = async ({
   returnAll = false,
   pageNumber = 1,
   resultsPerPage = 10
-): Promise<GetUsersResponse> => {
+}): Promise<GetUsersResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

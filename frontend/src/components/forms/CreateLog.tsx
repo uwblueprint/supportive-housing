@@ -210,7 +210,7 @@ const CreateLog = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents(true)
+    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
@@ -219,7 +219,7 @@ const CreateLog = ({
       setResidentOptions(residentLabels)
     }
 
-    const usersData = await UserAPIClient.getUsers(true)
+    const usersData = await UserAPIClient.getUsers({returnAll: true})
     if (usersData && usersData.users.length !== 0) {
       const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
       ({label: user.firstName, value: user.id}));
