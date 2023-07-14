@@ -61,7 +61,7 @@ const ResidentDirectory = (): React.ReactElement => {
         color="blue.600"
       >
         <Flex marginBottom="16px">
-          <Box textStyle="header-large">Resident Directory</Box>
+          <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
           {/* TODO: INSERT RESIDENT-RELATED BUTTONS */}

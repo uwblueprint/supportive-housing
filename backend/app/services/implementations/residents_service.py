@@ -63,7 +63,7 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_residents(self, return_all, page_number, results_per_page=10, resident_id=None):
+    def get_residents(self, return_all, page_number, results_per_page, resident_id=None):
         try:
             if resident_id:
                 residents_results = Residents.query.filter_by(resident_id=resident_id)
