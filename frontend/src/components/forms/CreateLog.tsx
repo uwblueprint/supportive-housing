@@ -210,7 +210,7 @@ const CreateLog = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents(true, 1, 1)
+    const residentsData = await ResidentAPIClient.getResidents(true)
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here

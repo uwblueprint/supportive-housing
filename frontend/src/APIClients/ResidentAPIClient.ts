@@ -4,9 +4,9 @@ import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 const getResidents = async (
-  returnAll: boolean,
-  pageNumber: number,
-  resultsPerPage: number,
+  returnAll = false,
+  pageNumber = 1,
+  resultsPerPage = 10,
 ): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
