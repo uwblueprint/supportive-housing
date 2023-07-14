@@ -29,10 +29,7 @@ const LogRecordsTable = ({
         overflowY="scroll"
         ref={tableRef}
       >
-        <Table
-          variant="logRecordsTable"
-          verticalAlign="middle"
-        >
+        <Table variant="showTable" verticalAlign="middle">
           <Thead>
             <Tr>
               <Th>Date</Th>

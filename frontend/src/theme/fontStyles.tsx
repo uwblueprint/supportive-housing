@@ -31,12 +31,19 @@ const fontStyles = {
     fontWeight: 700,
     fontSize: "16px",
   },
-  "hero-records": {
+  "hero-table": {
     fontFamily: font,
     fontSize: "28px",
     textTransform: "none",
     fontWeight: 700,
     color: "teal.500",
+  },
+  "user-status-label": {
+    fontFamily: font,
+    fontSize: "12px",
+    fontWeight: 500,
+    textAlign: "center",
+    color: "white",
   },
   "dm-sans-font": {
     fontFamily: font,
