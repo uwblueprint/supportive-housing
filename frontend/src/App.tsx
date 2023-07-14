@@ -24,12 +24,12 @@ import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherCo
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import ResidentDirectory from "./components/pages/ResidentDirectory";
-import EmployeeDirectory from "./components/pages/EmployeeDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
+import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -100,7 +100,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
-                  component={EmployeeDirectory}
+                  component={EmployeeDirectoryPage}
                 />
                 <PrivateRoute
                   exact

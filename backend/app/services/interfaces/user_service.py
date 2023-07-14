@@ -89,6 +89,7 @@ class IUserService(ABC):
     def count_users(self):
         """
         Count the total number of users
+        
         :return: count of users
         :rtype: int
         :raises Exception: if user count fails

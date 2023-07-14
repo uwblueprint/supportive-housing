@@ -93,10 +93,7 @@ const ExportCSVButton = (): React.ReactElement => {
                       },
                     }}
                   />
-                  <Button
-                    onClick={handleClear}
-                    variant="secondary"
-                  >
+                  <Button onClick={handleClear} variant="secondary">
                     Clear
                   </Button>
                 </Flex>
@@ -113,11 +110,7 @@ const ExportCSVButton = (): React.ReactElement => {
                 >
                   Cancel
                 </Button>
-                <Button
-                  onClick={handleSubmit}
-                  variant="primary"
-                  type="submit"
-                >
+                <Button onClick={handleSubmit} variant="primary" type="submit">
                   Export
                 </Button>
               </Box>

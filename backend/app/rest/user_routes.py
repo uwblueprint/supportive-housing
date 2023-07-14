@@ -64,6 +64,21 @@ def get_users():
     try:
         users = user_service.get_users(return_all, page_number, results_per_page)
         return jsonify(users), 201
+
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/count", methods=["GET"], strict_slashes=False)
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+def count_users():
+    """
+    Get number of users
+    """
+    try:
+        log_records = user_service.count_users()
+        return jsonify(log_records), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -106,10 +121,12 @@ def create_user():
     except Exception as e:
         error_message = getattr(e, "message", None)
         status_code = None
-        if (str(e) == "User already exists"):
+        if str(e) == "User already exists":
             status_code = 409
-            
-        return jsonify({"error": (error_message if error_message else str(e))}), (status_code if status_code else 500)
+
+        return jsonify({"error": (error_message if error_message else str(e))}), (
+            status_code if status_code else 500
+        )
 
 
 @blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)

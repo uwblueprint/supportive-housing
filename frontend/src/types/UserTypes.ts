@@ -8,6 +8,12 @@ export type User = {
   authId: string;
 };
 
+export type UserLabel = {
+  id: string;
+  label: string;
+  value: string;
+};
+
 export type GetUsersResponse = {
   users: User[];
 } | null;
