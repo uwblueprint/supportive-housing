@@ -20,25 +20,6 @@ class ResidentsService(IResidentsService):
         """
         self.logger = logger
 
-    def to_json_list(self, residents_results):
-        try:
-            residents_list = []
-            for resident in residents_results:
-                residents_list.append(
-                    {
-                        "id": resident.id,
-                        "initial": resident.initial,
-                        "room_num": resident.room_num,
-                        "date_joined": str(resident.date_joined),
-                        "date_left": str(resident.date_left) if resident.date_left else None,
-                        "building": resident.building,
-                        "resident_id": resident.resident_id,
-                    }
-                )
-            return residents_list
-        except Exception as postgres_error:
-            raise postgres_error
-
     def add_resident(self, resident):
         new_resident = resident
         try:

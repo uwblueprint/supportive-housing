@@ -7,16 +7,6 @@ class IResidentsService(ABC):
     """
 
     @abstractmethod
-    def to_json_list(self, residents_results):
-        """
-        Turns the residents_results from the sql query into json format
-        :param residents_results: residents retrieved from resident table
-        :type id: objects from resident table
-        """
-
-        pass
-
-    @abstractmethod
     def add_resident(self, id, initial, room_num, date_joined, date_left, building):
         """
         Add a resident to the database
