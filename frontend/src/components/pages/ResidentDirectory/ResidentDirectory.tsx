@@ -16,11 +16,11 @@ const ResidentDirectory = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getResidents = async (pageNumber: number) => {
-    const data = await ResidentAPIClient.getResidents(
-      false,      
+    const data = await ResidentAPIClient.getResidents({
+      returnAll: false,
       pageNumber,
-      resultsPerPage,
-    );
+      resultsPerPage
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
