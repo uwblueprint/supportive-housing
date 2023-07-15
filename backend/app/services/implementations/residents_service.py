@@ -2,7 +2,7 @@ from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
 from ...models import db
 from datetime import datetime
-from sqlalchemy import select, cast, Date, text
+from sqlalchemy import select, cast, Date
 import json
 
 
