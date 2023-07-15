@@ -79,9 +79,10 @@ const RESIDENTS: Resident[] = [
 ];
 
 // Replace this with the users from the db
+// const EMPLOYEES: User[] = [];
 const EMPLOYEES: UserLabel[] = [
-  { id: "4", label: "Huseyin", value: "Huseyin" },
-  { id: "5", label: "John Doe", value: "John Doe" },
+  { id: 4, label: "Huseyin", value: 4 },
+  { id: 5, label: "John Doe", value: 5 },
 ];
 
 const SearchAndFilters = ({
@@ -114,7 +115,7 @@ const SearchAndFilters = ({
   };
 
   const handleEmployeesChange = (
-    selectedEmployees: MultiValue<{ id: string; label: string; value: string }>,
+    selectedEmployees: MultiValue<UserLabel>,
   ) => {
     const mutableSelectedEmployees: UserLabel[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);

@@ -41,6 +41,14 @@ def get_users():
     """
     Get RESULTS_PER_PAGE users. Will return the users of corresponding to the page you're on
     """
+    return_all = False
+    try:
+        return_all = (
+            True if request.args.get("return_all").casefold() == "true" else False
+        )
+    except:
+        pass
+
     page_number = 1
     try:
         page_number = int(request.args.get("page_number"))
@@ -54,7 +62,7 @@ def get_users():
         pass
 
     try:
-        users = user_service.get_users(page_number, results_per_page)
+        users = user_service.get_users(return_all, page_number, results_per_page)
         return jsonify(users), 201
 
     except Exception as e:
@@ -69,12 +77,11 @@ def count_users():
     Get number of users
     """
     try:
-        log_records = user_service.count_users()
-        return jsonify(log_records), 201
+        numUsers = user_service.count_users()
+        return jsonify(numUsers), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-
 
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
 def get_user_status():

@@ -110,25 +110,28 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, page_number, results_per_page):
+    def get_users(self, return_all, page_number, results_per_page):
         try:
-            users = (
-                User.query.limit(results_per_page)
-                .offset((page_number - 1) * results_per_page)
-                .all()
-            )
+            if return_all:
+                users = User.query.all()
+            else:
+                users = (
+                    User.query.limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
+                    .all()
+                )
+
             json_list = list(
                 map(
                     lambda user: UserService.__user_to_dict_and_remove_auth_id(user),
                     users,
                 )
             )
-
             return {"users": json_list}
 
         except Exception as postgres_error:
             raise postgres_error
-
+        
     def count_users(self):
         try:
             count = User.query.count()

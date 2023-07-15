@@ -24,10 +24,10 @@ import {
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
-import CommonAPIClient from "../../APIClients/CommonAPIClient";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -51,7 +51,7 @@ const CreateResident = (): React.ReactElement => {
   const [showAlert, setShowAlert] = useState(false);
 
   const addResident = async () => {
-    await CommonAPIClient.createResident({
+    await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
       dateJoined: moveInDate,
