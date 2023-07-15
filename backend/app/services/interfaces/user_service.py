@@ -72,10 +72,11 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_users(self, page_number, results_per_page):
+    def get_users(self, return_all, page_number, results_per_page):
         """
         Get all users by a specific page and results per page
-
+        
+        :param return_all: flag to return all users
         :param page_number: number of page
         :param results_per_page: number of results_per_page
         :return: list of users
@@ -88,7 +89,7 @@ class IUserService(ABC):
     def count_users(self):
         """
         Count the total number of users
-
+        
         :return: count of users
         :rtype: int
         :raises Exception: if user count fails

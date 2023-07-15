@@ -75,17 +75,16 @@ class ResidentsService(IResidentsService):
                     .offset((page_number - 1) * results_per_page)
                     .all()
                 )
-                
+
             residents_results = list(map(lambda resident: resident.to_dict(), residents_results))
             return {"residents": residents_results}
-
         except Exception as postgres_error:
             raise postgres_error
-        
+    
     def count_residents(self):
         try:
             count = Residents.query.count()
             return {"num_results": count}
-        
+
         except Exception as postgres_error:
             raise postgres_error

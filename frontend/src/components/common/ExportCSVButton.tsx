@@ -22,6 +22,7 @@ import { TiExport } from "react-icons/ti";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
 import commonAPIClient from "../../APIClients/CommonAPIClient";
 import CSVConverter from "../../helper/CSVConverter";
+import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 
 const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -49,7 +50,7 @@ const ExportCSVButton = (): React.ReactElement => {
         .substring(0, 10),
     );
 
-    const data = await commonAPIClient.filterLogRecords({
+    const data = await LogRecordAPIClient.filterLogRecords({
       dateRange,
       returnAll: true, // return all data
     });

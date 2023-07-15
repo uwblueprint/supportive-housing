@@ -18,24 +18,62 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
-  ScaleFade,
+  ModalHeader,
   Text,
-  Textarea,
+  ScaleFade,
+  Textarea
 } from "@chakra-ui/react";
-
+import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
+import { AuthenticatedUser } from "../../types/AuthTypes";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { UserLabel } from "../../types/UserTypes";
+
+type Props = {
+  getRecords: (page_number: number) => Promise<void>;
+  countRecords: () => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+};
+
+type AlertData = {
+  status: AlertStatus;
+  description: string;
+}
+
+type AlertDataOptions = {
+  [key: string]: AlertData;
+}
+
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
   { label: "144", value: "144 Erb St. West" },
   { label: "362", value: "362 Erb St. West" },
   { label: "402", value: "402 Erb St. West" },
 ];
+
+const ALERT_DATA: AlertDataOptions = {
+  DEFAULT: {
+    status: 'info',
+    description: ''
+  },
+  SUCCESS: {
+    status: 'success',
+    description: 'Log successfully created.'
+  },
+  ERROR: {
+    status: 'error',
+    description: 'Error creating log.'
+  }
+}
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS = [
@@ -44,21 +82,37 @@ const TAGS = [
   { label: "Tag C", value: "C" },
 ];
 
-// Replace this with the residents from the db
-const RESIDENTS = [
-  { label: "DE307", value: "DE307" },
-  { label: "AH206", value: "AH206" },
-  { label: "MB404", value: "MB404" },
-];
+// Changes the border of the Select components if the input is invalid
+function getBorderStyle(state: any, error: boolean): string {
+  if (state.isFocused) {
+    return "2px solid #3182ce";
+  }
+  if (error) {
+    return "2px solid #e53e3e";
+  }
 
-// Replace this with the users from the db
-const EMPLOYEES = [
-  { label: "Huseyin", value: "Huseyin" },
-  { label: "John Doe", value: "John Doe" },
-];
+  return "1px solid #cbd5e0";
+}
 
-const CreateLog = () => {
-  const [employee, setEmployee] = useState("Huseyin"); // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+// Helper to get the currently logged in user
+const getCurUserSelectOption = () => {
+  const curUser: AuthenticatedUser | null = getLocalStorageObj(
+    AUTHENTICATED_USER_KEY,
+  );
+  if (curUser && curUser.firstName && curUser.id) {
+    const userId = parseInt(curUser.id, 10)
+    return {id: userId, label: curUser.firstName, value: userId}
+  }
+  return {id: -1, label: "", value: -1}
+}
+
+const CreateLog = ({
+  getRecords,
+  countRecords,
+  setUserPageNum,
+}: Props) => {
+  // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -68,11 +122,16 @@ const CreateLog = () => {
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState("");
+  const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
-  const [attnTo, setAttnTo] = useState("");
+  const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
+
+  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
+  
+  const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -83,8 +142,7 @@ const CreateLog = () => {
   const [notesError, setNotesError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
-
-  // if we need functionality to change the selected employee, handle should go here
+  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT)
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -117,7 +175,7 @@ const CreateLog = () => {
   };
 
   const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
@@ -134,7 +192,7 @@ const CreateLog = () => {
   };
 
   const handleAttnToChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
       setAttnTo(selectedOption.value);
@@ -147,8 +205,27 @@ const CreateLog = () => {
     setNotesError(inputValue === "");
   };
 
-  const [isCreateOpen, setCreateOpen] = React.useState(false);
+  // fetch resident + employee data for log creation
+  const getLogEntryOptions = async () => {
+    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
+
+    if (residentsData && residentsData.residents.length !== 0) {
+      // TODO: Remove the type assertions here
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
+      ({id: r.id!, label: r.residentId!, value: r.id!}));
+      setResidentOptions(residentLabels)
+    }
+
+    const usersData = await UserAPIClient.getUsers({returnAll: true})
+    if (usersData && usersData.users.length !== 0) {
+      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
+      ({id: user.id, label: user.firstName, value: user.id}));
+      setEmployeeOptions(userLabels);
+    }
+  }
+
   const handleCreateOpen = () => {
+    getLogEntryOptions()
     setCreateOpen(true);
 
     // reset all states
@@ -161,9 +238,9 @@ const CreateLog = () => {
       }),
     );
     setBuilding("");
-    setResident("");
+    setResident(-1);
     setTags([]);
-    setAttnTo("");
+    setAttnTo(-1);
     setNotes("");
 
     // reset all error states
@@ -183,44 +260,21 @@ const CreateLog = () => {
   };
 
   const handleSubmit = () => {
-    // log the state values for testing
-    // console.log({
-    //     employee,
-    //     date,
-    //     time,
-    //     building,
-    //     resident,
-    //     tags,
-    //     attnTo,
-    //     notes,
-    //     flagged,
-    // });
-
     // Update error states
-    setEmployeeError(employee === "");
+    setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === "");
+    setResidentError(resident === -1);
     setNotesError(notes === "");
-
-    // log the error state values for testing
-    // console.log({
-    //     employeeError: employee === "",
-    //     dateError: date === null,
-    //     timeError: time === "",
-    //     buildingError: building === "",
-    //     residentError: resident === "",
-    //     notesError: notes === "",
-    // });
 
     // If any required fields are empty, prevent form submission
     if (
-      employee === "" ||
+      (!employee.label) ||
       date === null ||
       time === "" ||
       building === "" ||
-      resident === "" ||
+      resident === -1 ||
       notes === ""
     ) {
       return;
@@ -228,14 +282,26 @@ const CreateLog = () => {
 
     // Create a log in the db with this data
     setCreateOpen(false);
-    setShowAlert(true);
     // update the table with the new log
+    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
+      if (res != null) {
+        setAlertData(ALERT_DATA.SUCCESS)
+        countRecords()
+        getRecords(1);
+        setUserPageNum(1)
+      }
+      else {
+        setAlertData(ALERT_DATA.ERROR)
+      }
+      setShowAlert(true);
+    })
   };
 
   useEffect(() => {
     if (showAlert) {
       setTimeout(() => {
         setShowAlert(false);
+        setAlertData(ALERT_DATA.DEFAULT)
       }, 3000);
     }
   }, [showAlert]);
@@ -265,9 +331,8 @@ const CreateLog = () => {
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
-                      options={EMPLOYEES}
                       isDisabled
-                      defaultValue={{ label: employee, value: employee }} // needs to be the current user
+                      defaultValue={getCurUserSelectOption()} 
                       styles={selectStyle}
                     />
                   </FormControl>
@@ -318,7 +383,7 @@ const CreateLog = () => {
                   <FormControl isRequired isInvalid={residentError} mt={4}>
                     <FormLabel>Resident</FormLabel>
                     <Select
-                      options={RESIDENTS}
+                      options={residentOptions}
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
@@ -333,6 +398,8 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
+                      // TODO: Integrate actual tags once implemented 
+                      isDisabled
                       options={TAGS}
                       isMulti
                       closeMenuOnSelect={false}
@@ -346,7 +413,7 @@ const CreateLog = () => {
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
-                      options={EMPLOYEES}
+                      options={employeeOptions}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
@@ -407,9 +474,9 @@ const CreateLog = () => {
         zIndex={9999}
       >
         <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="success" variant="left-accent" borderRadius="6px">
+          <Alert status={alertData.status} variant="left-accent" borderRadius="6px">
             <AlertIcon />
-            <AlertDescription>Log successfully created.</AlertDescription>
+            <AlertDescription>{alertData.description}</AlertDescription>
           </Alert>
         </ScaleFade>
       </Box>
