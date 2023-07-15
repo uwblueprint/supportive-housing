@@ -261,7 +261,7 @@ const CreateLog = ({
 
   const handleSubmit = () => {
     // Update error states
-    setEmployeeError(employee.label === "" && employee.value === -1);
+    setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
@@ -270,7 +270,7 @@ const CreateLog = ({
 
     // If any required fields are empty, prevent form submission
     if (
-      (employee.label === "" && employee.value === -1) ||
+      (!employee.label) ||
       date === null ||
       time === "" ||
       building === "" ||

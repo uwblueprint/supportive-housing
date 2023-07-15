@@ -1,5 +1,5 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetResidentsReponse, CountResidentsResponse } from "../types/ResidentTypes";
+import { GetResidentsReponse, CountResidentsResponse, Resident } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -44,7 +44,30 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
   }
 };
 
+const createResident = async ({
+  initial,
+  roomNum,
+  dateJoined,
+  building,
+}: Resident): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.post(
+      "/residents",
+      { initial, roomNum, dateJoined, building },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default {
   getResidents,
   countResidents,
+  createResident
 };
