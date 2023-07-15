@@ -9,9 +9,9 @@ export type User = {
 };
 
 export type UserLabel = {
-  id: string;
+  id: number;
   label: string;
-  value: string;
+  value: number;
 };
 
 export type GetUsersResponse = {

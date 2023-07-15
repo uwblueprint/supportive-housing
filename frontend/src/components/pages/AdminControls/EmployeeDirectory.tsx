@@ -8,6 +8,7 @@ import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
 import EmployeesTable from "./EmployeesTable";
+import UserAPIClient from "../../../APIClients/UserAPIClient";
 
 const EmployeeDirectoryPage = (): React.ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
@@ -20,7 +21,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
-    const data = await commonAPIClient.getUsers(pageNumber, resultsPerPage);
+    const data = await UserAPIClient.getUsers({pageNumber, resultsPerPage});
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
@@ -36,7 +37,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   };
 
   const countUsers = async () => {
-    const data = await commonAPIClient.countUsers();
+    const data = await UserAPIClient.countUsers();
     setNumUsers(data ? data.numResults : 0);
   };
 

@@ -4,7 +4,6 @@ import { Box, Flex, Spacer } from "@chakra-ui/react";
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
 import CreateLog from "../../forms/CreateLog";
-import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
@@ -13,6 +12,7 @@ import { Building } from "../../../types/BuildingTypes";
 import { Resident } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
+import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -59,7 +59,7 @@ const HomePage = (): React.ReactElement => {
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
     const tagsValues = tags.map((tag) => tag.value);
 
-    const data = await commonAPIClient.filterLogRecords({
+    const data = await LogRecordAPIClient.filterLogRecords({
       building: buildingValue,
       employeeId: employeeIds,
       attnTo: attentionToIds,
@@ -91,7 +91,7 @@ const HomePage = (): React.ReactElement => {
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
     const tagsValues = tags.map((tag) => tag.value);
 
-    const data = await commonAPIClient.countLogRecords({
+    const data = await LogRecordAPIClient.countLogRecords({
       building: buildingValue,
       employeeId: employeeIds,
       attnTo: attentionToIds,

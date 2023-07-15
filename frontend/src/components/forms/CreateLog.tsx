@@ -36,17 +36,13 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { UserLabel } from "../../types/UserTypes";
 
 type Props = {
   getRecords: (page_number: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
-
-type NewSelectOptionType = {
-  label: string;
-  value: number;
-}
 
 type AlertData = {
   status: AlertStatus;
@@ -104,9 +100,10 @@ const getCurUserSelectOption = () => {
     AUTHENTICATED_USER_KEY,
   );
   if (curUser && curUser.firstName && curUser.id) {
-    return {label: curUser.firstName, value: parseInt(curUser.id, 10)}
+    const userId = parseInt(curUser.id, 10)
+    return {id: userId, label: curUser.firstName, value: userId}
   }
-  return {label: "", value: -1}
+  return {id: -1, label: "", value: -1}
 }
 
 const CreateLog = ({
@@ -115,7 +112,7 @@ const CreateLog = ({
   setUserPageNum,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<NewSelectOptionType>(getCurUserSelectOption());
+  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -131,8 +128,8 @@ const CreateLog = ({
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
-  const [employeeOptions, setEmployeeOptions] = useState<NewSelectOptionType[]>([]);
-  const [residentOptions, setResidentOptions] = useState<NewSelectOptionType[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
   
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -214,15 +211,15 @@ const CreateLog = ({
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: NewSelectOptionType[] = residentsData.residents.map((r) => 
-      ({label: r.residentId!, value: r.id!}));
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
+      ({id: r.id!, label: r.residentId!, value: r.id!}));
       setResidentOptions(residentLabels)
     }
 
     const usersData = await UserAPIClient.getUsers({returnAll: true})
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: NewSelectOptionType[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
-      ({label: user.firstName, value: user.id}));
+      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
+      ({id: user.id, label: user.firstName, value: user.id}));
       setEmployeeOptions(userLabels);
     }
   }
