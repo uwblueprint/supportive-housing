@@ -21,3 +21,8 @@ export type GetLogRecordsReponse = {
 export type GetLogRecordCountResponse = {
   numResults: number;
 } | null;
+
+export type PostLogRecordsResponse = Omit<
+LogRecord, 
+'logId' | 'attnToFirstName' | 'attnToLastName' | 'employeeFirstName' | 'employeeLastName' | 'tags'
+> | null;
