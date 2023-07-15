@@ -115,7 +115,7 @@ const SearchAndFilters = ({
   };
 
   const handleEmployeesChange = (
-    selectedEmployees: MultiValue<User>,
+    selectedEmployees: MultiValue<UserLabel>,
   ) => {
     const mutableSelectedEmployees: UserLabel[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);
