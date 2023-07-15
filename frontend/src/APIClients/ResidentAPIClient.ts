@@ -26,6 +26,7 @@ const getResidents = async ({
     return null;
   }
 };
+
 const countResidents = async (): Promise<CountResidentsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
