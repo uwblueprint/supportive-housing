@@ -173,6 +173,7 @@ const LogRecordsTable = ({
         </ScaleFade>
       </Box>
     </>
+
   );
 };
 

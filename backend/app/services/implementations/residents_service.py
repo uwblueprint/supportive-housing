@@ -20,25 +20,6 @@ class ResidentsService(IResidentsService):
         """
         self.logger = logger
 
-    def to_json_list(self, residents_results):
-        try:
-            residents_list = []
-            for resident in residents_results:
-                residents_list.append(
-                    {
-                        "id": resident.id,
-                        "initial": resident.initial,
-                        "room_num": resident.room_num,
-                        "date_joined": str(resident.date_joined),
-                        "date_left": str(resident.date_left),
-                        "building": resident.building,
-                        "resident_id": resident.resident_id,
-                    }
-                )
-            return json.dumps(residents_list)
-        except Exception as postgres_error:
-            raise postgres_error
-
     def add_resident(self, resident):
         new_resident = resident
         try:
@@ -82,13 +63,28 @@ class ResidentsService(IResidentsService):
             )
         db.session.commit()
 
-    def get_residents(self, resident_id=None):
+    def get_residents(self, return_all, page_number, results_per_page, resident_id=None):
         try:
             if resident_id:
                 residents_results = Residents.query.filter_by(resident_id=resident_id)
-            else:
+            elif return_all:
                 residents_results = Residents.query.all()
+            else: 
+                residents_results = (
+                    Residents.query.limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
+                    .all()
+                )
 
-            return self.to_json_list(residents_results)
+            residents_results = list(map(lambda resident: resident.to_dict(), residents_results))
+            return {"residents": residents_results}
+        except Exception as postgres_error:
+            raise postgres_error
+    
+    def count_residents(self):
+        try:
+            count = Residents.query.count()
+            return {"num_results": count}
+
         except Exception as postgres_error:
             raise postgres_error
