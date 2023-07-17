@@ -59,9 +59,9 @@ const LogRecordsTable = ({
 
   // Handle edit form toggle
   const handleEditToggle = (logId: number) => {
-    setDeleteOpenMap((prevDeleteOpenMap) => ({
-      ...prevDeleteOpenMap,
-      [logId]: !prevDeleteOpenMap[logId],
+    setEditOpenMap((prevEditOpenMap) => ({
+      ...prevEditOpenMap,
+      [logId]: !prevEditOpenMap[logId],
     }));
   };
 

@@ -123,9 +123,45 @@ const deleteLogRecord = async (logId: number): Promise<boolean> => {
   }
 };
 
+const editLogRecord = async (
+  logId: number,
+  userId: number,
+  residentId: number,
+  flagged: boolean,
+  note: string,
+  attentionTo: number,
+  tags: string[],
+  building: string,
+) : Promise<any> => {
+  try {
+      const bearerToken = `Bearer ${getLocalStorageObjProperty(
+        AUTHENTICATED_USER_KEY,
+        "accessToken",
+      )}`;
+
+      const { data } = await baseAPIClient.put<any>(
+          `/log_records/${logId}`,
+          { 
+              employeeId: userId, 
+              residentId,
+              flagged,
+              note,
+              attnTo: attentionTo,
+              tags,
+              building,
+          },
+          { headers: { Authorization: bearerToken } },
+      );
+      return data;
+    } catch (error) {
+      return null;
+    }
+};
+
 export default {
   createLog,
   countLogRecords,
   filterLogRecords,
   deleteLogRecord,
+  editLogRecord,
 };

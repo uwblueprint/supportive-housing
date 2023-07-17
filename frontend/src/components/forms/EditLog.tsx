@@ -55,9 +55,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144", value: "144 Erb St. West" },
-  { label: "362", value: "362 Erb St. West" },
-  { label: "402", value: "402 Erb St. West" },
+  { label: "144", value: "144" },
+  { label: "362", value: "362" },
+  { label: "402", value: "402" },
 ];
 
 const ALERT_DATA: AlertDataOptions = {
@@ -67,11 +67,11 @@ const ALERT_DATA: AlertDataOptions = {
   },
   SUCCESS: {
     status: 'success',
-    description: 'Log successfully created.'
+    description: 'Log successfully edited.'
   },
   ERROR: {
     status: 'error',
-    description: 'Error creating log.'
+    description: 'Error editing log.'
   }
 }
 
@@ -231,7 +231,15 @@ const EditLog = ({
       return;
     }
 
-    console.log("test");
+    LogRecordAPIClient.editLogRecord(logRecord.logId, employee.value, resident, flagged, notes, attnTo, tags, building).then((res) => {
+      if (res != null) {
+        setAlertData(ALERT_DATA.SUCCESS)
+      }
+      else {
+        setAlertData(ALERT_DATA.ERROR)
+      }
+      setShowAlert(true);
+    })
 
   };
 
