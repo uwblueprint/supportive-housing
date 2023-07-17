@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # If you're on Windows, run bash create-residents.sh -w
-# Otherwise, run bash create-log-residents.sh
+# Otherwise, run bash create-residents.sh
 
 # Import common functions
 SEEDING_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )

@@ -1,10 +1,13 @@
-export type LogRecordFilters = {
+export type CountLogRecordFilters = {
   building?: string;
-  employeeId?: string[];
-  attnTo?: string[];
+  employeeId?: number[];
+  attnTo?: number[];
   dateRange?: string[];
   tags?: string[];
   flagged?: boolean;
+};
+
+export type LogRecordFilters = CountLogRecordFilters & {
   returnAll?: boolean;
   pageNumber?: number;
   resultsPerPage?: number;

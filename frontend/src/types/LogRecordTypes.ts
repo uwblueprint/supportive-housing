@@ -16,5 +16,13 @@ export type LogRecord = {
 
 export type GetLogRecordsReponse = {
   logRecords: LogRecord[];
+} | null;
+
+export type GetLogRecordCountResponse = {
   numResults: number;
 } | null;
+
+export type PostLogRecordsResponse = Omit<
+LogRecord, 
+'logId' | 'attnToFirstName' | 'attnToLastName' | 'employeeFirstName' | 'employeeLastName' | 'tags'
+> | null;

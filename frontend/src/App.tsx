@@ -23,13 +23,13 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-import ResidentDirectory from "./components/pages/ResidentDirectory";
-import EmployeeDirectory from "./components/pages/EmployeeDirectory";
+import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
-import InviteUsers from "./components/pages/InviteUsers";
+import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
+import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -62,11 +62,6 @@ const App = (): React.ReactElement => {
               <Switch>
                 <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                 <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
-                <PrivateRoute
-                  exact
-                  path={Routes.INVITE_USERS}
-                  component={InviteUsers}
-                />
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
@@ -105,7 +100,12 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
-                  component={EmployeeDirectory}
+                  component={EmployeeDirectoryPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.INVITE_EMPLOYEES}
+                  component={CreateEmployee}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
