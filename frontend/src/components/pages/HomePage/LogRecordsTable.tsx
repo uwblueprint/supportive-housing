@@ -27,7 +27,7 @@ import AuthContext from "../../../contexts/AuthContext";
 
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import EditResident from "../../forms/EditLog";
-import CommonAPIClient from "../../../APIClients/CommonAPIClient";
+import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 
 type Props = {
   logRecords: LogRecord[];
@@ -109,7 +109,7 @@ const LogRecordsTable = ({
 
                 const deleteLogRecord = async (itemId: number) => {
                   try {
-                    await CommonAPIClient.deleteLogRecord(itemId);
+                    await LogRecordAPIClient.deleteLogRecord(itemId);
                   } catch (error) {
                     return
                   }
@@ -165,8 +165,8 @@ const LogRecordsTable = ({
 
                     <EditResident
                       logRecord={record}
-                      isOpen={deleteOpenMap[record.logId]}
-                      toggleClose={() => handleDeleteToggle(record.logId)}
+                      isOpen={editOpenMap[record.logId]}
+                      toggleClose={() => handleEditToggle(record.logId)}
                     />
                   </>
                 );

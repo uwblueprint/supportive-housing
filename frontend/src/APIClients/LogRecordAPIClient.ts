@@ -106,10 +106,26 @@ const createLog = async(
       } catch (error) {
         return null;
       }
-}
+};
+
+const deleteLogRecord = async (logId: number): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken"
+    )}`;
+    await baseAPIClient.delete(`/log_records/${logId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 export default {
   createLog,
   countLogRecords,
   filterLogRecords,
+  deleteLogRecord,
 };
