@@ -5,6 +5,7 @@ import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import Pagination from "../../common/Pagination";
+import EditResident from "../../forms/EditResident";
 
 const ResidentDirectory = (): React.ReactElement => {
   const [residents, setResidents] = useState<Resident[]>([]);

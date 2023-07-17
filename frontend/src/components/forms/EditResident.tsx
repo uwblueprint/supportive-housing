@@ -44,7 +44,7 @@ const BUILDINGS = [
 const EditResident = (residentDetails: Resident ): React.ReactElement => {
   const { id, initial, roomNum, dateJoined, dateLeft, building } = residentDetails;
   const [initials, setInitials] = useState(initial);
-  const [roomNumber, setRoomNumber] = useState(roomNum);
+  const [roomNumber, setRoomNumber] = useState(roomNum.toString());
   const [moveInDate, setMoveInDate] = useState(dateJoined);
   const [userBuilding, setUserBuilding] = useState(building);
   const [moveOutDate, setMoveOutDate] = useState(new Date());
@@ -62,7 +62,7 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
   const editRes = async () => {
     await CommonAPIClient.editResident({
       initial: initials.toUpperCase(),
-      roomNum,
+      roomNum: parseInt(roomNumber, 10),
       dateJoined: moveInDate,
       building: userBuilding,
       dateLeft: moveOutDate,
@@ -123,7 +123,7 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
 
     // Reset the input states
     setInitials(initial);
-    setRoomNumber("");
+    setRoomNumber(roomNum.toString());
     setMoveInDate(moveInDate);
     setUserBuilding(building);
     setFlagged(false);
@@ -210,7 +210,7 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
                   <FormControl isRequired isInvalid={roomNumberError}>
                     <FormLabel>Room Number</FormLabel>
                     <Input
-                      placeholder={roomNum}
+                      placeholder={roomNum.toString()}
                       value={roomNumber}
                       onChange={handleRoomNumberChange}
                       type="number"
@@ -226,7 +226,6 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
                   <FormControl isRequired isInvalid={moveInDateError}>
                     <FormLabel>Move In Date</FormLabel>
                     <SingleDatepicker
-                      placeholder={dateJoined}
                       name="date-input"
                       date={moveInDate}
                       onDateChange={handleMoveInDateChange}
