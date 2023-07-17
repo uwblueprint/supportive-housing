@@ -26,6 +26,7 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 
 import DeleteConfirmation from "../../common/DeleteConfirmation";
+import EditResident from "../../forms/EditLog";
 import CommonAPIClient from "../../../APIClients/CommonAPIClient";
 
 type Props = {
@@ -47,6 +48,17 @@ const LogRecordsTable = ({
 
   // Handle delete confirmation toggle
   const handleDeleteToggle = (logId: number) => {
+    setDeleteOpenMap((prevDeleteOpenMap) => ({
+      ...prevDeleteOpenMap,
+      [logId]: !prevDeleteOpenMap[logId],
+    }));
+  };
+
+  // Edit form state
+  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
+
+  // Handle edit form toggle
+  const handleEditToggle = (logId: number) => {
     setDeleteOpenMap((prevDeleteOpenMap) => ({
       ...prevDeleteOpenMap,
       [logId]: !prevDeleteOpenMap[logId],
@@ -83,7 +95,7 @@ const LogRecordsTable = ({
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
-                <Th>Options</Th>
+                <Th> </Th>
               </Tr>
             </Thead>
 
@@ -132,10 +144,10 @@ const LogRecordsTable = ({
                             />
                             <MenuList>
                               <MenuItem onClick={() => handleDeleteToggle(record.logId)}>
-                                Delete
+                                Delete Log Record
                               </MenuItem>
-                              <MenuItem>
-                                Edit
+                              <MenuItem onClick={() => handleEditToggle(record.logId)}>
+                                Edit Log Record
                               </MenuItem>
                             </MenuList>
                           </Menu>
@@ -147,8 +159,14 @@ const LogRecordsTable = ({
                       itemName="log"
                       itemId={record.logId}
                       isOpen={deleteOpenMap[record.logId]}
-                      onClose={() => handleDeleteToggle(record.logId)}
+                      toggleClose={() => handleDeleteToggle(record.logId)}
                       deleteAPI={deleteLogRecord}
+                    />
+
+                    <EditResident
+                      logRecord={record}
+                      isOpen={deleteOpenMap[record.logId]}
+                      toggleClose={() => handleDeleteToggle(record.logId)}
                     />
                   </>
                 );

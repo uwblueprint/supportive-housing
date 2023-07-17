@@ -25,7 +25,6 @@ import {
   Textarea
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
@@ -37,11 +36,12 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
+import { LogRecord } from "../../types/LogRecordTypes";
 
 type Props = {
-  getRecords: (page_number: number) => Promise<void>;
-  countRecords: () => Promise<void>;
-  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  logRecord: LogRecord;
+  isOpen: boolean;
+  toggleClose: () => void;
 };
 
 type AlertData = {
@@ -82,18 +82,6 @@ const TAGS = [
   { label: "Tag C", value: "C" },
 ];
 
-// Changes the border of the Select components if the input is invalid
-function getBorderStyle(state: any, error: boolean): string {
-  if (state.isFocused) {
-    return "2px solid #3182ce";
-  }
-  if (error) {
-    return "2px solid #e53e3e";
-  }
-
-  return "1px solid #cbd5e0";
-}
-
 // Helper to get the currently logged in user
 const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
@@ -106,14 +94,14 @@ const getCurUserSelectOption = () => {
   return {id: -1, label: "", value: -1}
 }
 
-const CreateLog = ({
-  getRecords,
-  countRecords,
-  setUserPageNum,
+const EditLog = ({
+  logRecord,
+  isOpen,
+  toggleClose,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date(logRecord.datetime));
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
       hour: "2-digit",
@@ -121,18 +109,16 @@ const CreateLog = ({
       hour12: false,
     }),
   );
-  const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState(-1);
-  const [tags, setTags] = useState<string[]>([]);
-  const [attnTo, setAttnTo] = useState(-1);
-  const [notes, setNotes] = useState("");
-  const [flagged, setFlagged] = useState(false);
+  const [building, setBuilding] = useState(logRecord.building);
+  const [resident, setResident] = useState<number>(parseInt(logRecord.residentId, 10));
+  const [tags, setTags] = useState<string[]>(logRecord.tags);
+  const [attnTo, setAttnTo] = useState(logRecord.attnTo);
+  const [notes, setNotes] = useState(logRecord.note);
+  const [flagged, setFlagged] = useState(logRecord.flagged);
 
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
   const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
   
-  const [isCreateOpen, setCreateOpen] = React.useState(false);
-
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -179,9 +165,8 @@ const CreateLog = ({
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
+      setResidentError(false);
     }
-
-    setResidentError(selectedOption === null);
   };
 
   const handleTagsChange = (
@@ -224,40 +209,6 @@ const CreateLog = ({
     }
   }
 
-  const handleCreateOpen = () => {
-    getLogEntryOptions()
-    setCreateOpen(true);
-
-    // reset all states
-    setDate(new Date());
-    setTime(
-      new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
-    setBuilding("");
-    setResident(-1);
-    setTags([]);
-    setAttnTo(-1);
-    setNotes("");
-
-    // reset all error states
-    setEmployeeError(false);
-    setDateError(false);
-    setTimeError(false);
-    setBuildingError(false);
-    setResidentError(false);
-    setNotesError(false);
-
-    // reset alert state
-    setShowAlert(false);
-  };
-
-  const handleCreateClose = () => {
-    setCreateOpen(false);
-  };
 
   const handleSubmit = () => {
     // Update error states
@@ -280,21 +231,8 @@ const CreateLog = ({
       return;
     }
 
-    // Create a log in the db with this data
-    setCreateOpen(false);
-    // update the table with the new log
-    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, attnTo, building).then((res) => {
-      if (res != null) {
-        setAlertData(ALERT_DATA.SUCCESS)
-        countRecords()
-        getRecords(1);
-        setUserPageNum(1)
-      }
-      else {
-        setAlertData(ALERT_DATA.ERROR)
-      }
-      setShowAlert(true);
-    })
+    console.log("test");
+
   };
 
   useEffect(() => {
@@ -306,24 +244,18 @@ const CreateLog = ({
     }
   }, [showAlert]);
 
-  return (
-    <div>
-      <Box textAlign="right">
-        <Button
-          onClick={handleCreateOpen}
-          marginBottom="16px"
-          variant="primary"
-        >
-          <AddIcon boxSize="16px" marginRight="8px" />
-          Add Log
-        </Button>
-      </Box>
+  // Retrieves options for dropdowns
+  useEffect(() => {
+    getLogEntryOptions();
+  }, []);
 
+  return (
+    <>
       <Box>
-        <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
+        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>New Log Entry Details</ModalHeader>
+            <ModalHeader>Edit Log Entry Details</ModalHeader>
             <ModalBody>
               <Divider />
               <Row style={{marginTop: "16px"}}>
@@ -451,7 +383,7 @@ const CreateLog = ({
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
-                  onClick={handleCreateClose}
+                  onClick={toggleClose}
                   variant="tertiary"
                   marginRight="8px"
                 >
@@ -480,8 +412,8 @@ const CreateLog = ({
           </Alert>
         </ScaleFade>
       </Box>
-    </div>
+    </>
   );
 };
 
-export default CreateLog;
+export default EditLog;

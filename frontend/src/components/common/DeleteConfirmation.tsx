@@ -15,23 +15,23 @@ type Props = {
     itemName: string;
     itemId: number;
     isOpen: boolean;
-    onClose: () => void;
+    toggleClose: () => void;
     deleteAPI: (itemId: number) => void;
 };
 
-const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Props): React.ReactElement => {
+const DeleteConfirmation = ({ itemName, itemId, isOpen, toggleClose, deleteAPI }: Props): React.ReactElement => {
     
     const ITEM_NAME = itemName.toLowerCase();
 
     const handleSubmit = async () => {
         deleteAPI(itemId);
-        onClose();
+        toggleClose();
     };
 
     return (
         <>
             <Box>
-                <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Delete {ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)}</ModalHeader>
@@ -42,7 +42,7 @@ const DeleteConfirmation = ({ itemName, itemId, isOpen, onClose, deleteAPI }: Pr
                         </ModalBody>
                         <ModalFooter>
                             <Button
-                                onClick={onClose}
+                                onClick={toggleClose}
                                 variant="tertiary"
                                 marginRight="8px"
                             >
