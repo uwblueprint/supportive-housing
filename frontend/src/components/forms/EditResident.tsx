@@ -62,7 +62,7 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
   const editRes = async () => {
     await CommonAPIClient.editResident({
       initial: initials.toUpperCase(),
-      roomNum: parseInt(roomNumber, 10),
+      roomNum,
       dateJoined: moveInDate,
       building: userBuilding,
       dateLeft: moveOutDate,
@@ -123,7 +123,7 @@ const EditResident = (residentDetails: Resident ): React.ReactElement => {
 
     // Reset the input states
     setInitials(initial);
-    setRoomNumber(roomNum);
+    setRoomNumber("");
     setMoveInDate(moveInDate);
     setUserBuilding(building);
     setFlagged(false);
