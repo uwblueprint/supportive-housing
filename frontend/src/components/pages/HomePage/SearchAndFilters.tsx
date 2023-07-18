@@ -68,7 +68,7 @@ const RESIDENTS: Resident[] = [
     value: 1,
   },
   {
-    id: 1,
+    id: 2,
     initial: "P",
     roomNum: 112,
     dateJoined: new Date(),
