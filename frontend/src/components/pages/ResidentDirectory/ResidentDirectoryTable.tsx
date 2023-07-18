@@ -17,6 +17,8 @@ import {
 import { VscKebabVertical } from "react-icons/vsc";
 import { Resident } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
+import DeleteConfirmation from "../../common/DeleteConfirmation";
+import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 
@@ -53,10 +55,10 @@ const ResidentDirectoryTable = ({
   const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
 
   // Handle delete confirmation toggle
-  const handleDeleteToggle = (resident: Resident) => {
+  const handleDeleteToggle = (residentId: number) => {
     setDeleteOpenMap((prevDeleteOpenMap) => ({
       ...prevDeleteOpenMap,
-      [logId]: !prevDeleteOpenMap[logId],
+      [residentId]: !prevDeleteOpenMap[residentId],
     }));
   };
   const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
@@ -104,6 +106,14 @@ const ResidentDirectoryTable = ({
             {residents.map((resident) => {
               const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
               // TODO: Remove non-null assertion from residentId 
+              const deleteLogRecord = async (itemId: number) => {
+                try {
+                  await ResidentAPIClient.deleteResident(itemId);
+                } catch (error) {
+                  return
+                }
+                setShowAlert(true);
+              };
               return (
                 < >
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
@@ -111,30 +121,41 @@ const ResidentDirectoryTable = ({
                   <Td width="15%">{status}</Td>
                   <Td width="20%">{resident.building}</Td>
                   <Td width="20%">{startDate.date}</Td>
-                  <Td width="20%">{endDate? endDate.date : ""}</Td>
-                  <Menu>
-                  <MenuButton
-                    as={IconButton}
-                    aria-label='Options'
-                    icon={<VscKebabVertical />}
-                    w="36px"
-                    variant="ghost"
-                  />
-                  <MenuList>
-                    <MenuItem onClick={() => handleEditToggle(resident.id)}>
-                      Edit Log Record
-                    </MenuItem>
-                    <MenuItem >
-                      Delete Log Record
-                    </MenuItem>
-                  </MenuList>
-                </Menu>
+                  <Td width="15%">{endDate? endDate.date : ""}</Td>
+                  <Td width="5%">
+                    {(authenticatedUser?.role === "Admin") && (
+                    <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label='Options'
+                      icon={<VscKebabVertical />}
+                      w="36px"
+                      variant="ghost"
+                    />
+                    <MenuList>
+                      <MenuItem onClick={() => handleEditToggle(resident.id)}>
+                        Edit Log Record
+                      </MenuItem>
+                      <MenuItem onClick={() => handleDeleteToggle(resident.id)}>
+                        Delete Log Record
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                  )}
+                </Td>
                 </Tr>
                 <EditResident
                       resident={resident}
                       isOpen={editOpenMap[resident.id]}
                       toggleClose={() => handleEditToggle(resident.id)}
                 />
+                <DeleteConfirmation
+                      itemName="resident"
+                      itemId={resident.id}
+                      isOpen={deleteOpenMap[resident.id]}
+                      toggleClose={() => handleDeleteToggle(resident.id)}
+                      deleteAPI={deleteLogRecord}
+                    />
                 </>
               );
             })}

@@ -67,8 +67,50 @@ const createResident = async ({
   }
 };
 
+const deleteResident = async (residentId: number): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.delete(`/residents/${residentId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const editResident = async ({
+  residentId,
+  initial,
+  roomNum,
+  dateJoined,
+  building,
+  dateLeft,
+}: Resident): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.put(
+      `/residents/${residentId}`,
+      { initial, roomNum, dateJoined, building, dateLeft},
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+
 export default {
   getResidents,
   countResidents,
-  createResident
+  createResident,
+  editResident,
+  deleteResident
 };

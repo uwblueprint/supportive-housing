@@ -27,7 +27,7 @@ import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
-import CommonAPIClient from "../../APIClients/CommonAPIClient";
+import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes"
 
 import selectStyle from "../../theme/forms/selectStyles";
@@ -89,7 +89,8 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const editRes = async () => {
-    await CommonAPIClient.editResident({
+    await ResidentAPIClient.editResident({
+      id,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: moveInDate,
