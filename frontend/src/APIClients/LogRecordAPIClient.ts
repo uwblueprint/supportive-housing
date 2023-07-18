@@ -1,8 +1,15 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { GetLogRecordCountResponse, GetLogRecordsReponse, PostLogRecordsResponse } from "../types/LogRecordTypes";
-import { CountLogRecordFilters, LogRecordFilters } from "../components/common/types/Filters";
+import {
+  GetLogRecordCountResponse,
+  GetLogRecordsReponse,
+  PostLogRecordsResponse,
+} from "../types/LogRecordTypes";
+import {
+  CountLogRecordFilters,
+  LogRecordFilters,
+} from "../components/common/types/Filters";
 
 const countLogRecords = async ({
   building = "",
@@ -76,43 +83,43 @@ const filterLogRecords = async ({
   }
 };
 
-const createLog = async(
-    userId: number,
-    residentId: number,
-    flagged: boolean,
-    note: string,
-    attentionTo: number,
-    building: string,
-) : Promise<PostLogRecordsResponse> => {
-    try {
-        const bearerToken = `Bearer ${getLocalStorageObjProperty(
-          AUTHENTICATED_USER_KEY,
-          "accessToken",
-        )}`;
+const createLog = async (
+  userId: number,
+  residentId: number,
+  flagged: boolean,
+  note: string,
+  attentionTo: number,
+  building: string,
+): Promise<PostLogRecordsResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
 
-        const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
-            "/log_records/",
-            { 
-                employeeId: userId, 
-                residentId,
-                flagged,
-                note,
-                attnTo: attentionTo,
-                building,
-            },
-            { headers: { Authorization: bearerToken } },
-        );
-        return data;
-      } catch (error) {
-        return null;
-      }
+    const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
+      "/log_records/",
+      {
+        employeeId: userId,
+        residentId,
+        flagged,
+        note,
+        attnTo: attentionTo,
+        building,
+      },
+      { headers: { Authorization: bearerToken } },
+    );
+    return data;
+  } catch (error) {
+    return null;
+  }
 };
 
 const deleteLogRecord = async (logId: number): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
-      "accessToken"
+      "accessToken",
     )}`;
     await baseAPIClient.delete(`/log_records/${logId}`, {
       headers: { Authorization: bearerToken },
@@ -132,30 +139,30 @@ const editLogRecord = async (
   attentionTo: number,
   tags: string[],
   building: string,
-) : Promise<any> => {
+): Promise<any> => {
   try {
-      const bearerToken = `Bearer ${getLocalStorageObjProperty(
-        AUTHENTICATED_USER_KEY,
-        "accessToken",
-      )}`;
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
 
-      const { data } = await baseAPIClient.put<any>(
-          `/log_records/${logId}`,
-          { 
-              employeeId: userId, 
-              residentId,
-              flagged,
-              note,
-              attnTo: attentionTo,
-              tags,
-              building,
-          },
-          { headers: { Authorization: bearerToken } },
-      );
-      return data;
-    } catch (error) {
-      return null;
-    }
+    const { data } = await baseAPIClient.put<any>(
+      `/log_records/${logId}`,
+      {
+        employeeId: userId,
+        residentId,
+        flagged,
+        note,
+        attnTo: attentionTo,
+        tags,
+        building,
+      },
+      { headers: { Authorization: bearerToken } },
+    );
+    return data;
+  } catch (error) {
+    return null;
+  }
 };
 
 export default {
