@@ -50,20 +50,23 @@ const ResidentDirectoryTable = ({
   const [showAlert, setShowAlert] = useState(false);
 
   // Delete confirmation state
-  // const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
+  const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
 
   // Handle delete confirmation toggle
-  // const handleDeleteToggle = (resident: Resident) => {
-  //   setDeleteOpenMap((prevDeleteOpenMap) => ({
-  //     ...prevDeleteOpenMap,
-  //     [logId]: !prevDeleteOpenMap[logId],
-  //   }));
-  // };
-  const [edit, setShowEdit] = useState(false);
+  const handleDeleteToggle = (resident: Resident) => {
+    setDeleteOpenMap((prevDeleteOpenMap) => ({
+      ...prevDeleteOpenMap,
+      [logId]: !prevDeleteOpenMap[logId],
+    }));
+  };
+  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
 
   // Handle edit form toggle
-  const handleEditToggle = () => {
-    setShowEdit(true);
+  const handleEditToggle = (residentId: number) => {
+    setEditOpenMap((prevEditOpenMap) => ({
+      ...prevEditOpenMap,
+      [residentId]: !prevEditOpenMap[residentId],
+    }));
   };
 
   useEffect(() => {
@@ -118,16 +121,20 @@ const ResidentDirectoryTable = ({
                     variant="ghost"
                   />
                   <MenuList>
-                    <MenuItem onClick={() => handleDeleteToggle(resident)}>
-                      Delete Log Record
-                    </MenuItem>
-                    <MenuItem onClick={() => handleEditToggle()}>
+                    <MenuItem onClick={() => handleEditToggle(resident.id)}>
                       Edit Log Record
-                      {edit && <EditResident resident={resident} />}
+                    </MenuItem>
+                    <MenuItem >
+                      Delete Log Record
                     </MenuItem>
                   </MenuList>
                 </Menu>
                 </Tr>
+                <EditResident
+                      resident={resident}
+                      isOpen={editOpenMap[resident.id]}
+                      toggleClose={() => handleEditToggle(resident.id)}
+                />
                 </>
               );
             })}

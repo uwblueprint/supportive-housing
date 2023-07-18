@@ -3,8 +3,8 @@ export type Resident = {
   residentId?: string;
   initial: string;
   roomNum: number;
-  dateJoined: Date;
-  dateLeft?: Date;
+  dateJoined: string;
+  dateLeft?: string;
   building: string;
   label?: string;
   value?: number;

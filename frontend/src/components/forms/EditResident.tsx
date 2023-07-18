@@ -23,7 +23,7 @@ import {
   ScaleFade,
   Divider,
 } from "@chakra-ui/react";
-
+import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
@@ -40,14 +40,43 @@ const BUILDINGS = [
   { label: "402", value: "402" },
 ];
 
+type AlertData = {
+  status: AlertStatus;
+  description: string;
+};
 
-const EditResident = (resident: Resident ): React.ReactElement => {
+type AlertDataOptions = {
+  [key: string]: AlertData;
+};
+
+const ALERT_DATA: AlertDataOptions = {
+  DEFAULT: {
+    status: "info",
+    description: "",
+  },
+  SUCCESS: {
+    status: "success",
+    description: "Resident successfully edited.",
+  },
+  ERROR: {
+    status: "error",
+    description: "Error editing Resident.",
+  },
+};
+
+type Props = {
+  resident: Resident;
+  isOpen: boolean;
+  toggleClose: () => void;
+};
+
+const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   const { id, initial, roomNum, dateJoined, dateLeft, building } = resident;
   const [initials, setInitials] = useState(initial);
-  const [roomNumber, setRoomNumber] = useState("");
-  const [moveInDate, setMoveInDate] = useState(dateJoined);
+  const [roomNumber, setRoomNumber] = useState<number>(roomNum);
+  const [moveInDate, setMoveInDate] = useState(new Date(Date.parse(dateJoined)));
   const [userBuilding, setUserBuilding] = useState(building);
-  const [moveOutDate, setMoveOutDate] = useState(new Date());
+  const [moveOutDate, setMoveOutDate] = useState(dateLeft? new Date(Date.parse(dateLeft)) : new Date());
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -55,17 +84,23 @@ const EditResident = (resident: Resident ): React.ReactElement => {
   const [buildingError, setBuildingError] = useState(false);
   const [moveOutDateError, setMoveOutDateError] = useState(false);
   const [flagged, setFlagged] = useState(false);
+  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
 
-  const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const editRes = async () => {
     await CommonAPIClient.editResident({
       initial: initials.toUpperCase(),
-      roomNum: parseInt(roomNumber, 10),
+      roomNum: roomNumber,
       dateJoined: moveInDate,
       building: userBuilding,
       dateLeft: moveOutDate,
+    }).then((res) => {
+      if (res != null) {
+        setAlertData(ALERT_DATA.SUCCESS);
+      } else {
+        setAlertData(ALERT_DATA.ERROR);
+      }
     });
   };
 
@@ -85,7 +120,7 @@ const EditResident = (resident: Resident ): React.ReactElement => {
   const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
     const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
-      setRoomNumber(inputValue);
+      setRoomNumber(parseInt(inputValue, 10));
       setRoomNumberError(false);
     }
   };
@@ -118,35 +153,9 @@ const EditResident = (resident: Resident ): React.ReactElement => {
     }
   };
 
-  const handleOpen = () => {
-    setIsOpen(true);
-
-    // Reset the input states
-    setInitials(initial);
-    setRoomNumber("");
-    setMoveInDate(moveInDate);
-    setUserBuilding(building);
-    setFlagged(false);
-    setMoveOutDate(new Date());
-
-    // Reset the error states
-    setInitialsError(false);
-    setRoomNumberError(false);
-    setMoveInDateError(false);
-    setMoveOutDateError(false);
-    setBuildingError(false);
-
-    //  Reset alert state
-    setShowAlert(false);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   const handleSubmit = () => {
     setInitialsError(initials.length !== 2);
-    setRoomNumberError(roomNumber.length !== 3);
+    setRoomNumberError(roomNumber.toString().length !== 3);
     setBuildingError(userBuilding === "");
 
     //  Prevents form submission if any required values are incorrect
@@ -159,10 +168,7 @@ const EditResident = (resident: Resident ): React.ReactElement => {
     ) {
       return;
     }
-
     editRes();
-
-    setIsOpen(false);
     setShowAlert(true);
   };
 
@@ -177,15 +183,8 @@ const EditResident = (resident: Resident ): React.ReactElement => {
 
   return (
     <>
-      <Box textAlign="right">
-        <Button onClick={handleOpen} marginBottom="16px" variant="primary">
-          <AddIcon boxSize="16px" marginRight="8px" />
-          Edit Resident
-        </Button>
-      </Box>
-
       <Box>
-        <Modal isOpen={isOpen} onClose={handleClose} size="xl">
+        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Edit Resident</ModalHeader>
@@ -242,7 +241,7 @@ const EditResident = (resident: Resident ): React.ReactElement => {
                     <FormLabel>Building</FormLabel>
                     <Select
                       options={BUILDINGS}
-                      placeholder="Select building"
+                      placeholder={building}
                       onChange={handleBuildingChange}
                       styles={selectStyle}
                     />
