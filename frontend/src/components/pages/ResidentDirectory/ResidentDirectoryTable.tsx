@@ -1,6 +1,11 @@
-import React, { RefObject } from "react";
+import React, { RefObject, useState, useContext, useEffect } from "react";
 import {
   Box,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Table,
   TableContainer,
   Tbody,
@@ -9,8 +14,11 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { VscKebabVertical } from "react-icons/vsc";
 import { Resident } from "../../../types/ResidentTypes";
+import EditResident from "../../forms/EditResident";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
+import AuthContext from "../../../contexts/AuthContext";
 
 type Props = {
   residents: Resident[];
@@ -38,6 +46,34 @@ const ResidentDirectoryTable = ({
   residents,
   tableRef,
 }: Props): React.ReactElement => {
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [showAlert, setShowAlert] = useState(false);
+
+  // Delete confirmation state
+  // const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
+
+  // Handle delete confirmation toggle
+  // const handleDeleteToggle = (resident: Resident) => {
+  //   setDeleteOpenMap((prevDeleteOpenMap) => ({
+  //     ...prevDeleteOpenMap,
+  //     [logId]: !prevDeleteOpenMap[logId],
+  //   }));
+  // };
+  const [edit, setShowEdit] = useState(false);
+
+  // Handle edit form toggle
+  const handleEditToggle = () => {
+    setShowEdit(true);
+  };
+
+  useEffect(() => {
+    if (showAlert) {
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+    }
+  }, [showAlert]);
+
   return (
     <Box>
       <TableContainer
@@ -58,26 +94,41 @@ const ResidentDirectoryTable = ({
               <Th>Building</Th>
               <Th>Residency Start Date</Th>
               <Th>Residency End Date</Th>
+              <Th> </Th>
             </Tr>
           </Thead>
-
           <Tbody>
             {residents.map((resident) => {
               const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
               // TODO: Remove non-null assertion from residentId 
               return (
+                < >
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
                   <Td width="20%">{resident.residentId!}</Td>
                   <Td width="15%">{status}</Td>
                   <Td width="20%">{resident.building}</Td>
                   <Td width="20%">{startDate.date}</Td>
-                  {
-                    endDate ?
-                    <Td width="20%">{endDate.date}</Td>
-                    :
-                    null
-                  }
+                  <Td width="20%">{endDate? endDate.date : ""}</Td>
+                  <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    aria-label='Options'
+                    icon={<VscKebabVertical />}
+                    w="36px"
+                    variant="ghost"
+                  />
+                  <MenuList>
+                    <MenuItem onClick={() => handleDeleteToggle(resident)}>
+                      Delete Log Record
+                    </MenuItem>
+                    <MenuItem onClick={() => handleEditToggle()}>
+                      Edit Log Record
+                      {edit && <EditResident resident={resident} />}
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
                 </Tr>
+                </>
               );
             })}
           </Tbody>
