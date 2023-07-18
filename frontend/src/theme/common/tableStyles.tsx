@@ -1,14 +1,14 @@
 import type { ComponentStyleConfig } from "@chakra-ui/theme";
-import textStyles from "./textStyles";
+import fontStyles from "../fontStyles";
 
 const Table: ComponentStyleConfig = {
   variants: {
-    logRecordsTable: {
+    showTable: {
       th: {
         color: "teal.500",
         backgroundColor: "teal.50",
         textTransform: "none",
-        ...textStyles["header-table"],
+        ...fontStyles["header-table"],
       },
       tr: {
         borderBottom: "1px",

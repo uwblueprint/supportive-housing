@@ -1,59 +1,16 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetLogRecordsReponse } from "../types/LogRecordTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-
-import { LogRecordFilters } from "../components/common/types/Filters";
-
-const filterLogRecords = async ({
-  building = "",
-  employeeId = [],
-  attnTo = [],
-  dateRange = [],
-  tags = [],
-  flagged = false,
-  returnAll = false,
-  pageNumber,
-  resultsPerPage,
-}: LogRecordFilters): Promise<any> => {
-  try {
-    const bearerToken = `Bearer ${getLocalStorageObjProperty(
-      AUTHENTICATED_USER_KEY,
-      "accessToken",
-    )}`;
-    const { data } = await baseAPIClient.get(`/log_records`, {
-      params: {
-        filters: {
-          building,
-          employeeId,
-          attnTo,
-          dateRange,
-          tags,
-          flagged,
-        },
-        returnAll,
-        pageNumber,
-        resultsPerPage,
-      },
-      headers: { Authorization: bearerToken },
-    });
-    return data;
-  } catch (error) {
-    // TODO: more descriptive error / throw an exception potentially?
-    return null;
-  }
-};
+import { Resident } from "../types/ResidentTypes";
+import { CountUsersResponse, GetUsersResponse } from "../types/UserTypes";
 
 const inviteUser = async (
   email: string,
   role: string,
   firstName: string,
   lastName: string,
-): Promise<boolean> => {
+): Promise<string> => {
   try {
-    if (email === "") {
-      return false;
-    }
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
@@ -63,9 +20,9 @@ const inviteUser = async (
       { email, role, firstName, lastName },
       { headers: { Authorization: bearerToken } },
     );
-    return true;
-  } catch (error) {
-    return false;
+    return "Success";
+  } catch (error: any) {
+    return error.message;
   }
 };
 
@@ -94,7 +51,6 @@ const getUserStatus = async (email: string): Promise<string> => {
 };
 
 export default {
-  filterLogRecords,
   inviteUser,
   isUserInvited: getUserStatus,
 };

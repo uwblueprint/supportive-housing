@@ -18,7 +18,8 @@ type FormattedDateAndTime = {
   time: string;
 };
 
-const getFormattedDateAndTime = (dateObj: Date): FormattedDateAndTime => {
+const getFormattedDateAndTime = (dateObj: Date, includeYear = false): FormattedDateAndTime => {
+  const year = dateObj.getFullYear();
   const month = MONTHS[dateObj.getMonth()];
   const day = dateObj.getDate();
   const hours = dateObj.getHours();
@@ -27,7 +28,7 @@ const getFormattedDateAndTime = (dateObj: Date): FormattedDateAndTime => {
   const formattedHours = hours % 12 || 12;
   const formattedMinutes = minutes.toString().padStart(2, "0");
 
-  const formattedDate = `${month} ${day}`;
+  const formattedDate = includeYear ? `${month} ${day}, ${year}` : `${month} ${day}`;
   const formattedTime = `${formattedHours}:${formattedMinutes} ${amOrPm}`;
   return { date: formattedDate, time: formattedTime };
 };

@@ -7,16 +7,6 @@ class IResidentsService(ABC):
     """
 
     @abstractmethod
-    def to_json_list(self, residents_results):
-        """
-        Turns the residents_results from the sql query into json format
-        :param residents_results: residents retrieved from resident table
-        :type id: objects from resident table
-        """
-
-        pass
-
-    @abstractmethod
     def add_resident(self, id, initial, room_num, date_joined, date_left, building_id):
         """
         Add a resident to the database
@@ -31,7 +21,7 @@ class IResidentsService(ABC):
         :param date_left: the date the resident left, if exists
         :type date_left: date
         :param building_id: the building_id in which the resident is staying
-        :type building_id: int
+        :type building_id: Enum("144", "402", "362)
         :raises Exception: if resident creation fails
         """
         pass
@@ -59,12 +49,22 @@ class IResidentsService(ABC):
         pass
 
     @abstractmethod
-    def get_residents(self, resident_id, id):
+    def get_residents(self, return_all, page_number, results_per_page, resident_id=None):
         """
         Gets residents in json format.
         :param resident_id: id of resident to be deleted in the format of initial+room_num
         :type resident_id: string
         :param id: id of resident to be deleted, the primary key of the resident
         :type resident_id: initial
+        """
+        pass
+
+    @abstractmethod 
+    def count_residents(self):
+        """
+        Count the total number of residents
+        :return: count of residents
+        :rtype: int
+        :raises Exception: if resident count fails
         """
         pass

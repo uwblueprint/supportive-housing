@@ -85,3 +85,12 @@ code {
   font-size: 14px;
   color: #285e61;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: none;
+  display: none;
+}
+
+.chakra-collapse {
+  overflow: visible !important;
+}
