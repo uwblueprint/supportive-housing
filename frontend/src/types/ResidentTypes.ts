@@ -10,6 +10,12 @@ export type Resident = {
   value?: number;
 };
 
+export type ResidentLabel = {
+  id: number;
+  label: string;
+  value: number;
+};
+
 export type GetResidentsReponse = {
   residents: Resident[];
 } | null;

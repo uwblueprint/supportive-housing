@@ -48,7 +48,47 @@ const getUserStatus = async (email: string): Promise<string> => {
   }
 };
 
+const getUsers = async (): Promise<GetUsersResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get("/users", {
+      params: {},
+      headers: { Authorization: bearerToken },
+    });
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
+const createResident = async ({
+  initial,
+  roomNum,
+  dateJoined,
+  building,
+}: Resident): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.post(
+      "/residents",
+      { initial, roomNum, dateJoined, building },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 export default {
   inviteUser,
   isUserInvited: getUserStatus,
+  createResident,
+  getUsers,
 };

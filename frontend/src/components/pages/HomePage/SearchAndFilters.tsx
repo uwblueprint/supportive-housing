@@ -20,12 +20,14 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import { Building } from "../../../types/BuildingTypes";
-import { Resident } from "../../../types/ResidentTypes";
+import { Resident, ResidentLabel } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
+import UserAPIClient from "../../../APIClients/UserAPIClient";
+import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 
 type Props = {
-  residents: Resident[];
+  residents: ResidentLabel[];
   employees: UserLabel[];
   startDate: Date | undefined;
   endDate: Date | undefined;
@@ -33,7 +35,7 @@ type Props = {
   attentionTos: UserLabel[];
   building: Building | null;
   flagged: boolean;
-  setResidents: React.Dispatch<React.SetStateAction<Resident[]>>;
+  setResidents: React.Dispatch<React.SetStateAction<ResidentLabel[]>>;
   setEmployees: React.Dispatch<React.SetStateAction<UserLabel[]>>;
   setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
@@ -56,35 +58,6 @@ const TAGS: Tag[] = [
   { label: "Tag C", value: "C" },
 ];
 
-// Replace this with the residents from the db
-const RESIDENTS: Resident[] = [
-  {
-    id: 1,
-    initial: "K",
-    roomNum: 111,
-    dateJoined: new Date(),
-    building: "144",
-    label: "K111",
-    value: 1,
-  },
-  {
-    id: 2,
-    initial: "P",
-    roomNum: 112,
-    dateJoined: new Date(),
-    building: "1362",
-    label: "P112",
-    value: 2,
-  },
-];
-
-// Replace this with the users from the db
-// const EMPLOYEES: User[] = [];
-const EMPLOYEES: UserLabel[] = [
-  { id: 4, label: "Huseyin", value: 4 },
-  { id: 5, label: "John Doe", value: 5 },
-];
-
 const SearchAndFilters = ({
   residents,
   employees,
@@ -103,6 +76,43 @@ const SearchAndFilters = ({
   setBuilding,
   setFlagged,
 }: Props): React.ReactElement => {
+  const [userLabels, setUserLabels] = useState<UserLabel[]>();
+  const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
+
+  const getUsers = async () => {
+    const data = await UserAPIClient.getUsers({ returnAll: true });
+    const users = data?.users;
+    if (users) {
+      const labels = users.map((user: User) => {
+        return {
+          id: user.id,
+          label: `${user.firstName} ${user.lastName}`,
+          value: user.id,
+        } as UserLabel;
+      });
+      setUserLabels(labels);
+    } else {
+      setUserLabels(undefined);
+    }
+  };
+
+  const getResidents = async () => {
+    const data = await ResidentAPIClient.getResidents({ returnAll: true });
+    const residentsData = data?.residents;
+    if (residentsData) {
+      const labels = residentsData.map((resident: Resident) => {
+        return {
+          id: resident.id,
+          label: `${resident.initial}${resident.roomNum}`,
+          value: resident.id,
+        } as ResidentLabel;
+      });
+      setResidentLabels(labels);
+    } else {
+      setResidentLabels(undefined);
+    }
+  };
+
   const handleBuildingChange = (selectedOption: SingleValue<Building>) => {
     if (selectedOption !== null) {
       setBuilding(selectedOption);
@@ -114,9 +124,7 @@ const SearchAndFilters = ({
     setAttentionTos(mutableSelectedAttnTos);
   };
 
-  const handleEmployeesChange = (
-    selectedEmployees: MultiValue<UserLabel>,
-  ) => {
+  const handleEmployeesChange = (selectedEmployees: MultiValue<UserLabel>) => {
     const mutableSelectedEmployees: UserLabel[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);
   };
@@ -125,8 +133,12 @@ const SearchAndFilters = ({
     setEndDate(newEndDate);
   };
 
-  const handleResidentsChange = (selectedResidents: MultiValue<Resident>) => {
-    const mutableSelectedResidents: Resident[] = Array.from(selectedResidents);
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
+  ) => {
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
     setResidents(mutableSelectedResidents);
   };
 
@@ -150,6 +162,11 @@ const SearchAndFilters = ({
     setTags([]);
   };
 
+  useEffect(() => {
+    getUsers();
+    getResidents();
+  }, []);
+
   return (
     <Card style={{ textAlign: "left" }}>
       <Box padding="8px 16px 20px">
@@ -162,7 +179,7 @@ const SearchAndFilters = ({
               <FormLabel fontWeight="700">Residents</FormLabel>{" "}
               <Select
                 value={residents}
-                options={RESIDENTS}
+                options={residentLabels}
                 isMulti
                 closeMenuOnSelect={false}
                 placeholder="Select Resident"
@@ -174,7 +191,7 @@ const SearchAndFilters = ({
               <FormLabel fontWeight="700">Employees</FormLabel>
               <Select
                 value={employees}
-                options={EMPLOYEES}
+                options={userLabels}
                 isMulti
                 closeMenuOnSelect={false}
                 placeholder="Select Employee"
@@ -260,7 +277,7 @@ const SearchAndFilters = ({
                       <FormLabel fontWeight="700">Attention To</FormLabel>
                       <Select
                         value={attentionTos}
-                        options={EMPLOYEES}
+                        options={userLabels}
                         isMulti
                         closeMenuOnSelect={false}
                         placeholder="Select Attn To"
