@@ -22,7 +22,7 @@ import {
   ModalHeader,
   Text,
   ScaleFade,
-  Textarea
+  Textarea,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -47,11 +47,11 @@ type Props = {
 type AlertData = {
   status: AlertStatus;
   description: string;
-}
+};
 
 type AlertDataOptions = {
   [key: string]: AlertData;
-}
+};
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -62,18 +62,18 @@ const BUILDINGS = [
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
-    status: 'info',
-    description: ''
+    status: "info",
+    description: "",
   },
   SUCCESS: {
-    status: 'success',
-    description: 'Log successfully edited.'
+    status: "success",
+    description: "Log successfully edited.",
   },
   ERROR: {
-    status: 'error',
-    description: 'Error editing log.'
-  }
-}
+    status: "error",
+    description: "Error editing log.",
+  },
+};
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS = [
@@ -88,17 +88,13 @@ const getCurUserSelectOption = () => {
     AUTHENTICATED_USER_KEY,
   );
   if (curUser && curUser.firstName && curUser.id) {
-    const userId = curUser.id
-    return {id: userId, label: curUser.firstName, value: userId}
+    const userId = curUser.id;
+    return { id: userId, label: curUser.firstName, value: userId };
   }
-  return {id: -1, label: "", value: -1}
-}
+  return { id: -1, label: "", value: -1 };
+};
 
-const EditLog = ({
-  logRecord,
-  isOpen,
-  toggleClose,
-}: Props) => {
+const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date(logRecord.datetime));
@@ -110,7 +106,9 @@ const EditLog = ({
     }),
   );
   const [building, setBuilding] = useState(logRecord.building);
-  const [resident, setResident] = useState<number>(parseInt(logRecord.residentId, 10));
+  const [resident, setResident] = useState<number>(
+    parseInt(logRecord.residentId, 10),
+  );
   const [tags, setTags] = useState<string[]>(logRecord.tags);
   const [attnTo, setAttnTo] = useState(logRecord.attnTo);
   const [notes, setNotes] = useState(logRecord.note);
@@ -118,7 +116,7 @@ const EditLog = ({
 
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
   const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
-  
+
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
   const [dateError, setDateError] = useState(false);
@@ -128,7 +126,7 @@ const EditLog = ({
   const [notesError, setNotesError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
-  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT)
+  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -192,23 +190,32 @@ const EditLog = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
+    const residentsData = await ResidentAPIClient.getResidents({
+      returnAll: true,
+    });
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
-      ({id: r.id!, label: r.residentId!, value: r.id!}));
-      setResidentOptions(residentLabels)
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) => ({
+        id: r.id!,
+        label: r.residentId!,
+        value: r.id!,
+      }));
+      setResidentOptions(residentLabels);
     }
 
-    const usersData = await UserAPIClient.getUsers({returnAll: true})
+    const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
-      ({id: user.id, label: user.firstName, value: user.id}));
+      const userLabels: UserLabel[] = usersData.users
+        .filter((user) => user.userStatus === "Active")
+        .map((user) => ({
+          id: user.id,
+          label: user.firstName,
+          value: user.id,
+        }));
       setEmployeeOptions(userLabels);
     }
-  }
-
+  };
 
   const handleSubmit = () => {
     // Update error states
@@ -221,7 +228,7 @@ const EditLog = ({
 
     // If any required fields are empty, prevent form submission
     if (
-      (!employee.label) ||
+      !employee.label ||
       date === null ||
       time === "" ||
       building === "" ||
@@ -231,23 +238,30 @@ const EditLog = ({
       return;
     }
 
-    LogRecordAPIClient.editLogRecord(logRecord.logId, employee.value, resident, flagged, notes, attnTo, tags, building).then((res) => {
+    LogRecordAPIClient.editLogRecord(
+      logRecord.logId,
+      employee.value,
+      resident,
+      flagged,
+      notes,
+      attnTo,
+      tags,
+      building,
+    ).then((res) => {
       if (res != null) {
-        setAlertData(ALERT_DATA.SUCCESS)
-      }
-      else {
-        setAlertData(ALERT_DATA.ERROR)
+        setAlertData(ALERT_DATA.SUCCESS);
+      } else {
+        setAlertData(ALERT_DATA.ERROR);
       }
       setShowAlert(true);
-    })
-
+    });
   };
 
   useEffect(() => {
     if (showAlert) {
       setTimeout(() => {
         setShowAlert(false);
-        setAlertData(ALERT_DATA.DEFAULT)
+        setAlertData(ALERT_DATA.DEFAULT);
       }, 3000);
     }
   }, [showAlert]);
@@ -255,6 +269,7 @@ const EditLog = ({
   // Retrieves options for dropdowns
   useEffect(() => {
     getLogEntryOptions();
+    console.log(residentOptions, logRecord.residentId);
   }, []);
 
   return (
@@ -266,13 +281,13 @@ const EditLog = ({
             <ModalHeader>Edit Log Entry Details</ModalHeader>
             <ModalBody>
               <Divider />
-              <Row style={{marginTop: "16px"}}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
                       isDisabled
-                      defaultValue={getCurUserSelectOption()} 
+                      defaultValue={getCurUserSelectOption()}
                       styles={selectStyle}
                     />
                   </FormControl>
@@ -315,6 +330,7 @@ const EditLog = ({
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
+                      defaultValue={{ label: building, value: building }}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -327,6 +343,9 @@ const EditLog = ({
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
+                      defaultValue={residentOptions.find(
+                        (resOption) => resOption.label === logRecord.residentId,
+                      )}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -338,7 +357,7 @@ const EditLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented 
+                      // TODO: Integrate actual tags once implemented
                       isDisabled
                       options={TAGS}
                       isMulti
@@ -357,6 +376,9 @@ const EditLog = ({
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
+                      defaultValue={employeeOptions.find(
+                        (empOption) => empOption.value === logRecord.employeeId,
+                      )}
                     />
                   </FormControl>
                 </Col>
@@ -366,12 +388,12 @@ const EditLog = ({
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
                     <FormLabel>Notes</FormLabel>
-                      <Textarea
-                        value={notes}
-                        onChange={handleNotesChange}
-                        placeholder="Enter log notes here..."
-                        resize="none"
-                      />
+                    <Textarea
+                      value={notes}
+                      onChange={handleNotesChange}
+                      placeholder="Enter log notes here..."
+                      resize="none"
+                    />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
@@ -414,7 +436,11 @@ const EditLog = ({
         zIndex={9999}
       >
         <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status={alertData.status} variant="left-accent" borderRadius="6px">
+          <Alert
+            status={alertData.status}
+            variant="left-accent"
+            borderRadius="6px"
+          >
             <AlertIcon />
             <AlertDescription>{alertData.description}</AlertDescription>
           </Alert>
