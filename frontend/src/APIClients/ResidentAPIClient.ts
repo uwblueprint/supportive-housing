@@ -46,6 +46,7 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
 };
 
 const createResident = async ({
+  id,
   initial,
   roomNum,
   dateJoined,
@@ -83,7 +84,7 @@ const deleteResident = async (residentId: number): Promise<boolean> => {
 };
 
 const editResident = async ({
-  residentId,
+  id,
   initial,
   roomNum,
   dateJoined,
@@ -96,7 +97,7 @@ const editResident = async ({
       "accessToken",
     )}`;
     await baseAPIClient.put(
-      `/residents/${residentId}`,
+      `/residents/${id}`,
       { initial, roomNum, dateJoined, building, dateLeft},
       { headers: { Authorization: bearerToken } },
     );

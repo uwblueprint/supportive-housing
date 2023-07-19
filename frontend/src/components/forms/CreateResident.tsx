@@ -52,9 +52,10 @@ const AddResident = (): React.ReactElement => {
 
   const addResident = async () => {
     await ResidentAPIClient.createResident({
+      id: 0,
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
-      dateJoined: moveInDate,
+      dateJoined: moveInDate.toLocaleDateString('en-CA'),
       building,
     });
   };

@@ -1,5 +1,5 @@
 export type Resident = {
-  id?: number;
+  id: number;
   residentId?: string;
   initial: string;
   roomNum: number;

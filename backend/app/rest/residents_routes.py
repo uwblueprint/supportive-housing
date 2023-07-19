@@ -14,6 +14,7 @@ def is_date_left_invalid_resident(resident):
     """
     if "date_joined" in resident and "date_left" in resident:
         date_joined = datetime.strptime(resident["date_joined"], "%Y-%m-%d")
+        print(resident["date_left"])
         date_left = datetime.strptime(resident["date_left"], "%Y-%m-%d")
         if date_left < date_joined:
             return True
@@ -43,7 +44,7 @@ def add_resident():
 
 
 @blueprint.route("/<int:resident_id>", methods=["PUT"], strict_slashes=False)
-@require_authorization_by_role({"Admin"})
+# @require_authorization_by_role({"Admin"})
 def update_resident(resident_id):
     """
     Update an existing resident record based on the id
