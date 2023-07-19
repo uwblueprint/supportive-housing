@@ -271,6 +271,7 @@ const SearchAndFilters = ({
                         placeholder="Select Tags"
                         onChange={handleTagsChange}
                         styles={selectStyle}
+                        isDisabled
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
