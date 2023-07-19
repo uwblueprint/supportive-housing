@@ -36,7 +36,7 @@ const BUILDINGS = [
   { label: "402", value: "402" },
 ];
 
-const AddResident = (): React.ReactElement => {
+const CreateResident = (): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -250,4 +250,4 @@ const AddResident = (): React.ReactElement => {
   );
 };
 
-export default AddResident;
+export default CreateResident;
