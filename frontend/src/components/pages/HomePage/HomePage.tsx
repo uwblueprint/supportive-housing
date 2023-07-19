@@ -9,9 +9,9 @@ import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import { Building } from "../../../types/BuildingTypes";
-import { Resident } from "../../../types/ResidentTypes";
+import { ResidentLabel } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
-import { User, UserLabel } from "../../../types/UserTypes";
+import { UserLabel } from "../../../types/UserTypes";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 
 const HomePage = (): React.ReactElement => {
@@ -26,7 +26,7 @@ const HomePage = (): React.ReactElement => {
   */
   // TODO: search by resident
   // Filter state
-  const [residents, setResidents] = useState<Resident[]>([]);
+  const [residents, setResidents] = useState<ResidentLabel[]>([]);
   const [employees, setEmployees] = useState<UserLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
@@ -152,10 +152,11 @@ const HomePage = (): React.ReactElement => {
           <Box textStyle="hero-table">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-            <CreateLog 
-              getRecords={getLogRecords} 
+            <CreateLog
+              getRecords={getLogRecords}
               countRecords={countLogRecords}
-              setUserPageNum={setUserPageNum}/>
+              setUserPageNum={setUserPageNum}
+            />
             <ExportCSVButton />
           </Flex>
         </Flex>

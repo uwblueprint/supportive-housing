@@ -22,9 +22,10 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import commonApiClient from "../../APIClients/CommonAPIClient";
-import RoleOptions from "../common/types/Roles";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
+
+const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
 const CreateEmployee = (): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

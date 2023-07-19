@@ -6,10 +6,22 @@ import {
   GetLogRecordsReponse,
   PostLogRecordsResponse,
 } from "../types/LogRecordTypes";
-import {
-  CountLogRecordFilters,
-  LogRecordFilters,
-} from "../components/common/types/Filters";
+
+type CountLogRecordFilters = {
+  building?: string;
+  employeeId?: number[];
+  attnTo?: number[];
+  dateRange?: string[];
+  residentId?: number[];
+  tags?: string[];
+  flagged?: boolean;
+};
+
+type LogRecordFilters = CountLogRecordFilters & {
+  returnAll?: boolean;
+  pageNumber?: number;
+  resultsPerPage?: number;
+};
 
 const countLogRecords = async ({
   building = "",
