@@ -2,26 +2,12 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import {
+  CountLogRecordFilters,
   GetLogRecordCountResponse,
   GetLogRecordsReponse,
+  LogRecordFilters,
   PostLogRecordsResponse,
 } from "../types/LogRecordTypes";
-
-type CountLogRecordFilters = {
-  building?: string;
-  employeeId?: number[];
-  attnTo?: number[];
-  dateRange?: string[];
-  residentId?: number[];
-  tags?: string[];
-  flagged?: boolean;
-};
-
-type LogRecordFilters = CountLogRecordFilters & {
-  returnAll?: boolean;
-  pageNumber?: number;
-  resultsPerPage?: number;
-};
 
 const countLogRecords = async ({
   building = "",

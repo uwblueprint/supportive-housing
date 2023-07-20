@@ -2,7 +2,7 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
   GetResidentsReponse,
   CountResidentsResponse,
-  Resident,
+  CreateResidentParams,
 } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
@@ -52,12 +52,12 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
   }
 };
 
-const createResident = async (
-  initial: string,
-  roomNum: number,
-  dateJoined: Date,
-  building: string,
-): Promise<boolean> => {
+const createResident = async ({
+  initial,
+  roomNum,
+  dateJoined,
+  building,
+}: CreateResidentParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

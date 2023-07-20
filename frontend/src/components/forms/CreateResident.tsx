@@ -51,12 +51,12 @@ const CreateResident = (): React.ReactElement => {
   const [showAlert, setShowAlert] = useState(false);
 
   const addResident = async () => {
-    await ResidentAPIClient.createResident(
-      initials.toUpperCase(),
-      parseInt(roomNumber, 10),
-      moveInDate,
+    await ResidentAPIClient.createResident({
+      initial: initials.toUpperCase(),
+      roomNum: parseInt(roomNumber, 10),
+      dateJoined: moveInDate,
       building,
-    );
+    });
   };
 
   const handleInitialsChange = (e: { target: { value: unknown } }) => {

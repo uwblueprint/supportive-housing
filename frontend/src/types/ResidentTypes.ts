@@ -21,3 +21,8 @@ export type GetResidentsReponse = {
 export type CountResidentsResponse = {
   numResults: number;
 } | null;
+
+export type CreateResidentParams = Omit<
+  Resident,
+  "id" | "residentId" | "dateLeft"
+>;
