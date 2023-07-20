@@ -72,19 +72,19 @@ const LogRecordsTable = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
+    const residentsData = await ResidentAPIClient.getResidents({ returnAll: true })
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
-      ({id: r.id!, label: r.residentId!, value: r.id!}));
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) =>
+        ({ id: r.id!, label: r.residentId!, value: r.id! }));
       setResidentOptions(residentLabels)
     }
 
-    const usersData = await UserAPIClient.getUsers({returnAll: true})
+    const usersData = await UserAPIClient.getUsers({ returnAll: true })
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
-      ({id: user.id, label: user.firstName, value: user.id}));
+      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) =>
+        ({ id: user.id, label: user.firstName, value: user.id }));
       setEmployeeOptions(userLabels);
     }
   }
@@ -171,11 +171,11 @@ const LogRecordsTable = ({
                               variant="ghost"
                             />
                             <MenuList>
-                              <MenuItem onClick={() => handleDeleteToggle(record.logId)}>
-                                Delete Log Record
-                              </MenuItem>
                               <MenuItem onClick={() => handleEditToggle(record.logId)}>
                                 Edit Log Record
+                              </MenuItem>
+                              <MenuItem onClick={() => handleDeleteToggle(record.logId)}>
+                                Delete Log Record
                               </MenuItem>
                             </MenuList>
                           </Menu>
@@ -183,20 +183,20 @@ const LogRecordsTable = ({
                       </Td>
                     </Tr>
 
-                    <DeleteConfirmation
-                      itemName="log"
-                      itemId={record.logId}
-                      isOpen={deleteOpenMap[record.logId]}
-                      toggleClose={() => handleDeleteToggle(record.logId)}
-                      deleteAPI={deleteLogRecord}
-                    />
-
                     <EditResident
                       logRecord={record}
                       isOpen={editOpenMap[record.logId]}
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
+                    />
+
+                    <DeleteConfirmation
+                      itemName="log"
+                      itemId={record.logId}
+                      isOpen={deleteOpenMap[record.logId]}
+                      toggleClose={() => handleDeleteToggle(record.logId)}
+                      deleteAPI={deleteLogRecord}
                     />
                   </>
                 );
