@@ -1,8 +1,8 @@
 export type LogRecord = {
   logId: number;
-  attnTo: number;
-  attnToFirstName: string;
-  attnToLastName: string;
+  attnTo?: number;
+  attnToFirstName?: string;
+  attnToLastName?: string;
   building: string;
   datetime: string;
   employeeId: number;

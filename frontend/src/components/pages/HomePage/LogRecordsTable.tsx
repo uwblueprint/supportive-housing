@@ -164,7 +164,7 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
                       <Td width="5%">
-                        {`${record.attnToFirstName} ${record.attnToLastName}`}
+                        {record.attnToFirstName !== null && record.attnToLastName !== null ? `${record.attnToFirstName} ${record.attnToLastName}` : ''}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" || authenticatedUser?.id === record.employeeId) && (

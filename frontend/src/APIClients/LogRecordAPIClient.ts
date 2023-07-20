@@ -88,8 +88,8 @@ const createLog = async (
   residentId: number,
   flagged: boolean,
   note: string,
-  attentionTo: number,
   building: string,
+  attentionTo?: number,
 ): Promise<PostLogRecordsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(

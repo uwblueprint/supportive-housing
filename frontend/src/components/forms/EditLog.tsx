@@ -385,7 +385,7 @@ const EditLog = ({
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
-                      defaultValue={employeeOptions.find((item) => item.value === logRecord.employeeId)}
+                      defaultValue={employeeOptions.find((item) => item.value === logRecord.attnTo)}
                     />
                   </FormControl>
                 </Col>
