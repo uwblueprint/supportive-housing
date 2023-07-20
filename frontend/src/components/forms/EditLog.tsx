@@ -412,6 +412,7 @@ const EditLog = ({
                 style={{ paddingTop: "1rem" }}
                 onChange={() => setFlagged(!flagged)}
                 marginBottom="16px"
+                defaultChecked={flagged}
               >
                 <Text>Flag this Report</Text>
               </Checkbox>
