@@ -60,7 +60,7 @@ class LogRecordsService(ILogRecordsService):
             raise postgres_error
 
     def filter_by_building(self, building):
-        return f"\nbuilding='{building}'"
+        return f"\nlogs.building='{building}'"
 
     def filter_by_employee_id(self, employee_id):
         if type(employee_id) == list:
