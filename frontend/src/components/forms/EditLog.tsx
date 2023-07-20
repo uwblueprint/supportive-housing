@@ -42,6 +42,8 @@ type Props = {
   logRecord: LogRecord;
   isOpen: boolean;
   toggleClose: () => void;
+  employeeOptions: UserLabel[];
+  residentOptions: UserLabel[];
 };
 
 type AlertData = {
@@ -94,7 +96,7 @@ const getCurUserSelectOption = () => {
   return { id: -1, label: "", value: -1 };
 };
 
-const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
+const EditLog = ({ logRecord, isOpen, toggleClose, employeeOptions, residentOptions }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date(logRecord.datetime));
@@ -111,9 +113,6 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
   const [attnTo, setAttnTo] = useState(logRecord.attnTo);
   const [notes, setNotes] = useState(logRecord.note);
   const [flagged, setFlagged] = useState(logRecord.flagged);
-
-  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -186,38 +185,6 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     setNotesError(inputValue === "");
   };
 
-  // fetch resident + employee data for log creation
-  const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({
-      returnAll: true,
-    });
-
-    if (residentsData && residentsData.residents.length !== 0) {
-      // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) => ({
-        id: r.id!,
-        label: r.residentId!,
-        value: r.id!,
-      }));
-      setResidentOptions(residentLabels);
-
-      const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
-      setResident(residentId !== undefined ? residentId : -1);
-    }
-
-    const usersData = await UserAPIClient.getUsers({ returnAll: true });
-    if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users
-        .filter((user) => user.userStatus === "Active")
-        .map((user) => ({
-          id: user.id,
-          label: user.firstName,
-          value: user.id,
-        }));
-      setEmployeeOptions(userLabels);
-    }
-  };
-
   const handleClose = () => {
     // reset state variables 
     setEmployee(getCurUserSelectOption());
@@ -248,7 +215,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     setNotesError(false);
 
     // close modal
-    handleClose();
+    toggleClose();
   };
 
   const handleSubmit = () => {
@@ -301,15 +268,10 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     }
   }, [showAlert]);
 
-  // Retrieves options for dropdowns
-  useEffect(() => {
-    getLogEntryOptions();
-  }, []);
-
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
+        <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Edit Log Entry Details</ModalHeader>
@@ -443,7 +405,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
-                  onClick={toggleClose}
+                  onClick={handleClose}
                   variant="tertiary"
                   marginRight="8px"
                 >

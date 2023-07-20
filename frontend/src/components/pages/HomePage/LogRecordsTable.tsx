@@ -28,6 +28,9 @@ import AuthContext from "../../../contexts/AuthContext";
 import DeleteConfirmation from "../../common/DeleteConfirmation";
 import EditResident from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
+import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import UserAPIClient from "../../../APIClients/UserAPIClient";
+import { UserLabel } from "../../../types/UserTypes";
 
 type Props = {
   logRecords: LogRecord[];
@@ -43,8 +46,13 @@ const LogRecordsTable = ({
 
   const [showAlert, setShowAlert] = useState(false);
 
-  // Delete confirmation state
+  // Menu states
   const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
+  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
+
+  // Dropdown option states
+  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
 
   // Handle delete confirmation toggle
   const handleDeleteToggle = (logId: number) => {
@@ -54,9 +62,6 @@ const LogRecordsTable = ({
     }));
   };
 
-  // Edit form state
-  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
-
   // Handle edit form toggle
   const handleEditToggle = (logId: number) => {
     setEditOpenMap((prevEditOpenMap) => ({
@@ -65,6 +70,25 @@ const LogRecordsTable = ({
     }));
   };
 
+  // fetch resident + employee data for log creation
+  const getLogEntryOptions = async () => {
+    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
+
+    if (residentsData && residentsData.residents.length !== 0) {
+      // TODO: Remove the type assertions here
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
+      ({id: r.id!, label: r.residentId!, value: r.id!}));
+      setResidentOptions(residentLabels)
+    }
+
+    const usersData = await UserAPIClient.getUsers({returnAll: true})
+    if (usersData && usersData.users.length !== 0) {
+      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
+      ({id: user.id, label: user.firstName, value: user.id}));
+      setEmployeeOptions(userLabels);
+    }
+  }
+
   useEffect(() => {
     if (showAlert) {
       setTimeout(() => {
@@ -72,6 +96,10 @@ const LogRecordsTable = ({
       }, 3000);
     }
   }, [showAlert]);
+
+  useEffect(() => {
+    getLogEntryOptions();
+  }, []);
 
   return (
     <>
@@ -167,6 +195,8 @@ const LogRecordsTable = ({
                       logRecord={record}
                       isOpen={editOpenMap[record.logId]}
                       toggleClose={() => handleEditToggle(record.logId)}
+                      employeeOptions={employeeOptions}
+                      residentOptions={residentOptions}
                     />
                   </>
                 );
