@@ -1,8 +1,6 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { Resident } from "../types/ResidentTypes";
-import { CountUsersResponse, GetUsersResponse } from "../types/UserTypes";
 
 const inviteUser = async (
   email: string,

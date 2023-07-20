@@ -16,6 +16,7 @@ const countLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
 }: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
@@ -31,6 +32,7 @@ const countLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -49,6 +51,7 @@ const filterLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
   returnAll = false,
@@ -67,6 +70,7 @@ const filterLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -96,7 +100,6 @@ const createLog = async (
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-
     const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
       "/log_records/",
       {

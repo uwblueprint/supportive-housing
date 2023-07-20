@@ -55,6 +55,7 @@ const HomePage = (): React.ReactElement => {
     const buildingValue = building ? building.value : "";
     const employeeIds = employees.map((employee) => employee.id);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
+    const residentsIds = residents.map((resident) => resident.id);
     const dateRange =
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
     const tagsValues = tags.map((tag) => tag.value);
@@ -64,6 +65,7 @@ const HomePage = (): React.ReactElement => {
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange,
+      residentId: residentsIds,
       tags: tagsValues,
       flagged,
       resultsPerPage,
@@ -89,6 +91,8 @@ const HomePage = (): React.ReactElement => {
     const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
     const dateRange =
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
+    const residentsIds = residents.map((resident) => resident.id);
+
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
@@ -96,6 +100,7 @@ const HomePage = (): React.ReactElement => {
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange,
+      residentId: residentsIds,
       tags: tagsValues,
       flagged,
     });
@@ -112,6 +117,7 @@ const HomePage = (): React.ReactElement => {
     attentionTos,
     startDate,
     endDate,
+    residents,
     tags,
     flagged,
     setLogRecords,
@@ -120,7 +126,16 @@ const HomePage = (): React.ReactElement => {
 
   useEffect(() => {
     countLogRecords();
-  }, [building, employees, attentionTos, startDate, endDate, tags, flagged]);
+  }, [
+    building,
+    employees,
+    attentionTos,
+    startDate,
+    endDate,
+    residents,
+    tags,
+    flagged,
+  ]);
 
   return (
     <Box>
