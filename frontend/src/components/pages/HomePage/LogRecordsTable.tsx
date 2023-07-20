@@ -35,11 +35,17 @@ import { UserLabel } from "../../../types/UserTypes";
 type Props = {
   logRecords: LogRecord[];
   tableRef: RefObject<HTMLDivElement>;
+  getRecords: (page_number: number) => Promise<void>;
+  countRecords: () => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const LogRecordsTable = ({
   logRecords,
   tableRef,
+  getRecords,
+  countRecords,
+  setUserPageNum,
 }: Props): React.ReactElement => {
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -189,6 +195,9 @@ const LogRecordsTable = ({
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
+                      getRecords={getRecords}
+                      countRecords={countRecords}
+                      setUserPageNum={setUserPageNum}
                     />
 
                     <DeleteConfirmation

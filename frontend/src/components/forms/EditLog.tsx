@@ -28,8 +28,6 @@ import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-import UserAPIClient from "../../APIClients/UserAPIClient";
-import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
@@ -44,6 +42,9 @@ type Props = {
   toggleClose: () => void;
   employeeOptions: UserLabel[];
   residentOptions: UserLabel[];
+  getRecords: (page_number: number) => Promise<void>;
+  countRecords: () => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
 type AlertData = {
@@ -96,7 +97,16 @@ const getCurUserSelectOption = () => {
   return { id: -1, label: "", value: -1 };
 };
 
-const EditLog = ({ logRecord, isOpen, toggleClose, employeeOptions, residentOptions }: Props) => {
+const EditLog = ({ 
+  logRecord, 
+  isOpen, 
+  toggleClose, 
+  employeeOptions, 
+  residentOptions,
+  getRecords,
+  countRecords,
+  setUserPageNum, 
+}: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date(logRecord.datetime));
@@ -251,6 +261,11 @@ const EditLog = ({ logRecord, isOpen, toggleClose, employeeOptions, residentOpti
     ).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS);
+
+        countRecords();
+        getRecords(1);
+        setUserPageNum(1);
+        
         handleClose();
       } else {
         setAlertData(ALERT_DATA.ERROR);
