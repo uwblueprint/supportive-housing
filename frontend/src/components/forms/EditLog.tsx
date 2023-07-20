@@ -106,7 +106,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     }),
   );
   const [building, setBuilding] = useState(logRecord.building);
-  const [resident, setResident] = useState<number>(null);
+  const [resident, setResident] = useState<number>(-1);
   const [tags, setTags] = useState<string[]>(logRecord.tags);
   const [attnTo, setAttnTo] = useState(logRecord.attnTo);
   const [notes, setNotes] = useState(logRecord.note);
@@ -200,7 +200,9 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
         value: r.id!,
       }));
       setResidentOptions(residentLabels);
-      setResident(residentOptions.find((item) => item.label === logRecord.residentId)?.value);
+
+      const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
+      setResident(residentId !== undefined ? residentId : -1);
     }
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
@@ -228,7 +230,10 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
       }),
     );
     setBuilding(logRecord.building);
-    setResident(residentOptions.find((item) => item.label === logRecord.residentId)?.value);
+    
+    const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
+    setResident(residentId !== undefined ? residentId : -1);
+    
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo);
     setNotes(logRecord.note);
@@ -252,7 +257,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === "");
+    setResidentError(resident === -1);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -261,7 +266,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
       date === null ||
       time === "" ||
       building === "" ||
-      resident === "" ||
+      resident === -1 ||
       notes === ""
     ) {
       return;

@@ -122,7 +122,7 @@ const CreateLog = ({
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState("");
+  const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
@@ -175,7 +175,7 @@ const CreateLog = ({
   };
 
   const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
@@ -238,7 +238,7 @@ const CreateLog = ({
       }),
     );
     setBuilding("");
-    setResident("");
+    setResident(-1);
     setTags([]);
     setAttnTo(-1);
     setNotes("");
@@ -265,7 +265,7 @@ const CreateLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === "");
+    setResidentError(resident === -1);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -274,7 +274,7 @@ const CreateLog = ({
       date === null ||
       time === "" ||
       building === "" ||
-      resident === "" ||
+      resident === -1 ||
       notes === ""
     ) {
       return;

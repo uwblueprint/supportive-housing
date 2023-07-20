@@ -85,7 +85,7 @@ const filterLogRecords = async ({
 
 const createLog = async (
   userId: number,
-  residentId: string,
+  residentId: number,
   flagged: boolean,
   note: string,
   attentionTo: number,
@@ -133,7 +133,7 @@ const deleteLogRecord = async (logId: number): Promise<boolean> => {
 const editLogRecord = async (
   logId: number,
   userId: number,
-  residentId: string,
+  residentId: number,
   flagged: boolean,
   note: string,
   tags: string[],
