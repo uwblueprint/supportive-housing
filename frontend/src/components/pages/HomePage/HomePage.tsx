@@ -137,10 +137,11 @@ const HomePage = (): React.ReactElement => {
           <Box textStyle="hero-table">Day Logs</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-            <CreateLog 
-              getRecords={getLogRecords} 
+            <CreateLog
+              getRecords={getLogRecords}
               countRecords={countLogRecords}
-              setUserPageNum={setUserPageNum}/>
+              setUserPageNum={setUserPageNum}
+            />
             <ExportCSVButton />
           </Flex>
         </Flex>
@@ -164,12 +165,12 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable 
-          logRecords={logRecords} 
+        <LogRecordsTable
+          logRecords={logRecords}
           tableRef={tableRef}
-          getRecords={getLogRecords} 
+          getRecords={getLogRecords}
           countRecords={countLogRecords}
-          setUserPageNum={setUserPageNum} 
+          setUserPageNum={setUserPageNum}
         />
         <Pagination
           numRecords={numRecords}

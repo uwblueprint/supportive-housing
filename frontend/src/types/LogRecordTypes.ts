@@ -23,6 +23,11 @@ export type GetLogRecordCountResponse = {
 } | null;
 
 export type PostLogRecordsResponse = Omit<
-LogRecord, 
-'logId' | 'attnToFirstName' | 'attnToLastName' | 'employeeFirstName' | 'employeeLastName' | 'tags'
+  LogRecord,
+  | "logId"
+  | "attnToFirstName"
+  | "attnToLastName"
+  | "employeeFirstName"
+  | "employeeLastName"
+  | "tags"
 > | null;

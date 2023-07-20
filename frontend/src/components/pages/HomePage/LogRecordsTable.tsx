@@ -47,14 +47,17 @@ const LogRecordsTable = ({
   countRecords,
   setUserPageNum,
 }: Props): React.ReactElement => {
-
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [showAlert, setShowAlert] = useState(false);
 
   // Menu states
-  const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
-  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
+  const [deleteOpenMap, setDeleteOpenMap] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>(
+    {},
+  );
 
   // Dropdown option states
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
@@ -78,22 +81,32 @@ const LogRecordsTable = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({ returnAll: true })
+    const residentsData = await ResidentAPIClient.getResidents({
+      returnAll: true,
+    });
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) =>
-        ({ id: r.id!, label: r.residentId!, value: r.id! }));
-      setResidentOptions(residentLabels)
+      const residentLabels: UserLabel[] = residentsData.residents.map((r) => ({
+        id: r.id!,
+        label: r.residentId!,
+        value: r.id!,
+      }));
+      setResidentOptions(residentLabels);
     }
 
-    const usersData = await UserAPIClient.getUsers({ returnAll: true })
+    const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) =>
-        ({ id: user.id, label: user.firstName, value: user.id }));
+      const userLabels: UserLabel[] = usersData.users
+        .filter((user) => user.userStatus === "Active")
+        .map((user) => ({
+          id: user.id,
+          label: user.firstName,
+          value: user.id,
+        }));
       setEmployeeOptions(userLabels);
     }
-  }
+  };
 
   useEffect(() => {
     if (showAlert) {
@@ -116,11 +129,7 @@ const LogRecordsTable = ({
           overflowY="scroll"
           ref={tableRef}
         >
-          <Table
-            variant="showTable"
-            minHeight="400px"
-            verticalAlign="middle"
-          >
+          <Table variant="showTable" minHeight="400px" verticalAlign="middle">
             <Thead>
               <Tr>
                 <Th>Date</Th>
@@ -145,7 +154,7 @@ const LogRecordsTable = ({
                   try {
                     await LogRecordAPIClient.deleteLogRecord(itemId);
                   } catch (error) {
-                    return
+                    return;
                   }
                   setShowAlert(true);
                 };
@@ -164,23 +173,31 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
                       <Td width="5%">
-                        {record.attnToFirstName !== null && record.attnToLastName !== null ? `${record.attnToFirstName} ${record.attnToLastName}` : ''}
+                        {record.attnToFirstName !== null &&
+                        record.attnToLastName !== null
+                          ? `${record.attnToFirstName} ${record.attnToLastName}`
+                          : ""}
                       </Td>
                       <Td width="5%">
-                        {(authenticatedUser?.role === "Admin" || authenticatedUser?.id === record.employeeId) && (
+                        {(authenticatedUser?.role === "Admin" ||
+                          authenticatedUser?.id === record.employeeId) && (
                           <Menu>
                             <MenuButton
                               as={IconButton}
-                              aria-label='Options'
+                              aria-label="Options"
                               icon={<VscKebabVertical />}
                               w="36px"
                               variant="ghost"
                             />
                             <MenuList>
-                              <MenuItem onClick={() => handleEditToggle(record.logId)}>
+                              <MenuItem
+                                onClick={() => handleEditToggle(record.logId)}
+                              >
                                 Edit Log Record
                               </MenuItem>
-                              <MenuItem onClick={() => handleDeleteToggle(record.logId)}>
+                              <MenuItem
+                                onClick={() => handleDeleteToggle(record.logId)}
+                              >
                                 Delete Log Record
                               </MenuItem>
                             </MenuList>
@@ -225,12 +242,13 @@ const LogRecordsTable = ({
         <ScaleFade in={showAlert} unmountOnExit>
           <Alert status="success" variant="left-accent" borderRadius="6px">
             <AlertIcon />
-            <AlertDescription>Log Record deleted successfully.</AlertDescription>
+            <AlertDescription>
+              Log Record deleted successfully.
+            </AlertDescription>
           </Alert>
         </ScaleFade>
       </Box>
     </>
-
   );
 };
 
