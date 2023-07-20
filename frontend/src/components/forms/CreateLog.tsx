@@ -55,9 +55,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144", value: "144 Erb St. West" },
-  { label: "362", value: "362 Erb St. West" },
-  { label: "402", value: "402 Erb St. West" },
+  { label: "144", value: "144" },
+  { label: "362", value: "362" },
+  { label: "402", value: "402" },
 ];
 
 const ALERT_DATA: AlertDataOptions = {
@@ -122,7 +122,7 @@ const CreateLog = ({
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState(-1);
+  const [resident, setResident] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
@@ -175,7 +175,7 @@ const CreateLog = ({
   };
 
   const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+    selectedOption: SingleValue<{ label: string; value: string }>,
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
@@ -238,7 +238,7 @@ const CreateLog = ({
       }),
     );
     setBuilding("");
-    setResident(-1);
+    setResident("");
     setTags([]);
     setAttnTo(-1);
     setNotes("");
@@ -265,7 +265,7 @@ const CreateLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === -1);
+    setResidentError(resident === "");
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -274,7 +274,7 @@ const CreateLog = ({
       date === null ||
       time === "" ||
       building === "" ||
-      resident === -1 ||
+      resident === "" ||
       notes === ""
     ) {
       return;

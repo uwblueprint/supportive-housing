@@ -106,9 +106,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     }),
   );
   const [building, setBuilding] = useState(logRecord.building);
-  const [resident, setResident] = useState<number>(
-    parseInt(logRecord.residentId, 10),
-  );
+  const [resident, setResident] = useState<number>(null);
   const [tags, setTags] = useState<string[]>(logRecord.tags);
   const [attnTo, setAttnTo] = useState(logRecord.attnTo);
   const [notes, setNotes] = useState(logRecord.note);
@@ -202,6 +200,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
         value: r.id!,
       }));
       setResidentOptions(residentLabels);
+      setResident(residentOptions.find((item) => item.label === logRecord.residentId)?.value);
     }
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
@@ -217,13 +216,43 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
     }
   };
 
+  const handleClose = () => {
+    // reset state variables 
+    setEmployee(getCurUserSelectOption());
+    setDate(new Date(logRecord.datetime));
+    setTime(
+      date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }),
+    );
+    setBuilding(logRecord.building);
+    setResident(residentOptions.find((item) => item.label === logRecord.residentId)?.value);
+    setTags(logRecord.tags);
+    setAttnTo(logRecord.attnTo);
+    setNotes(logRecord.note);
+    setFlagged(logRecord.flagged);
+
+    // error states for non-nullable inputs
+    setEmployeeError(false);
+    setDateError(false);
+    setTimeError(false);
+    setBuildingError(false);
+    setResidentError(false);
+    setNotesError(false);
+
+    // close modal
+    handleClose();
+  };
+
   const handleSubmit = () => {
     // Update error states
     setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === -1);
+    setResidentError(resident === "");
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -232,7 +261,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
       date === null ||
       time === "" ||
       building === "" ||
-      resident === -1 ||
+      resident === "" ||
       notes === ""
     ) {
       return;
@@ -244,12 +273,13 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
       resident,
       flagged,
       notes,
-      attnTo,
       tags,
       building,
+      attnTo,
     ).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS);
+        handleClose();
       } else {
         setAlertData(ALERT_DATA.ERROR);
       }
@@ -269,7 +299,6 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
   // Retrieves options for dropdowns
   useEffect(() => {
     getLogEntryOptions();
-    console.log(residentOptions, logRecord.residentId);
   }, []);
 
   return (
@@ -330,7 +359,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={{ label: building, value: building }}
+                      defaultValue={BUILDINGS.find((item) => item.label === building)}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -343,9 +372,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
-                      defaultValue={residentOptions.find(
-                        (resOption) => resOption.label === logRecord.residentId,
-                      )}
+                      defaultValue={residentOptions.find((item) => item.label === logRecord.residentId)}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -376,9 +403,7 @@ const EditLog = ({ logRecord, isOpen, toggleClose }: Props) => {
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
-                      defaultValue={employeeOptions.find(
-                        (empOption) => empOption.value === logRecord.employeeId,
-                      )}
+                      defaultValue={employeeOptions.find((item) => item.value === logRecord.employeeId)}
                     />
                   </FormControl>
                 </Col>

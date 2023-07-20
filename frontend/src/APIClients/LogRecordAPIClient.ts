@@ -85,7 +85,7 @@ const filterLogRecords = async ({
 
 const createLog = async (
   userId: number,
-  residentId: number,
+  residentId: string,
   flagged: boolean,
   note: string,
   attentionTo: number,
@@ -133,12 +133,12 @@ const deleteLogRecord = async (logId: number): Promise<boolean> => {
 const editLogRecord = async (
   logId: number,
   userId: number,
-  residentId: number,
+  residentId: string,
   flagged: boolean,
   note: string,
-  attentionTo: number,
   tags: string[],
   building: string,
+  attentionTo?: number,
 ): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
