@@ -118,7 +118,10 @@ const EditLog = ({
     }),
   );
   const [building, setBuilding] = useState(logRecord.building);
-  const [resident, setResident] = useState<number>(-1);
+
+  const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
+  const [resident, setResident] = useState<number>(residentId !== undefined ? residentId : -1);
+  
   const [tags, setTags] = useState<string[]>(logRecord.tags);
   const [attnTo, setAttnTo] = useState(logRecord.attnTo);
   const [notes, setNotes] = useState(logRecord.note);
@@ -207,10 +210,7 @@ const EditLog = ({
       }),
     );
     setBuilding(logRecord.building);
-    
-    const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
     setResident(residentId !== undefined ? residentId : -1);
-    
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo);
     setNotes(logRecord.note);
@@ -265,7 +265,7 @@ const EditLog = ({
         countRecords();
         getRecords(1);
         setUserPageNum(1);
-        
+
         handleClose();
       } else {
         setAlertData(ALERT_DATA.ERROR);
