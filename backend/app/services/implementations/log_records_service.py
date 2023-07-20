@@ -48,7 +48,7 @@ class LogRecordsService(ILogRecordsService):
                         "attn_to": log[5],
                         "note": log[6],
                         "tags": log[7],
-                        "building_id": log[8],
+                        "building": log[8],
                         "employee_first_name": log[9],
                         "employee_last_name": log[10],
                         "attn_to_first_name": log[11],
