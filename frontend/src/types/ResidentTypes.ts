@@ -9,7 +9,6 @@ export type Resident = {
 };
 
 export type ResidentLabel = {
-  id: number;
   label: string;
   value: number;
 };

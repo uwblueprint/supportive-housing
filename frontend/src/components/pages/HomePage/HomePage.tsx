@@ -53,9 +53,9 @@ const HomePage = (): React.ReactElement => {
 
   const getLogRecords = async (pageNumber: number) => {
     const buildingValue = building ? building.value : "";
-    const employeeIds = employees.map((employee) => employee.id);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
-    const residentsIds = residents.map((resident) => resident.id);
+    const employeeIds = employees.map((employee) => employee.value);
+    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
+    const residentsIds = residents.map((resident) => resident.value);
     const dateRange =
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
     const tagsValues = tags.map((tag) => tag.value);
@@ -87,11 +87,11 @@ const HomePage = (): React.ReactElement => {
 
   const countLogRecords = async () => {
     const buildingValue = building ? building.value : "";
-    const employeeIds = employees.map((employee) => employee.id);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.id);
+    const employeeIds = employees.map((employee) => employee.value);
+    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const dateRange =
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
-    const residentsIds = residents.map((resident) => resident.id);
+    const residentsIds = residents.map((resident) => resident.value);
 
     const tagsValues = tags.map((tag) => tag.value);
 

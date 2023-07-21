@@ -85,14 +85,11 @@ const SearchAndFilters = ({
     if (users) {
       const labels = users.map((user: User) => {
         return {
-          id: user.id,
           label: `${user.firstName} ${user.lastName}`,
           value: user.id,
         } as UserLabel;
       });
       setUserLabels(labels);
-    } else {
-      setUserLabels(undefined);
     }
   };
 
@@ -102,14 +99,11 @@ const SearchAndFilters = ({
     if (residentsData) {
       const labels = residentsData.map((resident: Resident) => {
         return {
-          id: resident.id,
-          label: `${resident.initial}${resident.roomNum}`,
+          label: `${resident.residentId}`,
           value: resident.id,
         } as ResidentLabel;
       });
       setResidentLabels(labels);
-    } else {
-      setResidentLabels(undefined);
     }
   };
 
