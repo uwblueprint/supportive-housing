@@ -22,14 +22,15 @@ export type GetLogRecordCountResponse = {
   numResults: number;
 } | null;
 
-export type PostLogRecordsResponse = Omit<
+export type PostLogRecordsResponse = Pick<
   LogRecord,
-  | "logId"
-  | "attnToFirstName"
-  | "attnToLastName"
-  | "employeeFirstName"
-  | "employeeLastName"
-  | "tags"
+  | "attnTo"
+  | "building"
+  | "datetime"
+  | "employeeId"
+  | "flagged"
+  | "note"
+  | "residentId"
 > | null;
 
 export type CountLogRecordFilters = {

@@ -102,9 +102,9 @@ const getCurUserSelectOption = () => {
   );
   if (curUser && curUser.firstName && curUser.id) {
     const userId = parseInt(curUser.id, 10);
-    return { id: userId, label: curUser.firstName, value: userId };
+    return { label: curUser.firstName, value: userId };
   }
-  return { id: -1, label: "", value: -1 };
+  return { label: "", value: -1 };
 };
 
 const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
