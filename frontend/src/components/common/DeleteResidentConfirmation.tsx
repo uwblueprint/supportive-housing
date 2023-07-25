@@ -30,7 +30,6 @@ const DeleteResidentConfirmation = ({
 }: Props): React.ReactElement => {
   const ITEM_NAME = itemName.toLowerCase();
   const RES_ID = resId.toUpperCase();
-  let deleteUser: string | undefined;
 
   const handleSubmit = async () => {
     deleteAPI(itemId);

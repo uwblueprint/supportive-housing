@@ -21,7 +21,6 @@ import DeleteResidentConfirmation from "../../common/DeleteResidentConfirmation"
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
-import CreateToast from "../../common/Toasts";
 
 type Props = {
   residents: Resident[];
@@ -51,9 +50,10 @@ const ResidentDirectoryTable = ({
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
+
   // Delete confirmation state
   const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
-  const newToast = CreateToast();
+
   // Handle delete confirmation toggle
   const handleDeleteToggle = (residentId: number) => {
     setDeleteOpenMap((prevDeleteOpenMap) => ({
@@ -106,9 +106,12 @@ const ResidentDirectoryTable = ({
             {residents.map((resident) => {
               const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
               // TODO: Remove non-null assertion from residentId 
-              let residentDeleted;
               const deleteResident = async (itemId: number) => {
-                residentDeleted= await ResidentAPIClient.deleteResident(itemId);
+                try {
+                  await ResidentAPIClient.deleteResident(itemId);
+                } catch (error) {
+                  return
+                }
                 setShowAlert(true);
               };
               return (
