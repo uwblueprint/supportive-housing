@@ -14,7 +14,7 @@ import {
 type Props = {
   itemName: string;
   itemId: number;
-  resId: string;
+  resId: string | undefined;
   isOpen: boolean;
   toggleClose: () => void;
   deleteAPI: (itemId: number) => void;
@@ -29,7 +29,7 @@ const DeleteResidentConfirmation = ({
   deleteAPI,
 }: Props): React.ReactElement => {
   const ITEM_NAME = itemName.toLowerCase();
-  const RES_ID = resId.toUpperCase();
+  const RES_ID = resId ? resId.toUpperCase() : "";
 
   const handleSubmit = async () => {
     deleteAPI(itemId);

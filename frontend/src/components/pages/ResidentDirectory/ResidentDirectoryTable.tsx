@@ -71,6 +71,19 @@ const ResidentDirectoryTable = ({
     }));
   };
 
+  const deleteResident = async (itemId: number) => {
+    const { statusCode, message } = await ResidentAPIClient.deleteResident(itemId);
+    if (statusCode === 400) {
+      // IMPLEMENT
+      console.log("WOO 400")
+    }
+    else if (statusCode === 500) {
+      // IMPLEMENT
+      console.log("WOO 500")
+    }
+    setShowAlert(true);
+};
+
   useEffect(() => {
     if (showAlert) {
       setTimeout(() => {
@@ -106,14 +119,6 @@ const ResidentDirectoryTable = ({
             {residents.map((resident) => {
               const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
               // TODO: Remove non-null assertion from residentId 
-              const deleteResident = async (itemId: number) => {
-                try {
-                  await ResidentAPIClient.deleteResident(itemId);
-                } catch (error) {
-                  return
-                }
-                setShowAlert(true);
-              };
               return (
                 < >
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
@@ -150,13 +155,13 @@ const ResidentDirectoryTable = ({
                       toggleClose={() => handleEditToggle(resident.id)}
                 />
                 <DeleteResidentConfirmation
-                      itemName="resident"
-                      itemId={resident.id}
-                      resId={resident.residentId}
-                      isOpen={deleteOpenMap[resident.id]}
-                      toggleClose={() => handleDeleteToggle(resident.id)}
-                      deleteAPI={deleteResident}
-                    />
+                    itemName="resident"
+                    itemId={resident.id}
+                    resId={resident.residentId}
+                    isOpen={deleteOpenMap[resident.id]}
+                    toggleClose={() => handleDeleteToggle(resident.id)}
+                    deleteAPI={deleteResident}
+                  />
                 </>
               );
             })}
