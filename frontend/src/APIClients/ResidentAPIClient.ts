@@ -68,7 +68,7 @@ const createResident = async ({
   }
 };
 
-const deleteResident = async (residentId: number): Promise<boolean> => {
+const deleteResident = async (residentId: number): Promise<string> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -77,9 +77,9 @@ const deleteResident = async (residentId: number): Promise<boolean> => {
     await baseAPIClient.delete(`/residents/${residentId}`, {
       headers: { Authorization: bearerToken },
     });
-    return true;
+    return "Success";
   } catch (error) {
-    return false;
+    return error.message;
   }
 };
 

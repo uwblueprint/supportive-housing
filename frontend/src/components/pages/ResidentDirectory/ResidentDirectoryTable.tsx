@@ -17,10 +17,11 @@ import {
 import { VscKebabVertical } from "react-icons/vsc";
 import { Resident } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
-import DeleteConfirmation from "../../common/DeleteConfirmation";
+import DeleteResidentConfirmation from "../../common/DeleteResidentConfirmation";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
+import CreateToast from "../../common/Toasts";
 
 type Props = {
   residents: Resident[];
@@ -50,10 +51,9 @@ const ResidentDirectoryTable = ({
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
-
   // Delete confirmation state
   const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
-
+  const newToast = CreateToast();
   // Handle delete confirmation toggle
   const handleDeleteToggle = (residentId: number) => {
     setDeleteOpenMap((prevDeleteOpenMap) => ({
@@ -106,12 +106,9 @@ const ResidentDirectoryTable = ({
             {residents.map((resident) => {
               const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
               // TODO: Remove non-null assertion from residentId 
-              const deleteLogRecord = async (itemId: number) => {
-                try {
-                  await ResidentAPIClient.deleteResident(itemId);
-                } catch (error) {
-                  return
-                }
+              let residentDeleted;
+              const deleteResident = async (itemId: number) => {
+                residentDeleted= await ResidentAPIClient.deleteResident(itemId);
                 setShowAlert(true);
               };
               return (
@@ -134,10 +131,10 @@ const ResidentDirectoryTable = ({
                     />
                     <MenuList>
                       <MenuItem onClick={() => handleEditToggle(resident.id)}>
-                        Edit Log Record
+                        Edit Resident
                       </MenuItem>
                       <MenuItem onClick={() => handleDeleteToggle(resident.id)}>
-                        Delete Log Record
+                        Delete Resident
                       </MenuItem>
                     </MenuList>
                   </Menu>
@@ -149,12 +146,13 @@ const ResidentDirectoryTable = ({
                       isOpen={editOpenMap[resident.id]}
                       toggleClose={() => handleEditToggle(resident.id)}
                 />
-                <DeleteConfirmation
+                <DeleteResidentConfirmation
                       itemName="resident"
                       itemId={resident.id}
+                      resId={resident.residentId}
                       isOpen={deleteOpenMap[resident.id]}
                       toggleClose={() => handleDeleteToggle(resident.id)}
-                      deleteAPI={deleteLogRecord}
+                      deleteAPI={deleteResident}
                     />
                 </>
               );

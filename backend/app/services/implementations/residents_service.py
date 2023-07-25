@@ -1,5 +1,6 @@
 from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
+from ...models.log_records import LogRecords
 from ...models import db
 from datetime import datetime
 from sqlalchemy import select, cast, Date
@@ -54,10 +55,18 @@ class ResidentsService(IResidentsService):
         db.session.commit()
 
     def delete_resident(self, resident_id):
-        deleted_resident = Residents.query.filter_by(id=resident_id).delete()
-        if not deleted_resident:
+        resident_log_records = LogRecords.query.filter_by(resident_id=resident_id).count()
+        if resident_log_records == 0:
+            deleted_resident = Residents.query.filter_by(id=resident_id).delete()
+            if not deleted_resident:
+                raise Exception(
+                    "Resident with id {resident_id} not found".format(
+                        resident_id=resident_id
+                    )
+                )
+        else:
             raise Exception(
-                "Resident with id {resident_id} not found".format(
+                "Resident with id {resident_id} has existing log records".format(
                     resident_id=resident_id
                 )
             )

@@ -20,7 +20,6 @@ def is_date_left_invalid_resident(resident):
 
     return False
 
-
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def add_resident():
@@ -94,7 +93,10 @@ def delete_resident(resident_id):
         )
     except Exception as e:
         error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
+        if ("has existing log records" in str(e)):
+            return jsonify({"existing_log_record_error": "Resident has existing log records"}), 400
+        else:
+            return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)

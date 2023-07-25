@@ -14,19 +14,23 @@ import {
 type Props = {
   itemName: string;
   itemId: number;
+  resId: string;
   isOpen: boolean;
   toggleClose: () => void;
   deleteAPI: (itemId: number) => void;
 };
 
-const DeleteConfirmation = ({
+const DeleteResidentConfirmation = ({
   itemName,
   itemId,
+  resId,
   isOpen,
   toggleClose,
   deleteAPI,
 }: Props): React.ReactElement => {
   const ITEM_NAME = itemName.toLowerCase();
+  const RES_ID = resId.toUpperCase();
+  let deleteUser: string | undefined;
 
   const handleSubmit = async () => {
     deleteAPI(itemId);
@@ -40,13 +44,13 @@ const DeleteConfirmation = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              Delete {ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)}
+            {`This is a permanent action.
+              Are you sure you want to delete Resident ${RES_ID}`}
             </ModalHeader>
             <ModalBody>
               <Box marginBottom="12px">
                 <Text>
-                  Are you sure you want to delete this {ITEM_NAME}? Deleting a{" "}
-                  {ITEM_NAME} will permanently remove it from your system.
+                  Residents can only be deleted if there are no log records associated with them.
                 </Text>
               </Box>
             </ModalBody>
@@ -69,4 +73,4 @@ const DeleteConfirmation = ({
   );
 };
 
-export default DeleteConfirmation;
+export default DeleteResidentConfirmation;

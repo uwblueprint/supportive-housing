@@ -163,7 +163,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSave = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.toString().length !== 3);
     setBuildingError(userBuilding === "");
@@ -180,6 +180,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     }
     editRes();
     setShowAlert(true);
+    toggleClose();
   };
 
   // Timer to remove alert
@@ -206,7 +207,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
                   <FormControl isRequired isInvalid={initialsError}>
                     <FormLabel>Resident Initials</FormLabel>
                     <Input
-                      placeholder={initial}
+                      defaultValue={initial}
                       value={initials}
                       onChange={handleInitialsChange}
                     />
@@ -265,10 +266,10 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
                 onChange={() => handleFlagged()}
                 marginBottom="16px"
               >
-                <Text>Edit Move out Date</Text>
+                <Text>Edit Move Out Date</Text>
               </Checkbox>
               <FormControl isRequired isInvalid={moveOutDateError} isDisabled={!flagged}>
-                    <FormLabel>Move out date</FormLabel>
+                    <FormLabel>Move Out date</FormLabel>
                     <SingleDatepicker
                       name="date-input"
                       date={moveOutDate}
@@ -285,7 +286,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
               <Divider />
             </ModalBody>
             <ModalFooter>
-              <Button onClick={handleSubmit} variant="primary" type="submit">
+              <Button onClick={handleSave} variant="primary" type="submit">
                 Save
               </Button>
             </ModalFooter>
