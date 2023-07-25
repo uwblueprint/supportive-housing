@@ -143,7 +143,6 @@ const LogRecordsTable = ({
             </Thead>
 
             <Tbody>
-              {/* TODO: replace mockRecords with logRecords */}
               {logRecords.map((record) => {
                 // TODO: Investigate alternative methods for date storage + creation
                 const dateObj = new Date(record.datetime);
@@ -164,9 +163,6 @@ const LogRecordsTable = ({
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
-                      {
-                        // TODO: Resolve the resident record at some point
-                      }
                       <Td width="5%">{record.residentId}</Td>
                       <Td whiteSpace="normal" width="70%">
                         {record.note}

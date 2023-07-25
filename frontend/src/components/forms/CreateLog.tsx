@@ -56,9 +56,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144", value: "144" },
-  { label: "362", value: "362" },
-  { label: "402", value: "402" },
+  { label: "144 Erb St. West", value: "144" },
+  { label: "362 Erb St. West", value: "362" },
+  { label: "402 Erb St. West", value: "402" },
 ];
 
 const ALERT_DATA: AlertDataOptions = {
@@ -287,6 +287,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     // Create a log in the db with this data
     setCreateOpen(false);
     // update the table with the new log
+    // NOTE: -1 is the default state for attnTo
     if (attnTo !== -1) {
       LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, building, attnTo).then((res) => {
         if (res != null) {
