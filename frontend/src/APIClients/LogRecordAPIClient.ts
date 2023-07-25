@@ -1,14 +1,20 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { GetLogRecordCountResponse, GetLogRecordsReponse, PostLogRecordsResponse } from "../types/LogRecordTypes";
-import { CountLogRecordFilters, LogRecordFilters } from "../components/common/types/Filters";
+import {
+  CountLogRecordFilters,
+  GetLogRecordCountResponse,
+  GetLogRecordsReponse,
+  LogRecordFilters,
+  PostLogRecordsResponse,
+} from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
   building = "",
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
 }: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
@@ -24,6 +30,7 @@ const countLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -42,6 +49,7 @@ const filterLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
   returnAll = false,
@@ -60,6 +68,7 @@ const filterLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -76,37 +85,37 @@ const filterLogRecords = async ({
   }
 };
 
-const createLog = async(
-    userId: number,
-    residentId: number,
-    flagged: boolean,
-    note: string,
-    attentionTo: number,
-    building: string,
-) : Promise<PostLogRecordsResponse> => {
-    try {
-        const bearerToken = `Bearer ${getLocalStorageObjProperty(
-          AUTHENTICATED_USER_KEY,
-          "accessToken",
-        )}`;
+const createLog = async (
+  userId: number,
+  residentId: number,
+  flagged: boolean,
+  note: string,
+  attentionTo: number,
+  building: string,
+): Promise<PostLogRecordsResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
 
-        const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
-            "/log_records/",
-            { 
-                employeeId: userId, 
-                residentId,
-                flagged,
-                note,
-                attnTo: attentionTo,
-                building,
-            },
-            { headers: { Authorization: bearerToken } },
-        );
-        return data;
-      } catch (error) {
-        return null;
-      }
-}
+    const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
+      "/log_records/",
+      {
+        employeeId: userId,
+        residentId,
+        flagged,
+        note,
+        attnTo: attentionTo,
+        building,
+      },
+      { headers: { Authorization: bearerToken } },
+    );
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
 
 export default {
   createLog,
