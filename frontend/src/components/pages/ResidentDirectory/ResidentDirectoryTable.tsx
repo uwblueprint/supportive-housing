@@ -21,6 +21,7 @@ import DeleteResidentConfirmation from "../../common/DeleteResidentConfirmation"
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
+import CreateToast from "../../common/Toasts"
 
 type Props = {
   residents: Resident[];
@@ -50,6 +51,7 @@ const ResidentDirectoryTable = ({
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
+  const newToast = CreateToast();
 
   // Delete confirmation state
   const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
@@ -75,11 +77,11 @@ const ResidentDirectoryTable = ({
     const { statusCode, message } = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       // IMPLEMENT
-      console.log("WOO 400")
+      newToast("TEST", "TEST", "error")
     }
     else if (statusCode === 500) {
       // IMPLEMENT
-      console.log("WOO 500")
+      newToast("TEST", "TEST", "error")
     }
     setShowAlert(true);
 };
