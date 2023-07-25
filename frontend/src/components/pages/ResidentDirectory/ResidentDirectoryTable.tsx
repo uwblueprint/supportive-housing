@@ -77,11 +77,15 @@ const ResidentDirectoryTable = ({
     const { statusCode, message } = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       // IMPLEMENT
-      newToast("TEST", "TEST", "error")
+      newToast("Error deleting resident", "Resident has log records attached", "error")
     }
     else if (statusCode === 500) {
       // IMPLEMENT
-      newToast("TEST", "TEST", "error")
+      newToast("Error deleting resident", "", "error")
+    }
+    else {
+      // IMPLEMENT
+      newToast("Deleted Resident successfully", "", "success")
     }
     setShowAlert(true);
 };
