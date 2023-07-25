@@ -40,9 +40,9 @@ def create_app(config_name="development"):
 
     app.config["CORS_ORIGINS"] = [
         "http://localhost:3000",
-        "https://uw-blueprint-starter-code.firebaseapp.com",
-        "https://uw-blueprint-starter-code.web.app",
-        re.compile("^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        "https://blueprint-supportive-housing.firebaseapp.com",
+        "https://blueprint-supportive-housing.web.app",
+        re.compile("^https:\/\/blueprint-supportive-housing--pr.*\.web\.app$"),
     ]
     app.config["CORS_SUPPORTS_CREDENTIALS"] = True
     CORS(app)
