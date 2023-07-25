@@ -1,6 +1,10 @@
 import axios, { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { GetResidentsReponse, CountResidentsResponse, Resident } from "../types/ResidentTypes";
+import {
+  GetResidentsReponse,
+  CountResidentsResponse,
+  CreateResidentParams,
+} from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -14,14 +18,17 @@ const getResidents = async ({
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-    const { data } = await baseAPIClient.get<GetResidentsReponse>(`/residents/`, {
-      params: {
-        returnAll,
-        pageNumber,
-        resultsPerPage,
+    const { data } = await baseAPIClient.get<GetResidentsReponse>(
+      `/residents/`,
+      {
+        params: {
+          returnAll,
+          pageNumber,
+          resultsPerPage,
+        },
+        headers: { Authorization: bearerToken },
       },
-      headers: { Authorization: bearerToken },
-    });
+    );
     return data;
   } catch (error) {
     return null;
@@ -52,7 +59,7 @@ const createResident = async ({
   roomNum,
   dateJoined,
   building,
-}: Resident): Promise<boolean> => {
+}: CreateResidentParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

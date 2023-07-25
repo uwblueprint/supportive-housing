@@ -104,7 +104,6 @@ const ResidentDirectoryTable = ({
       >
         <Table
           variant="showTable"
-          minHeight="400px"
           verticalAlign="middle"
         >
           <Thead>
