@@ -2,14 +2,12 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import {
+  CountLogRecordFilters,
   GetLogRecordCountResponse,
   GetLogRecordsReponse,
+  LogRecordFilters,
   PostLogRecordsResponse,
 } from "../types/LogRecordTypes";
-import {
-  CountLogRecordFilters,
-  LogRecordFilters,
-} from "../components/common/types/Filters";
 
 const countLogRecords = async ({
   building = "",

@@ -9,7 +9,6 @@ export type User = {
 };
 
 export type UserLabel = {
-  id: number;
   label: string;
   value: number;
 };

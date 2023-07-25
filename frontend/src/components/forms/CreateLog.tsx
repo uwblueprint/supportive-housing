@@ -22,7 +22,7 @@ import {
   ModalHeader,
   Text,
   ScaleFade,
-  Textarea
+  Textarea,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -37,6 +37,7 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
+import { ResidentLabel } from "../../types/ResidentTypes";
 
 type Props = {
   getRecords: (page_number: number) => Promise<void>;
@@ -47,11 +48,11 @@ type Props = {
 type AlertData = {
   status: AlertStatus;
   description: string;
-}
+};
 
 type AlertDataOptions = {
   [key: string]: AlertData;
-}
+};
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
@@ -62,18 +63,18 @@ const BUILDINGS = [
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
-    status: 'info',
-    description: ''
+    status: "info",
+    description: "",
   },
   SUCCESS: {
-    status: 'success',
-    description: 'Log successfully created.'
+    status: "success",
+    description: "Log successfully created.",
   },
   ERROR: {
-    status: 'error',
-    description: 'Error creating log.'
-  }
-}
+    status: "error",
+    description: "Error creating log.",
+  },
+};
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS = [
@@ -103,14 +104,10 @@ const getCurUserSelectOption = () => {
     const userId = curUser.id
     return {id: userId, label: curUser.firstName, value: userId}
   }
-  return {id: -1, label: "", value: -1}
-}
+  return { label: "", value: -1 };
+};
 
-const CreateLog = ({
-  getRecords,
-  countRecords,
-  setUserPageNum,
-}: Props) => {
+const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
@@ -130,7 +127,7 @@ const CreateLog = ({
 
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
   const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
-  
+
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // error states for non-nullable inputs
@@ -142,7 +139,7 @@ const CreateLog = ({
   const [notesError, setNotesError] = useState(false);
 
   const [showAlert, setShowAlert] = useState(false);
-  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT)
+  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -207,25 +204,32 @@ const CreateLog = ({
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({returnAll: true})
+    const residentsData = await ResidentAPIClient.getResidents({
+      returnAll: true,
+    });
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) => 
-      ({id: r.id!, label: r.residentId!, value: r.id!}));
-      setResidentOptions(residentLabels)
+      const residentLabels: ResidentLabel[] = residentsData.residents.map(
+        (r) => ({ label: r.residentId!, value: r.id! }),
+      );
+      setResidentOptions(residentLabels);
     }
 
-    const usersData = await UserAPIClient.getUsers({returnAll: true})
+    const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users.filter((user) => user.userStatus === 'Active').map((user) => 
-      ({id: user.id, label: user.firstName, value: user.id}));
+      const userLabels: UserLabel[] = usersData.users
+        .filter((user) => user.userStatus === "Active")
+        .map((user) => ({
+          label: user.firstName,
+          value: user.id,
+        }));
       setEmployeeOptions(userLabels);
     }
-  }
+  };
 
   const handleCreateOpen = () => {
-    getLogEntryOptions()
+    getLogEntryOptions();
     setCreateOpen(true);
 
     // reset all states
@@ -270,7 +274,7 @@ const CreateLog = ({
 
     // If any required fields are empty, prevent form submission
     if (
-      (!employee.label) ||
+      !employee.label ||
       date === null ||
       time === "" ||
       building === "" ||
@@ -316,7 +320,7 @@ const CreateLog = ({
     if (showAlert) {
       setTimeout(() => {
         setShowAlert(false);
-        setAlertData(ALERT_DATA.DEFAULT)
+        setAlertData(ALERT_DATA.DEFAULT);
       }, 3000);
     }
   }, [showAlert]);
@@ -341,13 +345,13 @@ const CreateLog = ({
             <ModalHeader>New Log Entry Details</ModalHeader>
             <ModalBody>
               <Divider />
-              <Row style={{marginTop: "16px"}}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
                     <Select
                       isDisabled
-                      defaultValue={getCurUserSelectOption()} 
+                      defaultValue={getCurUserSelectOption()}
                       styles={selectStyle}
                     />
                   </FormControl>
@@ -413,7 +417,7 @@ const CreateLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented 
+                      // TODO: Integrate actual tags once implemented
                       isDisabled
                       options={TAGS}
                       isMulti
@@ -441,12 +445,12 @@ const CreateLog = ({
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
                     <FormLabel>Notes</FormLabel>
-                      <Textarea
-                        value={notes}
-                        onChange={handleNotesChange}
-                        placeholder="Enter log notes here..."
-                        resize="none"
-                      />
+                    <Textarea
+                      value={notes}
+                      onChange={handleNotesChange}
+                      placeholder="Enter log notes here..."
+                      resize="none"
+                    />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
@@ -489,7 +493,11 @@ const CreateLog = ({
         zIndex={9999}
       >
         <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status={alertData.status} variant="left-accent" borderRadius="6px">
+          <Alert
+            status={alertData.status}
+            variant="left-accent"
+            borderRadius="6px"
+          >
             <AlertIcon />
             <AlertDescription>{alertData.description}</AlertDescription>
           </Alert>

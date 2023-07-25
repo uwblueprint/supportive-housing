@@ -22,12 +22,29 @@ export type GetLogRecordCountResponse = {
   numResults: number;
 } | null;
 
-export type PostLogRecordsResponse = Omit<
+export type PostLogRecordsResponse = Pick<
   LogRecord,
-  | "logId"
-  | "attnToFirstName"
-  | "attnToLastName"
-  | "employeeFirstName"
-  | "employeeLastName"
-  | "tags"
+  | "attnTo"
+  | "building"
+  | "datetime"
+  | "employeeId"
+  | "flagged"
+  | "note"
+  | "residentId"
 > | null;
+
+export type CountLogRecordFilters = {
+  building?: string;
+  employeeId?: number[];
+  attnTo?: number[];
+  dateRange?: string[];
+  residentId?: number[];
+  tags?: string[];
+  flagged?: boolean;
+};
+
+export type LogRecordFilters = CountLogRecordFilters & {
+  returnAll?: boolean;
+  pageNumber?: number;
+  resultsPerPage?: number;
+};
