@@ -43,10 +43,16 @@ export type CountLogRecordFilters = {
   flagged?: boolean;
 };
 
-export type EditLogRecordParams = Omit<
-  LogRecord,
-  "attnToFirstName" | "attnToLastName" | "datetime" | "employeeFirstName" | "employeeLastName"
->;
+export type EditLogRecordParams = {
+  logId: number;
+  employeeId: number;
+  residentId: number;
+  flagged: boolean;
+  note: string;
+  tags: string[];
+  building: string;
+  attnTo?: number;
+};
 
 export type LogRecordFilters = CountLogRecordFilters & {
   returnAll?: boolean;

@@ -249,16 +249,16 @@ const EditLog = ({
       return;
     }
 
-    LogRecordAPIClient.editLogRecord(
-      logRecord.logId,
-      employee.value,
-      resident,
+    LogRecordAPIClient.editLogRecord({
+      logId: logRecord.logId,
+      employeeId: employee.value,
+      residentId: resident,
       flagged,
-      notes,
+      note: notes,
       tags,
       building,
       attnTo,
-    ).then((res) => {
+    }).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS);
 

@@ -7,6 +7,7 @@ import {
   GetLogRecordsReponse,
   LogRecordFilters,
   PostLogRecordsResponse,
+  EditLogRecordParams,
 } from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
@@ -131,16 +132,16 @@ const deleteLogRecord = async (logId: number): Promise<boolean> => {
   }
 };
 
-const editLogRecord = async (
-  logId: number,
-  userId: number,
-  residentId: number,
-  flagged: boolean,
-  note: string,
-  tags: string[],
-  building: string,
-  attentionTo?: number,
-): Promise<any> => {
+const editLogRecord = async ({
+  logId,
+  employeeId,
+  residentId,
+  flagged,
+  note,
+  tags,
+  building,
+  attnTo,
+}: EditLogRecordParams): Promise<any> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -150,11 +151,11 @@ const editLogRecord = async (
     const { data } = await baseAPIClient.put<any>(
       `/log_records/${logId}`,
       {
-        employeeId: userId,
+        employeeId,
         residentId,
         flagged,
         note,
-        attnTo: attentionTo,
+        attnTo,
         tags,
         building,
       },
