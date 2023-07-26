@@ -44,10 +44,14 @@ const DeleteConfirmation = ({
         <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{MESSAGE_HEADER}</ModalHeader>
+            <ModalHeader>
+              {MESSAGE_HEADER}
+            </ModalHeader>
             <ModalBody>
               <Box marginBottom="12px">
-                <Text>{MESSAGE_TEXT}</Text>
+                <Text>
+                  {MESSAGE_TEXT}
+                </Text>
               </Box>
             </ModalBody>
             <ModalFooter>

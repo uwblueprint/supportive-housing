@@ -43,6 +43,11 @@ export type CountLogRecordFilters = {
   flagged?: boolean;
 };
 
+export type EditLogRecordParams = Omit<
+  LogRecord,
+  "attnToFirstName" | "attnToLastName" | "datetime" | "employeeFirstName" | "employeeLastName"
+>;
+
 export type LogRecordFilters = CountLogRecordFilters & {
   returnAll?: boolean;
   pageNumber?: number;

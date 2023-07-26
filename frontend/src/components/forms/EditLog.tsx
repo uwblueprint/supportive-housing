@@ -341,7 +341,7 @@ const EditLog = ({
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={BUILDINGS.find((item) => item.label === building)}
+                      defaultValue={BUILDINGS.find((item) => item.value === building)}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
