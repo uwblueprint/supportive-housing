@@ -28,10 +28,12 @@ const DeleteConfirmation = ({
 }: Props): React.ReactElement => {
   const ITEM_NAME = itemName.toLowerCase();
 
-  const MESSAGE_HEADER = `Delete ${ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)}`;
-  
+  const MESSAGE_HEADER = `Delete ${
+    ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)
+  }`;
+
   const MESSAGE_TEXT = `Are you sure you want to delete this ${ITEM_NAME}? Deleting a \n\
-  ${ITEM_NAME} will permanently remove it from your system.`
+  ${ITEM_NAME} will permanently remove it from your system.`;
 
   const handleSubmit = async () => {
     deleteAPI(itemId);
@@ -44,14 +46,10 @@ const DeleteConfirmation = ({
         <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>
-              {MESSAGE_HEADER}
-            </ModalHeader>
+            <ModalHeader>{MESSAGE_HEADER}</ModalHeader>
             <ModalBody>
               <Box marginBottom="12px">
-                <Text>
-                  {MESSAGE_TEXT}
-                </Text>
+                <Text>{MESSAGE_TEXT}</Text>
               </Box>
             </ModalBody>
             <ModalFooter>
