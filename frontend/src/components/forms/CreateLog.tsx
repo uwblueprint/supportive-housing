@@ -193,6 +193,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   ) => {
     if (selectedOption !== null) {
       setAttnTo(selectedOption.value);
+    } else {
+      setAttnTo(-1);
     }
   };
 
@@ -288,33 +290,19 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setCreateOpen(false);
     // update the table with the new log
     // NOTE: -1 is the default state for attnTo
-    if (attnTo !== -1) {
-      LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, building, attnTo).then((res) => {
-        if (res != null) {
-          setAlertData(ALERT_DATA.SUCCESS)
-          countRecords()
-          getRecords(1);
-          setUserPageNum(1)
-        }
-        else {
-          setAlertData(ALERT_DATA.ERROR)
-        }
-        setShowAlert(true);
-      })
-    } else {
-      LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, building).then((res) => {
-        if (res != null) {
-          setAlertData(ALERT_DATA.SUCCESS)
-          countRecords()
-          getRecords(1);
-          setUserPageNum(1)
-        }
-        else {
-          setAlertData(ALERT_DATA.ERROR)
-        }
-        setShowAlert(true);
-      })
-    }
+    const attentionTo = attnTo === -1 ? undefined : attnTo;
+    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, building, attentionTo).then((res) => {
+      if (res != null) {
+        setAlertData(ALERT_DATA.SUCCESS)
+        countRecords()
+        getRecords(1);
+        setUserPageNum(1)
+      }
+      else {
+        setAlertData(ALERT_DATA.ERROR)
+      }
+      setShowAlert(true);
+    })
   };
 
   useEffect(() => {
@@ -433,6 +421,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
+                      isClearable
                       options={employeeOptions}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}

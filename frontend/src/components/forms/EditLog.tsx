@@ -189,6 +189,8 @@ const EditLog = ({
   ) => {
     if (selectedOption !== null) {
       setAttnTo(selectedOption.value);
+    } else {
+      setAttnTo(-1);
     }
   };
 
@@ -257,7 +259,7 @@ const EditLog = ({
       note: notes,
       tags,
       building,
-      attnTo,
+      attnTo: attnTo === -1 ? undefined : attnTo,
     }).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS);
@@ -381,6 +383,7 @@ const EditLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Attention To</FormLabel>
                     <Select
+                      isClearable
                       options={employeeOptions}
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
