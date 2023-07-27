@@ -8,6 +8,7 @@ import {
   LogRecordFilters,
   PostLogRecordsResponse,
   EditLogRecordParams,
+  CreateLogRecordParams,
 } from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
@@ -86,14 +87,16 @@ const filterLogRecords = async ({
   }
 };
 
-const createLog = async (
-  userId: number,
-  residentId: number,
-  flagged: boolean,
-  note: string,
-  building: string,
-  attentionTo?: number,
-): Promise<PostLogRecordsResponse> => {
+const createLog = async ({
+  employeeId,
+  residentId,
+  datetime,
+  flagged,
+  note,
+  tags,
+  building,
+  attnTo,
+}: CreateLogRecordParams): Promise<PostLogRecordsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -102,12 +105,14 @@ const createLog = async (
     const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
       "/log_records/",
       {
-        employeeId: userId,
+        employeeId,
         residentId,
+        datetime,
         flagged,
         note,
-        attnTo: attentionTo,
+        tags,
         building,
+        attnTo,
       },
       { headers: { Authorization: bearerToken } },
     );

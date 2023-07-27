@@ -38,6 +38,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
 import { ResidentLabel } from "../../types/ResidentTypes";
+import combineDateTime from "../../helper/combineDateTime";
 
 type Props = {
   getRecords: (page_number: number) => Promise<void>;
@@ -291,7 +292,16 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     // update the table with the new log
     // NOTE: -1 is the default state for attnTo
     const attentionTo = attnTo === -1 ? undefined : attnTo;
-    LogRecordAPIClient.createLog(employee.value, resident, flagged, notes, building, attentionTo).then((res) => {
+    LogRecordAPIClient.createLog({
+      employeeId: employee.value,
+      residentId: resident,
+      datetime: combineDateTime(date, time),
+      flagged,
+      note: notes,
+      tags,
+      building,
+      attnTo: attentionTo,
+    }).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS)
         countRecords()

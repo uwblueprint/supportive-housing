@@ -43,10 +43,22 @@ export type CountLogRecordFilters = {
   flagged?: boolean;
 };
 
+export type CreateLogRecordParams = {
+  employeeId: number;
+  residentId: number;
+  datetime: Date;
+  flagged: boolean;
+  note: string;
+  tags: string[];
+  building: string;
+  attnTo?: number;
+};
+
 export type EditLogRecordParams = {
   logId: number;
   employeeId: number;
   residentId: number;
+  datetime: Date;
   flagged: boolean;
   note: string;
   tags: string[];

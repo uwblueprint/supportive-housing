@@ -35,6 +35,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
+import combineDateTime from "../../helper/combineDateTime";
 
 type Props = {
   logRecord: LogRecord;
@@ -255,6 +256,7 @@ const EditLog = ({
       logId: logRecord.logId,
       employeeId: employee.value,
       residentId: resident,
+      datetime: combineDateTime(date, time),
       flagged,
       note: notes,
       tags,

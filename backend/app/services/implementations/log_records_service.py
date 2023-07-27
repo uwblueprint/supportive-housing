@@ -24,7 +24,6 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record
-        new_log_record["datetime"] = datetime.now()
 
         try:
             new_log_record = LogRecords(**new_log_record)
