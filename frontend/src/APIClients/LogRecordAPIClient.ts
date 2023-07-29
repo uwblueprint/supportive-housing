@@ -141,6 +141,7 @@ const editLogRecord = async ({
   logId,
   employeeId,
   residentId,
+  datetime,
   flagged,
   note,
   tags,
@@ -158,6 +159,7 @@ const editLogRecord = async ({
       {
         employeeId,
         residentId,
+        datetime,
         flagged,
         note,
         attnTo,
