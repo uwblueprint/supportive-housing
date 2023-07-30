@@ -26,7 +26,7 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 
 import DeleteConfirmation from "../../common/DeleteConfirmation";
-import EditResident from "../../forms/EditLog";
+import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
@@ -106,6 +106,15 @@ const LogRecordsTable = ({
     }
   };
 
+  const deleteLogRecord = async (itemId: number) => {
+    try {
+      await LogRecordAPIClient.deleteLogRecord(itemId);
+    } catch (error) {
+      return;
+    }
+    setShowAlert(true);
+  };
+
   useEffect(() => {
     if (showAlert) {
       setTimeout(() => {
@@ -142,19 +151,9 @@ const LogRecordsTable = ({
 
             <Tbody>
               {logRecords.map((record) => {
-                // TODO: Investigate alternative methods for date storage + creation
                 const dateObj = new Date(record.datetime);
 
                 const { date, time } = getFormattedDateAndTime(dateObj);
-
-                const deleteLogRecord = async (itemId: number) => {
-                  try {
-                    await LogRecordAPIClient.deleteLogRecord(itemId);
-                  } catch (error) {
-                    return;
-                  }
-                  setShowAlert(true);
-                };
 
                 return (
                   <>
@@ -200,7 +199,7 @@ const LogRecordsTable = ({
                       </Td>
                     </Tr>
 
-                    <EditResident
+                    <EditLog
                       logRecord={record}
                       isOpen={editOpenMap[record.logId]}
                       toggleClose={() => handleEditToggle(record.logId)}
