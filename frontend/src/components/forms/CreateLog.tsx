@@ -199,7 +199,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     }
   };
 
-  const handleNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     setNotes(inputValue);
     setNotesError(inputValue === "");
