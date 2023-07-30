@@ -1,4 +1,3 @@
-
 // Combine date and time 
 const combineDateTime = (dateObj: Date, timeStr: string): Date => {
     // Extract time components from timeStr

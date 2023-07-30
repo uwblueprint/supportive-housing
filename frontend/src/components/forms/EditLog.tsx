@@ -110,7 +110,7 @@ const EditLog = ({
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
-  const [date, setDate] = useState(new Date(logRecord.datetime));
+  const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
       hour: "2-digit",
@@ -118,15 +118,12 @@ const EditLog = ({
       hour12: false,
     }),
   );
-  const [building, setBuilding] = useState(logRecord.building);
-
-  const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
-  const [resident, setResident] = useState<number>(residentId !== undefined ? residentId : -1);
-  
-  const [tags, setTags] = useState<string[]>(logRecord.tags);
-  const [attnTo, setAttnTo] = useState(logRecord.attnTo);
-  const [notes, setNotes] = useState(logRecord.note);
-  const [flagged, setFlagged] = useState(logRecord.flagged);
+  const [building, setBuilding] = useState("");
+  const [resident, setResident] = useState(-1);
+  const [tags, setTags] = useState<string[]>([]);
+  const [attnTo, setAttnTo] = useState<number>(-1);
+  const [notes, setNotes] = useState("");
+  const [flagged, setFlagged] = useState(false);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -201,7 +198,7 @@ const EditLog = ({
     setNotesError(inputValue === "");
   };
 
-  const handleClose = () => {
+  const initializeValues = () => {
     // reset state variables 
     setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
@@ -213,9 +210,10 @@ const EditLog = ({
       }),
     );
     setBuilding(logRecord.building);
+    const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
-    setAttnTo(logRecord.attnTo);
+    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
@@ -226,9 +224,6 @@ const EditLog = ({
     setBuildingError(false);
     setResidentError(false);
     setNotesError(false);
-
-    // close modal
-    toggleClose();
   };
 
   const handleSubmit = () => {
@@ -270,13 +265,17 @@ const EditLog = ({
         getRecords(1);
         setUserPageNum(1);
 
-        handleClose();
+        toggleClose();
       } else {
         setAlertData(ALERT_DATA.ERROR);
       }
       setShowAlert(true);
     });
   };
+
+  useEffect(() => {
+    initializeValues();
+  }, [isOpen]);
 
   useEffect(() => {
     if (showAlert) {
@@ -290,7 +289,7 @@ const EditLog = ({
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={handleClose} size="xl">
+        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Edit Log Entry Details</ModalHeader>
@@ -426,7 +425,7 @@ const EditLog = ({
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
-                  onClick={handleClose}
+                  onClick={toggleClose}
                   variant="tertiary"
                   marginRight="8px"
                 >
