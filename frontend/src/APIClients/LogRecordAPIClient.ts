@@ -147,14 +147,13 @@ const editLogRecord = async ({
   tags,
   building,
   attnTo,
-}: EditLogRecordParams): Promise<any> => {
+}: EditLogRecordParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-
-    const { data } = await baseAPIClient.put<any>(
+    await baseAPIClient.put(
       `/log_records/${logId}`,
       {
         employeeId,
@@ -168,9 +167,9 @@ const editLogRecord = async ({
       },
       { headers: { Authorization: bearerToken } },
     );
-    return data;
+    return true;
   } catch (error) {
-    return null;
+    return false;
   }
 };
 

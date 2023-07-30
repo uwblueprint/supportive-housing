@@ -41,7 +41,7 @@ import { ResidentLabel } from "../../types/ResidentTypes";
 import combineDateTime from "../../helper/combineDateTime";
 
 type Props = {
-  getRecords: (page_number: number) => Promise<void>;
+  getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
@@ -103,7 +103,7 @@ const getCurUserSelectOption = () => {
   );
   if (curUser && curUser.firstName && curUser.id) {
     const userId = curUser.id
-    return {id: userId, label: curUser.firstName, value: userId}
+    return {label: curUser.firstName, value: userId}
   }
   return { label: "", value: -1 };
 };
@@ -199,8 +199,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     }
   };
 
-  const handleNotesChange = (e: { target: { value: unknown } }) => {
-    const inputValue: string = e.target.value as string;
+  const handleNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
     setNotes(inputValue);
     setNotesError(inputValue === "");
   };
@@ -266,7 +266,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setCreateOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Update error states
     setEmployeeError(!employee.label);
     setDateError(date === null);
@@ -292,7 +292,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     // update the table with the new log
     // NOTE: -1 is the default state for attnTo
     const attentionTo = attnTo === -1 ? undefined : attnTo;
-    LogRecordAPIClient.createLog({
+    await LogRecordAPIClient.createLog({
       employeeId: employee.value,
       residentId: resident,
       datetime: combineDateTime(date, time),
@@ -304,9 +304,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     }).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS)
-        countRecords()
+        countRecords();
         getRecords(1);
-        setUserPageNum(1)
+        setUserPageNum(1);
       }
       else {
         setAlertData(ALERT_DATA.ERROR)

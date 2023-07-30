@@ -43,7 +43,7 @@ type Props = {
   toggleClose: () => void;
   employeeOptions: UserLabel[];
   residentOptions: UserLabel[];
-  getRecords: (page_number: number) => Promise<void>;
+  getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
@@ -93,9 +93,9 @@ const getCurUserSelectOption = () => {
   );
   if (curUser && curUser.firstName && curUser.id) {
     const userId = curUser.id;
-    return { id: userId, label: curUser.firstName, value: userId };
+    return { label: curUser.firstName, value: userId };
   }
-  return { id: -1, label: "", value: -1 };
+  return { label: "", value: -1 };
 };
 
 const EditLog = ({ 
@@ -192,14 +192,14 @@ const EditLog = ({
     }
   };
 
-  const handleNotesChange = (e: { target: { value: unknown } }) => {
-    const inputValue: string = e.target.value as string;
+  const handleNotesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
     setNotes(inputValue);
     setNotesError(inputValue === "");
   };
 
   const initializeValues = () => {
-    // reset state variables 
+    // set state variables 
     setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
     setTime(
@@ -226,7 +226,7 @@ const EditLog = ({
     setNotesError(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Update error states
     setEmployeeError(!employee.label);
     setDateError(date === null);
@@ -247,7 +247,7 @@ const EditLog = ({
       return;
     }
 
-    LogRecordAPIClient.editLogRecord({
+    await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
       residentId: resident,
@@ -274,7 +274,9 @@ const EditLog = ({
   };
 
   useEffect(() => {
-    initializeValues();
+    if (isOpen) {
+      initializeValues();
+    }
   }, [isOpen]);
 
   useEffect(() => {

@@ -35,7 +35,7 @@ import { UserLabel } from "../../../types/UserTypes";
 type Props = {
   logRecords: LogRecord[];
   tableRef: RefObject<HTMLDivElement>;
-  getRecords: (page_number: number) => Promise<void>;
+  getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
@@ -88,7 +88,6 @@ const LogRecordsTable = ({
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
       const residentLabels: UserLabel[] = residentsData.residents.map((r) => ({
-        id: r.id!,
         label: r.residentId!,
         value: r.id!,
       }));
@@ -100,7 +99,6 @@ const LogRecordsTable = ({
       const userLabels: UserLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
-          id: user.id,
           label: user.firstName,
           value: user.id,
         }));
