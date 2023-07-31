@@ -71,7 +71,7 @@ type Props = {
 };
 
 const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
-  const { id, initial, roomNum, dateJoined, dateLeft, building } = resident;
+  const { id, residentId, initial, roomNum, dateJoined, dateLeft, building } = resident;
   const [initials, setInitials] = useState(initial);
   const [roomNumber, setRoomNumber] = useState<number>(roomNum);
   const [moveInDate, setMoveInDate] = useState<Date>(new Date(Date.parse(dateJoined)));
@@ -91,6 +91,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   const editRes = async () => {
     await ResidentAPIClient.editResident({
       id,
+      residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: moveInDate.toLocaleDateString('en-CA'),
@@ -163,6 +164,20 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     }
   };
 
+  const handleToggleClose = () => {
+    setFlagged(false);
+    setInitials(initial);
+    setRoomNumber(roomNum);
+    setMoveInDate(moveInDate);
+    setUserBuilding(building);
+    setInitialsError(false);
+    setRoomNumberError(false);
+    setMoveInDateError(false);
+    setMoveOutDateError(false);
+    setBuildingError(false);
+    toggleClose();
+  };
+
   const handleSave = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.toString().length !== 3);
@@ -172,7 +187,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     if (
       initials.length !== 2 ||
       moveInDateError || 
-      roomNumberError ||
+      roomNumber.toString().length !== 3 ||
       userBuilding === "" ||
       moveOutDateError
     ) {
@@ -180,9 +195,15 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     }
     editRes();
     setShowAlert(true);
+    setFlagged(false);
+    setInitialsError(false);
+    setRoomNumberError(false);
+    setMoveInDateError(false);
+    setMoveOutDateError(false);
+    setBuildingError(false);
     toggleClose();
   };
-
+  
   // Timer to remove alert
   useEffect(() => {
     if (showAlert) {
@@ -195,7 +216,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
+        <Modal isOpen={isOpen} onClose={handleToggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Edit Resident</ModalHeader>
@@ -279,7 +300,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
                     <FormErrorMessage marginBottom="8px">
                       Move out Date is required and must be after Move in Date
                     </FormErrorMessage>
-                    <Button marginTop="16px" onClick={handleClear} disabled={!flagged} variant="secondary">
+                    <Button marginTop="16px" marginBottom="16px" onClick={handleClear} disabled={!flagged} variant="secondary">
                     Clear Move Out Date
                   </Button>
                 </FormControl>

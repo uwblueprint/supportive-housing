@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
+  Resident,
   GetResidentsReponse,
   CountResidentsResponse,
   CreateResidentParams,
@@ -54,7 +55,6 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
 };
 
 const createResident = async ({
-  id,
   initial,
   roomNum,
   dateJoined,

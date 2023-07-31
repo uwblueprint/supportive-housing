@@ -36,6 +36,9 @@ const DeleteResidentConfirmation = ({
     toggleClose();
   };
 
+  const MODAL_HEADER = `This is a permanent action. Are you sure you want to delete Resident ${RES_ID}`;
+  const MODAL_TEXT = `Residents can only be deleted if there are no log records associated with them.`;
+
   return (
     <>
       <Box>
@@ -43,13 +46,12 @@ const DeleteResidentConfirmation = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-            {`This is a permanent action.
-              Are you sure you want to delete Resident ${RES_ID}`}
+            {MODAL_HEADER}
             </ModalHeader>
             <ModalBody>
               <Box marginBottom="12px">
                 <Text>
-                  Residents can only be deleted if there are no log records associated with them.
+                  {MODAL_TEXT}
                 </Text>
               </Box>
             </ModalBody>
