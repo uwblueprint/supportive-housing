@@ -147,7 +147,7 @@ const CreateResident = (): React.ReactElement => {
   return (
     <>
       <Box textAlign="right">
-        <Button onClick={handleOpen} marginBottom="16px" variant="primary">
+        <Button onClick={handleOpen} variant="primary">
           <AddIcon boxSize="16px" marginRight="8px" />
           Add Resident
         </Button>
