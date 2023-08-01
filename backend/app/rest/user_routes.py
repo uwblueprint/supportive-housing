@@ -83,6 +83,7 @@ def count_users():
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
 def get_user_status():
     try:

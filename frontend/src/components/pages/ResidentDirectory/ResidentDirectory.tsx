@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, Flex, Spacer } from "@chakra-ui/react";
-import ResidentDirectoryTable from './ResidentDirectoryTable'
+import ResidentDirectoryTable from "./ResidentDirectoryTable";
 import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import Pagination from "../../common/Pagination";
+import CreateResident from "../../forms/CreateResident";
 
 const ResidentDirectory = (): React.ReactElement => {
   const [residents, setResidents] = useState<Resident[]>([]);
@@ -19,7 +20,7 @@ const ResidentDirectory = (): React.ReactElement => {
     const data = await ResidentAPIClient.getResidents({
       returnAll: false,
       pageNumber,
-      resultsPerPage
+      resultsPerPage,
     });
 
     // Reset table scroll
@@ -33,21 +34,21 @@ const ResidentDirectory = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
-  }
+  };
 
   const countResidents = async () => {
-    const data = await ResidentAPIClient.countResidents()
+    const data = await ResidentAPIClient.countResidents();
     setNumResidents(data ? data.numResults : 0);
-  }
+  };
 
   useEffect(() => {
     setUserPageNum(1);
     getResidents(1);
-  }, [resultsPerPage])
+  }, [resultsPerPage]);
 
   useEffect(() => {
-    countResidents()
-  }, [])
+    countResidents();
+  }, []);
 
   return (
     <Box>
@@ -64,13 +65,10 @@ const ResidentDirectory = (): React.ReactElement => {
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
           <Flex justify="end" gap="12px">
-          {/* TODO: INSERT RESIDENT-RELATED BUTTONS */}
+            {CreateResident()}
           </Flex>
         </Flex>
-        <ResidentDirectoryTable
-          residents={residents}
-          tableRef={tableRef }
-        />
+        <ResidentDirectoryTable residents={residents} tableRef={tableRef} />
         <Pagination
           numRecords={numResidents}
           pageNum={pageNum}
@@ -82,7 +80,7 @@ const ResidentDirectory = (): React.ReactElement => {
         />
       </Box>
     </Box>
-  )
+  );
 };
 
 export default ResidentDirectory;

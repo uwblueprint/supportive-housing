@@ -23,7 +23,7 @@ import {
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";

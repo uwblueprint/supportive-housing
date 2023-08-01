@@ -26,7 +26,6 @@ import HooksDemo from "./components/pages/HooksDemo";
 import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
-import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
 import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
@@ -102,11 +101,7 @@ const App = (): React.ReactElement => {
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
                   component={EmployeeDirectoryPage}
                 />
-                <PrivateRoute
-                  exact
-                  path={Routes.INVITE_EMPLOYEES}
-                  component={CreateEmployee}
-                />
+
                 <Route exact path="*" component={NotFound} />
               </Switch>
             </Router>
