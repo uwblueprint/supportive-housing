@@ -54,37 +54,35 @@ const ResidentDirectoryTable = ({
   const newToast = CreateToast();
 
   // Delete confirmation state
-  const [deleteOpenMap, setDeleteOpenMap] = useState<{ [key: number]: boolean }>({});
-
+  const [editingResident, setEditingResident] = useState<Resident | null>(null);
+  const[deletingResident, setDeletingResident] = useState<Resident | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // Handle delete confirmation toggle
-  const handleDeleteToggle = (residentId: number) => {
-    setDeleteOpenMap((prevDeleteOpenMap) => ({
-      ...prevDeleteOpenMap,
-      [residentId]: !prevDeleteOpenMap[residentId],
-    }));
-  };
-  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>({});
+  
+  const handleEditClick = (resident : Resident) => {
+    setEditingResident(resident);
+    setIsEditModalOpen(true);
+  }
 
-  // Handle edit form toggle
-  const handleEditToggle = (residentId: number) => {
-    setEditOpenMap((prevEditOpenMap) => ({
-      ...prevEditOpenMap,
-      [residentId]: !prevEditOpenMap[residentId],
-    }));
-  };
+  const handleEditClose = () => {
+    setIsEditModalOpen(false);
+  }
+
+  const handleDeleteClick = (resident : Resident) => {
+    setDeletingResident(resident);
+    setIsDeleteModalOpen(!isDeleteModalOpen);
+  }
 
   const deleteResident = async (itemId: number) => {
     const { statusCode, message } = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
-      // IMPLEMENT
       newToast("Error deleting resident", "Resident has log records attached", "error")
     }
     else if (statusCode === 500) {
-      // IMPLEMENT
       newToast("Error deleting resident", "", "error")
     }
     else {
-      // IMPLEMENT
       newToast("Deleted Resident successfully", "", "success")
     }
     setShowAlert(true);
@@ -143,10 +141,10 @@ const ResidentDirectoryTable = ({
                       variant="ghost"
                     />
                     <MenuList>
-                      <MenuItem onClick={() => handleEditToggle(resident.id)}>
+                      <MenuItem onClick={() => handleEditClick(resident)}>
                         Edit Resident
                       </MenuItem>
-                      <MenuItem onClick={() => handleDeleteToggle(resident.id)}>
+                      <MenuItem onClick={() => handleDeleteClick(resident)}>
                         Delete Resident
                       </MenuItem>
                     </MenuList>
@@ -154,24 +152,28 @@ const ResidentDirectoryTable = ({
                   )}
                 </Td>
                 </Tr>
-                <EditResident
-                      resident={resident}
-                      isOpen={editOpenMap[resident.id]}
-                      toggleClose={() => handleEditToggle(resident.id)}
-                />
-                <DeleteResidentConfirmation
-                    itemName="resident"
-                    itemId={resident.id}
-                    resId={resident.residentId}
-                    isOpen={deleteOpenMap[resident.id]}
-                    toggleClose={() => handleDeleteToggle(resident.id)}
-                    deleteAPI={deleteResident}
-                  />
                 </>
               );
             })}
           </Tbody>
         </Table>
+        {editingResident && 
+        <EditResident
+            resident={editingResident}
+            isOpen={isEditModalOpen}
+            toggleClose={handleEditClose}
+                />
+        }
+        {deletingResident && 
+          <DeleteResidentConfirmation
+            itemName="resident"
+            itemId={deletingResident.id}
+            resId={deletingResident.residentId}
+            isOpen={isDeleteModalOpen}
+            toggleClose={() => handleDeleteClick(deletingResident)}
+            deleteAPI={deleteResident}
+          />
+        }
       </TableContainer>
     </Box>
   );
