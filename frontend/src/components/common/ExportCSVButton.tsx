@@ -17,26 +17,32 @@ import {
   AlertDescription,
   AlertIcon,
   Tooltip,
+  Grid,
+  GridItem,
+  Text,
 } from "@chakra-ui/react";
 import { TiExport } from "react-icons/ti";
-import { RangeDatepicker } from "chakra-dayzed-datepicker";
+import { RangeDatepicker, SingleDatepicker } from "chakra-dayzed-datepicker";
 import CSVConverter from "../../helper/CSVConverter";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
-import { rangeDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { rangeDatePickerStyle, singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [showAlert, setShowAlert] = useState(false);
 
   const [isOpen, setOpen] = useState(false);
 
   const handleClear = () => {
-    setSelectedDates([]);
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const handleOpen = () => {
     setOpen(true);
-    setSelectedDates([]);
+    handleClear();
   };
 
   const handleClose = () => {
@@ -44,6 +50,7 @@ const ExportCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
+    console.log(selectedDates)
     const dateRange = selectedDates.map((date) =>
       date
         .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
@@ -84,16 +91,56 @@ const ExportCSVButton = (): React.ReactElement => {
             <ModalHeader>Export to CSV File</ModalHeader>
             <ModalBody>
               <FormControl>
-                <Flex gap="8px">
-                  <RangeDatepicker
-                    selectedDates={selectedDates}
-                    onDateChange={setSelectedDates}
-                    propsConfigs={rangeDatePickerStyle}
-                  />
-                  <Button onClick={handleClear} variant="secondary">
-                    Clear
-                  </Button>
-                </Flex>
+                <Grid templateColumns="repeat(9, 1fr)">
+                  <GridItem colSpan={3}>
+                    <SingleDatepicker
+                      name="start-date-input"
+                      date={startDate}
+                      onDateChange={setStartDate}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "Start Date",
+                        },
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem
+                    colSpan={1}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Text fontSize="14px" color="#6D8788" fontWeight="700">
+                      TO
+                    </Text>
+                  </GridItem>
+                  <GridItem colSpan={3}>
+                    <SingleDatepicker
+                      name="end-date-input"
+                      date={endDate}
+                      onDateChange={setEndDate}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "End Date",
+                        },
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem
+                    colSpan={2}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Button onClick={handleClear} variant="secondary">
+                      Clear
+                    </Button>
+                  </GridItem>
+                </Grid>
                 <FormHelperText>
                   Note: If a range is not selected, all records will be printed.
                 </FormHelperText>
