@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -9,6 +9,7 @@ import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
 import EmployeesTable from "./EmployeesTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import CreateEmployee from "../../forms/CreateEmployee";
 
 const EmployeeDirectoryPage = (): React.ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
@@ -21,7 +22,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
-    const data = await UserAPIClient.getUsers({pageNumber, resultsPerPage});
+    const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
@@ -61,8 +62,9 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         margin="0px auto"
         color="blue.600"
       >
-        <Flex marginBottom="16px">
+        <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Employee Directory</Box>
+          <>{CreateEmployee()}</>
         </Flex>
 
         <EmployeesTable users={users} tableRef={tableRef} />

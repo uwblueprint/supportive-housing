@@ -131,7 +131,7 @@ class UserService(IUserService):
 
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def count_users(self):
         try:
             count = User.query.count()
