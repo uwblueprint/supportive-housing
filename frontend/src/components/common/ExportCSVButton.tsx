@@ -11,7 +11,7 @@ import {
   FormControl,
   Button,
   FormHelperText,
-  Flex,
+  FormErrorMessage,
   ScaleFade,
   Alert,
   AlertDescription,
@@ -22,15 +22,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { TiExport } from "react-icons/ti";
-import { RangeDatepicker, SingleDatepicker } from "chakra-dayzed-datepicker";
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import CSVConverter from "../../helper/CSVConverter";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
-import { rangeDatePickerStyle, singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+  const [dateError, setDateError] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState(false);
 
   const [isOpen, setOpen] = useState(false);
@@ -38,6 +39,7 @@ const ExportCSVButton = (): React.ReactElement => {
   const handleClear = () => {
     setStartDate(undefined);
     setEndDate(undefined);
+    setDateError(false);
   };
 
   const handleOpen = () => {
@@ -50,7 +52,12 @@ const ExportCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
-    console.log(selectedDates)
+    if (startDate && endDate && startDate <= endDate) {
+      setDateError(true);
+      return
+    }
+    setDateError(false);
+
     const dateRange = selectedDates.map((date) =>
       date
         .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
@@ -90,7 +97,7 @@ const ExportCSVButton = (): React.ReactElement => {
           <ModalContent>
             <ModalHeader>Export to CSV File</ModalHeader>
             <ModalBody>
-              <FormControl>
+              <FormControl isInvalid={dateError}>
                 <Grid templateColumns="repeat(9, 1fr)">
                   <GridItem colSpan={3}>
                     <SingleDatepicker
@@ -141,6 +148,11 @@ const ExportCSVButton = (): React.ReactElement => {
                     </Button>
                   </GridItem>
                 </Grid>
+                {dateError &&
+                  <FormErrorMessage>
+                    The start date must be before the end date.
+                  </FormErrorMessage>
+                }
                 <FormHelperText>
                   Note: If a range is not selected, all records will be printed.
                 </FormHelperText>
