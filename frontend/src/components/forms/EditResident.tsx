@@ -94,9 +94,9 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
       residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
-      dateJoined: moveInDate.toLocaleDateString('en-CA'),
+      dateJoined: moveInDate.toISOString(),
       building: userBuilding,
-      dateLeft: moveOutDate? moveOutDate.toLocaleDateString('en-CA') : undefined,
+      dateLeft: moveOutDate ? moveOutDate.toISOString() : undefined,
     }).then((res) => {
       if (res != null) {
         setAlertData(ALERT_DATA.SUCCESS);
