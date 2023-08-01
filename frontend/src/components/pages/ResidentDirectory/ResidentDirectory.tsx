@@ -61,12 +61,10 @@ const ResidentDirectory = (): React.ReactElement => {
         margin="0px auto"
         color="blue.600"
       >
-        <Flex marginBottom="16px">
+        <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
-          <Flex justify="end" gap="12px">
-            {CreateResident()}
-          </Flex>
+          <> {CreateResident()} </>
         </Flex>
         <ResidentDirectoryTable residents={residents} tableRef={tableRef} />
         <Pagination

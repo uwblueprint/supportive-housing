@@ -18,21 +18,24 @@ type Props = {
 };
 
 const getFormattedDatesAndStatus = (resident: Resident) => {
-    const startDateObj = new Date(resident.dateJoined);
-    const startDate = getFormattedDateAndTime(startDateObj, true);
+  const startDateObj = new Date(resident.dateJoined);
+  const startDate = getFormattedDateAndTime(startDateObj, true);
 
-    let endDate;
-    if (resident.dateLeft != null) {
-        const endDateObj = new Date(resident.dateLeft)
-        endDate = getFormattedDateAndTime(endDateObj, true)
-    }
-    const status = resident.dateJoined !== null && resident.dateLeft !== null ? "Past" : "Current";
-    return {
-        startDate,
-        endDate,
-        status
-    }
-}
+  let endDate;
+  if (resident.dateLeft != null) {
+    const endDateObj = new Date(resident.dateLeft);
+    endDate = getFormattedDateAndTime(endDateObj, true);
+  }
+  const status =
+    resident.dateJoined !== null && resident.dateLeft !== null
+      ? "Past"
+      : "Current";
+  return {
+    startDate,
+    endDate,
+    status,
+  };
+};
 
 const ResidentDirectoryTable = ({
   residents,
@@ -46,10 +49,7 @@ const ResidentDirectoryTable = ({
         overflowY="scroll"
         ref={tableRef}
       >
-        <Table
-          variant="showTable"
-          verticalAlign="middle"
-        >
+        <Table variant="showTable" verticalAlign="middle">
           <Thead>
             <Tr>
               <Th>Resident</Th>
@@ -62,20 +62,17 @@ const ResidentDirectoryTable = ({
 
           <Tbody>
             {residents.map((resident) => {
-              const { startDate, endDate, status } = getFormattedDatesAndStatus(resident);
-              // TODO: Remove non-null assertion from residentId 
+              const { startDate, endDate, status } = getFormattedDatesAndStatus(
+                resident,
+              );
+              // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
                   <Td width="20%">{resident.residentId!}</Td>
                   <Td width="15%">{status}</Td>
                   <Td width="20%">{resident.building}</Td>
                   <Td width="20%">{startDate.date}</Td>
-                  {
-                    endDate ?
-                    <Td width="20%">{endDate.date}</Td>
-                    :
-                    null
-                  }
+                  {endDate ? <Td width="20%">{endDate.date}</Td> : null}
                 </Tr>
               );
             })}
