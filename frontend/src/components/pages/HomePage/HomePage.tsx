@@ -180,7 +180,13 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable logRecords={logRecords} tableRef={tableRef} />
+        <LogRecordsTable
+          logRecords={logRecords}
+          tableRef={tableRef}
+          getRecords={getLogRecords}
+          countRecords={countLogRecords}
+          setUserPageNum={setUserPageNum}
+        />
         <Pagination
           numRecords={numRecords}
           pageNum={pageNum}
