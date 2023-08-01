@@ -168,7 +168,8 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     setFlagged(false);
     setInitials(initial);
     setRoomNumber(roomNum);
-    setMoveInDate(moveInDate);
+    setMoveInDate(new Date(Date.parse(dateJoined)));
+    setMoveOutDate(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
     setUserBuilding(building);
     setInitialsError(false);
     setRoomNumberError(false);
