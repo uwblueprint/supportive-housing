@@ -98,15 +98,15 @@ const getCurUserSelectOption = () => {
   return { label: "", value: -1 };
 };
 
-const EditLog = ({ 
-  logRecord, 
-  isOpen, 
-  toggleClose, 
-  employeeOptions, 
+const EditLog = ({
+  logRecord,
+  isOpen,
+  toggleClose,
+  employeeOptions,
   residentOptions,
   getRecords,
   countRecords,
-  setUserPageNum, 
+  setUserPageNum,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
@@ -247,7 +247,7 @@ const EditLog = ({
       return;
     }
 
-    await LogRecordAPIClient.editLogRecord({
+    const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
       residentId: resident,
@@ -257,20 +257,18 @@ const EditLog = ({
       tags,
       building,
       attnTo: attnTo === -1 ? undefined : attnTo,
-    }).then((res) => {
-      if (res != null) {
-        setAlertData(ALERT_DATA.SUCCESS);
+    })
+    if (res) {
+      setAlertData(ALERT_DATA.SUCCESS);
+      countRecords();
+      getRecords(1);
+      setUserPageNum(1);
 
-        countRecords();
-        getRecords(1);
-        setUserPageNum(1);
-
-        toggleClose();
-      } else {
-        setAlertData(ALERT_DATA.ERROR);
-      }
-      setShowAlert(true);
-    });
+      toggleClose();
+    } else {
+      setAlertData(ALERT_DATA.ERROR);
+    }
+    setShowAlert(true);
   };
 
   useEffect(() => {
