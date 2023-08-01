@@ -215,11 +215,11 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   }, [showAlert]);
 
   useEffect(() => {
-    setInitials(resident.initial);
-    setRoomNumber(resident.roomNum);
-    setMoveInDate(new Date(Date.parse(resident.dateJoined)));
-    setUserBuilding(resident.building);
-    setMoveOutDate(resident.dateLeft? new Date(Date.parse(resident.dateLeft)) : undefined);
+    setInitials(initial);
+    setRoomNumber(roomNum);
+    setMoveInDate(new Date(Date.parse(dateJoined)));
+    setUserBuilding(building);
+    setMoveOutDate(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
   }, [resident]);
   
   return (
