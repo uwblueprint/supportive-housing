@@ -21,6 +21,19 @@ class ResidentsService(IResidentsService):
         """
         self.logger = logger
 
+    def is_date_left_invalid_resident(self, resident):
+        """
+        Validates if date_left is greater than date_joined given a payload for a resident
+        """
+        if "date_joined" in resident and "date_left" in resident:
+            date_joined = datetime.fromisoformat(resident["date_joined"].replace('Z', '+00:00'))
+            date_left = datetime.fromisoformat(resident["date_left"].replace('Z', '+00:00'))
+
+            if date_left < date_joined:
+                return True
+
+        return False
+
     def add_resident(self, resident):
         new_resident = resident
         try:
