@@ -51,6 +51,13 @@ const ExportCSVButton = (): React.ReactElement => {
     setOpen(false);
   };
 
+  const formatDate = (date: Date | undefined) => {
+    if (date !== undefined) {
+      return date.toLocaleString("fr-CA", { timeZone: "America/Toronto" }).substring(0, 10);
+    }
+    return "";
+  };
+
   const handleSubmit = async () => {
     if (startDate && endDate && startDate <= endDate) {
       setDateError(true);
@@ -58,11 +65,13 @@ const ExportCSVButton = (): React.ReactElement => {
     }
     setDateError(false);
 
-    const dateRange = selectedDates.map((date) =>
-      date
-        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-        .substring(0, 10),
-    );
+    // const dateRange = selectedDates.map((date) =>
+    //   date
+    //     .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+    //     .substring(0, 10),
+    // );
+
+    const dateRange = [formatDate(startDate), formatDate(endDate)];
 
     const data = await LogRecordAPIClient.filterLogRecords({
       dateRange,
