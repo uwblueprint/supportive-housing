@@ -143,10 +143,23 @@ def update_user(user_id):
     """
     try:
         user = UpdateUserDTO(**request.json)
-        updated_user = user_service.update_user_by_id(user_id, user)
-        return jsonify(updated_user.__dict__), 200
+        user_service.update_user_by_id(user_id, user)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} updated sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            201,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
+
+        if (error_message == "User already exists" or str(e) == "User already exists"):
+            return jsonify({"error": (error_message if error_message else str(e))}), 409
+
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 

@@ -1,6 +1,11 @@
-import React, { RefObject } from "react";
+import React, { RefObject, useState } from "react";
 import {
   Box,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Table,
   TableContainer,
   Tbody,
@@ -9,7 +14,9 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { VscKebabVertical } from "react-icons/vsc";
 import { User, UserRole, UserStatus } from "../../../types/UserTypes";
+import EditEmployee from "../../forms/EditEmployee";
 
 type Props = {
   users: User[];
@@ -44,6 +51,21 @@ const getStatusColor = (user: User): string => {
 };
 
 const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
+  const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
+  const [deletingEmployee, setDeletingEmployee] = useState<User | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleEditClick = (employee: User) => {
+    setEditingEmployee(employee);
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (employee: User) => {
+    setDeletingEmployee(employee);
+    setIsDeleteModalOpen(true);
+  };
+
   return (
     <Box>
       <TableContainer
@@ -59,6 +81,7 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
               <Th>Email</Th>
               <Th textAlign="center">Role</Th>
               <Th textAlign="center">Status</Th>
+              <Th> </Th>
             </Tr>
           </Thead>
 
@@ -84,11 +107,47 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
                       {user.userStatus}
                     </Box>
                   </Td>
+                  <Td width="1%">
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        aria-label="Options"
+                        icon={<VscKebabVertical />}
+                        w="36px"
+                        variant="ghost"
+                      />
+                      <MenuList>
+                        <MenuItem onClick={() => handleEditClick(user)}>
+                          Edit Employee
+                        </MenuItem>
+                        <MenuItem onClick={() => handleDeleteClick(user)}>
+                          Deactivate Employee
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </Td>
                 </Tr>
               );
             })}
           </Tbody>
         </Table>
+        {editingEmployee && (
+          <EditEmployee
+            employee={editingEmployee}
+            isOpen={isEditModalOpen}
+            toggleClose={() => setIsEditModalOpen(false)}
+          />
+        )}
+        {/* {deletingResident && (
+          <DeleteResidentConfirmation
+            itemName="resident"
+            itemId={deletingResident.id}
+            resId={deletingResident.residentId}
+            isOpen={isDeleteModalOpen}
+            toggleClose={() => handleDeleteClick(deletingResident)}
+            deleteAPI={deleteResident}
+          />
+        )} */}
       </TableContainer>
     </Box>
   );

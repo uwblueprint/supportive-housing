@@ -245,6 +245,11 @@ class UserService(IUserService):
 
             if not old_user:
                 raise Exception("user_id {user_id} not found".format(user_id=user_id))
+            
+            if (old_user.email != user.email):
+                user_entry = User.query.filter_by(email=user.email).first()
+                if (user_entry):
+                    raise Exception("User already exists")
 
             User.query.filter_by(id=user_id).update(
                 {
@@ -252,7 +257,6 @@ class UserService(IUserService):
                     User.last_name: user.last_name,
                     User.role: user.role,
                     User.email: user.email,
-                    User.user_status: user.user_status,
                 }
             )
 
@@ -268,7 +272,6 @@ class UserService(IUserService):
                         User.last_name: old_user.last_name,
                         User.role: old_user.role,
                         User.email: old_user.email,
-                        User.user_status: old_user.user_status,
                     }
                     User.query.filter_by(id=user_id).update(**old_user_dict)
                     db.session.commit()
@@ -296,15 +299,6 @@ class UserService(IUserService):
                 )
             )
             raise e
-
-        return UserDTO(
-            user_id,
-            user.first_name,
-            user.last_name,
-            user.email,
-            user.role,
-            user.user_status,
-        )
 
     def delete_user_by_id(self, user_id):
         try:
