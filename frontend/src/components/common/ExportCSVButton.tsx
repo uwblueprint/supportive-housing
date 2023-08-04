@@ -53,7 +53,9 @@ const ExportCSVButton = (): React.ReactElement => {
 
   const formatDate = (date: Date | undefined) => {
     if (date !== undefined) {
-      return date.toLocaleString("fr-CA", { timeZone: "America/Toronto" }).substring(0, 10);
+      return date
+        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+        .substring(0, 10);
     }
     return "";
   };
@@ -61,7 +63,7 @@ const ExportCSVButton = (): React.ReactElement => {
   const handleSubmit = async () => {
     if (startDate && endDate && startDate >= endDate) {
       setDateError(true);
-      return
+      return;
     }
     setDateError(false);
 
@@ -151,11 +153,11 @@ const ExportCSVButton = (): React.ReactElement => {
                     </Button>
                   </GridItem>
                 </Grid>
-                {dateError &&
+                {dateError && (
                   <FormErrorMessage>
                     The start date must be before the end date.
                   </FormErrorMessage>
-                }
+                )}
                 <FormHelperText>
                   Note: If a range is not selected, all records will be printed.
                 </FormHelperText>
