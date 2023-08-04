@@ -68,7 +68,7 @@ const ExportCSVButton = (): React.ReactElement => {
     const dateRange = [formatDate(startDate), formatDate(endDate)];
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      dateRange,
+      dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
       returnAll: true, // return all data
     });
 
