@@ -6,14 +6,14 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
   const employee = `${logRecord.employeeFirstName} ${logRecord.employeeLastName}`;
 
   return {
-    attnTo,
+    attnTo: logRecord.attnTo != null ? attnTo : "",
     building: logRecord.building,
     datetime: logRecord.datetime,
     employee,
     flagged: logRecord.flagged,
     note: logRecord.note,
     residentId: logRecord.residentId,
-    tags: logRecord.tags.join("; "),
+    tags: logRecord.tags != null ? logRecord.tags.join("; ") : "",
   };
 };
 
