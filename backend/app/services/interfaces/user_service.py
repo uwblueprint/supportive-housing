@@ -110,6 +110,18 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
+    def update_user_status(self, user_id, user_status):
+        """
+        Update a user's status using their id
+
+        :param user_id: id of the user
+        :param user_status: new status of the user (one of "Invited", "Active", or "Deactivated")
+        :raises Exception: if update fails
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
     def create_invited_user(self, user):
         """
         Create a row in the user table with user_status = "Invited"
@@ -161,17 +173,6 @@ class IUserService(ABC):
 
         :param user_id: user_id of user to be deleted
         :type user_id: str
-        :raises Exception: if user deletion fails
-        """
-        pass
-
-    @abstractmethod
-    def delete_user_by_email(self, email):
-        """
-        Delete a user by email
-
-        :param str email: email of user to be deleted
-        :type email: str
         :raises Exception: if user deletion fails
         """
         pass

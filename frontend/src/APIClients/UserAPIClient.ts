@@ -6,6 +6,7 @@ import {
   GetUsersResponse,
   CountUsersResponse,
   UpdateUserParams,
+  UserStatus,
 } from "../types/UserTypes";
 
 const getUsers = async ({
@@ -52,11 +53,10 @@ const countUsers = async (): Promise<CountUsersResponse> => {
 
 const updateUser = async ({
   id,
-  email,
   firstName,
   lastName,
   role,
-}: UpdateUserParams): Promise<{ statusCode: number; message: string }> => {
+}: UpdateUserParams): Promise<number> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -64,27 +64,63 @@ const updateUser = async ({
     )}`;
     const res = await baseAPIClient.put(
       `/users/${id}`,
-      { email, firstName, lastName, role },
+      { firstName, lastName, role },
       {
         headers: { Authorization: bearerToken },
       },
     );
-    return {
-      statusCode: res.status,
-      message: "Success",
-    };
+    return res.status;
   } catch (error: any) {
     const axiosErr = (error as any) as AxiosError;
     if (axiosErr.response) {
-      return {
-        statusCode: axiosErr.response.status,
-        message: error.message,
-      };
+      return axiosErr.response.status;
     }
-    return {
-      statusCode: 500,
-      message: "Error updating user",
-    };
+    return 500;
+  }
+};
+
+const updateUserStatus = async (
+  userId: number,
+  userStatus: UserStatus,
+): Promise<number> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const res = await baseAPIClient.patch(
+      `/users/user-status/${userId}`,
+      { userStatus },
+      {
+        headers: { Authorization: bearerToken },
+      },
+    );
+    return res.status;
+  } catch (error: any) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response) {
+      return axiosErr.response.status;
+    }
+    return 500;
+  }
+};
+
+const deleteUser = async (userId: number): Promise<number> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const res = await baseAPIClient.delete(`/users/${userId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return res.status;
+  } catch (error: any) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response) {
+      return axiosErr.response.status;
+    }
+    return 500;
   }
 };
 
@@ -92,4 +128,6 @@ export default {
   getUsers,
   countUsers,
   updateUser,
+  updateUserStatus,
+  deleteUser,
 };

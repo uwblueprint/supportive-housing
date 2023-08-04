@@ -8,7 +8,7 @@ export type User = {
   authId: string;
 };
 
-export type UpdateUserParams = Omit<User, "userStatus" | "authId">;
+export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
 
 export type UserLabel = {
   label: string;

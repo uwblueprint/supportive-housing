@@ -45,7 +45,6 @@ const EditEmployee = ({
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const newToast = CreateToast();
 
-  const [email, setEmail] = useState<string>("");
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [adminStatus, setAdminStatus] = useState<string>("");
@@ -54,7 +53,6 @@ const EditEmployee = ({
     setIsTwoFactorAuthenticated,
   ] = useState<boolean>(false);
 
-  const [emailError, setEmailError] = useState<boolean>(false);
   const [firstNameError, setFirstNameError] = useState<boolean>(false);
   const [lastNameError, setLastNameError] = useState<boolean>(false);
   const [adminStatusError, setAdminStatusError] = useState<boolean>(false);
@@ -87,7 +85,6 @@ const EditEmployee = ({
   }, [adminStatus]);
 
   useEffect(() => {
-    setEmail(employee.email);
     setFirstName(employee.firstName);
     setLastName(employee.lastName);
     mapRoleToState(employee.role);
@@ -109,12 +106,6 @@ const EditEmployee = ({
     }
   };
 
-  const handleInvitedEmailChange = (e: { target: { value: unknown } }) => {
-    const inputValue = e.target.value as string;
-    setEmail(inputValue);
-    setEmailError(false);
-  };
-
   const handleAdminStatusChange = (inputValue: string) => {
     setAdminStatus(inputValue);
 
@@ -128,30 +119,21 @@ const EditEmployee = ({
   const handleClose = () => {
     toggleClose();
 
-    setEmail(employee.email);
     setFirstName(employee.firstName);
     setLastName(employee.lastName);
     mapRoleToState(employee.role);
 
-    setEmailError(false);
     setFirstNameError(false);
     setLastNameError(false);
     setAdminStatusError(false);
   };
 
   const onInviteEmployee = async (
-    isEmailError: boolean,
     isFirstNameError: boolean,
     isLastNameError: boolean,
     isAdminStatusError: boolean,
   ) => {
-    if (
-      !isEmailError &&
-      !isFirstNameError &&
-      !isLastNameError &&
-      !isAdminStatusError
-    ) {
-      let hasInvitedUser: string | undefined;
+    if (!isFirstNameError && !isLastNameError && !isAdminStatusError) {
       let roleOptionIndex: number | undefined;
 
       if (adminStatus === "1") {
@@ -163,20 +145,13 @@ const EditEmployee = ({
       }
 
       if (roleOptionIndex !== undefined) {
-        const { statusCode, message } = await UserAPIClient.updateUser({
+        const statusCode = await UserAPIClient.updateUser({
           id: employee.id,
           firstName,
           lastName,
-          email,
           role: RoleOptions[roleOptionIndex],
         });
-        if (statusCode === 409) {
-          newToast(
-            "Error updating employee",
-            `Employee with email ${email} already exists`,
-            "error",
-          );
-        } else if (statusCode === 201) {
+        if (statusCode === 201) {
           newToast(
             "Employee updated",
             "Employee has been successfully updated",
@@ -193,31 +168,22 @@ const EditEmployee = ({
   };
 
   const handleSubmit = () => {
-    const isEmailError = !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-      email,
-    );
     const onlyLetters = /^[A-Za-z]+$/;
     const isFirstNameError = !(firstName && onlyLetters.test(firstName));
     const isLastNameError = !(lastName && onlyLetters.test(lastName));
     const isAdminStatusError = adminStatus === "";
 
-    setEmailError(isEmailError);
     setFirstNameError(isFirstNameError);
     setLastNameError(isLastNameError);
     setAdminStatusError(isAdminStatusError);
-    onInviteEmployee(
-      isEmailError,
-      isFirstNameError,
-      isLastNameError,
-      isAdminStatusError,
-    );
+    onInviteEmployee(isFirstNameError, isLastNameError, isAdminStatusError);
   };
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={handleClose} isCentered>
         <ModalOverlay />
-        <ModalContent minW="513px" maxW="513px" minH="484px" borderRadius="8px">
+        <ModalContent minW="513px" maxW="513px" minH="410px" borderRadius="8px">
           <Box>
             <ModalHeader>Edit Employee</ModalHeader>
             <ModalCloseButton mt="5px" margin="inherit" size="lg" />
@@ -256,20 +222,6 @@ const EditEmployee = ({
                     <FormErrorMessage>Last Name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
-              </Box>
-              <Box display="flex" flexDirection="row" mt="16px">
-                <FormControl isRequired isInvalid={emailError}>
-                  <FormLabel>SHOW Email</FormLabel>
-                  <Input
-                    placeholder="Enter SHOW email"
-                    value={email}
-                    onChange={handleInvitedEmailChange}
-                    maxLength={254}
-                  />
-                  <FormErrorMessage>
-                    A valid email is required.
-                  </FormErrorMessage>
-                </FormControl>
               </Box>
             </Box>
             <Box pt="16px" pb="16px">
