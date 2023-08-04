@@ -59,17 +59,11 @@ const ExportCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
-    if (startDate && endDate && startDate <= endDate) {
+    if (startDate && endDate && startDate >= endDate) {
       setDateError(true);
       return
     }
     setDateError(false);
-
-    // const dateRange = selectedDates.map((date) =>
-    //   date
-    //     .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-    //     .substring(0, 10),
-    // );
 
     const dateRange = [formatDate(startDate), formatDate(endDate)];
 
