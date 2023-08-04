@@ -55,8 +55,8 @@ const CreateResident = (): React.ReactElement => {
     await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
-      dateJoined: moveInDate.toLocaleDateString('en-CA'),
-      building, 
+      dateJoined: moveInDate.toISOString(),
+      building,
     });
   };
 

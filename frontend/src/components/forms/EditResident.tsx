@@ -70,13 +70,13 @@ type Props = {
   toggleClose: () => void;
 };
 
-const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
+const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   const { id, residentId, initial, roomNum, dateJoined, dateLeft, building } = resident;
   const [initials, setInitials] = useState(initial);
   const [roomNumber, setRoomNumber] = useState<number>(roomNum);
   const [moveInDate, setMoveInDate] = useState<Date>(new Date(Date.parse(dateJoined)));
   const [userBuilding, setUserBuilding] = useState(building);
-  const [moveOutDate, setMoveOutDate] = useState(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
+  const [moveOutDate, setMoveOutDate] = useState(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -109,8 +109,8 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
   const handleClear = () => {
     setMoveOutDate(undefined);
   };
-  
-  const handleInitialsChange = (e: { target: { value: unknown } }) => {
+
+  const handleInitialsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     if (/^[a-z]{0,2}$/i.test(inputValue)) {
       setInitials(inputValue.toUpperCase());
@@ -120,10 +120,12 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
 
   const handleFlagged = () => {
     setFlagged(!flagged);
-    setMoveOutDate(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
+    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
   };
 
-  const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
+  const handleRoomNumberChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
       setRoomNumber(parseInt(inputValue, 10));
@@ -142,7 +144,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
       }
     }
   };
-  
+
   const handleMoveOutDateChange = (inputValue: Date) => {
     if (inputValue !== null) {
       if (inputValue >= moveInDate) {
@@ -152,7 +154,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
       else {
         setMoveOutDateError(true);
       }
-    } 
+    }
   };
 
   const handleBuildingChange = (
@@ -169,7 +171,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     setInitials(initial);
     setRoomNumber(roomNum);
     setMoveInDate(new Date(Date.parse(dateJoined)));
-    setMoveOutDate(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
+    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
     setUserBuilding(building);
     setInitialsError(false);
     setRoomNumberError(false);
@@ -187,7 +189,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     //  Prevents form submission if any required values are incorrect
     if (
       initials.length !== 2 ||
-      moveInDateError || 
+      moveInDateError ||
       roomNumber.toString().length !== 3 ||
       userBuilding === "" ||
       moveOutDateError
@@ -204,7 +206,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     setBuildingError(false);
     toggleClose();
   };
-  
+
   // Timer to remove alert
   useEffect(() => {
     if (showAlert) {
@@ -219,9 +221,9 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
     setRoomNumber(roomNum);
     setMoveInDate(new Date(Date.parse(dateJoined)));
     setUserBuilding(building);
-    setMoveOutDate(dateLeft? new Date(Date.parse(dateLeft)) : undefined);
-  }, [resident]);
-  
+    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
+  }, [building, dateJoined, dateLeft, initial, resident, roomNum]);
+
   return (
     <>
       <Box>
@@ -298,21 +300,27 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props ) => {
               >
                 <Text>Edit Move Out Date</Text>
               </Checkbox>
-              <FormControl isRequired isInvalid={moveOutDateError} isDisabled={!flagged}>
-                    <FormLabel>Move Out date</FormLabel>
-                    <SingleDatepicker
-                      name="date-input"
-                      date={moveOutDate}
-                      onDateChange={handleMoveOutDateChange}
-                      propsConfigs={singleDatePickerStyle}
-                    />
-                    <FormErrorMessage marginBottom="8px">
-                      Move out Date is required and must be after Move in Date
-                    </FormErrorMessage>
-                    <Button marginTop="16px" marginBottom="16px" onClick={handleClear} disabled={!flagged} variant="secondary">
-                    Clear Move Out Date
-                  </Button>
-                </FormControl>
+              <FormControl isInvalid={moveOutDateError} isDisabled={!flagged}>
+                <FormLabel>Move Out Date</FormLabel>
+                <SingleDatepicker
+                  name="date-input"
+                  date={moveOutDate}
+                  onDateChange={handleMoveOutDateChange}
+                  propsConfigs={singleDatePickerStyle}
+                />
+                <FormErrorMessage marginBottom="8px">
+                  Move out Date must be after Move in Date
+                </FormErrorMessage>
+                <Button
+                  marginTop="16px"
+                  marginBottom="16px"
+                  onClick={handleClear}
+                  disabled={!flagged}
+                  variant="secondary"
+                >
+                  Clear Move Out Date
+                </Button>
+              </FormControl>
               <Divider />
             </ModalBody>
             <ModalFooter>
