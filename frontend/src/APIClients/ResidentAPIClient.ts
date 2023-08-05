@@ -76,7 +76,9 @@ const createResident = async ({
   }
 };
 
-const deleteResident = async (residentId: number): Promise<{statusCode: number, message: string}> => {
+const deleteResident = async (
+  residentId: number,
+): Promise<{ statusCode: number; message: string }> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -87,20 +89,20 @@ const deleteResident = async (residentId: number): Promise<{statusCode: number, 
     });
     return {
       statusCode: 200,
-      message: "Success"
+      message: "Success",
     };
   } catch (error: any) {
-    const axiosErr = error as any as AxiosError
+    const axiosErr = (error as any) as AxiosError;
     if (axiosErr.response) {
       return {
         statusCode: axiosErr.response.status,
-        message: error.message
-      }
+        message: error.message,
+      };
     }
     return {
       statusCode: 404,
-      message: "Error deleting resident"
-    }
+      message: "Error deleting resident",
+    };
   }
 };
 
@@ -119,7 +121,7 @@ const editResident = async ({
     )}`;
     await baseAPIClient.put(
       `/residents/${id}`,
-      { initial, roomNum, dateJoined, building, dateLeft},
+      { initial, roomNum, dateJoined, building, dateLeft },
       { headers: { Authorization: bearerToken } },
     );
     return true;
@@ -128,11 +130,10 @@ const editResident = async ({
   }
 };
 
-
 export default {
   getResidents,
   countResidents,
   createResident,
   editResident,
-  deleteResident
+  deleteResident,
 };

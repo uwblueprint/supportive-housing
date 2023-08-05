@@ -28,10 +28,11 @@ import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
-import { Resident } from "../../types/ResidentTypes"
+import { Resident } from "../../types/ResidentTypes";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import CreateToast from "../common/Toasts";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -40,30 +41,6 @@ const BUILDINGS = [
   { label: "402", value: "402" },
 ];
 
-type AlertData = {
-  status: AlertStatus;
-  description: string;
-};
-
-type AlertDataOptions = {
-  [key: string]: AlertData;
-};
-
-const ALERT_DATA: AlertDataOptions = {
-  DEFAULT: {
-    status: "info",
-    description: "",
-  },
-  SUCCESS: {
-    status: "success",
-    description: "Resident successfully edited.",
-  },
-  ERROR: {
-    status: "error",
-    description: "Error editing Resident.",
-  },
-};
-
 type Props = {
   resident: Resident;
   isOpen: boolean;
@@ -71,46 +48,50 @@ type Props = {
 };
 
 const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
-  const { id, residentId, initial, roomNum, dateJoined, dateLeft, building } = resident;
-  const [initials, setInitials] = useState(initial);
-  const [roomNumber, setRoomNumber] = useState<number>(roomNum);
-  const [moveInDate, setMoveInDate] = useState<Date>(new Date(Date.parse(dateJoined)));
-  const [userBuilding, setUserBuilding] = useState(building);
-  const [moveOutDate, setMoveOutDate] = useState(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
+  const [initials, setInitials] = useState("");
+  const [roomNumber, setRoomNumber] = useState(-1);
+  const [moveInDate, setMoveInDate] = useState(new Date());
+  const [userBuilding, setUserBuilding] = useState("");
+  const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
-  const [moveInDateError, setMoveInDateError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
   const [moveOutDateError, setMoveOutDateError] = useState(false);
-  const [flagged, setFlagged] = useState(false);
-  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
 
-  const [showAlert, setShowAlert] = useState(false);
+  const newToast = CreateToast();
 
-  const editRes = async () => {
-    await ResidentAPIClient.editResident({
-      id,
-      residentId,
+  const editResident = async () => {
+    const res = await ResidentAPIClient.editResident({
+      id: resident.id,
+      residentId: resident.residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: moveInDate.toISOString(),
       building: userBuilding,
-      dateLeft: moveOutDate ? moveOutDate.toISOString() : undefined,
-    }).then((res) => {
-      if (res != null) {
-        setAlertData(ALERT_DATA.SUCCESS);
-      } else {
-        setAlertData(ALERT_DATA.ERROR);
-      }
+      dateLeft: moveOutDate?.toISOString(),
     });
+
+    if (res != null) {
+      newToast(
+        "Resident updated",
+        "Resident has been successfully updated",
+        "success",
+      );
+    } else {
+      newToast(
+        "Error updating resident",
+        "Resident was unable to be updated",
+        "error",
+      );
+    }
   };
 
-  const handleClear = () => {
+  const clearMoveOutDate = () => {
     setMoveOutDate(undefined);
   };
 
-  const handleInitialsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     if (/^[a-z]{0,2}$/i.test(inputValue)) {
       setInitials(inputValue.toUpperCase());
@@ -118,14 +99,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     }
   };
 
-  const handleFlagged = () => {
-    setFlagged(!flagged);
-    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
-  };
-
-  const handleRoomNumberChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handleRoomNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
       setRoomNumber(parseInt(inputValue, 10));
@@ -134,26 +108,16 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   };
 
   const handleMoveInDateChange = (inputValue: Date) => {
-    if (inputValue !== null) {
-      if (moveOutDate && inputValue > moveOutDate) {
-        setMoveInDateError(true);
-      }
-      else {
-        setMoveInDate(inputValue);
-        setMoveInDateError(false);
-      }
+    setMoveInDate(inputValue);
+    if (moveOutDate && inputValue < moveOutDate) {
+      setMoveOutDateError(false);
     }
   };
 
   const handleMoveOutDateChange = (inputValue: Date) => {
-    if (inputValue !== null) {
-      if (inputValue >= moveInDate) {
-        setMoveOutDate(inputValue);
-        setMoveOutDateError(false);
-      }
-      else {
-        setMoveOutDateError(true);
-      }
+    setMoveOutDate(inputValue);
+    if (inputValue > moveInDate) {
+      setMoveOutDateError(false);
     }
   };
 
@@ -167,62 +131,53 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   };
 
   const handleToggleClose = () => {
-    setFlagged(false);
-    setInitials(initial);
-    setRoomNumber(roomNum);
-    setMoveInDate(new Date(Date.parse(dateJoined)));
-    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
-    setUserBuilding(building);
+    toggleClose();
+
+    setInitials(resident.initial);
+    setRoomNumber(resident.roomNum);
+    setMoveInDate(new Date(resident.dateJoined));
+    setUserBuilding(resident.building);
+    setMoveOutDate(resident.dateLeft ? new Date(resident.dateLeft) : undefined);
+
     setInitialsError(false);
     setRoomNumberError(false);
-    setMoveInDateError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
-    toggleClose();
   };
 
-  const handleSave = () => {
-    setInitialsError(initials.length !== 2);
-    setRoomNumberError(roomNumber.toString().length !== 3);
-    setBuildingError(userBuilding === "");
-
-    //  Prevents form submission if any required values are incorrect
-    if (
-      initials.length !== 2 ||
-      moveInDateError ||
-      roomNumber.toString().length !== 3 ||
-      userBuilding === "" ||
-      moveOutDateError
-    ) {
+  const handleSave = async () => {
+    if (initials.length !== 2) {
+      setInitialsError(true);
       return;
     }
-    editRes();
-    setShowAlert(true);
-    setFlagged(false);
+    if (!roomNumber || roomNumber.toString().length !== 3) {
+      setRoomNumberError(true);
+      return;
+    }
+    if (moveOutDate && moveOutDate <= moveInDate) {
+      setMoveOutDateError(true);
+      return;
+    }
+    if (userBuilding === "") {
+      setBuildingError(true);
+      return;
+    }
+
+    await editResident();
     setInitialsError(false);
     setRoomNumberError(false);
-    setMoveInDateError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
     toggleClose();
   };
 
-  // Timer to remove alert
   useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-    }
-  }, [showAlert]);
-
-  useEffect(() => {
-    setInitials(initial);
-    setRoomNumber(roomNum);
-    setMoveInDate(new Date(Date.parse(dateJoined)));
-    setUserBuilding(building);
-    setMoveOutDate(dateLeft ? new Date(Date.parse(dateLeft)) : undefined);
-  }, [building, dateJoined, dateLeft, initial, resident, roomNum]);
+    setInitials(resident.initial);
+    setRoomNumber(resident.roomNum);
+    setMoveInDate(new Date(resident.dateJoined));
+    setUserBuilding(resident.building);
+    setMoveOutDate(resident.dateLeft ? new Date(resident.dateLeft) : undefined);
+  }, [resident]);
 
   return (
     <>
@@ -238,11 +193,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
                 <Col>
                   <FormControl isRequired isInvalid={initialsError}>
                     <FormLabel>Resident Initials</FormLabel>
-                    <Input
-                      defaultValue={initial}
-                      value={initials}
-                      onChange={handleInitialsChange}
-                    />
+                    <Input value={initials} onChange={handleInitialsChange} />
                     <FormErrorMessage>
                       Resident Initials are required and must contain 2 letters.
                     </FormErrorMessage>
@@ -264,7 +215,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
               </Row>
               <Row style={{ marginTop: "16px" }}>
                 <Col>
-                  <FormControl isRequired isInvalid={moveInDateError}>
+                  <FormControl isRequired>
                     <FormLabel>Move In Date</FormLabel>
                     <SingleDatepicker
                       name="date-input"
@@ -278,13 +229,13 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
                   </FormControl>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>
                     <Select
                       options={BUILDINGS}
-                      placeholder={building}
+                      placeholder={resident.building}
                       onChange={handleBuildingChange}
                       styles={selectStyle}
                     />
@@ -292,35 +243,29 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
                   </FormControl>
                 </Col>
               </Row>
-              <Checkbox
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                onChange={() => handleFlagged()}
-                marginBottom="16px"
-              >
-                <Text>Edit Move Out Date</Text>
-              </Checkbox>
-              <FormControl isInvalid={moveOutDateError} isDisabled={!flagged}>
-                <FormLabel>Move Out Date</FormLabel>
-                <SingleDatepicker
-                  name="date-input"
-                  date={moveOutDate}
-                  onDateChange={handleMoveOutDateChange}
-                  propsConfigs={singleDatePickerStyle}
-                />
-                <FormErrorMessage marginBottom="8px">
-                  Move out Date must be after Move in Date
-                </FormErrorMessage>
-                <Button
-                  marginTop="16px"
-                  marginBottom="16px"
-                  onClick={handleClear}
-                  disabled={!flagged}
-                  variant="secondary"
-                >
-                  Clear Move Out Date
-                </Button>
-              </FormControl>
+              <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
+                <Col>
+                  <FormControl isInvalid={moveOutDateError}>
+                    <FormLabel>Move Out Date</FormLabel>
+                    <SingleDatepicker
+                      name="date-input"
+                      date={moveOutDate}
+                      onDateChange={handleMoveOutDateChange}
+                      propsConfigs={singleDatePickerStyle}
+                    />
+                    <FormErrorMessage marginBottom="8px">
+                      Move out Date must be after Move in Date
+                    </FormErrorMessage>
+                    <Button
+                      marginTop="16px"
+                      onClick={clearMoveOutDate}
+                      variant="secondary"
+                    >
+                      Clear Move Out Date
+                    </Button>
+                  </FormControl>
+                </Col>
+              </Row>
               <Divider />
             </ModalBody>
             <ModalFooter>
@@ -330,21 +275,6 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="success" variant="left-accent" borderRadius="6px">
-            <AlertIcon />
-            <AlertDescription>Resident successfully Edited.</AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </>
   );

@@ -101,8 +101,7 @@ const getCurUserSelectOption = () => {
     AUTHENTICATED_USER_KEY,
   );
   if (curUser && curUser.firstName && curUser.id) {
-    const userId = parseInt(curUser.id, 10);
-    return { label: curUser.firstName, value: userId };
+    return { label: curUser.firstName, value: curUser.id };
   }
   return { label: "", value: -1 };
 };

@@ -82,7 +82,7 @@ const CreateResident = (): React.ReactElement => {
       setMoveInDateError(false);
     }
   };
-  
+
   const handleBuildingChange = (
     selectedOption: SingleValue<{ label: string; value: string }>,
   ) => {
@@ -185,9 +185,7 @@ const CreateResident = (): React.ReactElement => {
                       onChange={handleRoomNumberChange}
                       type="number"
                     />
-                    <FormErrorMessage>
-                      {ROOM_ERROR_TEXT}
-                    </FormErrorMessage>
+                    <FormErrorMessage>{ROOM_ERROR_TEXT}</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
