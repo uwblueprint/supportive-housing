@@ -112,14 +112,17 @@ def get_residents():
     except:
         pass
 
-    try:    
+    try:
         resident_id = request.args.get("resident_id")
-        residents_results = residents_service.get_residents(return_all, page_number, results_per_page, resident_id)
+        residents_results = residents_service.get_residents(
+            return_all, page_number, results_per_page, resident_id
+        )
         return jsonify(residents_results), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-    
+
+
 @blueprint.route("/count", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def count_residents():

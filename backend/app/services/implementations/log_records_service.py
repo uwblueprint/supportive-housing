@@ -24,7 +24,6 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record
-        new_log_record["datetime"] = datetime.now()
 
         try:
             new_log_record = LogRecords(**new_log_record)
@@ -212,16 +211,6 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.attn_to: None,
                 }
             )
-        if "note" in updated_log_record:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {LogRecords.note: updated_log_record["note"]}
-            )
-        else:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {
-                    LogRecords.note: None,
-                }
-            )
         if "tags" in updated_log_record:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {LogRecords.tags: updated_log_record["tags"]}
@@ -238,6 +227,8 @@ class LogRecordsService(ILogRecordsService):
                 LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
                 LogRecords.building: updated_log_record["building"],
+                LogRecords.note: updated_log_record["note"],
+                LogRecords.datetime: updated_log_record["datetime"],
             }
         )
         if not updated_log_record:

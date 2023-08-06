@@ -1,8 +1,8 @@
 export type LogRecord = {
   logId: number;
-  attnTo: number;
-  attnToFirstName: string;
-  attnToLastName: string;
+  attnTo?: number;
+  attnToFirstName?: string;
+  attnToLastName?: string;
   building: string;
   datetime: string;
   employeeId: number;
@@ -41,6 +41,29 @@ export type CountLogRecordFilters = {
   residentId?: number[];
   tags?: string[];
   flagged?: boolean;
+};
+
+export type CreateLogRecordParams = {
+  employeeId: number;
+  residentId: number;
+  datetime: Date;
+  flagged: boolean;
+  note: string;
+  tags: string[];
+  building: string;
+  attnTo?: number;
+};
+
+export type EditLogRecordParams = {
+  logId: number;
+  employeeId: number;
+  residentId: number;
+  datetime: Date;
+  flagged: boolean;
+  note: string;
+  tags: string[];
+  building: string;
+  attnTo?: number;
 };
 
 export type LogRecordFilters = CountLogRecordFilters & {

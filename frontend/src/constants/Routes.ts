@@ -17,5 +17,3 @@ export const HOOKS_PAGE = "/hooks";
 export const RESIDENT_DIRECTORY_PAGE = "/resident-directory";
 
 export const EMPLOYEE_DIRECTORY_PAGE = "/employee-directory";
-
-export const INVITE_EMPLOYEES = "/invite-employees";

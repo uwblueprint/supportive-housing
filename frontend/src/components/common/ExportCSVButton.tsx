@@ -20,9 +20,9 @@ import {
 } from "@chakra-ui/react";
 import { TiExport } from "react-icons/ti";
 import { RangeDatepicker } from "chakra-dayzed-datepicker";
-import commonAPIClient from "../../APIClients/CommonAPIClient";
 import CSVConverter from "../../helper/CSVConverter";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
+import { rangeDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
 const ExportCSVButton = (): React.ReactElement => {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
@@ -88,11 +88,7 @@ const ExportCSVButton = (): React.ReactElement => {
                   <RangeDatepicker
                     selectedDates={selectedDates}
                     onDateChange={setSelectedDates}
-                    propsConfigs={{
-                      inputProps: {
-                        placeholder: "MM/DD/YYYY - MM/DD/YYYY",
-                      },
-                    }}
+                    propsConfigs={rangeDatePickerStyle}
                   />
                   <Button onClick={handleClear} variant="secondary">
                     Clear

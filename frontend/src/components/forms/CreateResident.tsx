@@ -23,7 +23,7 @@ import {
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
@@ -148,7 +148,7 @@ const CreateResident = (): React.ReactElement => {
   return (
     <>
       <Box textAlign="right">
-        <Button onClick={handleOpen} marginBottom="16px" variant="primary">
+        <Button onClick={handleOpen} variant="primary">
           <AddIcon boxSize="16px" marginRight="8px" />
           Add Resident
         </Button>
