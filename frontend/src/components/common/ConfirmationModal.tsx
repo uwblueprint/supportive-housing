@@ -12,32 +12,22 @@ import {
 } from "@chakra-ui/react";
 
 type Props = {
-  itemName: string;
-  itemId: number;
+  header: string;
+  message: string;
   isOpen: boolean;
   toggleClose: () => void;
-  deleteAPI: (itemId: number) => void;
+  action: () => Promise<void>;
 };
 
-const DeleteConfirmation = ({
-  itemName,
-  itemId,
+const ConfirmationModal = ({
+  header,
+  message,
   isOpen,
   toggleClose,
-  deleteAPI,
+  action,
 }: Props): React.ReactElement => {
-  const ITEM_NAME = itemName.toLowerCase();
-
-  const MESSAGE_HEADER = `Delete ${
-    ITEM_NAME.charAt(0).toUpperCase() + ITEM_NAME.slice(1)
-  }`;
-
-  const MESSAGE_TEXT = `Are you sure you want to delete this ${ITEM_NAME}? Deleting a \n\
-  ${ITEM_NAME} will permanently remove it from your system.`;
-
   const handleSubmit = async () => {
-    deleteAPI(itemId);
-    toggleClose();
+    await action();
   };
 
   return (
@@ -46,10 +36,10 @@ const DeleteConfirmation = ({
         <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{MESSAGE_HEADER}</ModalHeader>
+            <ModalHeader>{header}</ModalHeader>
             <ModalBody>
               <Box marginBottom="12px">
-                <Text>{MESSAGE_TEXT}</Text>
+                <Text>{message}</Text>
               </Box>
             </ModalBody>
             <ModalFooter>
@@ -61,7 +51,7 @@ const DeleteConfirmation = ({
                 Cancel
               </Button>
               <Button onClick={handleSubmit} variant="primary" type="submit">
-                Yes, delete
+                Confirm
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -71,4 +61,4 @@ const DeleteConfirmation = ({
   );
 };
 
-export default DeleteConfirmation;
+export default ConfirmationModal;
