@@ -76,9 +76,7 @@ const createResident = async ({
   }
 };
 
-const deleteResident = async (
-  residentId: number,
-): Promise<{ statusCode: number; message: string }> => {
+const deleteResident = async (residentId: number): Promise<number> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -87,22 +85,13 @@ const deleteResident = async (
     await baseAPIClient.delete(`/residents/${residentId}`, {
       headers: { Authorization: bearerToken },
     });
-    return {
-      statusCode: 200,
-      message: "Success",
-    };
+    return 200;
   } catch (error: any) {
     const axiosErr = (error as any) as AxiosError;
     if (axiosErr.response) {
-      return {
-        statusCode: axiosErr.response.status,
-        message: error.message,
-      };
+      return axiosErr.response.status;
     }
-    return {
-      statusCode: 404,
-      message: "Error deleting resident",
-    };
+    return 404;
   }
 };
 
