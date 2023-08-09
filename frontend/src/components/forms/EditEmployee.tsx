@@ -20,7 +20,7 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
-import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
+import { UPDATE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 import { User, UserRole } from "../../types/UserTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
@@ -159,10 +159,10 @@ const EditEmployee = ({
           );
           handleClose();
         } else {
-          newToast("Error updating employee", INVITE_EMPLOYEE_ERROR, "error");
+          newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
         }
       } else {
-        newToast("Error updating employee", INVITE_EMPLOYEE_ERROR, "error");
+        newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
       }
     }
   };
