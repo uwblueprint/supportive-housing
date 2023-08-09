@@ -1,5 +1,6 @@
 from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
+from ...models.log_records import LogRecords
 from ...models import db
 from datetime import datetime
 from sqlalchemy import select, cast, Date
@@ -20,6 +21,19 @@ class ResidentsService(IResidentsService):
         """
         self.logger = logger
 
+    def is_date_left_invalid_resident(self, resident):
+        """
+        Validates if date_left is greater than date_joined given a payload for a resident
+        """
+        if "date_joined" in resident and "date_left" in resident:
+            date_joined = datetime.fromisoformat(resident["date_joined"].replace('Z', '+00:00'))
+            date_left = datetime.fromisoformat(resident["date_left"].replace('Z', '+00:00'))
+
+            if date_left < date_joined:
+                return True
+
+        return False
+
     def add_resident(self, resident):
         new_resident = resident
         try:
@@ -32,20 +46,20 @@ class ResidentsService(IResidentsService):
 
     def update_resident(self, resident_id, updated_resident):
         if "date_left" in updated_resident:
-            Residents.query.filter_by(id=resident_id).update(
+            create_update_resident = Residents.query.filter_by(id=resident_id).update(
                 {
                     Residents.date_left: updated_resident["date_left"],
+                    **updated_resident,
                 }
             )
-        updated_resident = Residents.query.filter_by(id=resident_id).update(
-            {
-                Residents.initial: updated_resident["initial"],
-                Residents.room_num: updated_resident["room_num"],
-                Residents.date_joined: updated_resident["date_joined"],
-                Residents.building: updated_resident["building"],
-            }
-        )
-        if not updated_resident:
+        else:
+            create_update_resident = Residents.query.filter_by(id=resident_id).update(
+                {
+                Residents.date_left: None, 
+                **updated_resident
+                }
+            )
+        if not create_update_resident:
             raise Exception(
                 "Resident with id {resident_id} not found".format(
                     resident_id=resident_id
@@ -54,10 +68,18 @@ class ResidentsService(IResidentsService):
         db.session.commit()
 
     def delete_resident(self, resident_id):
-        deleted_resident = Residents.query.filter_by(id=resident_id).delete()
-        if not deleted_resident:
+        resident_log_records = LogRecords.query.filter_by(resident_id=resident_id).count()
+        if resident_log_records == 0:
+            deleted_resident = Residents.query.filter_by(id=resident_id).delete()
+            if not deleted_resident:
+                raise Exception(
+                    "Resident with id {resident_id} not found".format(
+                        resident_id=resident_id
+                    )
+                )
+        else:
             raise Exception(
-                "Resident with id {resident_id} not found".format(
+                "Resident with id {resident_id} has existing log records".format(
                     resident_id=resident_id
                 )
             )

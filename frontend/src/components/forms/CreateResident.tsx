@@ -50,11 +50,12 @@ const CreateResident = (): React.ReactElement => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
+  const ROOM_ERROR_TEXT = `Room Number is required and must only contain numbers.`;
   const addResident = async () => {
     await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
-      dateJoined: moveInDate,
+      dateJoined: moveInDate.toISOString(),
       building,
     });
   };
@@ -184,9 +185,7 @@ const CreateResident = (): React.ReactElement => {
                       onChange={handleRoomNumberChange}
                       type="number"
                     />
-                    <FormErrorMessage>
-                      Room Number is required and must only contain numbers.
-                    </FormErrorMessage>
+                    <FormErrorMessage>{ROOM_ERROR_TEXT}</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
