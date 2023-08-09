@@ -8,8 +8,8 @@ class Residents(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     initial = db.Column(db.String, nullable=False)
     room_num = db.Column(db.Integer, nullable=False)
-    date_joined = db.Column(db.Date, nullable=False)
-    date_left = db.Column(db.Date, nullable=True)
+    date_joined = db.Column(db.DateTime(timezone=True), nullable=False)
+    date_left = db.Column(db.DateTime(timezone=True), nullable=True)
     building = db.Column(db.Enum("144", "402", "362", name="buildings"), nullable=False)
 
     resident_id = db.column_property(initial + cast(room_num, String))

@@ -102,8 +102,8 @@ const getCurUserSelectOption = () => {
     AUTHENTICATED_USER_KEY,
   );
   if (curUser && curUser.firstName && curUser.id) {
-    const userId = curUser.id
-    return { label: curUser.firstName, value: userId }
+    const userId = curUser.id;
+    return { label: curUser.firstName, value: userId };
   }
   return { label: "", value: -1 };
 };
@@ -301,15 +301,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       tags,
       building,
       attnTo: attentionTo,
-    })
+    });
     if (res != null) {
-      setAlertData(ALERT_DATA.SUCCESS)
+      setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
       getRecords(1);
       setUserPageNum(1);
-    }
-    else {
-      setAlertData(ALERT_DATA.ERROR)
+    } else {
+      setAlertData(ALERT_DATA.ERROR);
     }
     setShowAlert(true);
   };

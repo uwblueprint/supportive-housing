@@ -7,20 +7,6 @@ import json
 residents_service = ResidentsService(current_app.logger)
 blueprint = Blueprint("residents", __name__, url_prefix="/residents")
 
-
-def is_date_left_invalid_resident(resident):
-    """
-    Validates if date_left is greater than date_joined given a payload for a resident
-    """
-    if "date_joined" in resident and "date_left" in resident:
-        date_joined = datetime.strptime(resident["date_joined"], "%Y-%m-%d")
-        date_left = datetime.strptime(resident["date_left"], "%Y-%m-%d")
-        if date_left < date_joined:
-            return True
-
-    return False
-
-
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def add_resident():
@@ -28,7 +14,7 @@ def add_resident():
     Add a resident
     """
     resident = request.json
-    if is_date_left_invalid_resident(resident):
+    if residents_service.is_date_left_invalid_resident(resident):
         return (
             jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
             400,
@@ -49,7 +35,7 @@ def update_resident(resident_id):
     Update an existing resident record based on the id
     """
     updated_resident = request.json
-    if is_date_left_invalid_resident(updated_resident):
+    if residents_service.is_date_left_invalid_resident(updated_resident):
         return (
             jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
             400,
@@ -94,7 +80,10 @@ def delete_resident(resident_id):
         )
     except Exception as e:
         error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
+        if ("has existing log records" in str(e)):
+            return jsonify({"existing_log_record_error": "Resident has existing log records"}), 400
+        else:
+            return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
