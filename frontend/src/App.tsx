@@ -68,31 +68,6 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.CREATE_ENTITY_PAGE}
-                  component={CreatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.UPDATE_ENTITY_PAGE}
-                  component={UpdatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.DISPLAY_ENTITY_PAGE}
-                  component={DisplayPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.EDIT_TEAM_PAGE}
-                  component={EditTeamInfoPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOOKS_PAGE}
-                  component={HooksDemo}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.RESIDENT_DIRECTORY_PAGE}
                   component={ResidentDirectory}
                 />

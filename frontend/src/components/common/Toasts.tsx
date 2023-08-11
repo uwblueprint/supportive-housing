@@ -34,6 +34,7 @@ const CreateToast = (): ((
         position: "bottom-right",
         duration: 5000,
         isClosable: true,
+        variant: "left-accent",
       });
     }
   }, [details, toast]);
