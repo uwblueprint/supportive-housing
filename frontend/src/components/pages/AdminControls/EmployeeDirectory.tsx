@@ -7,7 +7,7 @@ import CreateLog from "../../forms/CreateLog";
 import commonAPIClient from "../../../APIClients/CommonAPIClient";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
-import EmployeesTable from "./EmployeesTable";
+import EmployeeDirectoryTable from "./EmployeeDirectoryTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import CreateEmployee from "../../forms/CreateEmployee";
 
@@ -67,7 +67,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           <>{CreateEmployee()}</>
         </Flex>
 
-        <EmployeesTable users={users} tableRef={tableRef} />
+        <EmployeeDirectoryTable users={users} tableRef={tableRef} />
         <Pagination
           numRecords={numUsers}
           pageNum={pageNum}

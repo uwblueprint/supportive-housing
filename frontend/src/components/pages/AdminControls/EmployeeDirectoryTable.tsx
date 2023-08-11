@@ -65,7 +65,7 @@ const getStatusColor = (user: User): string => {
   return color;
 };
 
-const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
+const EmployeeDirectoryTable = ({ users, tableRef }: Props): React.ReactElement => {
   const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
   const [activatingEmployee, setActivatingEmployee] = useState<User | null>(
     null,
@@ -109,15 +109,15 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
     );
     if (statusCode === 200) {
       newToast(
-        "Employee activated",
-        "Employee has been successfully activated",
+        "Employee Activated",
+        "Employee has been successfully activated.",
         "success",
       );
       setIsActivateModalOpen(false);
     } else {
       newToast(
-        "Error activating employee",
-        "Employee was unable to be activated",
+        "Error Activating Employee.",
+        "Employee was unable to be activated.",
         "error",
       );
     }
@@ -130,15 +130,15 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
     );
     if (statusCode === 200) {
       newToast(
-        "Employee deactivated",
-        "Employee has been successfully deactivated",
+        "Employee Deactivated",
+        "Employee has been successfully deactivated.",
         "success",
       );
       setIsDeactivateModalOpen(false);
     } else {
       newToast(
-        "Error deactivating employee",
-        "Employee was unable to be deactivated",
+        "Error Deactivating Employee",
+        "Employee was unable to be deactivated.",
         "error",
       );
     }
@@ -148,15 +148,15 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
     const statusCode = await UserAPIClient.deleteUser(employeeId);
     if (statusCode === 204) {
       newToast(
-        "Employee deleted",
-        "Employee has been successfully deleted",
+        "Employee Deleted",
+        "Employee has been successfully deleted.",
         "success",
       );
       setIsDeleteModalOpen(false);
     } else {
       newToast(
-        "Error deleting employee",
-        "Employee was unable to be deleted",
+        "Error Deleting Employee.",
+        "Employee was unable to be deleted.",
         "error",
       );
     }
@@ -278,4 +278,4 @@ const EmployeesTable = ({ users, tableRef }: Props): React.ReactElement => {
   );
 };
 
-export default EmployeesTable;
+export default EmployeeDirectoryTable;

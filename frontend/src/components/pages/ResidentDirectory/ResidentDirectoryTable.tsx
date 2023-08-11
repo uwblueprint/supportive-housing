@@ -49,7 +49,7 @@ const getFormattedDatesAndStatus = (resident: Resident) => {
 };
 
 const DELETE_CONFIRMATION_MESSAGE =
-  "Residents can only be deleted if there are no log records associated with them.";
+  "This is a permanent action. Residents can only be deleted if there are no log records associated with them.";
 
 const ResidentDirectoryTable = ({
   residents,
@@ -86,14 +86,18 @@ const ResidentDirectoryTable = ({
     const statusCode = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       newToast(
-        "Error deleting resident",
-        "Resident has log records attached",
+        "Error Deleting Resident",
+        "Resident has log records attached.",
         "error",
       );
     } else if (statusCode === 500) {
-      newToast("Error deleting resident", "", "error");
+      newToast("Error Deleting Resident", "Server error.", "error");
     } else {
-      newToast("Deleted Resident successfully", "", "success");
+      newToast(
+        "Deleted Resident",
+        "Resident has been deleted successfully.",
+        "success",
+      );
       setIsDeleteModalOpen(false);
     }
     setShowAlert(true);
@@ -174,7 +178,7 @@ const ResidentDirectoryTable = ({
         )}
         {deletingResident && (
           <ConfirmationModal
-            header={`This is a permanent action. Are you sure you want to delete Resident ${deletingResident.residentId}?`}
+            header={`Are you sure you want to delete Resident ${deletingResident.residentId}?`}
             message={DELETE_CONFIRMATION_MESSAGE}
             isOpen={isDeleteModalOpen}
             action={() => deleteResident(deletingResident.id)}
