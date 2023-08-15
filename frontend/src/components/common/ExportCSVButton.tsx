@@ -61,7 +61,7 @@ const ExportCSVButton = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
-    if (startDate && endDate && startDate >= endDate) {
+    if (startDate && endDate && startDate > endDate) {
       setDateError(true);
       return;
     }
