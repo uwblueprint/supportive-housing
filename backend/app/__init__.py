@@ -61,7 +61,7 @@ def create_app(config_name="development"):
             ),
         )
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("HEROKU_DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     firebase_admin.initialize_app(

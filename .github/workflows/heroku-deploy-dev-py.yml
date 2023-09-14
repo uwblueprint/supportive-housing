@@ -36,7 +36,6 @@ jobs:
           HEROKU_APP_NAME: "${{ secrets.HEROKU_APP_NAME }}"
       - name: Set Heroku config vars
         run: |
-          heroku config:set DATABASE_URL="${{ secrets.DATABASE_URL }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_WEB_API_KEY="${{ secrets.FIREBASE_WEB_API_KEY }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_REQUEST_URI="${{ secrets.FIREBASE_REQUEST_URI }}" -a $HEROKU_APP_NAME && \
           heroku config:set FIREBASE_STORAGE_DEFAULT_BUCKET="${{ secrets.FIREBASE_STORAGE_DEFAULT_BUCKET }}" -a $HEROKU_APP_NAME && \
