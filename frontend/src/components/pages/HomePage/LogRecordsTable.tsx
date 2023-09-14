@@ -25,12 +25,12 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 
 import AuthContext from "../../../contexts/AuthContext";
 
-import DeleteConfirmation from "../../common/DeleteConfirmation";
 import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import { UserLabel } from "../../../types/UserTypes";
+import ConfirmationModal from "../../common/ConfirmationModal";
 
 type Props = {
   logRecords: LogRecord[];
@@ -39,6 +39,10 @@ type Props = {
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
+
+const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
+const DELETE_CONFIRMATION_MESSAGE =
+  "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from your system.";
 
 const LogRecordsTable = ({
   logRecords,
@@ -112,6 +116,7 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
+    handleDeleteToggle(itemId);
     setShowAlert(true);
   };
 
@@ -136,7 +141,7 @@ const LogRecordsTable = ({
           overflowY="scroll"
           ref={tableRef}
         >
-          <Table variant="showTable" minHeight="400px" verticalAlign="middle">
+          <Table variant="showTable" verticalAlign="middle">
             <Thead>
               <Tr>
                 <Th>Date</Th>
@@ -210,12 +215,12 @@ const LogRecordsTable = ({
                       setUserPageNum={setUserPageNum}
                     />
 
-                    <DeleteConfirmation
-                      itemName="log"
-                      itemId={record.logId}
+                    <ConfirmationModal
+                      header={DELETE_CONFIRMATION_HEADER}
+                      message={DELETE_CONFIRMATION_MESSAGE}
                       isOpen={deleteOpenMap[record.logId]}
                       toggleClose={() => handleDeleteToggle(record.logId)}
-                      deleteAPI={deleteLogRecord}
+                      action={() => deleteLogRecord(record.logId)}
                     />
                   </>
                 );

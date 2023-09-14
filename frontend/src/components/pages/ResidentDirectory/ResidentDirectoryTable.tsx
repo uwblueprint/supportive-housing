@@ -17,11 +17,11 @@ import {
 import { VscKebabVertical } from "react-icons/vsc";
 import { Resident } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
-import DeleteResidentConfirmation from "../../common/DeleteResidentConfirmation";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
+import ConfirmationModal from "../../common/ConfirmationModal";
 
 type Props = {
   residents: Resident[];
@@ -47,6 +47,9 @@ const getFormattedDatesAndStatus = (resident: Resident) => {
     status,
   };
 };
+
+const DELETE_CONFIRMATION_MESSAGE =
+  "This is a permanent action. Residents can only be deleted if there are no log records associated with them.";
 
 const ResidentDirectoryTable = ({
   residents,
@@ -76,23 +79,26 @@ const ResidentDirectoryTable = ({
 
   const handleDeleteClick = (resident: Resident) => {
     setDeletingResident(resident);
-    setIsDeleteModalOpen(!isDeleteModalOpen);
+    setIsDeleteModalOpen(true);
   };
 
   const deleteResident = async (itemId: number) => {
-    const { statusCode, message } = await ResidentAPIClient.deleteResident(
-      itemId,
-    );
+    const statusCode = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       newToast(
-        "Error deleting resident",
-        "Resident has log records attached",
+        "Error Deleting Resident",
+        "Resident has log records attached.",
         "error",
       );
     } else if (statusCode === 500) {
-      newToast("Error deleting resident", "", "error");
+      newToast("Error Deleting Resident", "Server error.", "error");
     } else {
-      newToast("Deleted Resident successfully", "", "success");
+      newToast(
+        "Deleted Resident",
+        "Resident has been deleted successfully.",
+        "success",
+      );
+      setIsDeleteModalOpen(false);
     }
     setShowAlert(true);
   };
@@ -171,13 +177,12 @@ const ResidentDirectoryTable = ({
           />
         )}
         {deletingResident && (
-          <DeleteResidentConfirmation
-            itemName="resident"
-            itemId={deletingResident.id}
-            resId={deletingResident.residentId}
+          <ConfirmationModal
+            header={`Are you sure you want to delete Resident ${deletingResident.residentId}?`}
+            message={DELETE_CONFIRMATION_MESSAGE}
             isOpen={isDeleteModalOpen}
-            toggleClose={() => handleDeleteClick(deletingResident)}
-            deleteAPI={deleteResident}
+            action={() => deleteResident(deletingResident.id)}
+            toggleClose={() => setIsDeleteModalOpen(false)}
           />
         )}
       </TableContainer>

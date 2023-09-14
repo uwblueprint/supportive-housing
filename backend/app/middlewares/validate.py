@@ -6,6 +6,7 @@ from ..resources.create_user_dto import CreateUserDTO
 from ..resources.entity_dto import EntityDTO
 from ..resources.register_user_dto import RegisterUserDTO
 from ..resources.update_user_dto import UpdateUserDTO
+from ..resources.update_user_status_dto import UpdateUserStatusDTO
 from ..resources.create_invited_user_dto import CreateInvitedUserDTO
 
 dtos = {
@@ -13,6 +14,7 @@ dtos = {
     "EntityDTO": EntityDTO,
     "RegisterUserDTO": RegisterUserDTO,
     "UpdateUserDTO": UpdateUserDTO,
+    "UpdateUserStatusDTO": UpdateUserStatusDTO,
     "CreateInvitedUserDTO": CreateInvitedUserDTO,
 }
 
