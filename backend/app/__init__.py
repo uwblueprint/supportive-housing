@@ -38,14 +38,14 @@ def create_app(config_name="development"):
     if type(config_name) is not ScriptInfo:
         app.config.from_object(app_config[config_name])
 
-    app.config["CORS_ORIGINS"] = [
+    allowed_origins = [
         "http://localhost:3000",
         "https://blueprintsupportivehousing.firebaseapp.com",
         "https://blueprintsupportivehousing.web.app",
         re.compile("^https:\/\/blueprint-supportive-housing--pr.*\.web\.app$"),
     ]
-    app.config["CORS_SUPPORTS_CREDENTIALS"] = True
-    CORS(app)
+    
+    CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
 
     if os.getenv("FLASK_CONFIG") != "production":
         app.config[
