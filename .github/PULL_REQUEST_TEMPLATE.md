@@ -1,6 +1,6 @@
-## GitHub Issue link
-<!-- Please replace with your ticket's URL -->
-[Issue Name](https://github.com/uwblueprint/supportive-housing/issues/)
+## Notion task link
+<!-- Please replace with your task's URL -->
+[Task Name]([https://github.com/uwblueprint/supportive-housing/issues/](https://www.notion.so/uwblueprintexecs/2792c3504d744d2b90ff967c32d00961?v=d33629815ecf477ab4e1ff4e33774c32))
 
 
 <!-- Give a quick summary of the implementation details, provide design justifications if necessary -->
