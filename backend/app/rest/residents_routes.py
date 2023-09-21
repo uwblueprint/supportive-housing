@@ -7,6 +7,7 @@ import json
 residents_service = ResidentsService(current_app.logger)
 blueprint = Blueprint("residents", __name__, url_prefix="/residents")
 
+
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def add_resident():
@@ -80,8 +81,13 @@ def delete_resident(resident_id):
         )
     except Exception as e:
         error_message = getattr(e, "message", None)
-        if ("has existing log records" in str(e)):
-            return jsonify({"existing_log_record_error": "Resident has existing log records"}), 400
+        if "has existing log records" in str(e):
+            return (
+                jsonify(
+                    {"existing_log_record_error": "Resident has existing log records"}
+                ),
+                400,
+            )
         else:
             return jsonify({"error": (error_message if error_message else str(e))}), 500
 

@@ -26,8 +26,12 @@ class ResidentsService(IResidentsService):
         Validates if date_left is greater than date_joined given a payload for a resident
         """
         if "date_joined" in resident and "date_left" in resident:
-            date_joined = datetime.fromisoformat(resident["date_joined"].replace('Z', '+00:00'))
-            date_left = datetime.fromisoformat(resident["date_left"].replace('Z', '+00:00'))
+            date_joined = datetime.fromisoformat(
+                resident["date_joined"].replace("Z", "+00:00")
+            )
+            date_left = datetime.fromisoformat(
+                resident["date_left"].replace("Z", "+00:00")
+            )
 
             if date_left < date_joined:
                 return True
@@ -54,10 +58,7 @@ class ResidentsService(IResidentsService):
             )
         else:
             create_update_resident = Residents.query.filter_by(id=resident_id).update(
-                {
-                Residents.date_left: None, 
-                **updated_resident
-                }
+                {Residents.date_left: None, **updated_resident}
             )
         if not create_update_resident:
             raise Exception(
@@ -68,7 +69,9 @@ class ResidentsService(IResidentsService):
         db.session.commit()
 
     def delete_resident(self, resident_id):
-        resident_log_records = LogRecords.query.filter_by(resident_id=resident_id).count()
+        resident_log_records = LogRecords.query.filter_by(
+            resident_id=resident_id
+        ).count()
         if resident_log_records == 0:
             deleted_resident = Residents.query.filter_by(id=resident_id).delete()
             if not deleted_resident:
