@@ -94,8 +94,8 @@ def get_user_status():
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-    
-    
+
+
 @blueprint.route("user-status/<int:user_id>", methods=["PATCH"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 @validate_request("UpdateUserStatusDTO")

@@ -39,20 +39,26 @@ baseAPIClient.interceptors.request.use(async (config: AxiosRequestConfig) => {
       (typeof decodedToken === "string" ||
         decodedToken.exp <= Math.round(new Date().getTime() / 1000))
     ) {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/auth/refresh`,
-        {},
-        { withCredentials: true },
-      );
+      try {
+        const { data } = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/auth/refresh`,
+          {},
+          { withCredentials: true },
+        );
 
-      const accessToken = data.accessToken || data.access_token;
-      setLocalStorageObjProperty(
-        AUTHENTICATED_USER_KEY,
-        "accessToken",
-        accessToken,
-      );
+        const accessToken = data.accessToken || data.access_token;
+        setLocalStorageObjProperty(
+          AUTHENTICATED_USER_KEY,
+          "accessToken",
+          accessToken,
+        );
 
-      newConfig.headers.Authorization = accessToken;
+        newConfig.headers.Authorization = `Bearer ${accessToken}`;
+      } catch (error) {
+        // Refresh token expired, clear local storage and force re-login
+        localStorage.removeItem(AUTHENTICATED_USER_KEY);
+        window.location.reload();
+      }
     }
   }
 

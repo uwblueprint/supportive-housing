@@ -65,7 +65,10 @@ const getStatusColor = (user: User): string => {
   return color;
 };
 
-const EmployeeDirectoryTable = ({ users, tableRef }: Props): React.ReactElement => {
+const EmployeeDirectoryTable = ({
+  users,
+  tableRef,
+}: Props): React.ReactElement => {
   const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
   const [activatingEmployee, setActivatingEmployee] = useState<User | null>(
     null,

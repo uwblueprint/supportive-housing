@@ -157,7 +157,7 @@ class UserService(IUserService):
                 )
             )
             raise e
-    
+
     def update_user_status(self, user_id, user_status):
         try:
             User.query.filter_by(id=user_id).update(

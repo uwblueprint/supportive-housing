@@ -33,6 +33,7 @@ cookie_options = {
     "httponly": True,
     "samesite": ("None" if os.getenv("PREVIEW_DEPLOY") else "Strict"),
     "secure": (os.getenv("FLASK_CONFIG") == "production"),
+    "max_age": 24 * 60 * 60,  # persist for 24 hours
 }
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
