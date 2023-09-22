@@ -13,6 +13,8 @@ The frontend is a React application written in TypeScript.
 ## Table of Contents
 * 📝 [Documentation](#documentation)
 * 👨‍💻 [Getting Started](#getting-started)
+  * 🛳️ [Prerequisites](#prerequisites)
+  * 🔨 [Setup](#setup)     
 * 💻 [The Team](#the-team)
 
 ## Documentation
