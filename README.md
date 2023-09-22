@@ -14,7 +14,14 @@ The frontend is a React application written in TypeScript.
 * 📝 [Documentation](#documentation)
 * 👨‍💻 [Getting Started](#getting-started)
   * 🛳️ [Prerequisites](#prerequisites)
-  * 🔨 [Setup](#setup)     
+  * 🔨 [Setup](#setup)
+* 🧰 [Useful Commands](#useful-commands)
+  * 🚙 [Database Migrations](#database-migration)
+  * 🔌 [Connect To Database](#connect-to-database)
+  * ♻️ [Restart Docker Containers](#restart-docker-containers)
+  * 🌱 [Seeding](#seeding)
+  * 👕 [Linter](#linter)
+  * 🧪 [Tests](#tests)     
 * 💻 [The Team](#the-team)
 
 ## Documentation
@@ -63,11 +70,6 @@ bash ./scripts/exec-db.sh
 ### Restart Docker Containers
 ```bash
 bash ./scripts/restart-docker.sh
-```
-
-### Database Migration
-```bash
-bash ./scripts/flask-db-upgrade.sh
 ```
 
 ### Seeding
