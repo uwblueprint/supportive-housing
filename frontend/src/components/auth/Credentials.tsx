@@ -102,12 +102,6 @@ const Credentials = ({
           </div>
 
           <div>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="password"
-            />
             <FormControl>
               <Input 
                 type="password"
