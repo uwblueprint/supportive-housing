@@ -1,11 +1,19 @@
 import React, { useContext, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Input
+} from '@chakra-ui/react'
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
+
 
 type CredentialsProps = {
   email: string;
@@ -81,13 +89,13 @@ const Credentials = ({
         <h1>Login</h1>
         <form>
           <div>
-            <input
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="username@domain.com"
-            />
+            
+            <FormControl isRequired isInvalid={emailError}>
+              <Input type="email" value={email} onChange={handleEmailChange} placeholder='Your email address' /> 
+              <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+            </FormControl>
           </div>
+
           <div>
             <input
               type="password"
