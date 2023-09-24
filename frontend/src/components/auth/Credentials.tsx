@@ -37,6 +37,7 @@ const Credentials = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<boolean>(false);
 
   const handleEmailChange = (e: { target: { value: unknown } }) => {
     const inputValue = e.target.value as string;
@@ -89,9 +90,13 @@ const Credentials = ({
         <h1>Login</h1>
         <form>
           <div>
-            
             <FormControl isRequired isInvalid={emailError}>
-              <Input type="email" value={email} onChange={handleEmailChange} placeholder='Your email address' /> 
+              <Input 
+                type="email" 
+                value={email} 
+                onChange={handleEmailChange} 
+                placeholder="Your email address"
+              /> 
               <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
             </FormControl>
           </div>
@@ -103,6 +108,15 @@ const Credentials = ({
               onChange={(event) => setPassword(event.target.value)}
               placeholder="password"
             />
+            <FormControl>
+              <Input 
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Your password"
+              />
+              <FormErrorMessage>Incorrect password. Please try again.</FormErrorMessage>
+            </FormControl>
           </div>
           <div>
             <button
