@@ -1,9 +1,4 @@
 import React, { useContext } from "react";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -11,13 +6,6 @@ import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
-
-type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
-
-type GoogleErrorResponse = {
-  error: string;
-  details: string;
-};
 
 type CredentialsProps = {
   email: string;
@@ -71,22 +59,6 @@ const Credentials = ({
     history.push(SIGNUP_PAGE);
   };
 
-  const onGoogleLoginSuccess = async (tokenId: string) => {
-    setToken(tokenId);
-    const loginResponse: LoginResponse = await authAPIClient.loginWithGoogle(
-      tokenId,
-    );
-    if (loginResponse) {
-      const { requiresTwoFa, authUser } = loginResponse;
-      if (requiresTwoFa) {
-        setToggle(!toggle);
-      }
-      localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-      setAuthenticatedUser(authUser);
-    }
-    // Otherwise we can display some sort of error
-  };
-
   if (authenticatedUser) {
     return <Redirect to={HOME_PAGE} />;
   }
@@ -121,22 +93,6 @@ const Credentials = ({
               Log In
             </button>
           </div>
-          <GoogleLogin
-            clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-            buttonText="Login with Google"
-            onSuccess={(response: GoogleResponse): void => {
-              if ("tokenId" in response) {
-                onGoogleLoginSuccess(response.tokenId);
-              } else {
-                // eslint-disable-next-line no-alert
-                window.alert(response);
-              }
-            }}
-            onFailure={(error: GoogleErrorResponse) =>
-              // eslint-disable-next-line no-alert
-              window.alert(JSON.stringify(error))
-            }
-          />
         </form>
         <div>
           <button
