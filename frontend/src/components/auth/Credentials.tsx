@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -28,6 +28,18 @@ const Credentials = ({
 }: CredentialsProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
+  const [emailError, setEmailError] = useState<boolean>(false);
+
+  const handleEmailChange = (e: { target: { value: unknown } }) => {
+    const inputValue = e.target.value as string;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (emailRegex.test(inputValue)) {
+      setEmailError(false)
+    } else {
+      setEmailError(true)
+    }
+    setEmail(inputValue)
+  };
 
   const onLogInClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
@@ -72,7 +84,7 @@ const Credentials = ({
             <input
               type="email"
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={handleEmailChange}
               placeholder="username@domain.com"
             />
           </div>
