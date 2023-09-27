@@ -22,6 +22,7 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
+import { convertToDate } from "../../../helper/dateHelpers";
 
 type Props = {
   residents: Resident[];
@@ -29,12 +30,12 @@ type Props = {
 };
 
 const getFormattedDatesAndStatus = (resident: Resident) => {
-  const startDateObj = new Date(resident.dateJoined);
+  const startDateObj = convertToDate(resident.dateJoined);
   const startDate = getFormattedDateAndTime(startDateObj, true);
 
   let endDate;
   if (resident.dateLeft != null) {
-    const endDateObj = new Date(resident.dateLeft);
+    const endDateObj = convertToDate(resident.dateLeft);
     endDate = getFormattedDateAndTime(endDateObj, true);
   }
   const status =
