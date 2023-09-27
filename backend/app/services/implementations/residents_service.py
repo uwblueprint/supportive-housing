@@ -30,14 +30,14 @@ class ResidentsService(IResidentsService):
         """
         if "date_joined" in resident:
             resident["date_joined"] = self.convert_to_date_obj(resident["date_joined"])
-        
+
         if "date_left" in resident:
             resident["date_left"] = self.convert_to_date_obj(resident["date_left"])
 
         if "date_joined" in resident and "date_left" in resident:
             if resident["date_left"] < resident["date_joined"]:
                 return True
-            
+
         return False
 
     def add_resident(self, resident):
@@ -59,10 +59,7 @@ class ResidentsService(IResidentsService):
             )
         else:
             create_update_resident = Residents.query.filter_by(id=resident_id).update(
-                {
-                    Residents.date_left: None, 
-                    **updated_resident
-                }
+                {Residents.date_left: None, **updated_resident}
             )
         if not create_update_resident:
             raise Exception(
