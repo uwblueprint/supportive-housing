@@ -9,7 +9,7 @@ from ..services.implementations.sign_in_logs_service import SignInLogService
 
 user_service = UserService(current_app.logger)
 sign_in_logs_service = SignInLogService(current_app.logger)
-blueprint = Blueprint("logs", __name__, url_prefix="/logs")
+blueprint = Blueprint("sign_in_logs", __name__, url_prefix="/sign_in_logs")
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
@@ -96,3 +96,21 @@ def filter_logs():
             )
     else:
         return jsonify({"error": "Not enough information provided."})
+
+
+@blueprint.route("/", methods=["POST"], strict_slashes=False)
+def create_log():
+    try:
+        user_id = request.json["user_id"]
+    except:
+        pass
+
+    try:
+        sign_in_logs_service.create_sign_in_log(user_id)
+        return jsonify({"user_id": int(user_id)}), 200
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return (
+            jsonify({"error": (error_message if error_message else str(e))}),
+            500,
+        )

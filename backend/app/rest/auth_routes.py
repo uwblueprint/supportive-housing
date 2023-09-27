@@ -55,6 +55,7 @@ def login():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
+
         response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
@@ -69,6 +70,8 @@ def login():
             "email": auth_dto.email,
             "role": auth_dto.role,
         }
+
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
 
         response = jsonify(response)
         response.set_cookie(
