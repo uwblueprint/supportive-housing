@@ -12,6 +12,7 @@ import {
   Checkbox,
   FormControl,
   FormLabel,
+  FormErrorMessage,
   Text,
 } from "@chakra-ui/react";
 import { Card } from "react-bootstrap";
@@ -79,6 +80,8 @@ const SearchAndFilters = ({
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
+  const [dateError, setDateError] = useState<boolean>(false);
+
   const getUsers = async () => {
     const data = await UserAPIClient.getUsers({ returnAll: true });
     const users = data?.users;
@@ -123,8 +126,24 @@ const SearchAndFilters = ({
     setEmployees(mutableSelectedEmployees);
   };
 
+  const handleStartDateChange = (newStartDate: Date) => {
+    setStartDate(newStartDate);
+    
+    if (endDate && newStartDate < endDate) {
+      setDateError(true);
+    } else {
+      setDateError(false);
+    }
+  };
+
   const handleEndDateChange = (newEndDate: Date) => {
     setEndDate(newEndDate);
+
+    if (startDate && newEndDate < startDate) {
+      setDateError(true);
+    } else {
+      setDateError(false);
+    }
   };
 
   const handleResidentsChange = (
@@ -134,10 +153,6 @@ const SearchAndFilters = ({
       selectedResidents,
     );
     setResidents(mutableSelectedResidents);
-  };
-
-  const handleStartDateChange = (newStartDate: Date) => {
-    setStartDate(newStartDate);
   };
 
   const handleTagsChange = (selectedTags: MultiValue<Tag>) => {
@@ -167,7 +182,7 @@ const SearchAndFilters = ({
         <Text fontSize="12px" fontWeight="700" color="#6D8788" align="left">
           FILTER BY
         </Text>
-        <FormControl>
+        <FormControl isInvalid={dateError}>
           <Grid padding="10px 0px" templateColumns="repeat(7, 1fr)" gap={7}>
             <GridItem colSpan={2}>
               <FormLabel fontWeight="700">Residents</FormLabel>{" "}
@@ -242,6 +257,11 @@ const SearchAndFilters = ({
               </Button>
             </GridItem>
           </Grid>
+          {dateError && (
+            <FormErrorMessage>
+              The start date must be before the end date.
+            </FormErrorMessage>
+          )}
         </FormControl>
       </Box>
       <Accordion allowToggle>
