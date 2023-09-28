@@ -128,7 +128,7 @@ const SearchAndFilters = ({
 
   const handleStartDateChange = (newStartDate: Date) => {
     if (endDate && newStartDate > endDate) {
-      newToast("Invalid Date", "The start date must be before the start date.", "error");
+      newToast("Invalid Date", "The start date must be before the end date.", "error");
       return;
     } 
     setStartDate(newStartDate);
