@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 
 
@@ -96,21 +97,3 @@ def filter_logs():
             )
     else:
         return jsonify({"error": "Not enough information provided."})
-
-
-@blueprint.route("/", methods=["POST"], strict_slashes=False)
-def create_log():
-    try:
-        user_id = request.json["user_id"]
-    except:
-        pass
-
-    try:
-        sign_in_logs_service.create_sign_in_log(user_id)
-        return jsonify({"user_id": int(user_id)}), 200
-    except Exception as e:
-        error_message = getattr(e, "message", None)
-        return (
-            jsonify({"error": (error_message if error_message else str(e))}),
-            500,
-        )
