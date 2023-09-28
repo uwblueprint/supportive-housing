@@ -26,6 +26,7 @@ import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import CreateToast from "../../common/Toasts";
 
 type Props = {
   residents: ResidentLabel[];
@@ -81,6 +82,7 @@ const SearchAndFilters = ({
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
   const [dateError, setDateError] = useState<boolean>(false);
+  const newToast = CreateToast();
 
   const getUsers = async () => {
     const data = await UserAPIClient.getUsers({ returnAll: true });
@@ -176,6 +178,12 @@ const SearchAndFilters = ({
     getResidents();
   }, []);
 
+  useEffect(() => {
+    if (dateError) {
+      newToast("Invalid Dates", "The start date must be before the end date.", "error");
+    }
+  }, [dateError]);
+
   return (
     <Card style={{ textAlign: "left" }}>
       <Box padding="8px 16px 20px">
@@ -257,11 +265,6 @@ const SearchAndFilters = ({
               </Button>
             </GridItem>
           </Grid>
-          {dateError && (
-            <FormErrorMessage>
-              The start date must be before the end date.
-            </FormErrorMessage>
-          )}
         </FormControl>
       </Box>
       <Accordion allowToggle>
