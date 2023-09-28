@@ -4,11 +4,7 @@
 name: Deploy frontend to Firebase Hosting
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "frontend/**"
+  workflow_dispatch:
 
 defaults:
   run:
