@@ -5,6 +5,7 @@ from ..services.implementations.tags_service import TagsService
 tags_service = TagsService(current_app.logger)
 blueprint = Blueprint("tags", __name__, url_prefix="/tags")
 
+
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def get_tags():
