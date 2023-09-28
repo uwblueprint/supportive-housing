@@ -81,7 +81,6 @@ const SearchAndFilters = ({
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
-  const [dateError, setDateError] = useState<boolean>(false);
   const newToast = CreateToast();
 
   const getUsers = async () => {
@@ -129,23 +128,19 @@ const SearchAndFilters = ({
   };
 
   const handleStartDateChange = (newStartDate: Date) => {
+    if (endDate && newStartDate > endDate) {
+      newToast("Invalid Date", "The start date must be before the start date.", "error");
+      return;
+    } 
     setStartDate(newStartDate);
-    
-    if (endDate && newStartDate < endDate) {
-      setDateError(true);
-    } else {
-      setDateError(false);
-    }
   };
 
   const handleEndDateChange = (newEndDate: Date) => {
-    setEndDate(newEndDate);
-
-    if (startDate && newEndDate < startDate) {
-      setDateError(true);
-    } else {
-      setDateError(false);
+    if (startDate && startDate > newEndDate) {
+      newToast("Invalid Date", "The end date must be after the start date.", "error");
+      return;
     }
+    setEndDate(newEndDate);
   };
 
   const handleResidentsChange = (
@@ -178,19 +173,13 @@ const SearchAndFilters = ({
     getResidents();
   }, []);
 
-  useEffect(() => {
-    if (dateError) {
-      newToast("Invalid Dates", "The start date must be before the end date.", "error");
-    }
-  }, [dateError]);
-
   return (
     <Card style={{ textAlign: "left" }}>
       <Box padding="8px 16px 20px">
         <Text fontSize="12px" fontWeight="700" color="#6D8788" align="left">
           FILTER BY
         </Text>
-        <FormControl isInvalid={dateError}>
+        <FormControl>
           <Grid padding="10px 0px" templateColumns="repeat(7, 1fr)" gap={7}>
             <GridItem colSpan={2}>
               <FormLabel fontWeight="700">Residents</FormLabel>{" "}
