@@ -1,13 +1,19 @@
-export type LogRecord = {
-  logId: number;
+interface AttnToDetails {
   attnTo?: number;
   attnToFirstName?: string;
   attnToLastName?: string;
-  building: string;
-  datetime: string;
+};
+
+interface EmployeeDetails {
   employeeId: number;
   employeeFirstName: string;
   employeeLastName: string;
+};
+
+export interface LogRecord extends AttnToDetails, EmployeeDetails {
+  logId: number;
+  building: string;
+  datetime: string;
   flagged: boolean;
   note: string;
   residentId: string;
