@@ -1,6 +1,4 @@
-import os
 from datetime import datetime
-
 
 from flask import Blueprint, current_app, jsonify, request
 from ..middlewares.auth import require_authorization_by_role
@@ -10,7 +8,7 @@ from ..services.implementations.sign_in_logs_service import SignInLogService
 
 user_service = UserService(current_app.logger)
 sign_in_logs_service = SignInLogService(current_app.logger)
-blueprint = Blueprint("sign_in_logs", __name__, url_prefix="/sign_in_logs")
+blueprint = Blueprint("sign-in-logs", __name__, url_prefix="/sign-in-logs")
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)

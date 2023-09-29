@@ -55,7 +55,6 @@ def login():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
-
         response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":

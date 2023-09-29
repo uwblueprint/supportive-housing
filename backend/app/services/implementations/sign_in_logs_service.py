@@ -25,9 +25,7 @@ class SignInLogService(ISignInLogService):
     def create_sign_in_log(self, user_id):
         sign_in = {"id": user_id, "time": datetime.now()}
         try:
-            print("!!!!LADBLNALINPIWGAEN")
-            print(os.getenv("CREATE_SIGN_IN_LOG"))
-            if (os.getenv("CREATE_SIGN_IN_LOG")):
+            if os.getenv("CREATE_SIGN_IN_LOG") == "True":
                 new_sign_in = SignInLogs(**sign_in)
                 db.session.add(new_sign_in)
                 db.session.commit()
