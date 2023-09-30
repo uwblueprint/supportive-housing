@@ -1,6 +1,8 @@
 import os
 import requests
 
+from ..utilities.exceptions.firebase_exceptions import InvalidPasswordException
+
 from ..resources.token import Token
 
 FIREBASE_SIGN_IN_URL = (
@@ -49,6 +51,10 @@ class FirebaseRestClient:
         )
 
         response_json = response.json()
+
+        # Raise an invalid password exception
+        if (response_json["error"]["code"] == 400 and response_json["error"]["message"] == "INVALID_PASSWORD"):
+            raise InvalidPasswordException("Failed to sign-in via Firebase REST API")
 
         if response.status_code != 200:
             error_message = [

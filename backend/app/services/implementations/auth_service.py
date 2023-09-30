@@ -1,5 +1,6 @@
 import firebase_admin.auth
 
+from ...utilities.exceptions.firebase_exceptions import InvalidPasswordException
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO
 from ...resources.create_user_dto import CreateUserDTO
@@ -33,6 +34,8 @@ class AuthService(IAuthService):
             token = self.firebase_rest_client.sign_in_with_password(email, password)
             user = self.user_service.get_user_by_email(email)
             return AuthDTO(**{**token.__dict__, **user.__dict__})
+        except InvalidPasswordException:
+            raise 
         except Exception as e:
             self.logger.error(
                 "Failed to generate token for user with email {email}".format(
