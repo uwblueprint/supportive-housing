@@ -46,7 +46,7 @@ const HomePage = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const formatDate = (date: Date | undefined) => {
-    if (date !== undefined) {
+    if (date) {
       return date
         .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
         .substring(0, 10);

@@ -80,7 +80,7 @@ const SearchAndFilters = ({
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
-  const newToast = CreateToast();
+  const dateChangeToast = CreateToast();
 
   const getUsers = async () => {
     const data = await UserAPIClient.getUsers({ returnAll: true });
@@ -128,7 +128,7 @@ const SearchAndFilters = ({
 
   const handleStartDateChange = (newStartDate: Date) => {
     if (endDate && newStartDate > endDate) {
-      newToast("Invalid Date", "The start date must be before the end date.", "error");
+      dateChangeToast("Invalid Date", "The start date must be before the end date.", "error");
       return;
     } 
     setStartDate(newStartDate);
@@ -136,7 +136,7 @@ const SearchAndFilters = ({
 
   const handleEndDateChange = (newEndDate: Date) => {
     if (startDate && startDate > newEndDate) {
-      newToast("Invalid Date", "The end date must be after the start date.", "error");
+      dateChangeToast("Invalid Date", "The end date must be after the start date.", "error");
       return;
     }
     setEndDate(newEndDate);
