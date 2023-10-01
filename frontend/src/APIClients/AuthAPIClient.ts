@@ -3,6 +3,7 @@ import {
   MutationFunctionOptions,
   OperationVariables,
 } from "@apollo/client";
+import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser, LoginResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
@@ -23,19 +24,13 @@ const login = async (
     );
     return data;
   } catch (error) {
-    return null;
-  }
-};
-
-const loginWithGoogle = async (idToken: string): Promise<LoginResponse> => {
-  try {
-    const { data } = await baseAPIClient.post(
-      "/auth/login",
-      { idToken },
-      { withCredentials: true },
-    );
-    return data;
-  } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 401) {
+        return {
+          errCode: axiosErr.response.status,
+          errMessage: "Incorrect password. Please try again."
+        }
+    }
     return null;
   }
 };
@@ -149,7 +144,6 @@ const refresh = async (): Promise<boolean> => {
 export default {
   login,
   logout,
-  loginWithGoogle,
   twoFa,
   twoFaWithGoogle,
   register,

@@ -11,7 +11,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { LoginResponse } from "../../types/AuthTypes";
+import { LoginErrorResponse, LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
 
@@ -24,6 +24,10 @@ type CredentialsProps = {
   toggle: boolean;
   setToggle: (toggle: boolean) => void;
 };
+
+const isLoginErrorResponse = (res: LoginResponse) : res is LoginErrorResponse => {
+  return (res !== null && 'errCode' in res);
+}
 
 const Credentials = ({
   email,
@@ -50,6 +54,12 @@ const Credentials = ({
     setEmail(inputValue)
   };
 
+  const handlePasswordChange = (e: { target: { value: unknown } }) => {
+    const inputValue = e.target.value as string;
+    setPassword(inputValue)
+    setPasswordError(false)
+  };
+
   const onLogInClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
@@ -57,7 +67,11 @@ const Credentials = ({
         email,
         password,
       );
-      if (loginResponse) {
+      if (isLoginErrorResponse(loginResponse)) {
+        console.log(loginResponse)
+        setPasswordError(true);
+      }
+      else if (loginResponse) {
         const { requiresTwoFa, authUser } = loginResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
@@ -102,11 +116,11 @@ const Credentials = ({
           </div>
 
           <div>
-            <FormControl>
+            <FormControl isRequired isInvalid={passwordError}>
               <Input 
                 type="password"
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={handlePasswordChange}
                 placeholder="Your password"
               />
               <FormErrorMessage>Incorrect password. Please try again.</FormErrorMessage>
