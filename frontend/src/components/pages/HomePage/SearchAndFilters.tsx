@@ -25,6 +25,7 @@ import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import CreateToast from "../../common/Toasts";
 
 type Props = {
   residents: ResidentLabel[];
@@ -79,6 +80,8 @@ const SearchAndFilters = ({
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
+  const dateChangeToast = CreateToast();
+
   const getUsers = async () => {
     const data = await UserAPIClient.getUsers({ returnAll: true });
     const users = data?.users;
@@ -123,7 +126,19 @@ const SearchAndFilters = ({
     setEmployees(mutableSelectedEmployees);
   };
 
+  const handleStartDateChange = (newStartDate: Date) => {
+    if (endDate && newStartDate > endDate) {
+      dateChangeToast("Invalid Date", "The start date must be before the end date.", "error");
+      return;
+    } 
+    setStartDate(newStartDate);
+  };
+
   const handleEndDateChange = (newEndDate: Date) => {
+    if (startDate && startDate > newEndDate) {
+      dateChangeToast("Invalid Date", "The end date must be after the start date.", "error");
+      return;
+    }
     setEndDate(newEndDate);
   };
 
@@ -134,10 +149,6 @@ const SearchAndFilters = ({
       selectedResidents,
     );
     setResidents(mutableSelectedResidents);
-  };
-
-  const handleStartDateChange = (newStartDate: Date) => {
-    setStartDate(newStartDate);
   };
 
   const handleTagsChange = (selectedTags: MultiValue<Tag>) => {
