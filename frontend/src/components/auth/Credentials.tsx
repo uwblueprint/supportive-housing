@@ -42,6 +42,7 @@ const Credentials = ({
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
 
   const handleEmailChange = (e: { target: { value: unknown } }) => {
     const inputValue = e.target.value as string;
@@ -58,6 +59,7 @@ const Credentials = ({
     const inputValue = e.target.value as string;
     setPassword(inputValue)
     setPasswordError(false)
+    setPasswordErrStr("");
   };
 
   const onLogInClick = async () => {
@@ -70,6 +72,7 @@ const Credentials = ({
       if (isLoginErrorResponse(loginResponse)) {
         console.log(loginResponse)
         setPasswordError(true);
+        setPasswordErrStr(loginResponse.errMessage);
       }
       else if (loginResponse) {
         const { requiresTwoFa, authUser } = loginResponse;
@@ -123,7 +126,7 @@ const Credentials = ({
                 onChange={handlePasswordChange}
                 placeholder="Your password"
               />
-              <FormErrorMessage>Incorrect password. Please try again.</FormErrorMessage>
+              <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
             </FormControl>
           </div>
           <div>

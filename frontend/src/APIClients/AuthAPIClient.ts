@@ -4,6 +4,7 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
+import getLoginErrMessage from '../helper/authErrorMessage'
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser, LoginResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
@@ -26,10 +27,10 @@ const login = async (
   } catch (error) {
     const axiosErr = (error as any) as AxiosError;
     if (axiosErr.response && axiosErr.response.status === 401) {
-        return {
-          errCode: axiosErr.response.status,
-          errMessage: "Incorrect password. Please try again."
-        }
+      return {
+        errCode: axiosErr.response.status,
+        errMessage: getLoginErrMessage(axiosErr.response)
+      }
     }
     return null;
   }

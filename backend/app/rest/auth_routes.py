@@ -1,5 +1,8 @@
 import os
-from ..utilities.exceptions.firebase_exceptions import InvalidPasswordException
+from ..utilities.exceptions.firebase_exceptions import (
+    InvalidPasswordException, 
+    TooManyLoginAttemptsException
+)
 
 from flask import Blueprint, current_app, jsonify, request
 from twilio.rest import Client
@@ -78,7 +81,7 @@ def login():
             **cookie_options,
         )
         return response, 200
-    except InvalidPasswordException as e:
+    except (InvalidPasswordException, TooManyLoginAttemptsException) as e:
         return jsonify({"error": str(e)}), 401
     except Exception as e:
         error_message = getattr(e, "message", None)
