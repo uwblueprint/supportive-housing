@@ -1,5 +1,6 @@
 from ..interfaces.tags_service import ITagsService
 from ...models.tag import Tag
+from ...models import db
 
 
 class TagsService(ITagsService):
@@ -23,3 +24,11 @@ class TagsService(ITagsService):
             return {"tags": tags_results}
         except Exception as postgres_error:
             raise postgres_error
+        
+    def delete_tag(self, tag_id):        
+        deleted_tag = Tag.query.filter_by(tag_id=tag_id).update({"status": "Deleted"})
+        if not deleted_tag:
+            raise Exception(
+                "Tag with id {tag_id} not found".format(tag_id=tag_id)
+            )
+        db.session.commit()
