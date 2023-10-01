@@ -2,22 +2,8 @@ import React, { useContext } from "react";
 import {
   Box,
   Button,
-  Checkbox,
-  Divider,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Input,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
-  ModalFooter,
-  Radio,
-  RadioGroup,
   Text,
 } from "@chakra-ui/react";
 import {
@@ -114,10 +100,115 @@ const Credentials = ({
   }
 
   if (toggle) {
+    // Lock scroll
+    document.body.style.overflow = "hidden"
     return (
-      <Flex>
-        <Box>
-          {/* BOX */}
+      <Flex h="100vh">
+        <Box w="47%">
+          <Flex
+            position="absolute"
+            top="27%"
+            left="6%"
+            w="36%"
+            h="30%"
+            justifyContent="space-between"
+            direction="column"
+          >
+            <Box display="flex"  alignItems="flex-start">
+              <Text 
+                position="absolute" 
+                fontWeight="700" 
+                fontSize="40px" 
+                color="#000000"
+              >
+                Log In
+              </Text>
+            </Box>
+            <Box>
+              <Input 
+                height="7vh" 
+                placeholder="Your email address"
+                fontWeight="400"
+                fontSize="22px"
+                lineHeight="29px"
+                position="absolute"
+                color="#989898"
+                _placeholder={{
+                color: "#989898"
+                }}
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </Box>
+            <Box>
+              <Input 
+                  height="7vh" 
+                  placeholder="Your password"
+                  fontWeight="400"
+                  fontSize="22px"
+                  lineHeight="29px"
+                  position="absolute"
+                  color="#989898"
+                  _placeholder={{
+                  color: "#989898", 
+                  }}
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                />
+            </Box>
+            <Box>
+              <Button
+                height="7vh"
+                width="100%"
+                bg="#285E61"
+                borderRadius="4px"
+                position="absolute"
+                fontWeight="400"
+                fontSize="22px"
+                lineHeight="29px"
+                color="#FFF"
+                _hover={{cursor: "default"}}
+                _focus={{ outline: "none", boxShadow: "none" }}
+                disabled={email === '' || password === ''}
+                type="button"
+                onClick={onLogInClick}
+              >
+                Log In
+              </Button>
+            </Box>
+          </Flex>
+          <Flex
+            top="70%"
+            left="6%"
+            direction="row"
+            position="absolute"
+            width="100%"
+            alignContent="center"
+          >
+            <Text
+            fontWeight="400"
+            fontSize="18px"
+            lineHeight="23.44px"
+            paddingRight="1.1%"
+            color="#535353"
+            >
+                Not a member yet?
+            </Text>
+            <Text
+              fontWeight="500"
+              fontSize="18px"
+              lineHeight="23.44px"
+              color="#285E61"
+              onClick={onSignUpClick}
+            >
+              Sign Up Now
+            </Text>
+          </Flex>
+        </Box>
+        <Box flex="1" bg="#285E61">
+          {/* Green Background */}
         </Box>
       </Flex>
   );
