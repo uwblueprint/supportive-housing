@@ -32,7 +32,10 @@ const login = async (
         errMessage: getLoginErrMessage(axiosErr.response)
       }
     }
-    return null;
+    return {
+      errCode: 500,
+      errMessage: getLoginErrMessage(axiosErr.response)
+    }
   }
 };
 

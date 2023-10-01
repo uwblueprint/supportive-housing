@@ -55,15 +55,17 @@ class FirebaseRestClient:
 
         response_json = response.json()
 
+        self.logger.error("LOOOL", response_json["error"])
+
         # Raise an invalid password exception
         # The corresponding error message from Firebase is INVALID_PASSWORD
         if (response_json["error"]["code"] == 400 and response_json["error"]["message"] == "INVALID_PASSWORD"):
-            raise InvalidPasswordException
+            raise InvalidPasswordException()
 
         # The corresponding error message from Firebase is 
         # 'TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.'
         elif (response_json["error"]["code"] == 400 and response_json["error"]["message"][:27] == "TOO_MANY_ATTEMPTS_TRY_LATER"):
-            raise TooManyLoginAttemptsException
+            raise TooManyLoginAttemptsException()
         elif response.status_code != 200:
             error_message = [
                 "Failed to sign-in via Firebase REST API, status code =",
