@@ -45,10 +45,13 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const formatDate = (date: Date) => {
-    const isoString = date.toISOString(); // Get ISO string, e.g., "2023-07-09T00:00:00.000Z"
-    const formattedDate = isoString.slice(0, 10); // Extract "YYYY-MM-DD" from the ISO string
-    return formattedDate;
+  const formatDate = (date: Date | undefined) => {
+    if (date) {
+      return date
+        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+        .substring(0, 10);
+    }
+    return "";
   };
 
   const getLogRecords = async (pageNumber: number) => {
@@ -56,15 +59,14 @@ const HomePage = (): React.ReactElement => {
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const residentsIds = residents.map((resident) => resident.value);
-    const dateRange =
-      startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
+    const dateRange = [formatDate(startDate), formatDate(endDate)];
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.filterLogRecords({
       building: buildingValue,
       employeeId: employeeIds,
       attnTo: attentionToIds,
-      dateRange,
+      dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
       residentId: residentsIds,
       tags: tagsValues,
       flagged,

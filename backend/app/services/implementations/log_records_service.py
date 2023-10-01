@@ -86,14 +86,23 @@ class LogRecordsService(ILogRecordsService):
         return f"\nattn_to={attn_to}"
 
     def filter_by_date_range(self, date_range):
+        sql = ""
         if len(date_range) > 0:
-            start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
-                hour=0, minute=0
-            )
-            end_date = datetime.strptime(
-                date_range[len(date_range) - 1], "%Y-%m-%d"
-            ).replace(hour=23, minute=59)
-        return f"\ndatetime>='{start_date}' AND datetime<='{end_date}'"
+            if (date_range[0] != ""):
+                start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
+                    hour=0, minute=0
+                )
+                sql += f"\ndatetime>='{start_date}'"
+            if (date_range[-1] != ""):
+                end_date = datetime.strptime(
+                    date_range[len(date_range) - 1], "%Y-%m-%d"
+                ).replace(hour=23, minute=59)
+                
+                if (sql == ""):
+                    sql += f"\ndatetime<='{end_date}'"
+                else:
+                    sql += f"\nAND datetime<='{end_date}'"
+        return sql
 
     def filter_by_tags(self, tags):
         sql_statement = f"\n'{tags[0]}'=ANY (tags)"
