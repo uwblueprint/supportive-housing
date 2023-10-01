@@ -33,7 +33,6 @@ class TagsService(ITagsService):
             raise Exception("Tag name {name} already exists".format(name=updated_name))
         create_update_tag = Tag.query.filter_by(tag_id=tag_id).update(
             { 
-                Tag.name: updated_name,
                 **updated_tag,
             }
         )
