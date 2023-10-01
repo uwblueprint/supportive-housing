@@ -1,3 +1,4 @@
+import os
 from ..interfaces.sign_in_logs_service import ISignInLogService
 from ...models.sign_in_logs import SignInLogs
 from ...models import db
@@ -24,9 +25,10 @@ class SignInLogService(ISignInLogService):
     def create_sign_in_log(self, user_id):
         sign_in = {"id": user_id, "time": datetime.now()}
         try:
-            new_sign_in = SignInLogs(**sign_in)
-            db.session.add(new_sign_in)
-            db.session.commit()
+            if os.getenv("CREATE_SIGN_IN_LOG") == "True":
+                new_sign_in = SignInLogs(**sign_in)
+                db.session.add(new_sign_in)
+                db.session.commit()
         except Exception as postgres_error:
             raise postgres_error
 
