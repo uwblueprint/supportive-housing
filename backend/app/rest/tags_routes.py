@@ -20,7 +20,7 @@ def get_tags():
         return jsonify({"error": (error_message if error_message else str(e))}), 500
     
 
-@blueprint.route("/delete/<int:tag_id>", methods=["PUT"], strict_slashes=False)
+@blueprint.route("/<int:tag_id>", methods=["DELETE"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def delete_tag(tag_id):
     """
