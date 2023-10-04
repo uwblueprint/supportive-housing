@@ -9,6 +9,7 @@ import Signup from "./components/auth/Signup";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
 import DisplayPage from "./components/pages/DisplayPage";
+import HomePage from "./components/pages/HomePage/HomePage";
 import NotFound from "./components/pages/NotFound";
 import UpdatePage from "./components/pages/UpdatePage";
 import * as Routes from "./constants/Routes";
@@ -22,11 +23,12 @@ import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
-import LogRecords from "./components/pages/LogRecords";
-import ResidentDirectory from "./components/pages/ResidentDirectory";
-import EmployeeDirectory from "./components/pages/EmployeeDirectory";
+import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
+
+import customTheme from "./theme";
+import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -47,7 +49,7 @@ const App = (): React.ReactElement => {
   );
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={customTheme}>
       <SampleContext.Provider value={sampleContext}>
         <SampleContextDispatcherContext.Provider
           value={dispatchSampleContextUpdate}
@@ -62,32 +64,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
-                  component={LogRecords}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.CREATE_ENTITY_PAGE}
-                  component={CreatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.UPDATE_ENTITY_PAGE}
-                  component={UpdatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.DISPLAY_ENTITY_PAGE}
-                  component={DisplayPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.EDIT_TEAM_PAGE}
-                  component={EditTeamInfoPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOOKS_PAGE}
-                  component={HooksDemo}
+                  component={HomePage}
                 />
                 <PrivateRoute
                   exact
@@ -97,8 +74,9 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
-                  component={EmployeeDirectory}
+                  component={EmployeeDirectoryPage}
                 />
+
                 <Route exact path="*" component={NotFound} />
               </Switch>
             </Router>

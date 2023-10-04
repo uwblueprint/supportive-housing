@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 
@@ -48,11 +48,6 @@ const Default = (): React.ReactElement => {
         <Logout />
         <RefreshCredentials />
         <ResetPassword />
-        <Button text="Create Entity" path={Routes.CREATE_ENTITY_PAGE} />
-        <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
-        <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
-        <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
-        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
       </div>
 
       <div style={{ height: "2rem" }} />

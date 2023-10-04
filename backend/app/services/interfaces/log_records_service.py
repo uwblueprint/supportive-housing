@@ -13,10 +13,7 @@ class ILogRecordsService(ABC):
 
         :param user_id: user id of the user adding the log record
         :type user_id: int
-        :param resident_first_name: resident's first name
-        :type resident_first_name: string
-        :param resident_last_name: resident's last name
-        :type resident_last_name: string
+        :param resident_id: resident's id
         :param flagged: checkbox if attention is needed
         :type flagged: boolean
         :param note: note that user inputs
@@ -28,9 +25,11 @@ class ILogRecordsService(ABC):
         pass
 
     @abstractmethod
-    def get_log_records(self, page_number,filters=None):
+    def get_log_records(
+        self, page_number, return_all, results_per_page=10, filters=None
+    ):
         """
-        Get all log records 
+        Get all log records
 
         :param start_index: start index of logs that are returned
         :type start_index: int

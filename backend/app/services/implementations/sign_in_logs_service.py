@@ -1,3 +1,4 @@
+import os
 from ..interfaces.sign_in_logs_service import ISignInLogService
 from ...models.sign_in_logs import SignInLogs
 from ...models import db
@@ -21,16 +22,17 @@ class SignInLogService(ISignInLogService):
         """
         self.logger = logger
 
-    def create_log(self, user_id):
+    def create_sign_in_log(self, user_id):
         sign_in = {"id": user_id, "time": datetime.now()}
         try:
-            new_sign_in = SignInLogs(**sign_in)
-            db.session.add(new_sign_in)
-            db.session.commit()
+            if os.getenv("CREATE_SIGN_IN_LOG") == "True":
+                new_sign_in = SignInLogs(**sign_in)
+                db.session.add(new_sign_in)
+                db.session.commit()
         except Exception as postgres_error:
             raise postgres_error
 
-    def get_logs_list(self, logs):
+    def get_sign_in_logs_list(self, logs):
         try:
             logs_list = []
             # return as json object
@@ -46,25 +48,25 @@ class SignInLogService(ISignInLogService):
         except Exception as postgres_error:
             raise postgres_error
 
-    def get_logs_by_id(self, user_id):
+    def get_sign_in_logs_by_id(self, user_id):
         try:
             sign_in_logs = SignInLogs.query.filter_by(id=user_id).order_by(
                 SignInLogs.time.desc()
             )[:100]
-            return self.get_logs_list(sign_in_logs)
+            return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:
             raise postgres_error
 
-    def get_logs_by_date_range(self, start_date, end_date):
+    def get_sign_in_logs_by_date_range(self, start_date, end_date):
         try:
             sign_in_logs = SignInLogs.query.filter(
                 SignInLogs.time >= start_date, SignInLogs.time <= end_date
             ).order_by(SignInLogs.time.desc())[:100]
-            return self.get_logs_list(sign_in_logs)
+            return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:
             raise postgres_error
 
-    def get_logs_by_date_range_and_id(self, start_date, end_date, user_id):
+    def get_sign_in_logs_by_date_range_and_id(self, start_date, end_date, user_id):
         try:
             sign_in_logs = (
                 SignInLogs.query.filter(
@@ -73,6 +75,6 @@ class SignInLogService(ISignInLogService):
                 .filter_by(id=user_id)
                 .order_by(SignInLogs.time.desc())[:100]
             )
-            return self.get_logs_list(sign_in_logs)
+            return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:
             raise postgres_error

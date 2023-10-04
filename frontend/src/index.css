@@ -1,40 +1,96 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
-.records {
-  font-family: 'DM Sans';
-  text-align: center;
-  color: #2D3748;
-  width: 75%;
-  padding-top: 10%;
-  margin: 0px auto
-}
-
-.table-header th {
-  font-family: 'DM Sans';
-  font-size: 16px;
-  text-transform: none;
-  color: #2D3748;
-  background-color: #EDF2F7
-}
-
 .navbar-text {
-  font-family: 'DM Sans';
+  font-family: "DM Sans";
   font-size: 16px !important;
   font-weight: 400;
-  color: #FFFFFF !important;
-  text-decoration: none
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+.log-entry h1 {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.button {
+  font-family: "DM Sans";
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.solid-button {
+  color: #ffffff;
+  background-color: #285e61 !important;
+  transition: background-color 0.25s ease !important;
+}
+
+.solid-button:hover {
+  background-color: #1b2a2c !important;
+  transition: background-color 0.5s ease !important;
+}
+
+.solid-button:active {
+  background-color: #285e61 !important;
+  box-shadow: inset 0px 0px 10px #ffffff !important;
+  transition: background-color 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.ghost-button {
+  color: #285e61 !important;
+  transition: color 0.25s ease !important;
+}
+
+.ghost-button:hover {
+  color: #1b2a2c !important;
+  background-color: #ffffff !important;
+  transition: color 0.5s ease !important;
+}
+
+.ghost-button:active {
+  color: #285e61 !important;
+  transition: color 0.1s ease !important;
+}
+
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  margin: 0px 0px;
+}
+
+/* Add some padding inside the card container */
+.container {
+  padding: 15px 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.primary {
+  font-weight: 700;
+  font-size: 14px;
+  color: #285e61;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: none;
+  display: none;
+}
+
+.chakra-collapse {
+  overflow: visible !important;
 }

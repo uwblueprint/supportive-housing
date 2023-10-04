@@ -72,20 +72,71 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_users(self):
+    def get_users(self, return_all, page_number, results_per_page):
         """
-        Get all users (possibly paginated in the future)
+        Get all users by a specific page and results per page
 
-        :return: list of UserDTOs
+        :param return_all: flag to return all users
+        :param page_number: number of page
+        :param results_per_page: number of results_per_page
+        :return: list of users
         :rtype: [UserDTO]
         :raises Exception: if user retrieval fails
         """
         pass
 
     @abstractmethod
-    def create_user(self, user, auth_id=None, signup_method="PASSWORD"):
+    def count_users(self):
         """
-        Create a user, email verification configurable
+        Count the total number of users
+
+        :return: count of users
+        :rtype: int
+        :raises Exception: if user count fails
+        """
+        pass
+
+    @abstractmethod
+    def get_user_status_by_email(self, email):
+        """
+        Get a user's user_status using their email
+
+        :return: user_status, one of "Invited", "Active", "Deactivated"
+        :rtype: string
+        :type email: string
+        :param email: email of the user
+        :raises Exception: if user retrieval fails
+        """
+        pass
+
+    @abstractmethod
+    def update_user_status(self, user_id, user_status):
+        """
+        Update a user's status using their id
+
+        :param user_id: id of the user
+        :param user_status: new status of the user (one of "Invited", "Active", or "Deactivated")
+        :raises Exception: if update fails
+        :rtype: None
+        """
+        pass
+
+    @abstractmethod
+    def create_invited_user(self, user):
+        """
+        Create a row in the user table with user_status = "Invited"
+
+        :param user: the user to be created
+        :type user: CreateUserDTO
+        :return: the created user
+        :rtype: UserDTO
+        """
+        pass
+
+    @abstractmethod
+    def activate_user(self, user, auth_id=None, signup_method="PASSWORD"):
+        """
+        If a user is invited, update the user's status and auth id, otherwise throw an error
 
         :param user: the user to be created
         :type user: CreateUserDTO
@@ -122,17 +173,6 @@ class IUserService(ABC):
 
         :param user_id: user_id of user to be deleted
         :type user_id: str
-        :raises Exception: if user deletion fails
-        """
-        pass
-
-    @abstractmethod
-    def delete_user_by_email(self, email):
-        """
-        Delete a user by email
-
-        :param str email: email of user to be deleted
-        :type email: str
         :raises Exception: if user deletion fails
         """
         pass

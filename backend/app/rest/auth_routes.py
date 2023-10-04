@@ -14,7 +14,6 @@ from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
 from ..services.implementations.sign_in_logs_service import SignInLogService
 
-
 user_service = UserService(current_app.logger)
 sign_in_logs_service = SignInLogService(current_app.logger)
 email_service = EmailService(
@@ -34,6 +33,7 @@ cookie_options = {
     "httponly": True,
     "samesite": ("None" if os.getenv("PREVIEW_DEPLOY") else "Strict"),
     "secure": (os.getenv("FLASK_CONFIG") == "production"),
+    "max_age": 24 * 60 * 60,  # persist for 24 hours
 }
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -70,6 +70,8 @@ def login():
             "role": auth_dto.role,
         }
 
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
+
         response = jsonify(response)
         response.set_cookie(
             "refreshToken",
@@ -93,9 +95,7 @@ def two_fa():
 
     if not passcode:
         return (
-            jsonify(
-                {"error": "Must supply passcode as a query parameter.t"}
-            ),
+            jsonify({"error": "Must supply passcode as a query parameter.t"}),
             400,
         )
 
@@ -136,7 +136,7 @@ def two_fa():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
-        sign_in_logs_service.create_log(auth_dto.id)
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
         return response, 200
 
     except Exception as e:
@@ -151,9 +151,8 @@ def register():
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
     """
     try:
-        request.json["role"] = "Relief Staff"
         user = CreateUserDTO(**request.json)
-        user_service.create_user(user)
+        user_service.activate_user(user)
         auth_dto = auth_service.generate_token(
             request.json["email"], request.json["password"]
         )

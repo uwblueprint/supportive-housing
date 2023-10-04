@@ -5,7 +5,9 @@ from flask import Blueprint, current_app, jsonify, request
 from ..middlewares.auth import require_authorization_by_role
 from ..middlewares.validate import validate_request
 from ..resources.create_user_dto import CreateUserDTO
+from ..resources.create_invited_user_dto import CreateInvitedUserDTO
 from ..resources.update_user_dto import UpdateUserDTO
+from ..resources.update_user_status_dto import UpdateUserStatusDTO
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
@@ -38,75 +40,121 @@ DEFAULT_CSV_OPTIONS = {
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_users():
     """
-    Get all users, optionally filter by a user_id or email query parameter to retrieve a single user
+    Get RESULTS_PER_PAGE users. Will return the users of corresponding to the page you're on
     """
-    user_id = request.args.get("user_id")
-    email = request.args.get("email")
-    content_type = request.mimetype
+    return_all = False
+    try:
+        return_all = (
+            True if request.args.get("return_all").casefold() == "true" else False
+        )
+    except:
+        pass
 
-    if user_id and email:
-        return jsonify({"error": "Cannot query by both user_id and email"}), 400
+    page_number = 1
+    try:
+        page_number = int(request.args.get("page_number"))
+    except:
+        pass
 
-    if not (user_id or email):
-        try:
-            users = user_service.get_users()
+    results_per_page = 10
+    try:
+        results_per_page = int(request.args.get("results_per_page"))
+    except:
+        pass
 
-            if content_type == "text/csv":
-                return (
-                    jsonify(
-                        generate_csv_from_list(
-                            [user.__dict__ for user in users], **DEFAULT_CSV_OPTIONS
-                        )
-                    ),
-                    200,
-                )
+    try:
+        users = user_service.get_users(return_all, page_number, results_per_page)
+        return jsonify(users), 201
 
-            return jsonify(list(map(lambda user: user.__dict__, users))), 200
-        except Exception as e:
-            error_message = getattr(e, "message", None)
-            return jsonify({"error": (error_message if error_message else str(e))}), 500
-
-    if user_id:
-        if type(user_id) is not str:
-            return jsonify({"error": "user_id query parameter must be a string"}), 400
-        else:
-            try:
-                user = user_service.get_user_by_id(user_id)
-                return jsonify(user.__dict__), 200
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    if email:
-        if type(email) is not str:
-            return jsonify({"error": "email query parameter must be a string"}), 400
-        else:
-            try:
-                user = user_service.get_user_by_email(email)
-                return jsonify(user.__dict__), 200
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
-@blueprint.route("/", methods=["POST"], strict_slashes=False)
+@blueprint.route("/count", methods=["GET"], strict_slashes=False)
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+def count_users():
+    """
+    Get number of users
+    """
+    try:
+        numUsers = user_service.count_users()
+        return jsonify(numUsers), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
+def get_user_status():
+    try:
+        email = request.args.get("email")
+        user_status = user_service.get_user_status_by_email(email)
+        return jsonify({"user_status": user_status, "email": email}), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("user-status/<int:user_id>", methods=["PATCH"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
-@validate_request("CreateUserDTO")
+@validate_request("UpdateUserStatusDTO")
+def update_user_status(user_id):
+    """
+    Update the user with the specified status
+    """
+    try:
+        body = UpdateUserStatusDTO(**request.json)
+        user_service.update_user_status(user_id, body.user_status)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} updated sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/invite-user", methods=["POST"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+@validate_request("CreateInvitedUserDTO")
 def create_user():
     """
     Create a user
     """
     try:
-        user = CreateUserDTO(**request.json)
-        created_user = user_service.create_user(user)
-        auth_service.send_email_verification_link(request.json["email"])
+        user = CreateInvitedUserDTO(**request.json)
+        created_user = user_service.create_invited_user(user)
         return jsonify(created_user.__dict__), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        status_code = None
+        if str(e) == "User already exists":
+            status_code = 409
+
+        return jsonify({"error": (error_message if error_message else str(e))}), (
+            status_code if status_code else 500
+        )
+
+
+@blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+@validate_request("CreateUserDTO")
+def activate_user():
+    """
+    Activate a user
+    """
+    try:
+        user = CreateUserDTO(**request.json)
+        activated_user = user_service.activate_user(user)
+        auth_service.send_email_verification_link(request.json["email"])
+        return jsonify(activated_user.__dict__), 201
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -121,54 +169,44 @@ def update_user(user_id):
     """
     try:
         user = UpdateUserDTO(**request.json)
-        updated_user = user_service.update_user_by_id(user_id, user)
-        return jsonify(updated_user.__dict__), 200
+        user_service.update_user_by_id(user_id, user)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} updated sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            201,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
-@blueprint.route("/", methods=["DELETE"], strict_slashes=False)
+@blueprint.route("/<int:user_id>", methods=["DELETE"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
-def delete_user():
+def delete_user(user_id):
     """
-    Delete a user by user_id or email, specified through a query parameter
+    Delete a user by user_id
     """
-    user_id = request.args.get("user_id")
-    email = request.args.get("email")
 
-    if user_id and email:
-        return jsonify({"error": "Cannot delete by both user_id and email"}), 400
-
-    if user_id:
-        if type(user_id) is not str:
-            return jsonify({"error": "user_id query parameter must be a string"}), 400
-        else:
-            try:
-                user_service.delete_user_by_id(user_id)
-                return "", 204
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    if email:
-        if type(email) is not str:
-            return jsonify({"error": "email query parameter must be a string"}), 400
-        else:
-            try:
-                user_service.delete_user_by_email(email)
-                return "", 204
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    return (
-        jsonify({"error": "Must supply one of user_id or email as query parameter."}),
-        400,
-    )
+    try:
+        user_service.delete_user_by_id(user_id)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} deleted sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            204,
+        )
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return (
+            jsonify({"error": (error_message if error_message else str(e))}),
+            500,
+        )
