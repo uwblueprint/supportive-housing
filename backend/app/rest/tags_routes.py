@@ -25,7 +25,6 @@ def update_tag(tag_id):
     Update a tag based on tag id
     """
     updated_tag_record = request.json
-    current_app.logger.info(updated_tag_record)
     try:
         updated_tag_record = tags_service.update_tag(
             tag_id, updated_tag_record
