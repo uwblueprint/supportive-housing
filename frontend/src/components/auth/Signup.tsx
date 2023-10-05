@@ -6,6 +6,13 @@ import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+  Input
+} from '@chakra-ui/react'
 
 const Signup = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -13,6 +20,24 @@ const Signup = (): React.ReactElement => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [emailError, setEmailError] = useState<boolean>(false);
+
+  const handleEmailChange = (e: { target: { value: unknown } }) => {
+    const inputValue = e.target.value as string;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (emailRegex.test(inputValue)) {
+      setEmailError(false)
+    } else {
+      setEmailError(true)
+    }
+    setEmail(inputValue)
+  };
+
+  const handlePasswordChange = (e: { target: { value: unknown }}) => {
+    const inputValue = e.target.value as string;
+    setPassword(inputValue)
+  }
 
   const onSignupClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
@@ -57,20 +82,25 @@ const Signup = (): React.ReactElement => {
           />
         </div>
         <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="username@domain.com"
-          />
+          <FormControl isRequired isInvalid={emailError}>
+            <Input 
+              type="email" 
+              value={email} 
+              onChange={handleEmailChange} 
+              placeholder="Your email address"
+            /> 
+            <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+          </FormControl>
         </div>
         <div>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="password"
-          />
+          <FormControl isRequired>
+            <Input
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="password"
+            />
+          </FormControl>
         </div>
         <div>
           <button
