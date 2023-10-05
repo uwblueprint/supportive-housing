@@ -1,17 +1,13 @@
-interface AttnToDetails {
-  attnTo?: number;
-  attnToFirstName?: string;
-  attnToLastName?: string;
+type NameRecord = {
+  id: number;
+  firstName: string;
+  lastName: string;
 };
 
-interface EmployeeDetails {
-  employeeId: number;
-  employeeFirstName: string;
-  employeeLastName: string;
-};
-
-export interface LogRecord extends AttnToDetails, EmployeeDetails {
+export type LogRecord = {
   logId: number;
+  attnTo?: NameRecord;
+  employee: NameRecord;
   building: string;
   datetime: string;
   flagged: boolean;
@@ -33,7 +29,7 @@ export type PostLogRecordsResponse = Pick<
   | "attnTo"
   | "building"
   | "datetime"
-  | "employeeId"
+  | "employee"
   | "flagged"
   | "note"
   | "residentId"

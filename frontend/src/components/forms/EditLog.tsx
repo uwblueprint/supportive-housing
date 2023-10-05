@@ -215,7 +215,7 @@ const EditLog = ({
     )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
-    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo : -1);
+    setAttnTo(logRecord.attnTo != undefined ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
