@@ -118,9 +118,9 @@ class LogRecordsService(ILogRecordsService):
         return sql
 
     def filter_by_tags(self, tags):
-        sql_statement = f"\n'{tags[0]}'=ANY (tags)"
+        sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
         for i in range(1, len(tags)):
-            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tags)"
+            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tag_names)"
         return sql_statement
 
     def filter_by_flagged(self, flagged):
@@ -157,23 +157,29 @@ class LogRecordsService(ILogRecordsService):
     ):
         try:
             sql = "SELECT\n \
-            logs.log_id,\n \
-            logs.employee_id,\n \
-            CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
-            logs.datetime,\n \
-            logs.flagged,\n \
-            logs.attn_to,\n \
-            logs.note,\n \
-            logs.tags,\n \
-            logs.building,\n \
-            employees.first_name AS employee_first_name,\n \
-            employees.last_name AS employee_last_name,\n \
-            attn_tos.first_name AS attn_to_first_name,\n \
-            attn_tos.last_name AS attn_to_last_name\n \
-            FROM log_records logs\n \
-            LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id \n \
-            JOIN residents ON logs.resident_id = residents.id"
+                logs.log_id,\n \
+                logs.employee_id,\n \
+                CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
+                logs.datetime,\n \
+                logs.flagged,\n \
+                logs.attn_to,\n \
+                logs.note,\n \
+                logs.building,\n \
+                t.tag_names, \n \
+                employees.first_name AS employee_first_name,\n \
+                employees.last_name AS employee_last_name,\n \
+                attn_tos.first_name AS attn_to_first_name,\n \
+                attn_tos.last_name AS attn_to_last_name\n \
+                FROM log_records logs\n \
+                LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
+                JOIN users employees ON logs.employee_id = employees.id\n \
+                LEFT JOIN\n \
+                    (SELECT logs.log_id, string_to_array(string_agg(tags.name, ','), ',') AS tag_names FROM log_records logs\n \
+                    JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
+                    JOIN tags ON lrt.tag_id = tags.tag_id\n \
+                    GROUP BY logs.log_id \n \
+                ) t ON logs.log_id = t.log_id\n \
+                JOIN residents ON logs.resident_id = residents.id"
 
             sql += self.filter_log_records(filters)
 
