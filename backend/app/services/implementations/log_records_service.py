@@ -242,9 +242,10 @@ class LogRecordsService(ILogRecordsService):
                 }
             )
         if "tags" in updated_log_record:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {LogRecords.tags: updated_log_record["tags"]}
-            )
+            logRecord = LogRecords.query.filter_by(log_id=log_id).first()
+            if (logRecord):
+                logRecord.tags = []
+                self.construct_tags(logRecord, updated_log_record["tags"])
         else:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {
