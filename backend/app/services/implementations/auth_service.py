@@ -37,8 +37,20 @@ class AuthService(IAuthService):
             token = self.firebase_rest_client.sign_in_with_password(email, password)
             user = self.user_service.get_user_by_email(email)
             return AuthDTO(**{**token.__dict__, **user.__dict__})
-        except (InvalidPasswordException, TooManyLoginAttemptsException):
-            raise 
+        except InvalidPasswordException as e:
+            self.logger.error(
+                "Incorrect password entered for user with email {email}".format(
+                    email=email
+                )
+            )
+            raise e
+        except TooManyLoginAttemptsException as e:
+            self.logger.error(
+                "Too many failed login attempts for user with email {email}".format(
+                    email=email
+                )
+            )
+            raise e
         except Exception as e:
             self.logger.error(
                 "Failed to generate token for user with email {email}".format(
