@@ -164,8 +164,8 @@ class LogRecordsService(ILogRecordsService):
                 logs.flagged,\n \
                 logs.attn_to,\n \
                 logs.note,\n \
-                logs.building,\n \
                 t.tag_names, \n \
+                logs.building,\n \
                 employees.first_name AS employee_first_name,\n \
                 employees.last_name AS employee_last_name,\n \
                 attn_tos.first_name AS attn_to_first_name,\n \
