@@ -7,6 +7,11 @@ const Text: ComponentStyleConfig = {
       ...fontStyles["body-medium"],
       color: "teal.300",
     },
+    login: {
+      color: "black.default",
+      fontWeight: "700", 
+      fontSize: "40px" 
+    }
   },
   defaultProps: {
     variant: "default",

@@ -34,6 +34,18 @@ const Input: ComponentStyleConfig = {
         ...fontStyles["body-medium"],
       },
     },
+    login: {
+      field: {
+        height: "7vh",
+        fontWeight: "400",
+        fontSize: "22px",
+        lineHeight: "29px",
+        color: "gray.650",
+        _placeholder: {
+          color: "gray.150"
+        }
+      },
+    },
   },
   defaultProps: {
     variant: "default",

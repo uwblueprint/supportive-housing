@@ -106,74 +106,46 @@ const Credentials = ({
       <Flex h="100vh">
         <Box w="47%">
           <Flex
-            position="absolute"
+            h="30%"
+            w="36%"
             top="27%"
             left="6%"
-            w="36%"
-            h="30%"
-            justifyContent="space-between"
             direction="column"
+            position="absolute"
+            justifyContent="space-between"
           >
             <Box display="flex"  alignItems="flex-start">
-              <Text 
-                position="absolute" 
-                fontWeight="700" 
-                fontSize="40px" 
-                color="#000000"
-              >
+              <Text variant="login" position="absolute">
                 Log In
               </Text>
             </Box>
             <Box>
               <Input 
-                height="7vh" 
-                placeholder="Your email address"
-                fontWeight="400"
-                fontSize="22px"
-                lineHeight="29px"
+                variant="login"
                 position="absolute"
-                color="#989898"
-                _placeholder={{
-                color: "#989898"
-                }}
-                type="email"
+                placeholder="Your email address"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
             <Box>
               <Input 
-                  height="7vh" 
-                  placeholder="Your password"
-                  fontWeight="400"
-                  fontSize="22px"
-                  lineHeight="29px"
-                  position="absolute"
-                  color="#989898"
-                  _placeholder={{
-                  color: "#989898", 
-                  }}
+                  variant="login"
                   type="password"
+                  position="absolute"
+                  placeholder="Your password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                 />
             </Box>
             <Box>
               <Button
-                height="7vh"
-                width="100%"
-                bg="#285E61"
-                borderRadius="4px"
+                variant="login"
                 position="absolute"
-                fontWeight="400"
-                fontSize="22px"
-                lineHeight="29px"
-                color="#FFF"
-                _hover={{cursor: "default"}}
-                _focus={{ outline: "none", boxShadow: "none" }}
                 disabled={email === '' || password === ''}
                 type="button"
                 onClick={onLogInClick}
+                
               >
                 Log In
               </Button>

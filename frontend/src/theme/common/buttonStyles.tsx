@@ -57,6 +57,24 @@ const Button: ComponentStyleConfig = {
       color: "white.default",
       ...fontStyles["button-navbar"],
     },
+    login: {
+      background: "#285E61",
+      fontWeight: "400",
+      fontSize: "22px",
+      lineHeight: "29px",
+      color: "white.default",
+      borderRadius: "4px",
+      height: "7vh",
+      width: "100%",
+      _hover: {
+        cursor: "default",
+        background: "inherit"
+      },
+      _focus: { 
+        outline: "none",
+        boxShadow: "none"
+      },
+    }
   },
 };
 
