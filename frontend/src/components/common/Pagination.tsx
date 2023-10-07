@@ -26,7 +26,7 @@ type Props = {
   userPageNum: number;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   setResultsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  getRecords: (page_number: number) => Promise<void>;
+  getRecords: (pageNumber: number) => Promise<void>;
 };
 
 const RESULTS_PER_PAGE_OPTIONS = [10, 25, 50];

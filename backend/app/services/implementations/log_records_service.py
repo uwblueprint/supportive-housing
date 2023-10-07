@@ -24,7 +24,6 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record
-        new_log_record["datetime"] = datetime.now()
 
         try:
             new_log_record = LogRecords(**new_log_record)
@@ -87,14 +86,23 @@ class LogRecordsService(ILogRecordsService):
         return f"\nattn_to={attn_to}"
 
     def filter_by_date_range(self, date_range):
+        sql = ""
         if len(date_range) > 0:
-            start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
-                hour=0, minute=0
-            )
-            end_date = datetime.strptime(
-                date_range[len(date_range) - 1], "%Y-%m-%d"
-            ).replace(hour=23, minute=59)
-        return f"\ndatetime>='{start_date}' AND datetime<='{end_date}'"
+            if (date_range[0] != ""):
+                start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
+                    hour=0, minute=0
+                )
+                sql += f"\ndatetime>='{start_date}'"
+            if (date_range[-1] != ""):
+                end_date = datetime.strptime(
+                    date_range[len(date_range) - 1], "%Y-%m-%d"
+                ).replace(hour=23, minute=59)
+                
+                if (sql == ""):
+                    sql += f"\ndatetime<='{end_date}'"
+                else:
+                    sql += f"\nAND datetime<='{end_date}'"
+        return sql
 
     def filter_by_tags(self, tags):
         sql_statement = f"\n'{tags[0]}'=ANY (tags)"
@@ -213,16 +221,6 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.attn_to: None,
                 }
             )
-        if "note" in updated_log_record:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {LogRecords.note: updated_log_record["note"]}
-            )
-        else:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {
-                    LogRecords.note: None,
-                }
-            )
         if "tags" in updated_log_record:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {LogRecords.tags: updated_log_record["tags"]}
@@ -239,6 +237,8 @@ class LogRecordsService(ILogRecordsService):
                 LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
                 LogRecords.building_id: updated_log_record["building_id"],
+                LogRecords.note: updated_log_record["note"],
+                LogRecords.datetime: updated_log_record["datetime"],
             }
         )
         if not updated_log_record:

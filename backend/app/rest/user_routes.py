@@ -7,6 +7,7 @@ from ..middlewares.validate import validate_request
 from ..resources.create_user_dto import CreateUserDTO
 from ..resources.create_invited_user_dto import CreateInvitedUserDTO
 from ..resources.update_user_dto import UpdateUserDTO
+from ..resources.update_user_status_dto import UpdateUserStatusDTO
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
@@ -83,12 +84,38 @@ def count_users():
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+
 @blueprint.route("/user-status", methods=["GET"], strict_slashes=False)
 def get_user_status():
     try:
         email = request.args.get("email")
         user_status = user_service.get_user_status_by_email(email)
         return jsonify({"user_status": user_status, "email": email}), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("user-status/<int:user_id>", methods=["PATCH"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+@validate_request("UpdateUserStatusDTO")
+def update_user_status(user_id):
+    """
+    Update the user with the specified status
+    """
+    try:
+        body = UpdateUserStatusDTO(**request.json)
+        user_service.update_user_status(user_id, body.user_status)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} updated sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            200,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -142,54 +169,44 @@ def update_user(user_id):
     """
     try:
         user = UpdateUserDTO(**request.json)
-        updated_user = user_service.update_user_by_id(user_id, user)
-        return jsonify(updated_user.__dict__), 200
+        user_service.update_user_by_id(user_id, user)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} updated sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            201,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
-@blueprint.route("/", methods=["DELETE"], strict_slashes=False)
+@blueprint.route("/<int:user_id>", methods=["DELETE"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
-def delete_user():
+def delete_user(user_id):
     """
-    Delete a user by user_id or email, specified through a query parameter
+    Delete a user by user_id
     """
-    user_id = request.args.get("user_id")
-    email = request.args.get("email")
 
-    if user_id and email:
-        return jsonify({"error": "Cannot delete by both user_id and email"}), 400
-
-    if user_id:
-        if type(user_id) is not str:
-            return jsonify({"error": "user_id query parameter must be a string"}), 400
-        else:
-            try:
-                user_service.delete_user_by_id(user_id)
-                return "", 204
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    if email:
-        if type(email) is not str:
-            return jsonify({"error": "email query parameter must be a string"}), 400
-        else:
-            try:
-                user_service.delete_user_by_email(email)
-                return "", 204
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
-    return (
-        jsonify({"error": "Must supply one of user_id or email as query parameter."}),
-        400,
-    )
+    try:
+        user_service.delete_user_by_id(user_id)
+        return (
+            jsonify(
+                {
+                    "message": "User record with id {user_id} deleted sucessfully".format(
+                        user_id=user_id
+                    )
+                }
+            ),
+            204,
+        )
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return (
+            jsonify({"error": (error_message if error_message else str(e))}),
+            500,
+        )

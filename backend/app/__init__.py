@@ -38,14 +38,16 @@ def create_app(config_name="development"):
     if type(config_name) is not ScriptInfo:
         app.config.from_object(app_config[config_name])
 
-    app.config["CORS_ORIGINS"] = [
+    allowed_origins = [
         "http://localhost:3000",
-        "https://uw-blueprint-starter-code.firebaseapp.com",
-        "https://uw-blueprint-starter-code.web.app",
-        re.compile("^https:\/\/uw-blueprint-starter-code--pr.*\.web\.app$"),
+        "https://blueprintsupportivehousing.firebaseapp.com",
+        "https://blueprintsupportivehousing.web.app",
+        re.compile("^https:\/\/blueprint-supportive-housing--pr.*\.web\.app$"),
     ]
-    app.config["CORS_SUPPORTS_CREDENTIALS"] = True
-    CORS(app)
+
+    CORS(
+        app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True
+    )
 
     if os.getenv("FLASK_CONFIG") != "production":
         app.config[
@@ -61,7 +63,9 @@ def create_app(config_name="development"):
             ),
         )
     else:
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "HEROKU_DATABASE_URL"
+        ).replace("postgres://", "postgresql://", 1)
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     firebase_admin.initialize_app(

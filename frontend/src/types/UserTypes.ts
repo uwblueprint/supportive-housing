@@ -8,8 +8,9 @@ export type User = {
   authId: string;
 };
 
+export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
+
 export type UserLabel = {
-  id: number;
   label: string;
   value: number;
 };

@@ -26,7 +26,6 @@ import HooksDemo from "./components/pages/HooksDemo";
 import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
-import CreateEmployee from "./components/forms/CreateEmployee";
 
 import customTheme from "./theme";
 import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
@@ -69,31 +68,6 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.CREATE_ENTITY_PAGE}
-                  component={CreatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.UPDATE_ENTITY_PAGE}
-                  component={UpdatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.DISPLAY_ENTITY_PAGE}
-                  component={DisplayPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.EDIT_TEAM_PAGE}
-                  component={EditTeamInfoPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOOKS_PAGE}
-                  component={HooksDemo}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.RESIDENT_DIRECTORY_PAGE}
                   component={ResidentDirectory}
                 />
@@ -102,11 +76,7 @@ const App = (): React.ReactElement => {
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
                   component={EmployeeDirectoryPage}
                 />
-                <PrivateRoute
-                  exact
-                  path={Routes.INVITE_EMPLOYEES}
-                  component={CreateEmployee}
-                />
+
                 <Route exact path="*" component={NotFound} />
               </Switch>
             </Router>

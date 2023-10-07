@@ -23,11 +23,12 @@ import {
 
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import { convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -50,11 +51,12 @@ const CreateResident = (): React.ReactElement => {
   const [isOpen, setIsOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
+  const ROOM_ERROR_TEXT = `Room Number is required and must only contain numbers.`;
   const addResident = async () => {
     await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
-      dateJoined: moveInDate,
+      dateJoined: convertToString(moveInDate),
       building,
     });
   };
@@ -147,7 +149,7 @@ const CreateResident = (): React.ReactElement => {
   return (
     <>
       <Box textAlign="right">
-        <Button onClick={handleOpen} marginBottom="16px" variant="primary">
+        <Button onClick={handleOpen} variant="primary">
           <AddIcon boxSize="16px" marginRight="8px" />
           Add Resident
         </Button>
@@ -184,9 +186,7 @@ const CreateResident = (): React.ReactElement => {
                       onChange={handleRoomNumberChange}
                       type="number"
                     />
-                    <FormErrorMessage>
-                      Room Number is required and must only contain numbers.
-                    </FormErrorMessage>
+                    <FormErrorMessage>{ROOM_ERROR_TEXT}</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>

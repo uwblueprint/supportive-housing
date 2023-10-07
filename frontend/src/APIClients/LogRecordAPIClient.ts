@@ -1,14 +1,22 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { GetLogRecordCountResponse, GetLogRecordsReponse, PostLogRecordsResponse } from "../types/LogRecordTypes";
-import { CountLogRecordFilters, LogRecordFilters } from "../components/common/types/Filters";
+import {
+  CountLogRecordFilters,
+  GetLogRecordCountResponse,
+  GetLogRecordsReponse,
+  LogRecordFilters,
+  PostLogRecordsResponse,
+  EditLogRecordParams,
+  CreateLogRecordParams,
+} from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
   building = "",
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
 }: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
@@ -24,6 +32,7 @@ const countLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -42,6 +51,7 @@ const filterLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
+  residentId = [],
   tags = [],
   flagged = false,
   returnAll = false,
@@ -60,6 +70,7 @@ const filterLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
+          residentId,
           tags,
           flagged,
         },
@@ -76,40 +87,96 @@ const filterLogRecords = async ({
   }
 };
 
-const createLog = async(
-    userId: number,
-    residentId: number,
-    flagged: boolean,
-    note: string,
-    attentionTo: number,
-    building: string,
-) : Promise<PostLogRecordsResponse> => {
-    try {
-        const bearerToken = `Bearer ${getLocalStorageObjProperty(
-          AUTHENTICATED_USER_KEY,
-          "accessToken",
-        )}`;
+const createLog = async ({
+  employeeId,
+  residentId,
+  datetime,
+  flagged,
+  note,
+  tags,
+  building,
+  attnTo,
+}: CreateLogRecordParams): Promise<PostLogRecordsResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
+      "/log_records/",
+      {
+        employeeId,
+        residentId,
+        datetime,
+        flagged,
+        note,
+        tags,
+        building,
+        attnTo,
+      },
+      { headers: { Authorization: bearerToken } },
+    );
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
 
-        const { data } = await baseAPIClient.post<PostLogRecordsResponse>(
-            "/log_records/",
-            { 
-                employeeId: userId, 
-                residentId,
-                flagged,
-                note,
-                attnTo: attentionTo,
-                building,
-            },
-            { headers: { Authorization: bearerToken } },
-        );
-        return data;
-      } catch (error) {
-        return null;
-      }
-}
+const deleteLogRecord = async (logId: number): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.delete(`/log_records/${logId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const editLogRecord = async ({
+  logId,
+  employeeId,
+  residentId,
+  datetime,
+  flagged,
+  note,
+  tags,
+  building,
+  attnTo,
+}: EditLogRecordParams): Promise<boolean> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.put(
+      `/log_records/${logId}`,
+      {
+        employeeId,
+        residentId,
+        datetime,
+        flagged,
+        note,
+        attnTo,
+        tags,
+        building,
+      },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 export default {
   createLog,
   countLogRecords,
   filterLogRecords,
+  deleteLogRecord,
+  editLogRecord,
 };

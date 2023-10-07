@@ -31,7 +31,10 @@ class Residents(db.Model):
             attr = getattr(self, field)
             # if it's a regular column, extract the value
             if isinstance(column, ColumnProperty):
-                formatted[field] = attr
+                if (field == "date_joined" or field == "date_left") and attr:
+                    formatted[field] = attr.strftime("%Y-%m-%d")
+                else:
+                    formatted[field] = attr
             # otherwise, it's a relationship field
             # (currently not applicable, but may be useful for entity groups)
             elif include_relationships:

@@ -25,22 +25,24 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
-import UserAPIClient from "../../APIClients/UserAPIClient";
-import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
-import { ResidentLabel } from "../../types/ResidentTypes";
-import combineDateTime from "../../helper/combineDateTime";
+import { LogRecord } from "../../types/LogRecordTypes";
+import { combineDateTime } from "../../helper/dateHelpers";
 
 type Props = {
+  logRecord: LogRecord;
+  isOpen: boolean;
+  toggleClose: () => void;
+  employeeOptions: UserLabel[];
+  residentOptions: UserLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
@@ -69,11 +71,11 @@ const ALERT_DATA: AlertDataOptions = {
   },
   SUCCESS: {
     status: "success",
-    description: "Log successfully created.",
+    description: "Log successfully edited.",
   },
   ERROR: {
     status: "error",
-    description: "Error creating log.",
+    description: "Error editing log.",
   },
 };
 
@@ -83,18 +85,6 @@ const TAGS = [
   { label: "Tag B", value: "B" },
   { label: "Tag C", value: "C" },
 ];
-
-// Changes the border of the Select components if the input is invalid
-function getBorderStyle(state: any, error: boolean): string {
-  if (state.isFocused) {
-    return "2px solid #3182ce";
-  }
-  if (error) {
-    return "2px solid #e53e3e";
-  }
-
-  return "1px solid #cbd5e0";
-}
 
 // Helper to get the currently logged in user
 const getCurUserSelectOption = () => {
@@ -108,7 +98,16 @@ const getCurUserSelectOption = () => {
   return { label: "", value: -1 };
 };
 
-const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
+const EditLog = ({
+  logRecord,
+  isOpen,
+  toggleClose,
+  employeeOptions,
+  residentOptions,
+  getRecords,
+  countRecords,
+  setUserPageNum,
+}: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
@@ -122,14 +121,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   const [building, setBuilding] = useState("");
   const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
-  const [attnTo, setAttnTo] = useState(-1);
+  const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
-
-  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
-
-  const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // error states for non-nullable inputs
   const [employeeError, setEmployeeError] = useState(false);
@@ -177,9 +171,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   ) => {
     if (selectedOption !== null) {
       setResident(selectedOption.value);
+      setResidentError(false);
     }
-
-    setResidentError(selectedOption === null);
   };
 
   const handleTagsChange = (
@@ -205,65 +198,34 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setNotesError(inputValue === "");
   };
 
-  // fetch resident + employee data for log creation
-  const getLogEntryOptions = async () => {
-    const residentsData = await ResidentAPIClient.getResidents({
-      returnAll: true,
-    });
-
-    if (residentsData && residentsData.residents.length !== 0) {
-      // TODO: Remove the type assertions here
-      const residentLabels: ResidentLabel[] = residentsData.residents.map(
-        (r) => ({ label: r.residentId!, value: r.id! }),
-      );
-      setResidentOptions(residentLabels);
-    }
-
-    const usersData = await UserAPIClient.getUsers({ returnAll: true });
-    if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users
-        .filter((user) => user.userStatus === "Active")
-        .map((user) => ({
-          label: user.firstName,
-          value: user.id,
-        }));
-      setEmployeeOptions(userLabels);
-    }
-  };
-
-  const handleCreateOpen = () => {
-    getLogEntryOptions();
-    setCreateOpen(true);
-
-    // reset all states
-    setDate(new Date());
+  const initializeValues = () => {
+    // set state variables
+    setEmployee(getCurUserSelectOption());
+    setDate(new Date(logRecord.datetime));
     setTime(
-      new Date().toLocaleTimeString([], {
+      date.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
       }),
     );
-    setBuilding("");
-    setResident(-1);
-    setTags([]);
-    setAttnTo(-1);
-    setNotes("");
+    setBuilding(logRecord.building);
+    const residentId = residentOptions.find(
+      (item) => item.label === logRecord.residentId,
+    )?.value;
+    setResident(residentId !== undefined ? residentId : -1);
+    setTags(logRecord.tags);
+    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo : -1);
+    setNotes(logRecord.note);
+    setFlagged(logRecord.flagged);
 
-    // reset all error states
+    // error states for non-nullable inputs
     setEmployeeError(false);
     setDateError(false);
     setTimeError(false);
     setBuildingError(false);
     setResidentError(false);
     setNotesError(false);
-
-    // reset alert state
-    setShowAlert(false);
-  };
-
-  const handleCreateClose = () => {
-    setCreateOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -287,12 +249,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       return;
     }
 
-    // Create a log in the db with this data
-    setCreateOpen(false);
-    // update the table with the new log
-    // NOTE: -1 is the default state for attnTo
-    const attentionTo = attnTo === -1 ? undefined : attnTo;
-    const res = await LogRecordAPIClient.createLog({
+    const res = await LogRecordAPIClient.editLogRecord({
+      logId: logRecord.logId,
       employeeId: employee.value,
       residentId: resident,
       datetime: combineDateTime(date, time),
@@ -300,18 +258,26 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       note: notes,
       tags,
       building,
-      attnTo: attentionTo,
+      attnTo: attnTo === -1 ? undefined : attnTo,
     });
-    if (res != null) {
+    if (res) {
       setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
       getRecords(1);
       setUserPageNum(1);
+
+      toggleClose();
     } else {
       setAlertData(ALERT_DATA.ERROR);
     }
     setShowAlert(true);
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      initializeValues();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (showAlert) {
@@ -323,23 +289,12 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   }, [showAlert]);
 
   return (
-    <div>
-      <Box textAlign="right">
-        <Button
-          onClick={handleCreateOpen}
-          marginBottom="16px"
-          variant="primary"
-        >
-          <AddIcon boxSize="16px" marginRight="8px" />
-          Add Log
-        </Button>
-      </Box>
-
+    <>
       <Box>
-        <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
+        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>New Log Entry Details</ModalHeader>
+            <ModalHeader>Edit Log Entry Details</ModalHeader>
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
@@ -391,6 +346,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
+                      defaultValue={BUILDINGS.find(
+                        (item) => item.value === building,
+                      )}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -403,6 +361,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
+                      defaultValue={residentOptions.find(
+                        (item) => item.label === logRecord.residentId,
+                      )}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -434,6 +395,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
+                      defaultValue={employeeOptions.find(
+                        (item) => item.value === logRecord.attnTo,
+                      )}
                     />
                   </FormControl>
                 </Col>
@@ -460,6 +424,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 style={{ paddingTop: "1rem" }}
                 onChange={() => setFlagged(!flagged)}
                 marginBottom="16px"
+                defaultChecked={flagged}
               >
                 <Text>Flag this Report</Text>
               </Checkbox>
@@ -468,7 +433,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
-                  onClick={handleCreateClose}
+                  onClick={toggleClose}
                   variant="tertiary"
                   marginRight="8px"
                 >
@@ -501,8 +466,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
           </Alert>
         </ScaleFade>
       </Box>
-    </div>
+    </>
   );
 };
 
-export default CreateLog;
+export default EditLog;
