@@ -130,12 +130,12 @@ const Credentials = ({
             </Box>
             <Box>
               <Input 
-                  variant="login"
-                  type="password"
-                  position="absolute"
-                  placeholder="Your password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                variant="login"
+                type="password"
+                position="absolute"
+                placeholder="Your password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
                 />
             </Box>
             <Box>
@@ -143,9 +143,8 @@ const Credentials = ({
                 variant="login"
                 position="absolute"
                 disabled={email === '' || password === ''}
-                type="button"
+                _hover={{cursor: "default"}}
                 onClick={onLogInClick}
-                
               >
                 Log In
               </Button>
@@ -154,33 +153,21 @@ const Credentials = ({
           <Flex
             top="70%"
             left="6%"
+            width="100%"
             direction="row"
             position="absolute"
-            width="100%"
             alignContent="center"
           >
-            <Text
-            fontWeight="400"
-            fontSize="18px"
-            lineHeight="23.44px"
-            paddingRight="1.1%"
-            color="#535353"
-            >
-                Not a member yet?
+            <Text variant="loginSecondary" paddingRight="1.1%">
+              Not a member yet?
             </Text>
-            <Text
-              fontWeight="500"
-              fontSize="18px"
-              lineHeight="23.44px"
-              color="#285E61"
-              onClick={onSignUpClick}
-            >
+            <Text variant="loginTertiary" onClick={onSignUpClick}>
               Sign Up Now
             </Text>
           </Flex>
         </Box>
-        <Box flex="1" bg="#285E61">
-          {/* Green Background */}
+        <Box flex="1" bg="teal.400">
+          {/* Background */}
         </Box>
       </Flex>
   );

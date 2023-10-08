@@ -10,7 +10,22 @@ const Text: ComponentStyleConfig = {
     login: {
       color: "black.default",
       fontWeight: "700", 
-      fontSize: "40px" 
+      fontSize: "40px",
+      fontFamily: "DM Sans"
+    },
+    loginSecondary: {
+      color: "gray.650",
+      fontWeight: "400",
+      fontSize: "18px",
+      fontFamily: "DM Sans",
+      lineHeight: "23.44px"
+    },
+    loginTertiary: {
+      color: "teal.400",
+      fontWeight: "500",
+      fontSize: "18px",
+      fontFamily: "DM Sans",
+      lineHeight: "23.44px"
     }
   },
   defaultProps: {
