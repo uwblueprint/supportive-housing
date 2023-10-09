@@ -1,6 +1,6 @@
 export type CSVLog = {
   attnTo: string;
-  building: string;
+  buildingId: number;
   datetime: string;
   employee: string;
   flagged: boolean;
