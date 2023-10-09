@@ -67,10 +67,12 @@ const Button: ComponentStyleConfig = {
       borderRadius: "4px",
       height: "7vh",
       width: "100%",
-      _focus: { 
-        outline: "none",
-        boxShadow: "none"
+      transition: "background-color 0.25s ease !important",
+      _active: {
+        background: "teal.400",
+        boxShadow: "inset 0px 0px 10px #ffffff !important",
       },
+
     }
   },
 };

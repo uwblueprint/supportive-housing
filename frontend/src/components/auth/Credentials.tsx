@@ -19,7 +19,6 @@ import AuthContext from "../../contexts/AuthContext";
 import { LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
-
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
 type GoogleErrorResponse = {
@@ -143,7 +142,11 @@ const Credentials = ({
                 variant="login"
                 position="absolute"
                 disabled={email === '' || password === ''}
-                _hover={{cursor: "default"}}
+                _hover={
+                  !email || !password
+                    ? {cursor: "pointer"}
+                    : {background: "teal.500", transition: "transition: background-color 0.5s ease !important"}
+                }
                 onClick={onLogInClick}
               >
                 Log In

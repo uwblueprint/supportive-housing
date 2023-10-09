@@ -25,7 +25,11 @@ const Text: ComponentStyleConfig = {
       fontWeight: "500",
       fontSize: "18px",
       fontFamily: "DM Sans",
-      lineHeight: "23.44px"
+      lineHeight: "23.44px",
+      _hover: {
+        cursor: "pointer",
+        textDecor: "underline"
+      }
     }
   },
   defaultProps: {
