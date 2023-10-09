@@ -57,7 +57,7 @@ const CreateResident = (): React.ReactElement => {
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
       dateJoined: convertToString(moveInDate),
-      buildingId
+      buildingId,
     });
   };
 
