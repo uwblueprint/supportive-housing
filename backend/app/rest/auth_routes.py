@@ -70,6 +70,8 @@ def login():
             "role": auth_dto.role,
         }
 
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
+
         response = jsonify(response)
         response.set_cookie(
             "refreshToken",
