@@ -57,6 +57,23 @@ const Button: ComponentStyleConfig = {
       color: "white.default",
       ...fontStyles["button-navbar"],
     },
+    login: {
+      background: "teal.400",
+      fontWeight: "400",
+      fontSize: "22px",
+      fontFamily: "DM Sans",
+      lineHeight: "29px",
+      color: "white.default",
+      borderRadius: "4px",
+      height: "7vh",
+      width: "100%",
+      transition: "background-color 0.25s ease !important",
+      _active: {
+        background: "teal.400",
+        boxShadow: "inset 0px 0px 10px #ffffff !important",
+      },
+
+    }
   },
 };
 
