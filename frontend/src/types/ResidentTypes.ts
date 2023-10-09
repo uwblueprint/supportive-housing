@@ -5,7 +5,7 @@ export type Resident = {
   roomNum: number;
   dateJoined: string;
   dateLeft?: string;
-  building: string;
+  buildingId: number;
 };
 
 export type ResidentLabel = {

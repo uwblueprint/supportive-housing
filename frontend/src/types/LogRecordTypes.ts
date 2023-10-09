@@ -3,7 +3,7 @@ export type LogRecord = {
   attnTo?: number;
   attnToFirstName?: string;
   attnToLastName?: string;
-  building: string;
+  buildingId: number;
   datetime: string;
   employeeId: number;
   employeeFirstName: string;
@@ -25,7 +25,7 @@ export type GetLogRecordCountResponse = {
 export type PostLogRecordsResponse = Pick<
   LogRecord,
   | "attnTo"
-  | "building"
+  | "buildingId"
   | "datetime"
   | "employeeId"
   | "flagged"
@@ -34,7 +34,7 @@ export type PostLogRecordsResponse = Pick<
 > | null;
 
 export type CountLogRecordFilters = {
-  building?: string;
+  buildingId?: number;
   employeeId?: number[];
   attnTo?: number[];
   dateRange?: string[];
@@ -50,7 +50,7 @@ export type CreateLogRecordParams = {
   flagged: boolean;
   note: string;
   tags: string[];
-  building: string;
+  buildingId: number;
   attnTo?: number;
 };
 
@@ -62,7 +62,7 @@ export type EditLogRecordParams = {
   flagged: boolean;
   note: string;
   tags: string[];
-  building: string;
+  buildingId: number;
   attnTo?: number;
 };
 

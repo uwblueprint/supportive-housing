@@ -59,9 +59,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144 Erb St. West", value: "144" },
-  { label: "362 Erb St. West", value: "362" },
-  { label: "402 Erb St. West", value: "402" },
+  { label: "144 Erb St. West", value: 1 },
+  { label: "362 Erb St. West", value: 2 },
+  { label: "402 Erb St. West", value: 3 },
 ];
 
 const ALERT_DATA: AlertDataOptions = {
@@ -118,7 +118,7 @@ const EditLog = ({
       hour12: false,
     }),
   );
-  const [building, setBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(logRecord.buildingId);
   const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
@@ -157,10 +157,10 @@ const EditLog = ({
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
     }
 
     setBuildingError(selectedOption === null);
@@ -209,7 +209,7 @@ const EditLog = ({
         hour12: false,
       }),
     );
-    setBuilding(logRecord.building);
+    setBuildingId(logRecord.buildingId);
     const residentId = residentOptions.find(
       (item) => item.label === logRecord.residentId,
     )?.value;
@@ -233,7 +233,7 @@ const EditLog = ({
     setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
-    setBuildingError(building === "");
+    setBuildingError(buildingId === undefined);
     setResidentError(resident === -1);
     setNotesError(notes === "");
 
@@ -242,7 +242,7 @@ const EditLog = ({
       !employee.label ||
       date === null ||
       time === "" ||
-      building === "" ||
+      buildingId === undefined ||
       resident === -1 ||
       notes === ""
     ) {
@@ -257,7 +257,7 @@ const EditLog = ({
       flagged,
       note: notes,
       tags,
-      building,
+      buildingId,
       attnTo: attnTo === -1 ? undefined : attnTo,
     });
     if (res) {
@@ -347,7 +347,7 @@ const EditLog = ({
                       onChange={handleBuildingChange}
                       styles={selectStyle}
                       defaultValue={BUILDINGS.find(
-                        (item) => item.value === building,
+                        (item) => item.value === buildingId,
                       )}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>

@@ -12,7 +12,7 @@ import {
 } from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
-  building = "",
+  buildingId,
   employeeId = [],
   attnTo = [],
   dateRange = [],
@@ -28,7 +28,7 @@ const countLogRecords = async ({
     const { data } = await baseAPIClient.get(`/log_records/count`, {
       params: {
         filters: {
-          building,
+          buildingId,
           employeeId,
           attnTo,
           dateRange,
@@ -47,7 +47,7 @@ const countLogRecords = async ({
 };
 
 const filterLogRecords = async ({
-  building = "",
+  buildingId,
   employeeId = [],
   attnTo = [],
   dateRange = [],
@@ -66,7 +66,7 @@ const filterLogRecords = async ({
     const { data } = await baseAPIClient.get(`/log_records`, {
       params: {
         filters: {
-          building,
+          buildingId,
           employeeId,
           attnTo,
           dateRange,
@@ -94,7 +94,7 @@ const createLog = async ({
   flagged,
   note,
   tags,
-  building,
+  buildingId,
   attnTo,
 }: CreateLogRecordParams): Promise<PostLogRecordsResponse> => {
   try {
@@ -111,7 +111,7 @@ const createLog = async ({
         flagged,
         note,
         tags,
-        building,
+        buildingId,
         attnTo,
       },
       { headers: { Authorization: bearerToken } },
@@ -145,7 +145,7 @@ const editLogRecord = async ({
   flagged,
   note,
   tags,
-  building,
+  buildingId,
   attnTo,
 }: EditLogRecordParams): Promise<boolean> => {
   try {
@@ -163,7 +163,7 @@ const editLogRecord = async ({
         note,
         attnTo,
         tags,
-        building,
+        buildingId,
       },
       { headers: { Authorization: bearerToken } },
     );

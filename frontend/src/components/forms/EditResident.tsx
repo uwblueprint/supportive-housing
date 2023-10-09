@@ -37,9 +37,9 @@ import { convertToDate, convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
-  { label: "144", value: "144" },
-  { label: "362", value: "362" },
-  { label: "402", value: "402" },
+  { label: "144 Erb St. W", value: 1 },
+  { label: "362 Erb St. W", value: 2 },
+  { label: "402 Erb St. W", value: 3 },
 ];
 
 type Props = {
@@ -52,7 +52,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [userBuilding, setUserBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(resident.buildingId);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
@@ -69,7 +69,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
-      building: userBuilding,
+      buildingId,
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
@@ -123,10 +123,10 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setUserBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
       setBuildingError(false);
     }
   };
@@ -137,7 +137,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setUserBuilding(resident.building);
+    setBuildingId(resident.buildingId);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
@@ -161,7 +161,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       setMoveOutDateError(true);
       return;
     }
-    if (userBuilding === "") {
+    if (buildingId === undefined) {
       setBuildingError(true);
       return;
     }
@@ -178,7 +178,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setUserBuilding(resident.building);
+    setBuildingId(resident.buildingId);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
@@ -240,7 +240,9 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
                     <FormLabel>Building</FormLabel>
                     <Select
                       options={BUILDINGS}
-                      placeholder={resident.building}
+                      defaultValue={BUILDINGS.find(
+                        (item) => item.value === buildingId,
+                      )}
                       onChange={handleBuildingChange}
                       styles={selectStyle}
                     />

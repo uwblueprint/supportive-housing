@@ -32,16 +32,16 @@ import { convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
-  { label: "144", value: "144" },
-  { label: "362", value: "362" },
-  { label: "402", value: "402" },
+  { label: "144 Erb St. W", value: 1 },
+  { label: "362 Erb St. W", value: 2 },
+  { label: "402 Erb St. W", value: 3 },
 ];
 
 const CreateResident = (): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [building, setBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(0);
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -57,7 +57,7 @@ const CreateResident = (): React.ReactElement => {
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
       dateJoined: convertToString(moveInDate),
-      building,
+      buildingId
     });
   };
 
@@ -85,10 +85,10 @@ const CreateResident = (): React.ReactElement => {
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
       setBuildingError(false);
     }
   };
@@ -100,7 +100,7 @@ const CreateResident = (): React.ReactElement => {
     setInitials("");
     setRoomNumber("");
     setMoveInDate(new Date());
-    setBuilding("");
+    setBuildingId(0);
 
     // Reset the error states
     setInitialsError(false);
@@ -119,14 +119,14 @@ const CreateResident = (): React.ReactElement => {
   const handleSubmit = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.length !== 3);
-    setBuildingError(building === "");
+    setBuildingError(buildingId === 0);
 
     //  Prevents form submission if any required values are incorrect
     if (
       initials.length !== 2 ||
       roomNumber.length !== 3 ||
       moveInDateError ||
-      building === ""
+      buildingId === 0
     ) {
       return;
     }

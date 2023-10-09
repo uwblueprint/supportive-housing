@@ -47,7 +47,7 @@ class LogRecordsService(ILogRecordsService):
                         "attn_to": log[5],
                         "note": log[6],
                         "tags": log[7],
-                        "building": log[8],
+                        "building_id": log[8],
                         "employee_first_name": log[9],
                         "employee_last_name": log[10],
                         "attn_to_first_name": log[11],
@@ -59,7 +59,7 @@ class LogRecordsService(ILogRecordsService):
             raise postgres_error
 
     def filter_by_building_id(self, building_id):
-        return f"\nbuilding_id='{building_id}'"
+        return f"\nlogs.building_id='{building_id}'"
 
     def filter_by_employee_id(self, employee_id):
         if type(employee_id) == list:
@@ -152,7 +152,7 @@ class LogRecordsService(ILogRecordsService):
             logs.attn_to,\n \
             logs.note,\n \
             logs.tags,\n \
-            buildings.name AS building_name,\n \
+            buildings.id AS building_id,\n \
             employees.first_name AS employee_first_name,\n \
             employees.last_name AS employee_last_name,\n \
             attn_tos.first_name AS attn_to_first_name,\n \

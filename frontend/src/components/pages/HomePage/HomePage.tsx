@@ -55,7 +55,7 @@ const HomePage = (): React.ReactElement => {
   };
 
   const getLogRecords = async (pageNumber: number) => {
-    const buildingValue = building ? building.value : "";
+    const buildingId = building ? building.value : undefined;
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const residentsIds = residents.map((resident) => resident.value);
@@ -63,7 +63,7 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      building: buildingValue,
+      buildingId,
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
@@ -88,7 +88,7 @@ const HomePage = (): React.ReactElement => {
   };
 
   const countLogRecords = async () => {
-    const buildingValue = building ? building.value : "";
+    const buildingId = building ? building.value : undefined;
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const dateRange =
@@ -98,7 +98,7 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
-      building: buildingValue,
+      buildingId,
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange,

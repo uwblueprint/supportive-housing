@@ -47,9 +47,9 @@ type Props = {
 };
 // Ideally we should be storing this information in the database
 const BUILDINGS: Building[] = [
-  { label: "144 Erb St. West", value: "144" },
-  { label: "362 Erb St. West", value: "362" },
-  { label: "402 Erb St. West", value: "402" },
+  { label: "144 Erb St. West", value: 1 },
+  { label: "362 Erb St. West", value: 2 },
+  { label: "402 Erb St. West", value: 3 },
 ];
 
 // Replace this with the tags from the db once the API and table are made

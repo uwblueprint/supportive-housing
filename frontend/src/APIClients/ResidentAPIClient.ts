@@ -58,7 +58,7 @@ const createResident = async ({
   initial,
   roomNum,
   dateJoined,
-  building,
+  buildingId,
 }: CreateResidentParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -67,7 +67,7 @@ const createResident = async ({
     )}`;
     await baseAPIClient.post(
       "/residents",
-      { initial, roomNum, dateJoined, building },
+      { initial, roomNum, dateJoined, buildingId },
       { headers: { Authorization: bearerToken } },
     );
     return true;
@@ -100,7 +100,7 @@ const editResident = async ({
   initial,
   roomNum,
   dateJoined,
-  building,
+  buildingId,
   dateLeft,
 }: Resident): Promise<boolean> => {
   try {
@@ -110,7 +110,7 @@ const editResident = async ({
     )}`;
     await baseAPIClient.put(
       `/residents/${id}`,
-      { initial, roomNum, dateJoined, building, dateLeft },
+      { initial, roomNum, dateJoined, buildingId, dateLeft },
       { headers: { Authorization: bearerToken } },
     );
     return true;
