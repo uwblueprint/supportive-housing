@@ -143,6 +143,14 @@ const Credentials = ({
                 position="absolute"
                 disabled={email === '' || password === ''}
                 _hover={
+                  email && password
+                    ? {
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
+                    : {}
+                }
                   !email || !password
                     ? {cursor: "pointer"}
                     : {background: "teal.500", transition: "transition: background-color 0.5s ease !important"}
