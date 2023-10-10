@@ -8,10 +8,6 @@ const combineDateTime = (dateObj: Date, timeStr: string): Date => {
   newDateObj.setHours(hours);
   newDateObj.setMinutes(minutes);
 
-  // Randomize the seconds and miliseconds for cursor pagination
-  newDateObj.setSeconds(Math.floor(Math.random() * 60));
-  newDateObj.setMilliseconds(Math.floor(Math.random() * 1000));
-
   return newDateObj;
 };
 
