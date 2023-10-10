@@ -18,6 +18,28 @@ def get_tags():
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+@blueprint.route("/<int:tag_id>", methods=["DELETE"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+def delete_tag(tag_id):
+    """
+    Delete a tag based on tag id
+    """
+    try:
+        tags_service.delete_tag(tag_id)
+        return (
+            jsonify(
+                {
+                    "message": "Tag with id {tag_id} deleted sucessfully".format(
+                       tag_id=tag_id
+                    )
+                }
+            ),
+            201,
+        )
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
 @blueprint.route("/<int:tag_id>", methods=["PUT"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def update_tag(tag_id):
