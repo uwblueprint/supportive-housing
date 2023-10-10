@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 
-import Pagination from "../../common/Pagination";
+import CursorPagination from "../../common/CursorPagination";
 import NavigationBar from "../../common/NavigationBar";
-import CreateLog from "../../forms/CreateLog";
-import commonAPIClient from "../../../APIClients/CommonAPIClient";
-import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
 import EmployeeDirectoryTable from "./EmployeeDirectoryTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
@@ -15,26 +12,29 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
   const [numUsers, setNumUsers] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
-  const [pageNum, setPageNum] = useState<number>(1);
-  const [userPageNum, setUserPageNum] = useState(pageNum);
+
+  const [nextCursor, setNextCursor] = useState<number>(-1);
+  const [prevCursor, setPrevCursor] = useState<number>(-1);
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const getUsers = async (pageNumber: number) => {
-    const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
+  const getUsers = async (direction?: string) => {
+    const data = await UserAPIClient.getUsers({
+      returnAll: false,
+      resultsPerPage,
+      nextCursor,
+      prevCursor,
+      direction,
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
 
     setUsers(data ? data.users : []);
-
-    if (!data || data.users.length === 0) {
-      setUserPageNum(0);
-      setPageNum(0);
-    } else {
-      setPageNum(pageNumber);
-    }
+    setNextCursor(data ? data.nextCursor : -1);
+    setPrevCursor(data ? data.prevCursor : -1);
+    console.log(data ? data.nextCursor : -1)
   };
 
   const countUsers = async () => {
@@ -43,8 +43,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   };
 
   useEffect(() => {
-    setUserPageNum(1);
-    getUsers(1);
+    getUsers();
   }, [resultsPerPage]);
 
   useEffect(() => {
@@ -68,13 +67,14 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         </Flex>
 
         <EmployeeDirectoryTable users={users} tableRef={tableRef} />
-        <Pagination
+        <CursorPagination
           numRecords={numUsers}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
           resultsPerPage={resultsPerPage}
           setResultsPerPage={setResultsPerPage}
+          nextCursor={nextCursor}
+          prevCursor={prevCursor}
+          setNextCursor={setNextCursor}
+          setPrevCursor={setPrevCursor}
           getRecords={getUsers}
         />
       </Box>

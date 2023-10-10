@@ -50,20 +50,32 @@ def get_users():
     except:
         pass
 
-    page_number = 1
-    try:
-        page_number = int(request.args.get("page_number"))
-    except:
-        pass
-
     results_per_page = 10
     try:
         results_per_page = int(request.args.get("results_per_page"))
     except:
         pass
 
+    next_cursor = -1
     try:
-        users = user_service.get_users(return_all, page_number, results_per_page)
+        next_cursor = int(request.args.get("next_cursor"))
+    except:
+        pass
+
+    prev_cursor = -1
+    try:
+        prev_cursor = int(request.args.get("prev_cursor"))
+    except:
+        pass
+
+    direction = ""
+    try:
+        direction = str(request.args.get("direction"))
+    except:
+        pass
+
+    try:
+        users = user_service.get_users(return_all, results_per_page, next_cursor, prev_cursor, direction)
         return jsonify(users), 201
 
     except Exception as e:

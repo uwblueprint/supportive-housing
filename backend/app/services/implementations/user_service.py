@@ -110,16 +110,55 @@ class UserService(IUserService):
             )
             raise e
 
-    def get_users(self, return_all, page_number, results_per_page):
+    def get_users(self, return_all, results_per_page, next_cursor, prev_cursor, direction):
         try:
             if return_all:
                 users = User.query.all()
             else:
-                users = (
-                    User.query.limit(results_per_page)
-                    .offset((page_number - 1) * results_per_page)
-                    .all()
-                )
+                if direction == "" or (next_cursor == -1 and prev_cursor == -1):
+                    users = (
+                        User.query.order_by(User.id.asc())
+                        .limit(results_per_page)
+                        .all()
+                    )
+                    next_cursor = json_list[-1].id
+                elif next_cursor != -1 and direction == "next":
+                    users = (
+                        User.query.filter(User.id > next_cursor)
+                        .order_by(User.id.asc())
+                        .limit(results_per_page)
+                        .all()
+                    )
+
+                    if len(users) < results_per_page:
+                        users.append(
+                            User.query.filter(User.id <= next_cursor)
+                            .order_by(User.id.asc())
+                            .limit(results_per_page - len(users))
+                            .all()
+                        )
+                    
+                    next_cursor = json_list[-1].id
+                    prev_cursor = json_list[0].id
+
+                elif prev_cursor != -1 and direction == "previous":
+                    users = (
+                        User.query.filter(User.id <= prev_cursor)
+                        .order_by(User.id.asc())
+                        .limit(results_per_page - len(users))
+                        .all()
+                    )
+
+                    if len(users) < results_per_page:
+                        users.append(
+                            User.query.filter(User.id <= next_cursor)
+                            .order_by(User.id.asc())
+                            .limit(results_per_page)
+                            .all()
+                        )
+
+                    next_cursor = json_list[-1].id
+                    prev_cursor = json_list[0].id
 
             json_list = list(
                 map(
@@ -127,7 +166,11 @@ class UserService(IUserService):
                     users,
                 )
             )
-            return {"users": json_list}
+            return {
+                "users": json_list,
+                "next_cursor": next_cursor,
+                "prev_cursor": prev_cursor,
+            }
 
         except Exception as postgres_error:
             raise postgres_error

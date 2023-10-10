@@ -7,13 +7,16 @@ import {
   CountUsersResponse,
   UpdateUserParams,
   UserStatus,
+  GetUsersParams,
 } from "../types/UserTypes";
 
 const getUsers = async ({
-  returnAll = false,
-  pageNumber = 1,
-  resultsPerPage = 10,
-}): Promise<GetUsersResponse> => {
+  returnAll,
+  resultsPerPage,
+  nextCursor,
+  prevCursor,
+  direction,
+}: GetUsersParams): Promise<GetUsersResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -22,8 +25,10 @@ const getUsers = async ({
     const { data } = await baseAPIClient.get<GetUsersResponse>(`/users`, {
       params: {
         returnAll,
-        pageNumber,
         resultsPerPage,
+        nextCursor,
+        prevCursor,
+        direction,
       },
       headers: { Authorization: bearerToken },
     });

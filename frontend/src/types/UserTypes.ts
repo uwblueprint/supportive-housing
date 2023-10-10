@@ -8,6 +8,14 @@ export type User = {
   authId: string;
 };
 
+export type GetUsersParams = {
+  returnAll: boolean;
+  resultsPerPage: number;
+  nextCursor: number;
+  prevCursor: number;
+  direction: string | undefined;
+};
+
 export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
 
 export type UserLabel = {
@@ -17,6 +25,8 @@ export type UserLabel = {
 
 export type GetUsersResponse = {
   users: User[];
+  nextCursor: number;
+  prevCursor: number;
 } | null;
 
 export type CountUsersResponse = {
