@@ -32,7 +32,7 @@ class TagsService(ITagsService):
             raise Exception(
                 "Tag with id {tag_id} not found".format(tag_id=tag_id)
                 )
-        db.session.commit(
+        db.session.commit()
 
     def update_tag(self, tag_id, updated_tag):
         updated_name = updated_tag["name"]
