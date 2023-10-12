@@ -1,6 +1,6 @@
 from ..interfaces.log_records_service import ILogRecordsService
 from ...models.log_records import LogRecords
-from ...models.tag import Tag
+from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
 from pytz import timezone
@@ -34,7 +34,7 @@ class LogRecordsService(ILogRecordsService):
 
             db.session.add(new_log_record)
             db.session.commit()
-            return log_record
+            return new_log_record.to_dict(True)
         except Exception as postgres_error:
             raise postgres_error
         
