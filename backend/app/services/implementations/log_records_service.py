@@ -120,7 +120,7 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_tags(self, tags):
         sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
         for i in range(1, len(tags)):
-            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tag_names)"
+            sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
         return sql_statement
 
     def filter_by_flagged(self, flagged):
