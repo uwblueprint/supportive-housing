@@ -67,17 +67,38 @@ const Authy = ({
     return <Redirect to={HOME_PAGE} />;
   }
 
+  const boxIndexes = [0, 1, 2, 3, 4, 5];
+
   if (toggle) {
     return (
       <>
         <Box bg="teal.400" height="100vh" onClick={handleFocus}>
           <Flex bg="white" height="100vh" width="47%" justifyContent="center" alignItems="center">
-            <VStack width="77%" border="2px solid red" align="flex-start" gap="2vh">
+            <VStack width="77%" align="flex-start" gap="2vh">
               <Text variant="login">One last step!</Text>
               <Text variant="loginSecondary">In order to protect your account, please confirm the authorization code sent to {email}</Text>
+              <Flex direction="row" width="100%" justifyContent="space-around">
+                {boxIndexes.map((boxIndex) => {
+                  return (
+                    <Flex
+                      key={boxIndex}
+                      width="56px"
+                      height="56px"
+                      border="1px solid #A7A7A7"
+                      borderRadius="4px"
+                      justify="center"
+                      align="center"
+                    >
+                      <Text variant="login" textAlign="center">
+                        {passcode.length > boxIndex ? passcode[boxIndex] : " "}
+                      </Text>
+                    </Flex>
+                  )
+                })}
+              </Flex>
               <Button
                 variant="login"
-                disabled={email === '' || password === ''}
+                disabled={passcode.length < 6}
                 _hover={
                   email && password
                     ? {
@@ -88,9 +109,8 @@ const Authy = ({
                     : {}
                 }
               >
-                Log In
+                Authenticate
               </Button>
-              <h1>{passcode}</h1>
               <Input
                 ref={inputRef}
                 autoFocus
