@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
-import Login from "./components/auth/Login";
-import Signup from "./components/auth/Signup";
+import Login from "./components/pages/LoginPage";
+import Signup from "./components/pages/SignupPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
 import DisplayPage from "./components/pages/DisplayPage";

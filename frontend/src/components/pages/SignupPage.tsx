@@ -5,7 +5,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
-import Authy from "./Authy";
+import Authy from "../auth/Authy";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 
 const Signup = (): React.ReactElement => {

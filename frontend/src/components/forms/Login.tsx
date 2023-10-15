@@ -35,7 +35,7 @@ type CredentialsProps = {
   setToggle: (toggle: boolean) => void;
 };
 
-const Credentials = ({
+const Login = ({
   email,
   setEmail,
   password,
@@ -181,4 +181,4 @@ const Credentials = ({
   return <></>;
 };
 
-export default Credentials;
+export default Login;

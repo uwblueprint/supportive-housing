@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Credentials from "./Credentials";
-import Authy from "./Authy";
+import Credentials from "../forms/Login";
+import Authy from "../auth/Authy";
 
 const Login = (): React.ReactElement => {
   const [email, setEmail] = useState("");
