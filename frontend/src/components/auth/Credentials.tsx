@@ -16,7 +16,6 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
@@ -51,7 +50,7 @@ const Credentials = ({
   const onLogInClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse: LoginResponse = await authAPIClient.login(
+      const loginResponse = await authAPIClient.login(
         email,
         password,
       );
@@ -80,7 +79,7 @@ const Credentials = ({
 
   const onGoogleLoginSuccess = async (tokenId: string) => {
     setToken(tokenId);
-    const loginResponse: LoginResponse = await authAPIClient.loginWithGoogle(
+    const loginResponse = await authAPIClient.loginWithGoogle(
       tokenId,
     );
     if (loginResponse) {

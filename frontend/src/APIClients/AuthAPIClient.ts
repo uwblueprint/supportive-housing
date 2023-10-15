@@ -4,7 +4,7 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser, LoginResponse, RegisterResponse } from "../types/AuthTypes";
+import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -14,7 +14,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<LoginResponse> => {
+): Promise<AuthTokenResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -27,7 +27,7 @@ const login = async (
   }
 };
 
-const loginWithGoogle = async (idToken: string): Promise<LoginResponse> => {
+const loginWithGoogle = async (idToken: string): Promise<AuthTokenResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -96,7 +96,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<RegisterResponse> => {
+): Promise<AuthTokenResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
