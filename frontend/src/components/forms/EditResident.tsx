@@ -33,6 +33,7 @@ import { Resident } from "../../types/ResidentTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
+import { convertToDate, convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -67,9 +68,9 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       residentId: resident.residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
-      dateJoined: moveInDate.toISOString(),
+      dateJoined: convertToString(moveInDate),
       building: userBuilding,
-      dateLeft: moveOutDate?.toISOString(),
+      dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
     if (res != null) {
@@ -135,9 +136,11 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
 
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
-    setMoveInDate(new Date(resident.dateJoined));
+    setMoveInDate(convertToDate(resident.dateJoined));
     setUserBuilding(resident.building);
-    setMoveOutDate(resident.dateLeft ? new Date(resident.dateLeft) : undefined);
+    setMoveOutDate(
+      resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
+    );
 
     setInitialsError(false);
     setRoomNumberError(false);
@@ -174,9 +177,11 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   useEffect(() => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
-    setMoveInDate(new Date(resident.dateJoined));
+    setMoveInDate(convertToDate(resident.dateJoined));
     setUserBuilding(resident.building);
-    setMoveOutDate(resident.dateLeft ? new Date(resident.dateLeft) : undefined);
+    setMoveOutDate(
+      resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
+    );
   }, [resident]);
 
   return (

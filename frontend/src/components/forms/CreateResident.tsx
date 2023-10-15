@@ -28,6 +28,7 @@ import { Col, Row } from "react-bootstrap";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import { convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -55,7 +56,7 @@ const CreateResident = (): React.ReactElement => {
     await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
-      dateJoined: moveInDate.toISOString(),
+      dateJoined: convertToString(moveInDate),
       building,
     });
   };

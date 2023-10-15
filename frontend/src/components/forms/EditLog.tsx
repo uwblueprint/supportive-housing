@@ -35,7 +35,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
-import combineDateTime from "../../helper/combineDateTime";
+import { combineDateTime } from "../../helper/dateHelpers";
 
 type Props = {
   logRecord: LogRecord;
@@ -199,7 +199,7 @@ const EditLog = ({
   };
 
   const initializeValues = () => {
-    // set state variables 
+    // set state variables
     setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
     setTime(
@@ -210,7 +210,9 @@ const EditLog = ({
       }),
     );
     setBuilding(logRecord.building);
-    const residentId = residentOptions.find((item) => item.label === logRecord.residentId)?.value;
+    const residentId = residentOptions.find(
+      (item) => item.label === logRecord.residentId,
+    )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo : -1);
@@ -257,7 +259,7 @@ const EditLog = ({
       tags,
       building,
       attnTo: attnTo === -1 ? undefined : attnTo,
-    })
+    });
     if (res) {
       setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
@@ -344,7 +346,9 @@ const EditLog = ({
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={BUILDINGS.find((item) => item.value === building)}
+                      defaultValue={BUILDINGS.find(
+                        (item) => item.value === building,
+                      )}
                     />
                     <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
@@ -357,7 +361,9 @@ const EditLog = ({
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}
-                      defaultValue={residentOptions.find((item) => item.label === logRecord.residentId)}
+                      defaultValue={residentOptions.find(
+                        (item) => item.label === logRecord.residentId,
+                      )}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -389,7 +395,9 @@ const EditLog = ({
                       placeholder="Select Employee"
                       onChange={handleAttnToChange}
                       styles={selectStyle}
-                      defaultValue={employeeOptions.find((item) => item.value === logRecord.attnTo)}
+                      defaultValue={employeeOptions.find(
+                        (item) => item.value === logRecord.attnTo,
+                      )}
                     />
                   </FormControl>
                 </Col>
