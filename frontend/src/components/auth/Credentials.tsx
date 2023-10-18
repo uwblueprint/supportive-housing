@@ -44,7 +44,7 @@ const Credentials = ({
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
 
-  const handleEmailChange = (e: { target: { value: unknown } }) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailRegex.test(inputValue)) {
@@ -55,7 +55,7 @@ const Credentials = ({
     setEmail(inputValue)
   };
 
-  const handlePasswordChange = (e: { target: { value: unknown } }) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue)
     setPasswordError(false)
