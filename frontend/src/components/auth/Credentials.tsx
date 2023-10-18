@@ -70,7 +70,6 @@ const Credentials = ({
         password,
       );
       if (isLoginErrorResponse(loginResponse)) {
-        console.log(loginResponse)
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
       }
