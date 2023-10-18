@@ -93,9 +93,6 @@ const Credentials = ({
         }
       }
       // Otherwise we can display some sort of error
-    } else {
-      // eslint-disable-next-line no-alert
-      window.alert("user not invited");
     }
   };
 
