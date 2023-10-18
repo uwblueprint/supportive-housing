@@ -118,6 +118,10 @@ const LogRecordsTable = ({
     }
     handleDeleteToggle(itemId);
     setShowAlert(true);
+    countRecords();
+    getRecords(1);
+    setUserPageNum(1); // needs work
+
   };
 
   useEffect(() => {
