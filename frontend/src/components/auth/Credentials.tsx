@@ -11,7 +11,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { LoginErrorResponse, LoginResponse } from "../../types/AuthTypes";
+import { ErrorResponse, LoginResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
 
@@ -25,7 +25,7 @@ type CredentialsProps = {
   setToggle: (toggle: boolean) => void;
 };
 
-const isLoginErrorResponse = (res: LoginResponse) : res is LoginErrorResponse => {
+const isLoginErrorResponse = (res: LoginResponse | ErrorResponse) : res is ErrorResponse => {
   return (res !== null && 'errCode' in res);
 }
 
@@ -44,7 +44,7 @@ const Credentials = ({
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailRegex.test(inputValue)) {
@@ -55,7 +55,7 @@ const Credentials = ({
     setEmail(inputValue)
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue)
     setPasswordError(false)
@@ -65,7 +65,7 @@ const Credentials = ({
   const onLogInClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse: LoginResponse = await authAPIClient.login(
+      const loginResponse: LoginResponse | ErrorResponse = await authAPIClient.login(
         email,
         password,
       );

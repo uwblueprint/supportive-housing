@@ -6,7 +6,7 @@ import {
 import { AxiosError } from "axios";
 import getLoginErrMessage from '../helper/authErrorMessage'
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser, LoginResponse } from "../types/AuthTypes";
+import { AuthenticatedUser, LoginResponse, ErrorResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -16,7 +16,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<LoginResponse> => {
+): Promise<LoginResponse | ErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
