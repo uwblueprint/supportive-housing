@@ -34,7 +34,7 @@ const login = async (
     }
     return {
       errCode: 500,
-      errMessage: getLoginErrMessage(axiosErr.response)
+      errMessage: "Error logging in. Please try again later."
     }
   }
 };
