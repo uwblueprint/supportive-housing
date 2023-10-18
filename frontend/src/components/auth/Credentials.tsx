@@ -1,12 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
 import {
+  Box,
+  Button,
+  Flex,
+  Text,
   FormControl,
-  FormLabel,
   FormErrorMessage,
-  FormHelperText,
   Input
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
+import {
+  GoogleLogin,
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+} from "react-google-login";
+import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
@@ -101,54 +108,91 @@ const Credentials = ({
   }
 
   if (toggle) {
+    // Lock scroll
+    document.body.style.overflow = "hidden"
     return (
-      <div style={{ textAlign: "center" }}>
-        <h1>Login</h1>
-        <form>
-          <div>
-            <FormControl isRequired isInvalid={emailError}>
-              <Input 
-                type="email" 
-                value={email} 
-                onChange={handleEmailChange} 
-                placeholder="Your email address"
-              /> 
-              <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
-            </FormControl>
-          </div>
-
-          <div>
-            <FormControl isRequired isInvalid={passwordError}>
-              <Input 
-                type="password"
-                value={password}
-                onChange={handlePasswordChange}
-                placeholder="Your password"
-              />
-              <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
-            </FormControl>
-          </div>
-          <div>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onLogInClick}
-            >
-              Log In
-            </button>
-          </div>
-        </form>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onSignUpClick}
+      <Flex h="100vh">
+        <Box w="47%">
+          <Flex
+            h="30%"
+            w="36%"
+            top="27%"
+            left="6%"
+            direction="column"
+            position="absolute"
+            justifyContent="space-between"
           >
-            Sign Up
-          </button>
-        </div>
-      </div>
-    );
+            <Box display="flex"  alignItems="flex-start">
+              <Text variant="login" position="absolute">
+                Log In
+              </Text>
+            </Box>
+            <Box>
+              <FormControl isRequired isInvalid={emailError}>
+                <Input 
+                  variant="login"
+                  position="absolute"
+                  placeholder="Your email address"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box>
+              <FormControl isRequired isInvalid={passwordError}>
+                <Input 
+                  variant="login"
+                  type="password"
+                  position="absolute"
+                  placeholder="Your password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                </FormControl>
+            </Box>
+            <Box>
+              <Button
+                variant="login"
+                position="absolute"
+                disabled={email === '' || password === ''}
+                _hover={
+                  email && password
+                    ? {
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
+                    : {}
+                }
+                onClick={onLogInClick}
+              >
+                Log In
+              </Button>
+            </Box>
+          </Flex>
+          <Flex
+            top="70%"
+            left="6%"
+            width="100%"
+            direction="row"
+            position="absolute"
+            alignContent="center"
+          >
+            <Text variant="loginSecondary" paddingRight="1.1%">
+              Not a member yet?
+            </Text>
+            <Text variant="loginTertiary" onClick={onSignUpClick}>
+              Sign Up Now
+            </Text>
+          </Flex>
+        </Box>
+        <Box flex="1" bg="teal.400">
+          {/* Background */}
+        </Box>
+      </Flex>
+  );
   }
   return <></>;
 };
