@@ -1,5 +1,12 @@
 import React, { useContext } from "react";
 import {
+  Box,
+  Button,
+  Flex,
+  Input,
+  Text,
+} from "@chakra-ui/react";
+import {
   GoogleLogin,
   GoogleLoginResponse,
   GoogleLoginResponseOffline,
@@ -92,63 +99,85 @@ const Credentials = ({
   }
 
   if (toggle) {
+    // Lock scroll
+    document.body.style.overflow = "hidden"
     return (
-      <div style={{ textAlign: "center" }}>
-        <h1>Login</h1>
-        <form>
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="username@domain.com"
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="password"
-            />
-          </div>
-          <div>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onLogInClick}
-            >
-              Log In
-            </button>
-          </div>
-          <GoogleLogin
-            clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-            buttonText="Login with Google"
-            onSuccess={(response: GoogleResponse): void => {
-              if ("tokenId" in response) {
-                onGoogleLoginSuccess(response.tokenId);
-              } else {
-                // eslint-disable-next-line no-alert
-                window.alert(response);
-              }
-            }}
-            onFailure={(error: GoogleErrorResponse) =>
-              // eslint-disable-next-line no-alert
-              window.alert(JSON.stringify(error))
-            }
-          />
-        </form>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onSignUpClick}
+      <Flex h="100vh">
+        <Box w="47%">
+          <Flex
+            h="30%"
+            w="36%"
+            top="27%"
+            left="6%"
+            direction="column"
+            position="absolute"
+            justifyContent="space-between"
           >
-            Sign Up
-          </button>
-        </div>
-      </div>
-    );
+            <Box display="flex"  alignItems="flex-start">
+              <Text variant="login" position="absolute">
+                Log In
+              </Text>
+            </Box>
+            <Box>
+              <Input 
+                variant="login"
+                position="absolute"
+                placeholder="Your email address"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </Box>
+            <Box>
+              <Input 
+                variant="login"
+                type="password"
+                position="absolute"
+                placeholder="Your password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                />
+            </Box>
+            <Box>
+              <Button
+                variant="login"
+                position="absolute"
+                disabled={email === '' || password === ''}
+                _hover={
+                  email && password
+                    ? {
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
+                    : {}
+                }
+                onClick={onLogInClick}
+              >
+                Log In
+              </Button>
+            </Box>
+          </Flex>
+          <Flex
+            top="70%"
+            left="6%"
+            width="100%"
+            direction="row"
+            position="absolute"
+            alignContent="center"
+          >
+            <Text variant="loginSecondary" paddingRight="1.1%">
+              Not a member yet?
+            </Text>
+            <Text variant="loginTertiary" onClick={onSignUpClick}>
+              Sign Up Now
+            </Text>
+          </Flex>
+        </Box>
+        <Box flex="1" bg="teal.400">
+          {/* Background */}
+        </Box>
+      </Flex>
+  );
   }
   return <></>;
 };
