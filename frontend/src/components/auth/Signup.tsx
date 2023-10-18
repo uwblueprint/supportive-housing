@@ -31,7 +31,7 @@ const Signup = (): React.ReactElement => {
 
   const [emailError, setEmailError] = useState<boolean>(false);
 
-  const handleEmailChange = (e: { target: { value: unknown } }) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (emailRegex.test(inputValue)) {
@@ -42,7 +42,7 @@ const Signup = (): React.ReactElement => {
     setEmail(inputValue)
   };
 
-  const handlePasswordChange = (e: { target: { value: unknown }}) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue)
   }
