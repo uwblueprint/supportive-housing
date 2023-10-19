@@ -29,8 +29,8 @@ const ResidentDirectory = (): React.ReactElement => {
     setResidents(data ? data.residents : []);
 
     if (!data || data.residents.length === 0) {
-      setUserPageNum(0);
-      setPageNum(0);
+      setUserPageNum(1);
+      setPageNum(1);
     } else {
       setPageNum(pageNumber);
     }

@@ -80,8 +80,8 @@ const HomePage = (): React.ReactElement => {
     setLogRecords(data ? data.logRecords : []);
 
     if (!data || data.logRecords.length === 0) {
-      setUserPageNum(0);
-      setPageNum(0);
+      setPageNum(1);
+      setUserPageNum(1);
     } else {
       setPageNum(pageNumber);
     }

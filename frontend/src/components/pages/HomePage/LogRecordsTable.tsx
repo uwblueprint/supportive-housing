@@ -119,14 +119,15 @@ const LogRecordsTable = ({
       return;
     }
     handleDeleteToggle(itemId);
-    setShowAlert(true);
+    const newUserPageNum:  number = (
+      logRecords.length === 1 && userPageNum > 1
+        ? userPageNum - 1 
+        : userPageNum
+    );
     countRecords();
-    getRecords(userPageNum);
-    if (logRecords.length === 1) {
-      setUserPageNum(Math.max(1, userPageNum))
-    } else {
-      setUserPageNum(userPageNum);
-    }
+    setShowAlert(true);
+    setUserPageNum(newUserPageNum);
+    getRecords(newUserPageNum);
     
   };
 
