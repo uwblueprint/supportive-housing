@@ -35,6 +35,7 @@ import ConfirmationModal from "../../common/ConfirmationModal";
 type Props = {
   logRecords: LogRecord[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
@@ -47,6 +48,7 @@ const DELETE_CONFIRMATION_MESSAGE =
 const LogRecordsTable = ({
   logRecords,
   tableRef,
+  userPageNum,
   getRecords,
   countRecords,
   setUserPageNum,
@@ -119,9 +121,13 @@ const LogRecordsTable = ({
     handleDeleteToggle(itemId);
     setShowAlert(true);
     countRecords();
-    getRecords(1);
-    setUserPageNum(1); // needs work
-
+    getRecords(userPageNum);
+    if (logRecords.length === 1) {
+      setUserPageNum(Math.max(1, userPageNum))
+    } else {
+      setUserPageNum(userPageNum);
+    }
+    
   };
 
   useEffect(() => {
@@ -224,7 +230,7 @@ const LogRecordsTable = ({
                       message={DELETE_CONFIRMATION_MESSAGE}
                       isOpen={deleteOpenMap[record.logId]}
                       toggleClose={() => handleDeleteToggle(record.logId)}
-                      action={() => deleteLogRecord(record.logId)}
+                      action={() => deleteLogRecord(record.logId)} // what else can we pass
                     />
                   </>
                 );
