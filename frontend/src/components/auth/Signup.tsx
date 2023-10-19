@@ -57,11 +57,6 @@ const Signup = (): React.ReactElement => {
         password,
       );
       setAuthenticatedUser(user);
-    } else {
-      // TODO: make this alert better and also differentiate between
-      // when a user is not invited and when a user's account already exists
-      // eslint-disable-next-line no-alert
-      window.alert("user not invited");
     }
   };
 
