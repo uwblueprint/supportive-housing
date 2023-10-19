@@ -11,6 +11,7 @@ class Residents(db.Model):
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
     building = db.Column(db.Enum("144", "402", "362", name="buildings"), nullable=False)
+    log_records = db.relationship("LogRecords", secondary="log_record_residents", back_populates="residents")
 
     resident_id = db.column_property(initial + cast(room_num, String))
 

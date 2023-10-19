@@ -12,6 +12,7 @@ def init_app(app):
     from .log_records import LogRecords
     from .tag import Tag
     from .residents import Residents
+    from .log_record_residents import LogRecordResidents
 
     app.app_context().push()
     db.init_app(app)
