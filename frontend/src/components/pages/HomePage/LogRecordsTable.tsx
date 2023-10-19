@@ -128,7 +128,6 @@ const LogRecordsTable = ({
     setShowAlert(true);
     setUserPageNum(newUserPageNum);
     getRecords(newUserPageNum);
-    
   };
 
   useEffect(() => {
@@ -231,7 +230,7 @@ const LogRecordsTable = ({
                       message={DELETE_CONFIRMATION_MESSAGE}
                       isOpen={deleteOpenMap[record.logId]}
                       toggleClose={() => handleDeleteToggle(record.logId)}
-                      action={() => deleteLogRecord(record.logId)} // what else can we pass
+                      action={() => deleteLogRecord(record.logId)}
                     />
                   </>
                 );
