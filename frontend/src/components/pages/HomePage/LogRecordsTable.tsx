@@ -119,7 +119,7 @@ const LogRecordsTable = ({
       return;
     }
     handleDeleteToggle(itemId);
-    const newUserPageNum:  number = (
+    const newUserPageNum: number = (
       logRecords.length === 1 && userPageNum > 1
         ? userPageNum - 1 
         : userPageNum
