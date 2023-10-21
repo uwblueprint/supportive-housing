@@ -30,8 +30,8 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     setUsers(data ? data.users : []);
 
     if (!data || data.users.length === 0) {
-      setUserPageNum(1);
-      setPageNum(1);
+      setUserPageNum(0);
+      setPageNum(0);
     } else {
       setPageNum(pageNumber);
     }
