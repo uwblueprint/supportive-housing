@@ -213,11 +213,13 @@ class LogRecordsService(ILogRecordsService):
             raise postgres_error
 
     def delete_log_record(self, log_id):
-        deleted_log_record = LogRecords.query.filter_by(log_id=log_id).delete()
-        if not deleted_log_record:
+        log_record_to_delete = LogRecords.query.filter_by(log_id=log_id).first()
+        if not log_record_to_delete:
             raise Exception(
                 "Log record with id {log_id} not found".format(log_id=log_id)
             )
+        log_record_to_delete.residents = []
+        db.session.delete(log_record_to_delete)
         db.session.commit()
 
     def update_log_record(self, log_id, updated_log_record):
@@ -243,10 +245,20 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.tags: None,
                 }
             )
+        if "residents" in updated_log_record:
+            log_record = LogRecords.query.filter_by(log_id=log_id).first()
+            if log_record:
+                log_record.residents = []
+                self.construct_residents(log_record, updated_log_record["residents"])
+        else:
+            LogRecords.query.filter_by(log_id=log_id).update(
+                {
+                    LogRecords.residents: None,
+                }
+            )
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
                 LogRecords.employee_id: updated_log_record["employee_id"],
-                LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
                 LogRecords.building: updated_log_record["building"],
                 LogRecords.note: updated_log_record["note"],
