@@ -54,7 +54,7 @@ class LogRecordsService(ILogRecordsService):
                     {
                         "log_id": log[0],
                         "employee_id": log[1],
-                        "resident_id": log[2],
+                        "residents": log[2],
                         "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
                         "flagged": log[4],
                         "attn_to": log[5],
@@ -159,7 +159,7 @@ class LogRecordsService(ILogRecordsService):
             sql = "SELECT\n \
             logs.log_id,\n \
             logs.employee_id,\n \
-            CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
+            r.residents,\n \
             logs.datetime,\n \
             logs.flagged,\n \
             logs.attn_to,\n \
@@ -173,7 +173,12 @@ class LogRecordsService(ILogRecordsService):
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id \n \
-            JOIN residents ON logs.resident_id = residents.id"
+            LEFT JOIN\n \
+                (SELECT logs.log_id, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
+                JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
+                JOIN residents ON lrr.resident_id = residents.id\n \
+                GROUP BY logs.log_id \n \
+            ) r ON logs.log_id = r.log_id\n"
 
             sql += self.filter_log_records(filters)
 
