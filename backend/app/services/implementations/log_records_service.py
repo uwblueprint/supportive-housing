@@ -1,5 +1,6 @@
 from ..interfaces.log_records_service import ILogRecordsService
 from ...models.log_records import LogRecords
+from ...models.residents import Residents
 from ...models.user import User
 from ...models import db
 from datetime import datetime
@@ -24,14 +25,26 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record
+        residents = new_log_record["residents"]
+        del new_log_record["residents"]
 
         try:
             new_log_record = LogRecords(**new_log_record)
+            self.construct_residents(new_log_record, residents)
+            
             db.session.add(new_log_record)
             db.session.commit()
-            return log_record
+            return {**log_record, "residents": residents}
         except Exception as postgres_error:
             raise postgres_error
+        
+    def construct_residents(self, log_record, residents):
+        for resident_id in residents:
+            resident = Residents.query.filter_by(id=resident_id).first()
+
+            if not resident:
+                raise Exception(f"Resident with id {resident_id} does not exist")
+            log_record.residents.append(resident)
 
     def to_json_list(self, logs):
         try:
