@@ -245,17 +245,13 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.tags: None,
                 }
             )
-        if "residents" in updated_log_record:
-            log_record = LogRecords.query.filter_by(log_id=log_id).first()
-            if log_record:
-                log_record.residents = []
+
+        log_record = LogRecords.query.filter_by(log_id=log_id).first()
+        if log_record:
+            log_record.residents = []
+            if "residents" in updated_log_record:
                 self.construct_residents(log_record, updated_log_record["residents"])
-        else:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {
-                    LogRecords.residents: None,
-                }
-            )
+
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
                 LogRecords.employee_id: updated_log_record["employee_id"],
