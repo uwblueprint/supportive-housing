@@ -204,7 +204,14 @@ class LogRecordsService(ILogRecordsService):
             COUNT(*)\n \
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id"
+            JOIN users employees ON logs.employee_id = employees.id\n\
+            LEFT JOIN\n \
+                (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids FROM log_records logs\n \
+                JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
+                JOIN residents ON lrr.resident_id = residents.id\n \
+                GROUP BY logs.log_id \n \
+            ) r ON logs.log_id = r.log_id\n"
+            
 
             sql += self.filter_log_records(filters)
 
