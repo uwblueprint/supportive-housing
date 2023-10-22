@@ -57,9 +57,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144 Erb St. West", value: 1 },
-  { label: "362 Erb St. West", value: 2 },
-  { label: "402 Erb St. West", value: 3 },
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 const ALERT_DATA: AlertDataOptions = {

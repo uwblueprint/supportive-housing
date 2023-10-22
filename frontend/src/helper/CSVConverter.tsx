@@ -7,7 +7,7 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
 
   return {
     attnTo: logRecord.attnTo != null ? attnTo : "",
-    buildingId: logRecord.buildingId,
+    building: logRecord.building,
     datetime: logRecord.datetime,
     employee,
     flagged: logRecord.flagged,

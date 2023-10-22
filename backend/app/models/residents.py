@@ -11,6 +11,7 @@ class Residents(db.Model):
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
+    building = db.relationship("Buildings", back_populates="resident")
 
     resident_id = db.column_property(initial + cast(room_num, String))
 

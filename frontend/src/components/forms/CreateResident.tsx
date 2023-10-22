@@ -32,9 +32,9 @@ import { convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
-  { label: "144 Erb St. W", value: 1 },
-  { label: "362 Erb St. W", value: 2 },
-  { label: "402 Erb St. W", value: 3 },
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 const CreateResident = (): React.ReactElement => {

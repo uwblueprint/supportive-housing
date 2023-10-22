@@ -4,6 +4,7 @@ export type LogRecord = {
   attnToFirstName?: string;
   attnToLastName?: string;
   buildingId: number;
+  building: string;
   datetime: string;
   employeeId: number;
   employeeFirstName: string;

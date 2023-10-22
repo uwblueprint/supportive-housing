@@ -15,13 +15,13 @@ class IResidentsService(ABC):
         :param initial: initial of resident
         :type initial: string
         :param room_num: room number which the resident resides in
-        :type room_num: integer
+        :type room_num: int
         :param date_joined: the date the resident joined
         :type date_joined: date
         :param date_left: the date the resident left, if exists
         :type date_left: date
         :param building_id: the building_id in which the resident is staying
-        :type building_id: Enum("144", "402", "362)
+        :type building_id: int
         :raises Exception: if resident creation fails
         """
         pass

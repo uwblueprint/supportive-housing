@@ -18,7 +18,7 @@ INSERT INTO buildings (
 VALUES (
   1,
   '144 Erb St. W',
-  'Building 1'
+  '144'
   );
 
 INSERT INTO buildings (
@@ -29,7 +29,7 @@ name
 VALUES ( 
   2,
   '362 Erb St. W',
-  'Building 2'
+  '362'
   );
 
 INSERT INTO buildings (
@@ -40,7 +40,7 @@ name
 VALUES ( 
   3,
   '402 Erb St. W',
-  'Building 3'
+  '402'
   );
 "
 

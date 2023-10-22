@@ -46,10 +46,10 @@ type Props = {
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 // Ideally we should be storing this information in the database
-const BUILDINGS: Building[] = [
-  { label: "144 Erb St. West", value: 1 },
-  { label: "362 Erb St. West", value: 2 },
-  { label: "402 Erb St. West", value: 3 },
+const BUILDINGS = [
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 // Replace this with the tags from the db once the API and table are made

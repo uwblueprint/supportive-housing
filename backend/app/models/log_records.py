@@ -15,6 +15,7 @@ class LogRecords(db.Model):
     note = db.Column(db.String, nullable=False)
     tags = db.Column(db.ARRAY(db.String), nullable=True)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
+    building = db.relationship("Buildings", back_populates="log_record")
 
     def to_dict(self, include_relationships=False):
         # define the entities table

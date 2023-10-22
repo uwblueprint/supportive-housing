@@ -48,10 +48,11 @@ class LogRecordsService(ILogRecordsService):
                         "note": log[6],
                         "tags": log[7],
                         "building_id": log[8],
-                        "employee_first_name": log[9],
-                        "employee_last_name": log[10],
-                        "attn_to_first_name": log[11],
-                        "attn_to_last_name": log[12],
+                        "building": log[9],
+                        "employee_first_name": log[10],
+                        "employee_last_name": log[11],
+                        "attn_to_first_name": log[12],
+                        "attn_to_last_name": log[13],
                     }
                 )
             return logs_list
@@ -153,6 +154,7 @@ class LogRecordsService(ILogRecordsService):
             logs.note,\n \
             logs.tags,\n \
             buildings.id AS building_id,\n \
+            buildings.name AS building,\n \
             employees.first_name AS employee_first_name,\n \
             employees.last_name AS employee_last_name,\n \
             attn_tos.first_name AS attn_to_first_name,\n \

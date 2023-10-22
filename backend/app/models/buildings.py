@@ -8,6 +8,8 @@ class Buildings(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     address = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=False)
+    log_record = db.relationship("LogRecords", back_populates="building")
+    resident = db.relationship("Residents", back_populates="building")
 
     def to_dict(self, include_relationships=False):
         # define the entities table
