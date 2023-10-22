@@ -98,11 +98,9 @@ const Credentials = ({
     return <Redirect to={HOME_PAGE} />;
   }
 
-  if (toggle) {
-    // Lock scroll
-    document.body.style.overflow = "hidden"
+  if (toggle) {   
     return (
-      <Flex h="100vh">
+      <Flex h="100vh" overflow="hidden">
         <Box w="47%">
           <Flex
             h="30%"

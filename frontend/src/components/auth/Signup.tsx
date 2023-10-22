@@ -47,10 +47,8 @@ const Signup = (): React.ReactElement => {
   if (authenticatedUser) {
     return <Redirect to={HOME_PAGE} />;
   }
-  // Lock scroll
-  document.body.style.overflow = "hidden"
   return (
-    <Flex h="100vh">
+    <Flex h="100vh" overflow="hidden">
         <Box w="47%">
           <Flex
             display="flex"  

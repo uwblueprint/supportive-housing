@@ -132,7 +132,7 @@ const LogRecordsTable = ({
     getLogEntryOptions();
   }, []);
 
-  document.body.style.overflow = 'auto';
+  
   return (
     <>
       <Box>
