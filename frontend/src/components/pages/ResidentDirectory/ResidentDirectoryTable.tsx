@@ -27,6 +27,11 @@ import { convertToDate } from "../../../helper/dateHelpers";
 type Props = {
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
+  numResidents: number;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  setNumResidents: React.Dispatch<React.SetStateAction<number>>;
+  getRecords: (pageNumber: number) => Promise<void>;
 };
 
 const getFormattedDatesAndStatus = (resident: Resident) => {
@@ -55,6 +60,11 @@ const DELETE_CONFIRMATION_MESSAGE =
 const ResidentDirectoryTable = ({
   residents,
   tableRef,
+  userPageNum,
+  numResidents,
+  setUserPageNum,
+  setNumResidents,
+  getRecords,
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
@@ -99,6 +109,14 @@ const ResidentDirectoryTable = ({
         "Resident has been deleted successfully.",
         "success",
       );
+      const newUserPageNum: number = (
+        residents.length === 1
+          ? userPageNum - 1 
+          : userPageNum
+      );
+      setNumResidents(numResidents - 1)
+      getRecords(newUserPageNum)
+      setUserPageNum(newUserPageNum)
       setIsDeleteModalOpen(false);
     }
     setShowAlert(true);
