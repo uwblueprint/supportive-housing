@@ -100,7 +100,7 @@ const Credentials = ({
 
   if (toggle) {   
     return (
-      <Flex h="100vh" overflow="hidden">
+      <Flex h="100vh">
         <Box w="47%">
           <Flex
             h="30%"

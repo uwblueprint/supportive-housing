@@ -48,7 +48,7 @@ const Signup = (): React.ReactElement => {
     return <Redirect to={HOME_PAGE} />;
   }
   return (
-    <Flex h="100vh" overflow="hidden">
+    <Flex h="100vh">
         <Box w="47%">
           <Flex
             display="flex"  
