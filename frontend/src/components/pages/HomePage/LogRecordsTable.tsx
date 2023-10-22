@@ -132,7 +132,6 @@ const LogRecordsTable = ({
     getLogEntryOptions();
   }, []);
 
-  
   return (
     <>
       <Box>
