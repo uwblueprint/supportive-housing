@@ -55,6 +55,8 @@ const Signup = (): React.ReactElement => {
     }
   };
 
+  const isCreateAccountBtnDisabled = () => email === '' || password === '' || firstName === '' || lastName === ''
+
   const onLogInClick = () => {
     history.push(LOGIN_PAGE);
   }; 
@@ -110,7 +112,7 @@ const Signup = (): React.ReactElement => {
 
             <Button
               variant="login"
-              disabled={email === '' || password === '' || firstName === '' || lastName === ''}
+              disabled={isCreateAccountBtnDisabled()}
               _hover={
                 email && password && firstName && lastName
                   ? {
@@ -137,97 +139,6 @@ const Signup = (): React.ReactElement => {
             </Flex>
           </Flex>
         </Flex>
-        
-        {/* <Flex
-          display="flex"  
-          alignItems="flex-start"
-          top="17.5%"
-          left="6%"
-          w="100%"
-        >
-          <Text variant="login" position="absolute">
-            Sign Up
-          </Text>
-        </Flex>
-        <Flex
-          h="40%"
-          w="36%"
-          top="28%"
-          left="6%"
-          direction="column"
-          justifyContent="space-between"
-        >
-          <Box>
-            <Input 
-              variant="login"
-              placeholder="Your first name"
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
-            />
-          </Box>
-          <Box>
-            <Input 
-              variant="login"
-              placeholder="Your last name"
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
-            />
-          </Box>
-          <Box>
-            <FormControl isRequired isInvalid={emailError}>
-              <Input 
-                variant="login"
-                placeholder="Your email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
-            </FormControl>
-          </Box>
-          <Box>
-            <FormControl isRequired>
-              <Input 
-                variant="login"
-                type="password"
-                placeholder="Your password"
-                value={password}
-                onChange={handlePasswordChange}
-              />
-            </FormControl>
-          </Box>
-          <Box>
-            <Button
-              variant="login"
-              disabled={email === '' || password === '' || firstName === '' || lastName === ''}
-              _hover={
-                email && password && firstName && lastName
-                  ? {
-                      background: "teal.500",
-                      transition:
-                        "transition: background-color 0.5s ease !important",
-                    }
-                  : {}
-              }
-              onClick={onSignupClick}
-            >
-              Create Account
-            </Button>
-          </Box>
-        </Flex>
-        <Flex
-          top="80%"
-          left="6%"
-          width="100%"
-          direction="row"
-          alignContent="center"
-        >
-          <Text variant="loginSecondary" paddingRight="1.1%">
-            Already have an account?
-          </Text>
-          <Text variant="loginTertiary" onClick={onLogInClick}>
-            Log In Now
-          </Text>
-        </Flex> */}
       </Box>
       <Box flex="1" bg="teal.400">
         {/* Background */}
