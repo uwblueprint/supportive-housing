@@ -82,13 +82,13 @@ class LogRecordsService(ILogRecordsService):
             return sql_statement
         return f"\nemployee_id={employee_id}"
 
-    def filter_by_resident_id(self, resident_id):
-        if type(resident_id) == list:
-            sql_statement = f"\nresident_id={resident_id[0]}"
-            for i in range(1, len(resident_id)):
-                sql_statement = sql_statement + f"\nOR resident_id={resident_id[i]}"
+    def filter_by_residents(self, residents):
+        if type(residents) == list:
+            sql_statement = f"\n'{residents[0]}'=ANY (residents)"
+            for i in range(1, len(residents)):
+                sql_statement = sql_statement + f"\nAND '{residents[i]}'=ANY (residents)"
             return sql_statement
-        return f"\nresident_id={resident_id}"
+        return f"\n'{residents}'=ANY (residents)"
 
     def filter_by_attn_to(self, attn_to):
         if type(attn_to) == list:
@@ -136,7 +136,7 @@ class LogRecordsService(ILogRecordsService):
             options = {
                 "building": self.filter_by_building,
                 "employee_id": self.filter_by_employee_id,
-                "resident_id": self.filter_by_resident_id,
+                "residents": self.filter_by_residents,
                 "attn_to": self.filter_by_attn_to,
                 "date_range": self.filter_by_date_range,
                 "tags": self.filter_by_tags,
