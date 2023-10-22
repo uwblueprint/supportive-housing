@@ -10,7 +10,7 @@ export type LogRecord = {
   employeeLastName: string;
   flagged: boolean;
   note: string;
-  residentId: string;
+  residents: string[];
   tags: string[];
 };
 
@@ -30,7 +30,7 @@ export type PostLogRecordsResponse = Pick<
   | "employeeId"
   | "flagged"
   | "note"
-  | "residentId"
+  | "residents"
 > | null;
 
 export type CountLogRecordFilters = {
@@ -38,7 +38,7 @@ export type CountLogRecordFilters = {
   employeeId?: number[];
   attnTo?: number[];
   dateRange?: string[];
-  residentId?: number[];
+  residents?: number[];
   tags?: string[];
   flagged?: boolean;
 };

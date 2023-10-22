@@ -211,7 +211,7 @@ const EditLog = ({
     );
     setBuilding(logRecord.building);
     const residentId = residentOptions.find(
-      (item) => item.label === logRecord.residentId,
+      (item) => item.label === logRecord.residents[0],
     )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);

@@ -165,7 +165,7 @@ const LogRecordsTable = ({
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
-                      <Td width="5%">{record.residentId}</Td>
+                      <Td width="5%">{record.residents?.join(", ")}</Td>
                       <Td whiteSpace="normal" width="70%">
                         {record.note}
                       </Td>
