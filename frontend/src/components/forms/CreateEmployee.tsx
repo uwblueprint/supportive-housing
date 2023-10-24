@@ -118,7 +118,6 @@ const CreateEmployee = ({
     setInvitedFirstNameError(false);
     setInvitedLastNameError(false);
     setInvitedAdminStatusError(false);
-
   };
 
   const handleClose = () => {
