@@ -64,10 +64,24 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
       >
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Employee Directory</Box>
-          <>{CreateEmployee()}</>
+          <CreateEmployee
+            userPageNum={userPageNum}
+            numUsers={numUsers}
+            getRecords={getUsers}
+            setUserPageNum={setUserPageNum}
+            setNumUsers={setNumUsers}
+          />
         </Flex>
 
-        <EmployeeDirectoryTable users={users} tableRef={tableRef} />
+        <EmployeeDirectoryTable 
+          users={users} 
+          tableRef={tableRef} 
+          userPageNum={userPageNum}
+          numUsers={numUsers}
+          setUserPageNum={setUserPageNum}
+          getRecords={getUsers}
+          setNumUsers={setNumUsers}
+        />
         <Pagination
           numRecords={numUsers}
           pageNum={pageNum}

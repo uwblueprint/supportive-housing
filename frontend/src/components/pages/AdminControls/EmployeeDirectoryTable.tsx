@@ -24,6 +24,11 @@ import UserAPIClient from "../../../APIClients/UserAPIClient";
 type Props = {
   users: User[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
+  numUsers: number;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  setNumUsers: React.Dispatch<React.SetStateAction<number>>;
+  getRecords: (pageNumber: number) => Promise<void>;
 };
 
 const ACTIVATE_CONFIRMATION_HEADER = "Activate Employee";
@@ -68,6 +73,11 @@ const getStatusColor = (user: User): string => {
 const EmployeeDirectoryTable = ({
   users,
   tableRef,
+  userPageNum,
+  numUsers,
+  setUserPageNum,
+  getRecords,
+  setNumUsers,
 }: Props): React.ReactElement => {
   const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
   const [activatingEmployee, setActivatingEmployee] = useState<User | null>(
@@ -116,6 +126,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully activated.",
         "success",
       );
+      getRecords(userPageNum)
       setIsActivateModalOpen(false);
     } else {
       newToast(
@@ -137,6 +148,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deactivated.",
         "success",
       );
+      getRecords(userPageNum)
       setIsDeactivateModalOpen(false);
     } else {
       newToast(
@@ -155,6 +167,14 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deleted.",
         "success",
       );
+      const newUserPageNum: number = (
+        users.length === 1
+          ? userPageNum - 1
+          : userPageNum
+      );
+      setNumUsers(numUsers - 1)
+      getRecords(newUserPageNum)
+      setUserPageNum(newUserPageNum)
       setIsDeleteModalOpen(false);
     } else {
       newToast(

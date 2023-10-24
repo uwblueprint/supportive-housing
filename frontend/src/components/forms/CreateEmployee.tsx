@@ -25,9 +25,22 @@ import commonApiClient from "../../APIClients/CommonAPIClient";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 
+type Props = {
+  userPageNum: number;
+  numUsers: number;
+  getRecords: (pageNumber: number) => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  setNumUsers: React.Dispatch<React.SetStateAction<number>>;
+}
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
-const CreateEmployee = (): React.ReactElement => {
+const CreateEmployee = ({
+  userPageNum,
+  numUsers,
+  getRecords,
+  setUserPageNum,
+  setNumUsers,
+}: Props): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const newToast = CreateToast();
@@ -105,10 +118,12 @@ const CreateEmployee = (): React.ReactElement => {
     setInvitedFirstNameError(false);
     setInvitedLastNameError(false);
     setInvitedAdminStatusError(false);
+
   };
 
   const handleClose = () => {
     setIsOpen(false);
+    getRecords(userPageNum);
   };
 
   const onInviteEmployee = async (
@@ -180,6 +195,8 @@ const CreateEmployee = (): React.ReactElement => {
       isLastNameError,
       isAdminStatusError,
     );
+    setUserPageNum(1);
+    setNumUsers(numUsers + 1)
   };
 
   return (
