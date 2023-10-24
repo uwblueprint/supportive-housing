@@ -30,6 +30,14 @@ import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { convertToString } from "../../helper/dateHelpers";
 
+type Props = {
+  userPageNum: number;
+  numResidents: number;
+  getRecords: (pageNumber: number) => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  setNumResidents: React.Dispatch<React.SetStateAction<number>>;
+}
+
 // TODO: Connect to Buidings table
 const BUILDINGS = [
   { label: "144", value: "144" },
@@ -37,7 +45,13 @@ const BUILDINGS = [
   { label: "402", value: "402" },
 ];
 
-const CreateResident = (): React.ReactElement => {
+const CreateResident = ({
+  userPageNum,
+  numResidents,
+  getRecords,
+  setUserPageNum,
+  setNumResidents,
+}: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -59,6 +73,7 @@ const CreateResident = (): React.ReactElement => {
       dateJoined: convertToString(moveInDate),
       building,
     });
+    getRecords(userPageNum);
   };
 
   const handleInitialsChange = (e: { target: { value: unknown } }) => {
@@ -132,7 +147,8 @@ const CreateResident = (): React.ReactElement => {
     }
 
     addResident();
-
+    setNumResidents(numResidents + 1)
+    setUserPageNum(1)
     setIsOpen(false);
     setShowAlert(true);
   };
