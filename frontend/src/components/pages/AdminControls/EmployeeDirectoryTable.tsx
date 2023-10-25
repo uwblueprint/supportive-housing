@@ -170,11 +170,11 @@ const EmployeeDirectoryTable = ({
       <TableContainer
         marginTop="12px"
         height="70vh"
-        overflowY="scroll"
+        overflowY="unset"
         ref={tableRef}
       >
         <Table variant="showTable" verticalAlign="middle">
-          <Thead>
+          <Thead position="sticky" top={0} zIndex="docked">
             <Tr>
               <Th>Employee Name</Th>
               <Th>Email</Th>

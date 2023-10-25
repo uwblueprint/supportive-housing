@@ -117,11 +117,11 @@ const ResidentDirectoryTable = ({
       <TableContainer
         marginTop="12px"
         height="70vh"
-        overflowY="scroll"
+        overflowY="unset"
         ref={tableRef}
       >
         <Table variant="showTable" verticalAlign="middle">
-          <Thead>
+          <Thead position="sticky" top={0} zIndex="docked">
             <Tr>
               <Th>Resident</Th>
               <Th>Status</Th>
