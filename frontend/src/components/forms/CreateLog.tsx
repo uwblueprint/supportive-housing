@@ -294,7 +294,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     const attentionTo = attnTo === -1 ? undefined : attnTo;
     const res = await LogRecordAPIClient.createLog({
       employeeId: employee.value,
-      residentId: resident,
+      residents: [resident],
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,

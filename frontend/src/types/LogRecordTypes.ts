@@ -45,7 +45,7 @@ export type CountLogRecordFilters = {
 
 export type CreateLogRecordParams = {
   employeeId: number;
-  residentId: number;
+  residents: number[];
   datetime: Date;
   flagged: boolean;
   note: string;
@@ -57,7 +57,7 @@ export type CreateLogRecordParams = {
 export type EditLogRecordParams = {
   logId: number;
   employeeId: number;
-  residentId: number;
+  residents: number[];
   datetime: Date;
   flagged: boolean;
   note: string;

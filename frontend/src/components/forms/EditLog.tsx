@@ -252,7 +252,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residentId: resident,
+      residents: resident,
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -362,7 +362,7 @@ const EditLog = ({
                       onChange={handleResidentChange}
                       styles={selectStyle}
                       defaultValue={residentOptions.find(
-                        (item) => item.label === logRecord.residentId,
+                        (item) => logRecord.residents?.includes(item.label),
                       )}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
