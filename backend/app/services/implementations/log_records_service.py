@@ -34,7 +34,7 @@ class LogRecordsService(ILogRecordsService):
 
             db.session.add(new_log_record)
             db.session.commit()
-            return new_log_record.to_dict(True)
+            return log_record
         except Exception as postgres_error:
             raise postgres_error
         
@@ -59,7 +59,7 @@ class LogRecordsService(ILogRecordsService):
                         "flagged": log[4],
                         "attn_to": log[5],
                         "note": log[6],
-                        "tags": log[7],
+                        "tags ": log[7],
                         "building": log[8],
                         "employee_first_name": log[9],
                         "employee_last_name": log[10],
@@ -118,10 +118,12 @@ class LogRecordsService(ILogRecordsService):
         return sql
 
     def filter_by_tags(self, tags):
-        sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
-        for i in range(1, len(tags)):
-            sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
-        return sql_statement
+        if len(tags) >= 1:
+            sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
+            for i in range(1, len(tags)):
+                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
+            return sql_statement
+        return f"\n'{tags}'=ANY (tag_names)"
 
     def filter_by_flagged(self, flagged):
         print(flagged)
@@ -242,10 +244,9 @@ class LogRecordsService(ILogRecordsService):
                 }
             )
         if "tags" in updated_log_record:
-            logRecord = LogRecords.query.filter_by(log_id=log_id).first()
-            if (logRecord):
-                logRecord.tags = []
-                self.construct_tags(logRecord, updated_log_record["tags"])
+            LogRecords.query.filter_by(log_id=log_id).update(
+                {LogRecords.tags: updated_log_record["tags"]}
+            )
         else:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {
