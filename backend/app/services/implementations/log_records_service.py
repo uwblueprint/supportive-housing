@@ -153,7 +153,15 @@ class LogRecordsService(ILogRecordsService):
                         if filters.get(filter):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
-
+    
+    def join_tag_attributes(self):
+        return "LEFT JOIN\n \
+                    (SELECT logs.log_id, string_to_array(string_agg(tags.name, ','), ',') AS tag_names FROM log_records logs\n \
+                    JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
+                    JOIN tags ON lrt.tag_id = tags.tag_id\n \
+                    GROUP BY logs.log_id \n \
+                ) t ON logs.log_id = t.log_id\n"
+            
     def get_log_records(
         self, page_number, return_all, results_per_page=10, filters=None
     ):
@@ -174,14 +182,9 @@ class LogRecordsService(ILogRecordsService):
                 attn_tos.last_name AS attn_to_last_name\n \
                 FROM log_records logs\n \
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-                JOIN users employees ON logs.employee_id = employees.id\n \
-                LEFT JOIN\n \
-                    (SELECT logs.log_id, string_to_array(string_agg(tags.name, ','), ',') AS tag_names FROM log_records logs\n \
-                    JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
-                    JOIN tags ON lrt.tag_id = tags.tag_id\n \
-                    GROUP BY logs.log_id \n \
-                ) t ON logs.log_id = t.log_id\n \
-                JOIN residents ON logs.resident_id = residents.id"
+                JOIN users employees ON logs.employee_id = employees.id\n"
+            sql += self.join_tag_attributes()
+            sql += "\nJOIN residents ON logs.resident_id = residents.id"
 
             sql += self.filter_log_records(filters)
 
@@ -208,6 +211,8 @@ class LogRecordsService(ILogRecordsService):
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id"
+            
+            sql += f"\n{self.join_tag_attributes()}"
 
             sql += self.filter_log_records(filters)
 
