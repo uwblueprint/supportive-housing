@@ -75,11 +75,10 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         <EmployeeDirectoryTable 
           users={users} 
           tableRef={tableRef} 
-          userPageNum={userPageNum}
-          numUsers={numUsers}
+          userPageNum={userPageNum} 
           setUserPageNum={setUserPageNum}
           getRecords={getUsers}
-          setNumUsers={setNumUsers}
+          countUsers={countUsers}
         />
         <Pagination
           numRecords={numUsers}
