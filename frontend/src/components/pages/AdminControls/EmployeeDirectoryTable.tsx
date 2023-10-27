@@ -264,7 +264,11 @@ const EmployeeDirectoryTable = ({
           <EditEmployee
             employee={editingEmployee}
             isOpen={isEditModalOpen}
-            toggleClose={() => setIsEditModalOpen(false)}
+            toggleClose={() => {
+              setIsEditModalOpen(false)
+              getRecords(userPageNum)
+            }
+            }
           />
         )}
         {activatingEmployee && (
