@@ -21,25 +21,29 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
+import { User } from "../../types/UserTypes";
+import UserAPIClient from "../../APIClients/UserAPIClient";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 
 type Props = {
+  users: User[];
   userPageNum: number;
-  numUsers: number;
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   setNumUsers: React.Dispatch<React.SetStateAction<number>>;
+  countUsers: () => Promise<void>;
 }
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
 const CreateEmployee = ({
+  users,
   userPageNum,
-  numUsers,
   getRecords,
   setUserPageNum,
   setNumUsers,
+  countUsers,
 }: Props): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -123,6 +127,7 @@ const CreateEmployee = ({
   const handleClose = () => {
     setIsOpen(false);
     getRecords(userPageNum);
+    countUsers();
   };
 
   const onInviteEmployee = async (
@@ -195,7 +200,6 @@ const CreateEmployee = ({
       isAdminStatusError,
     );
     setUserPageNum(1);
-    setNumUsers(numUsers + 1)
   };
 
   return (

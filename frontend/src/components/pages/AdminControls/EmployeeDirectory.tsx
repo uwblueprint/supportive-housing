@@ -65,11 +65,12 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Employee Directory</Box>
           <CreateEmployee
+            users={users}
             userPageNum={userPageNum}
-            numUsers={numUsers}
             getRecords={getUsers}
             setUserPageNum={setUserPageNum}
             setNumUsers={setNumUsers}
+            countUsers={countUsers}
           />
         </Flex>
 
