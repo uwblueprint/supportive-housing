@@ -158,7 +158,7 @@ const Credentials = ({
           <Flex
             top="70%"
             left="6%"
-            width="100%"
+            width="64%"
             direction="row"
             position="absolute"
             alignContent="center"
