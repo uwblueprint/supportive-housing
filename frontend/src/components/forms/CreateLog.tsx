@@ -120,7 +120,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState(-1);
+  const [residents, setResidents] = useState<ResidentLabel[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
@@ -172,14 +172,17 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setBuildingError(selectedOption === null);
   };
 
-  const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setResident(selectedOption.value);
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
+    if (mutableSelectedResidents !== null) {
+      setResidents(mutableSelectedResidents);
     }
-
-    setResidentError(selectedOption === null);
+    setResidentError(mutableSelectedResidents === null);
+    
   };
 
   const handleTagsChange = (
@@ -245,7 +248,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       }),
     );
     setBuilding("");
-    setResident(-1);
+    setResidents([]);
     setTags([]);
     setAttnTo(-1);
     setNotes("");
@@ -272,7 +275,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === -1);
+    setResidentError(residents === null);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -281,7 +284,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       date === null ||
       time === "" ||
       building === "" ||
-      resident === -1 ||
+      residents === null ||
       notes === ""
     ) {
       return;
@@ -294,7 +297,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     const attentionTo = attnTo === -1 ? undefined : attnTo;
     const res = await LogRecordAPIClient.createLog({
       employeeId: employee.value,
-      residents: [resident],
+      residents: [residents],
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -397,12 +400,13 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                    <FormLabel>Resident</FormLabel>
+                  <FormLabel>Residents</FormLabel>
                     <Select
                       options={residentOptions}
+                      isMulti
+                      closeMenuOnSelect={false}
                       placeholder="Select Resident"
-                      onChange={handleResidentChange}
-                      styles={selectStyle}
+                      onChange={handleResidentsChange}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
