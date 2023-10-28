@@ -1,11 +1,5 @@
 import React, { useContext } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import {
   GoogleLogin,
   GoogleLoginResponse,
@@ -50,10 +44,7 @@ const Login = ({
   const onLogInClick = async () => {
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse = await authAPIClient.login(
-        email,
-        password,
-      );
+      const loginResponse = await authAPIClient.login(email, password);
       if (loginResponse) {
         const { requiresTwoFa, authUser } = loginResponse;
         if (requiresTwoFa) {
@@ -79,9 +70,7 @@ const Login = ({
 
   const onGoogleLoginSuccess = async (tokenId: string) => {
     setToken(tokenId);
-    const loginResponse = await authAPIClient.loginWithGoogle(
-      tokenId,
-    );
+    const loginResponse = await authAPIClient.loginWithGoogle(tokenId);
     if (loginResponse) {
       const { requiresTwoFa, authUser } = loginResponse;
       if (requiresTwoFa) {
@@ -99,7 +88,7 @@ const Login = ({
 
   if (toggle) {
     // Lock scroll
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = "hidden";
     return (
       <Flex h="100vh">
         <Box w="47%">
@@ -112,13 +101,13 @@ const Login = ({
             position="absolute"
             justifyContent="space-between"
           >
-            <Box display="flex"  alignItems="flex-start">
+            <Box display="flex" alignItems="flex-start">
               <Text variant="login" position="absolute">
                 Log In
               </Text>
             </Box>
             <Box>
-              <Input 
+              <Input
                 variant="login"
                 position="absolute"
                 placeholder="Your email address"
@@ -127,20 +116,20 @@ const Login = ({
               />
             </Box>
             <Box>
-              <Input 
+              <Input
                 variant="login"
                 type="password"
                 position="absolute"
                 placeholder="Your password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                />
+              />
             </Box>
             <Box>
               <Button
                 variant="login"
                 position="absolute"
-                disabled={email === '' || password === ''}
+                disabled={email === "" || password === ""}
                 _hover={
                   email && password
                     ? {
@@ -176,7 +165,7 @@ const Login = ({
           {/* Background */}
         </Box>
       </Flex>
-  );
+    );
   }
   return <></>;
 };

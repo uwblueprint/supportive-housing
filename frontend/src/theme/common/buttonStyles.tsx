@@ -72,8 +72,7 @@ const Button: ComponentStyleConfig = {
         background: "teal.400",
         boxShadow: "inset 0px 0px 10px #ffffff !important",
       },
-
-    }
+    },
   },
 };
 
