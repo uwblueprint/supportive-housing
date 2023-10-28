@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import { ChakraProvider } from "@chakra-ui/react";
 
-import Login from "./components/pages/LoginPage";
-import Signup from "./components/pages/SignupPage";
+import LoginPage from "./components/pages/LoginPage";
+import SignupPage from "./components/pages/SignupPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CreatePage from "./components/pages/CreatePage";
 import DisplayPage from "./components/pages/DisplayPage";
@@ -59,8 +59,8 @@ const App = (): React.ReactElement => {
           >
             <Router>
               <Switch>
-                <Route exact path={Routes.LOGIN_PAGE} component={Login} />
-                <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
+                <Route exact path={Routes.LOGIN_PAGE} component={LoginPage} />
+                <Route exact path={Routes.SIGNUP_PAGE} component={SignupPage} />
                 <PrivateRoute
                   exact
                   path={Routes.HOME_PAGE}
