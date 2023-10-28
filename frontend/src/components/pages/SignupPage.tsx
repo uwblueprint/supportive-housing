@@ -8,7 +8,7 @@ import commonApiClient from "../../APIClients/CommonAPIClient";
 import Authy from "../auth/Authy";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 
-const Signup = (): React.ReactElement => {
+const SignupPage = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [toggle, setToggle] = useState(true);
   const [firstName, setFirstName] = useState("");
@@ -102,4 +102,4 @@ const Signup = (): React.ReactElement => {
   return (<Authy email={email} password={password} token="" toggle={!toggle} />);
 };
 
-export default Signup;
+export default SignupPage;
