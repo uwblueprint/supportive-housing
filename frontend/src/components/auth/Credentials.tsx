@@ -155,18 +155,18 @@ const Credentials = ({
               >
                 Log In
               </Button>
+              <Flex
+                paddingTop="29px"
+                alignContent="center"
+              >
+                <Text variant="loginSecondary" paddingRight="1.1%">
+                  Not a member yet?
+                </Text>
+                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                  Sign Up Now
+                </Text>
+              </Flex>
             </Flex>
-          </Flex>
-          <Flex
-            paddingTop="29px"
-            alignContent="center"
-          >
-            <Text variant="loginSecondary" paddingRight="1.1%">
-              Not a member yet?
-            </Text>
-            <Text variant="loginTertiary" onClick={onSignUpClick}>
-              Sign Up Now
-            </Text>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">
