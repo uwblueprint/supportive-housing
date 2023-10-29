@@ -2,14 +2,11 @@ import { LogRecord } from "../types/LogRecordTypes";
 import { CSVLog } from "../types/CSVLog";
 
 const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
-  const attnTo = `${logRecord.attnToFirstName} ${logRecord.attnToLastName}`;
-  const employee = `${logRecord.employeeFirstName} ${logRecord.employeeLastName}`;
-
   return {
-    attnTo: logRecord.attnTo != null ? attnTo : "",
+    attnTo: logRecord.attnTo != null ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : "",
     building: logRecord.building,
     datetime: logRecord.datetime,
-    employee,
+    employee: `${logRecord.employee.firstName} ${logRecord.employee.lastName}`,
     flagged: logRecord.flagged,
     note: logRecord.note,
     residentId: logRecord.residentId,
