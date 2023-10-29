@@ -120,7 +120,8 @@ const CreateEmployee = ({
 
   const handleClose = () => {
     setIsOpen(false);
-    getRecords(userPageNum);
+    getRecords(1);
+    setUserPageNum(1);
     countUsers();
   };
 
@@ -193,7 +194,6 @@ const CreateEmployee = ({
       isLastNameError,
       isAdminStatusError,
     );
-    setUserPageNum(1);
   };
 
   return (
