@@ -32,10 +32,9 @@ import { convertToString } from "../../helper/dateHelpers";
 
 type Props = {
   userPageNum: number;
-  numResidents: number;
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-  setNumResidents: React.Dispatch<React.SetStateAction<number>>;
+  countResidents: () => Promise<void>;
 }
 
 // TODO: Connect to Buidings table
@@ -47,10 +46,9 @@ const BUILDINGS = [
 
 const CreateResident = ({
   userPageNum,
-  numResidents,
   getRecords,
   setUserPageNum,
-  setNumResidents,
+  countResidents,
 }: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
@@ -73,7 +71,8 @@ const CreateResident = ({
       dateJoined: convertToString(moveInDate),
       building,
     });
-    getRecords(userPageNum);
+    getRecords(1);
+    countResidents();
   };
 
   const handleInitialsChange = (e: { target: { value: unknown } }) => {
@@ -147,8 +146,7 @@ const CreateResident = ({
     }
 
     addResident();
-    setNumResidents(numResidents + 1)
-    setUserPageNum(1)
+    setUserPageNum(1);
     setIsOpen(false);
     setShowAlert(true);
   };

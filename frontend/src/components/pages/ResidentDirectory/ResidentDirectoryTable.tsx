@@ -28,10 +28,9 @@ type Props = {
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
   userPageNum: number;
-  numResidents: number;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-  setNumResidents: React.Dispatch<React.SetStateAction<number>>;
   getRecords: (pageNumber: number) => Promise<void>;
+  countResidents: () => Promise<void>;
 };
 
 const getFormattedDatesAndStatus = (resident: Resident) => {
@@ -61,10 +60,9 @@ const ResidentDirectoryTable = ({
   residents,
   tableRef,
   userPageNum,
-  numResidents,
   setUserPageNum,
-  setNumResidents,
   getRecords,
+  countResidents,
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
@@ -114,7 +112,7 @@ const ResidentDirectoryTable = ({
           ? userPageNum - 1 
           : userPageNum
       );
-      setNumResidents(numResidents - 1)
+      countResidents()
       getRecords(newUserPageNum)
       setUserPageNum(newUserPageNum)
       setIsDeleteModalOpen(false);
@@ -192,7 +190,11 @@ const ResidentDirectoryTable = ({
           <EditResident
             resident={editingResident}
             isOpen={isEditModalOpen}
-            toggleClose={handleEditClose}
+            toggleClose={() => {
+              handleEditClose()
+              getRecords(userPageNum)
+              }
+            }
           />
         )}
         {deletingResident && (

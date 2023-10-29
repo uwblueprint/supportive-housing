@@ -66,20 +66,18 @@ const ResidentDirectory = (): React.ReactElement => {
           <Spacer />
           <CreateResident
             userPageNum={userPageNum}
-            numResidents={numResidents}
             getRecords={getResidents}
             setUserPageNum={setUserPageNum}
-            setNumResidents={setNumResidents}
+            countResidents={countResidents}
           />
         </Flex>
         <ResidentDirectoryTable 
           residents={residents} 
           tableRef={tableRef}
           userPageNum={userPageNum}
-          numResidents={numResidents}
           setUserPageNum={setUserPageNum}
           getRecords={getResidents}
-          setNumResidents={setNumResidents}
+          countResidents={countResidents}
         />
         <Pagination
           numRecords={numResidents}
