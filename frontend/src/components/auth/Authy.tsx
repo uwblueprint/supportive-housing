@@ -29,7 +29,7 @@ const Authy = ({
 }: AuthyProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [error, setError] = useState("");
-  const [passcode, setPasscode] = useState("");
+  const [authCode, setAuthCode] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -37,9 +37,9 @@ const Authy = ({
     let authUser: AuthenticatedUser | null;
 
     if (token) {
-      authUser = await authAPIClient.twoFaWithGoogle(passcode, token);
+      authUser = await authAPIClient.twoFaWithGoogle(authCode, token);
     } else {
-      authUser = await authAPIClient.twoFa(passcode, email, password);
+      authUser = await authAPIClient.twoFa(authCode, email, password);
     }
 
     if (authUser) {
@@ -50,10 +50,10 @@ const Authy = ({
     }
   };
 
-  const handlePasscode = (e: { target: { value: unknown } }) => {
-    const newPasscode = e.target.value as string;
-    if (newPasscode !== null && /^[0-9]{0,6}$/.test(newPasscode)) {
-      setPasscode(newPasscode);
+  const handleAuthCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newAuthCode = e.target.value;
+    if (newAuthCode !== null && /^[0-9]{0,6}$/.test(newAuthCode)) {
+      setAuthCode(newAuthCode);
     }
   };
 
@@ -90,7 +90,7 @@ const Authy = ({
                       align="center"
                     >
                       <Text variant="authyDigit" textAlign="center">
-                        {passcode.length > boxIndex ? passcode[boxIndex] : " "}
+                        {authCode.length > boxIndex ? authCode[boxIndex] : " "}
                       </Text>
                     </Flex>
                   )
@@ -98,15 +98,13 @@ const Authy = ({
               </Flex>
               <Button
                 variant="login"
-                disabled={passcode.length < 6}
+                disabled={authCode.length < 6}
                 _hover={
-                  email && password
-                    ? {
-                      background: "teal.500",
-                      transition:
-                        "transition: background-color 0.5s ease !important",
-                    }
-                    : {}
+                  {
+                    background: "teal.500",
+                    transition:
+                      "transition: background-color 0.5s ease !important",
+                  }
                 }
               >
                 Authenticate
@@ -116,8 +114,8 @@ const Authy = ({
                 autoFocus
                 position="absolute"
                 left="-999999px"
-                value={passcode}
-                onChange={handlePasscode}
+                value={authCode}
+                onChange={handleAuthCode}
               />
             </VStack>
           </Flex>
