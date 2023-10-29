@@ -34,6 +34,7 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
+import { ResidentLabel } from "../../types/ResidentTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
 
@@ -166,13 +167,17 @@ const EditLog = ({
     setBuildingError(selectedOption === null);
   };
 
-  const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setResidents(selectedOption.value);
-      setResidentError(false);
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
+    if (mutableSelectedResidents !== null) {
+      setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
     }
+    setResidentError(mutableSelectedResidents.length === 0);
+    
   };
 
   const handleTagsChange = (
@@ -213,7 +218,7 @@ const EditLog = ({
     const residentId = residentOptions.find(
       (item) => logRecord.residents.includes(item.label),
     )?.value;
-    setResident(residentId !== undefined ? residentId : -1);
+    setResidents(residentId !== undefined ? residents : []);
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
@@ -355,16 +360,13 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                    <FormLabel>Resident</FormLabel>
+                  <FormLabel>Residents</FormLabel>
                     <Select
                       options={residentOptions}
                       isMulti
+                      closeMenuOnSelect={false}
                       placeholder="Select Resident"
-                      onChange={handleResidentChange}
-                      styles={selectStyle}
-                      defaultValue={residentOptions.find(
-                        (item) => logRecord.residents?.includes(item.label),
-                      )}
+                      onChange={handleResidentsChange}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
