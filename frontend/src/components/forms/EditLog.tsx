@@ -34,6 +34,7 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
+import { ResidentLabel } from "../../types/ResidentTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
 
@@ -119,7 +120,7 @@ const EditLog = ({
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState(-1);
+  const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
@@ -166,13 +167,17 @@ const EditLog = ({
     setBuildingError(selectedOption === null);
   };
 
-  const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setResident(selectedOption.value);
-      setResidentError(false);
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
+    if (mutableSelectedResidents !== null) {
+      setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
     }
+    setResidentError(mutableSelectedResidents.length === 0);
+    
   };
 
   const handleTagsChange = (
@@ -213,7 +218,7 @@ const EditLog = ({
     const residentId = residentOptions.find(
       (item) => item.label === logRecord.residents[0],
     )?.value;
-    setResident(residentId !== undefined ? residentId : -1);
+    setResidents(residentId !== undefined ? residents : []);
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
@@ -234,7 +239,7 @@ const EditLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === -1);
+    setResidentError(residents.length === 0);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -243,7 +248,7 @@ const EditLog = ({
       date === null ||
       time === "" ||
       building === "" ||
-      resident === -1 ||
+      residents.length === 0 ||
       notes === ""
     ) {
       return;
@@ -252,7 +257,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residents: [resident],
+      residents,
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -355,15 +360,13 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                    <FormLabel>Resident</FormLabel>
+                  <FormLabel>Residents</FormLabel>
                     <Select
                       options={residentOptions}
+                      isMulti
+                      closeMenuOnSelect={false}
                       placeholder="Select Resident"
-                      onChange={handleResidentChange}
-                      styles={selectStyle}
-                      defaultValue={residentOptions.find(
-                        (item) => logRecord.residents?.includes(item.label),
-                      )}
+                      onChange={handleResidentsChange}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
