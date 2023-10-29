@@ -159,7 +159,7 @@ const Credentials = ({
                 paddingTop="29px"
                 alignContent="center"
               >
-                <Text variant="loginSecondary" paddingRight="1.1%">
+                <Text variant="loginSecondary" paddingRight="17px">
                   Not a member yet?
                 </Text>
                 <Text variant="loginTertiary" onClick={onSignUpClick}>
