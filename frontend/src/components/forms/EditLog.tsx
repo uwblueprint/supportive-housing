@@ -119,7 +119,7 @@ const EditLog = ({
     }),
   );
   const [building, setBuilding] = useState("");
-  const [resident, setResident] = useState(-1);
+  const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
@@ -170,7 +170,7 @@ const EditLog = ({
     selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setResident(selectedOption.value);
+      setResidents(selectedOption.value);
       setResidentError(false);
     }
   };
@@ -211,7 +211,7 @@ const EditLog = ({
     );
     setBuilding(logRecord.building);
     const residentId = residentOptions.find(
-      (item) => item.label === logRecord.residents[0],
+      (item) => logRecord.residents.includes(item.label),
     )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
@@ -234,7 +234,7 @@ const EditLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(resident === -1);
+    setResidentError(residents.length === 0);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -243,7 +243,7 @@ const EditLog = ({
       date === null ||
       time === "" ||
       building === "" ||
-      resident === -1 ||
+      residents.length === 0 ||
       notes === ""
     ) {
       return;
@@ -252,7 +252,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residents: [resident],
+      residents,
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -358,6 +358,7 @@ const EditLog = ({
                     <FormLabel>Resident</FormLabel>
                     <Select
                       options={residentOptions}
+                      isMulti
                       placeholder="Select Resident"
                       onChange={handleResidentChange}
                       styles={selectStyle}

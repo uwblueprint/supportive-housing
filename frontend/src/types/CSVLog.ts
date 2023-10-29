@@ -5,6 +5,6 @@ export type CSVLog = {
   employee: string;
   flagged: boolean;
   note: string;
-  residents: string[];
+  residents: string;
   tags: string;
 };
