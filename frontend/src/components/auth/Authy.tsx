@@ -74,10 +74,10 @@ const Authy = ({
       <>
         <Box bg="teal.400" height="100vh" onClick={handleFocus}>
           <Flex bg="white" height="100vh" width="47%" justifyContent="center" alignItems="center">
-            <VStack width="77%" align="flex-start" gap="3vh">
+            <VStack width="75%" align="flex-start" gap="3vh">
               <Text variant="login">One last step!</Text>
               <Text variant="loginSecondary">In order to protect your account, please enter the authorization code from the Twilio Authy application.</Text>
-              <Flex direction="row" width="100%" justifyContent="space-around">
+              <Flex direction="row" width="100%" justifyContent="space-between">
                 {boxIndexes.map((boxIndex) => {
                   return (
                     <Flex
