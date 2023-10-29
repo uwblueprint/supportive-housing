@@ -12,7 +12,7 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
     employee,
     flagged: logRecord.flagged,
     note: logRecord.note,
-    residentId: logRecord.residentId,
+    residents: logRecord.residents,
     tags: logRecord.tags != null ? logRecord.tags.join("; ") : "",
   };
 };

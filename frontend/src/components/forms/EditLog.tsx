@@ -252,7 +252,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residents: resident,
+      residents: [resident],
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
