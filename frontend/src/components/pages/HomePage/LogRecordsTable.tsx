@@ -142,7 +142,7 @@ const LogRecordsTable = ({
           ref={tableRef}
         >
           <Table variant="showTable" verticalAlign="middle">
-            <Thead position="sticky" top={0} zIndex="docked">
+            <Thead>
               <Tr>
                 <Th>Date</Th>
                 <Th>Time</Th>

@@ -121,7 +121,7 @@ const ResidentDirectoryTable = ({
         ref={tableRef}
       >
         <Table variant="showTable" verticalAlign="middle">
-          <Thead position="sticky" top={0} zIndex="docked">
+          <Thead>
             <Tr>
               <Th>Resident</Th>
               <Th>Status</Th>
