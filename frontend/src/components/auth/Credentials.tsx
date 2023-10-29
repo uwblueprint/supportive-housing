@@ -110,7 +110,7 @@ const Credentials = ({
     return (
       <Flex h="100vh">
         <Box w="47%">
-          <Flex marginTop="172px" display="flex" align="center" justify="center">
+          <Flex marginTop="270px" display="flex" align="center" justify="center">
             <Flex
               width="76%"
               align="flex-start"
