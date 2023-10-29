@@ -120,7 +120,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     }),
   );
   const [building, setBuilding] = useState("");
-  const [residents, setResidents] = useState<ResidentLabel[]>([]);
+  const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
@@ -179,9 +179,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       selectedResidents,
     );
     if (mutableSelectedResidents !== null) {
-      setResidents(mutableSelectedResidents);
+      setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
     }
-    setResidentError(mutableSelectedResidents === null);
+    setResidentError(mutableSelectedResidents.length === 0);
     
   };
 
@@ -275,7 +275,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(building === "");
-    setResidentError(residents === null);
+    setResidentError(residents.length === 0);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -284,7 +284,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       date === null ||
       time === "" ||
       building === "" ||
-      residents === null ||
+      residents.length === 0 ||
       notes === ""
     ) {
       return;
