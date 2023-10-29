@@ -1,13 +1,15 @@
+type NameRecord = {
+  id: number;
+  firstName: string;
+  lastName: string;
+};
+
 export type LogRecord = {
   logId: number;
-  attnTo?: number;
-  attnToFirstName?: string;
-  attnToLastName?: string;
+  attnTo?: NameRecord;
+  employee: NameRecord;
   building: string;
   datetime: string;
-  employeeId: number;
-  employeeFirstName: string;
-  employeeLastName: string;
   flagged: boolean;
   note: string;
   residents: string[];
@@ -27,7 +29,7 @@ export type PostLogRecordsResponse = Pick<
   | "attnTo"
   | "building"
   | "datetime"
-  | "employeeId"
+  | "employee"
   | "flagged"
   | "note"
   | "residents"
