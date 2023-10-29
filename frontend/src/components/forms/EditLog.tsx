@@ -215,10 +215,10 @@ const EditLog = ({
       }),
     );
     setBuilding(logRecord.building);
-    const residentId = residentOptions.find(
+    const residentIds = residentOptions.filter(
       (item) => logRecord.residents.includes(item.label),
-    )?.value;
-    setResidents(residentId !== undefined ? residents : []);
+    ).map((item) => item.value);
+    setResidents(residentIds);
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
@@ -367,6 +367,9 @@ const EditLog = ({
                       closeMenuOnSelect={false}
                       placeholder="Select Resident"
                       onChange={handleResidentsChange}
+                      defaultValue={residentOptions.filter(
+                        (item) => logRecord.residents.includes(item.label),
+                      )}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
