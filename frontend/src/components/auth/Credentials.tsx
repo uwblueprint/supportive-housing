@@ -110,49 +110,37 @@ const Credentials = ({
     return (
       <Flex h="100vh">
         <Box w="47%">
-          <Flex
-            h="30%"
-            w="36%"
-            top="27%"
-            left="6%"
-            direction="column"
-            position="absolute"
-            justifyContent="space-between"
-          >
-            <Box display="flex"  alignItems="flex-start">
-              <Text variant="login" position="absolute">
+          <Flex marginTop="172px" display="flex" align="center" justify="center">
+            <Flex
+              width="76%"
+              align="flex-start"
+              direction="column"
+              gap="28px"
+            >
+              <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
-            </Box>
-            <Box>
-              <FormControl isRequired isInvalid={emailError}>
-                <Input 
-                  variant="login"
-                  position="absolute"
-                  placeholder="Your email address"
-                  value={email}
-                  onChange={handleEmailChange}
-                />
-                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl isRequired isInvalid={passwordError}>
-                <Input 
-                  variant="login"
-                  type="password"
-                  position="absolute"
-                  placeholder="Your password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                />
-                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                <FormControl isRequired isInvalid={emailError}>
+                  <Input 
+                    variant="login"
+                    placeholder="Your email address"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                  <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
                 </FormControl>
-            </Box>
-            <Box>
+                <FormControl isRequired isInvalid={passwordError}>
+                  <Input 
+                    variant="login"
+                    type="password"
+                    placeholder="Your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                </FormControl>
               <Button
                 variant="login"
-                position="absolute"
                 disabled={email === '' || password === ''}
                 _hover={
                   email && password
@@ -167,14 +155,10 @@ const Credentials = ({
               >
                 Log In
               </Button>
-            </Box>
+            </Flex>
           </Flex>
           <Flex
-            top="70%"
-            left="6%"
-            width="100%"
-            direction="row"
-            position="absolute"
+            paddingTop="29px"
             alignContent="center"
           >
             <Text variant="loginSecondary" paddingRight="1.1%">
