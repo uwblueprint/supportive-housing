@@ -103,42 +103,37 @@ const Credentials = ({
       <Flex h="100vh">
         <Box w="47%">
           <Flex
-            h="30%"
-            w="36%"
-            top="27%"
-            left="6%"
+            h="100%"
             direction="column"
-            position="absolute"
-            justifyContent="space-between"
+            justifyContent="center"
+            alignItems="center"
+            gap="28px"
           >
-            <Box display="flex"  alignItems="flex-start">
-              <Text variant="login" position="absolute">
+            <Box w="80%" textAlign="left">
+              <Text variant="login">
                 Log In
               </Text>
             </Box>
-            <Box>
+            <Box w="80%">
               <Input 
                 variant="login"
-                position="absolute"
                 placeholder="Your email address"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
-            <Box>
+            <Box w="80%">
               <Input 
                 variant="login"
                 type="password"
-                position="absolute"
                 placeholder="Your password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 />
             </Box>
-            <Box>
+            <Box w="80%">
               <Button
                 variant="login"
-                position="absolute"
                 disabled={email === '' || password === ''}
                 _hover={
                   email && password
@@ -154,21 +149,16 @@ const Credentials = ({
                 Log In
               </Button>
             </Box>
-          </Flex>
-          <Flex
-            top="70%"
-            left="6%"
-            width="64%"
-            direction="row"
-            position="absolute"
-            alignContent="center"
-          >
-            <Text variant="loginSecondary" paddingRight="1.1%">
-              Not a member yet?
-            </Text>
-            <Text variant="loginTertiary" onClick={onSignUpClick}>
-              Sign Up Now
-            </Text>
+            <Box w="80%">
+              <Flex gap="10px">
+                <Text variant="loginSecondary">
+                  Not a member yet?
+                </Text>
+                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                  Sign Up Now
+                </Text>
+              </Flex>
+            </Box>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">

@@ -39,7 +39,7 @@ const Input: ComponentStyleConfig = {
         border: "1px solid",
         borderColor: "gray.100",
         borderRadius: "4px",
-        height: "7vh",
+        height: "9vh",
         fontWeight: "400",
         fontSize: "22px",
         fontFamily: "DM Sans",
