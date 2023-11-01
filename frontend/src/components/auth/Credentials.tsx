@@ -50,14 +50,17 @@ const Credentials = ({
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
+  const [loginClicked, setLoginClicked] = useState<boolean>(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (emailRegex.test(inputValue)) {
-      setEmailError(false)
-    } else {
-      setEmailError(true)
+    if (loginClicked) {
+      if (emailRegex.test(inputValue)) {
+        setEmailError(false)
+      } else {
+        setEmailError(true)
+      }
     }
     setEmail(inputValue)
 
@@ -76,6 +79,7 @@ const Credentials = ({
   };
 
   const onLogInClick = async () => {
+    setLoginClicked(true)
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
       const loginResponse: LoginResponse | ErrorResponse = await authAPIClient.login(
@@ -98,7 +102,6 @@ const Credentials = ({
           setAuthenticatedUser(authUser);
         }
       }
-      // Otherwise we can display some sort of error
     }
   };
 
