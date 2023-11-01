@@ -60,11 +60,17 @@ const Credentials = ({
       setEmailError(true)
     }
     setEmail(inputValue)
+
+    // Clear password error on changing the email
+    setPasswordError(false)
+    setPasswordErrStr("")
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue)
+
+    // Clear password error on changing the password
     setPasswordError(false)
     setPasswordErrStr("");
   };
