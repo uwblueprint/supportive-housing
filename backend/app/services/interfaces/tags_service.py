@@ -12,7 +12,7 @@ class ITagsService(ABC):
         Gets tags in json format.
         """
         pass
-    
+
     @abstractmethod
     def update_tag(self, tag_id, updated_tag):
         """

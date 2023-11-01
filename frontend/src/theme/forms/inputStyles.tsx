@@ -46,7 +46,7 @@ const Input: ComponentStyleConfig = {
         lineHeight: "29px",
         color: "gray.650",
         _placeholder: {
-          color: "gray.150"
+          color: "gray.150",
         },
       },
     },

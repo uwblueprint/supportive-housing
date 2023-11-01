@@ -92,17 +92,17 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_date_range(self, date_range):
         sql = ""
         if len(date_range) > 0:
-            if (date_range[0] != ""):
+            if date_range[0] != "":
                 start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
                     hour=0, minute=0
                 )
                 sql += f"\ndatetime>='{start_date}'"
-            if (date_range[-1] != ""):
+            if date_range[-1] != "":
                 end_date = datetime.strptime(
                     date_range[len(date_range) - 1], "%Y-%m-%d"
                 ).replace(hour=23, minute=59)
-                
-                if (sql == ""):
+
+                if sql == "":
                     sql += f"\ndatetime<='{end_date}'"
                 else:
                     sql += f"\nAND datetime<='{end_date}'"
