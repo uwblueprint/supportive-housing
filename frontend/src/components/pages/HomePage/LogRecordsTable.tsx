@@ -118,8 +118,7 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
-    handleDeleteToggle(itemId);
-    const newUserPageNum: number = (
+    const newUserPageNum = (
       logRecords.length === 1
         ? userPageNum - 1 
         : userPageNum
@@ -128,6 +127,7 @@ const LogRecordsTable = ({
     setShowAlert(true);
     setUserPageNum(newUserPageNum);
     getRecords(newUserPageNum);
+    handleDeleteToggle(itemId);
   };
 
   useEffect(() => {
@@ -216,6 +216,7 @@ const LogRecordsTable = ({
 
                     <EditLog
                       logRecord={record}
+                      userPageNum={userPageNum}
                       isOpen={editOpenMap[record.logId]}
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}

@@ -39,6 +39,7 @@ import { combineDateTime } from "../../helper/dateHelpers";
 
 type Props = {
   logRecord: LogRecord;
+  userPageNum: number;
   isOpen: boolean;
   toggleClose: () => void;
   employeeOptions: UserLabel[];
@@ -100,6 +101,7 @@ const getCurUserSelectOption = () => {
 
 const EditLog = ({
   logRecord,
+  userPageNum,
   isOpen,
   toggleClose,
   employeeOptions,
@@ -263,8 +265,8 @@ const EditLog = ({
     if (res) {
       setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
-      getRecords(1);
-      setUserPageNum(1);
+      getRecords(userPageNum);
+      setUserPageNum(userPageNum);
 
       toggleClose();
     } else {
