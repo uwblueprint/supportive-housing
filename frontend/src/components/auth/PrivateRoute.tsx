@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Route, Redirect } from "react-router-dom";
-
+import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
-import { LOGIN_PAGE } from "../../constants/Routes";
+import { LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 
 type PrivateRouteProps = {
   component: React.FC;
@@ -17,11 +17,22 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
 }: PrivateRouteProps) => {
   const { authenticatedUser } = useContext(AuthContext);
 
-  return authenticatedUser ? (
-    <Route path={path} exact={exact} component={component} />
-  ) : (
-    <Redirect to={LOGIN_PAGE} />
-  );
+  if (authenticatedUser === null) {
+    return (
+      <Redirect to={LOGIN_PAGE} />
+    )
+  }
+
+  const isVerified = authAPIClient.isVerified();
+  if (isVerified) {
+    return (
+      <Route path={path} exact={exact} component={component} />
+    )
+  }
+
+  return (
+    <Redirect to={VERIFICATION_PAGE} />
+  )
 };
 
 export default PrivateRoute;
