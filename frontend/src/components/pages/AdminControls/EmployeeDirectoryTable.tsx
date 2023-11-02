@@ -165,7 +165,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deleted.",
         "success",
       );
-      const newUserPageNum: number = (
+      const newUserPageNum = (
         users.length === 1
           ? userPageNum - 1
           : userPageNum
@@ -264,11 +264,9 @@ const EmployeeDirectoryTable = ({
           <EditEmployee
             employee={editingEmployee}
             isOpen={isEditModalOpen}
-            toggleClose={() => {
-              setIsEditModalOpen(false)
-              getRecords(userPageNum)
-            }
-            }
+            userPageNum={userPageNum}
+            getRecords={getRecords}
+            toggleClose={() => setIsEditModalOpen(false)}
           />
         )}
         {activatingEmployee && (

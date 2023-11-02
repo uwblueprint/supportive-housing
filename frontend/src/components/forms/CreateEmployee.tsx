@@ -26,7 +26,6 @@ import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 
 type Props = {
-  userPageNum: number;
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   countUsers: () => Promise<void>;
@@ -34,7 +33,6 @@ type Props = {
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
 const CreateEmployee = ({
-  userPageNum,
   getRecords,
   setUserPageNum,
   countUsers,
@@ -120,9 +118,6 @@ const CreateEmployee = ({
 
   const handleClose = () => {
     setIsOpen(false);
-    getRecords(1);
-    setUserPageNum(1);
-    countUsers();
   };
 
   const onInviteEmployee = async (
@@ -164,6 +159,9 @@ const CreateEmployee = ({
           `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
           "success",
         );
+        getRecords(1);
+        setUserPageNum(1);
+        countUsers();
         handleClose();
       } else {
         newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
