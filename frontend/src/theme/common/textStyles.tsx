@@ -9,9 +9,9 @@ const Text: ComponentStyleConfig = {
     },
     login: {
       color: "black.default",
-      fontWeight: "700", 
+      fontWeight: "700",
       fontSize: "40px",
-      fontFamily: "DM Sans"
+      fontFamily: "DM Sans",
     },
     authyDigit: {
       color: "black.default",
@@ -24,7 +24,7 @@ const Text: ComponentStyleConfig = {
       fontWeight: "400",
       fontSize: "18px",
       fontFamily: "DM Sans",
-      lineHeight: "23.44px"
+      lineHeight: "23.44px",
     },
     loginTertiary: {
       color: "teal.400",
@@ -34,9 +34,9 @@ const Text: ComponentStyleConfig = {
       lineHeight: "23.44px",
       _hover: {
         cursor: "pointer",
-        textDecor: "underline"
-      }
-    }
+        textDecor: "underline",
+      },
+    },
   },
   defaultProps: {
     variant: "default",

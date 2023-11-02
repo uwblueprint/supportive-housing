@@ -8,17 +8,12 @@ import {
   FormErrorMessage,
   Input
 } from "@chakra-ui/react";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { ErrorResponse, LoginResponse } from "../../types/AuthTypes";
+import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
 
@@ -32,11 +27,11 @@ type CredentialsProps = {
   setToggle: (toggle: boolean) => void;
 };
 
-const isLoginErrorResponse = (res: LoginResponse | ErrorResponse) : res is ErrorResponse => {
+const isLoginErrorResponse = (res: AuthTokenResponse | ErrorResponse) : res is ErrorResponse => {
   return (res !== null && 'errCode' in res);
 }
 
-const Credentials = ({
+const Login = ({
   email,
   setEmail,
   password,
@@ -82,7 +77,7 @@ const Credentials = ({
     setLoginClicked(true)
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse: LoginResponse | ErrorResponse = await authAPIClient.login(
+      const loginResponse: AuthTokenResponse | ErrorResponse = await authAPIClient.login(
         email,
         password,
       );
@@ -115,7 +110,7 @@ const Credentials = ({
 
   if (toggle) {
     // Lock scroll
-    document.body.style.overflow = "hidden"
+    document.body.style.overflow = "hidden";
     return (
       <Flex h="100vh">
         <Box w="47%">
@@ -182,9 +177,9 @@ const Credentials = ({
           {/* Background */}
         </Box>
       </Flex>
-  );
+    );
   }
   return <></>;
 };
 
-export default Credentials;
+export default Login;
