@@ -12,7 +12,7 @@ import {
 } from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
-  buildingId,
+  buildingId = [],
   employeeId = [],
   attnTo = [],
   dateRange = [],
@@ -47,7 +47,7 @@ const countLogRecords = async ({
 };
 
 const filterLogRecords = async ({
-  buildingId,
+  buildingId = [],
   employeeId = [],
   attnTo = [],
   dateRange = [],

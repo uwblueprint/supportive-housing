@@ -19,7 +19,7 @@ import Select, { MultiValue, SingleValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
-import { Building } from "../../../types/BuildingTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import { Resident, ResidentLabel } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
@@ -34,7 +34,7 @@ type Props = {
   endDate: Date | undefined;
   tags: Tag[];
   attentionTos: UserLabel[];
-  building: Building | null;
+  buildings: BuildingLabel[];
   flagged: boolean;
   setResidents: React.Dispatch<React.SetStateAction<ResidentLabel[]>>;
   setEmployees: React.Dispatch<React.SetStateAction<UserLabel[]>>;
@@ -42,7 +42,7 @@ type Props = {
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
   setAttentionTos: React.Dispatch<React.SetStateAction<UserLabel[]>>;
-  setBuilding: React.Dispatch<React.SetStateAction<Building | null>>;
+  setBuildings: React.Dispatch<React.SetStateAction<BuildingLabel[]>>;
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 // Ideally we should be storing this information in the database
@@ -66,7 +66,7 @@ const SearchAndFilters = ({
   endDate,
   tags,
   attentionTos,
-  building,
+  buildings,
   flagged,
   setResidents,
   setEmployees,
@@ -74,7 +74,7 @@ const SearchAndFilters = ({
   setEndDate,
   setTags,
   setAttentionTos,
-  setBuilding,
+  setBuildings,
   setFlagged,
 }: Props): React.ReactElement => {
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
@@ -110,10 +110,9 @@ const SearchAndFilters = ({
     }
   };
 
-  const handleBuildingChange = (selectedOption: SingleValue<Building>) => {
-    if (selectedOption !== null) {
-      setBuilding(selectedOption);
-    }
+  const handleBuildingChange = (selectedBuildings: MultiValue<BuildingLabel>) => {
+    const mutableSelectedBuildings: BuildingLabel[] = Array.from(selectedBuildings);
+    setBuildings(mutableSelectedBuildings);
   };
 
   const handleAttnToChange = (selectedAttnTos: MultiValue<UserLabel>) => {
@@ -166,7 +165,7 @@ const SearchAndFilters = ({
 
   const handleClearAll = () => {
     setAttentionTos([]);
-    setBuilding(null);
+    setBuildings([]);
     setEmployees([]);
     setEndDate(undefined);
     setFlagged(false);
@@ -302,8 +301,9 @@ const SearchAndFilters = ({
                     <GridItem colSpan={2}>
                       <FormLabel fontWeight="700">Building</FormLabel>
                       <Select
-                        value={building}
+                        value={buildings}
                         options={BUILDINGS}
+                        isMulti
                         placeholder="Building No."
                         onChange={handleBuildingChange}
                         styles={selectStyle}

@@ -25,22 +25,13 @@ class ResidentsService(IResidentsService):
     def to_residents_json_list(self, resident_results):
         residents_json_list = []
         for result in resident_results:
-            date_left = None
-            if result[0].date_left:
-                date_left = result[0].date_left.strftime("%Y-%m-%d")
+            resident, building = result[0], result[1]
+            if resident.date_left:
+                resident["date_left"] = resident.date_left.strftime("%Y-%m-%d")
 
-            residents_json_list.append(
-                {
-                    "id": result[0].id,
-                    "initial": result[0].initial,
-                    "room_num": result[0].room_num,
-                    "date_joined": result[0].date_joined.strftime("%Y-%m-%d"),
-                    "date_left": date_left,
-                    "resident_id": result[0].resident_id,
-                    "building_id": result[0].building_id,
-                    "building": result[1]
-                }
-            )
+            resident_dict = resident.to_dict()
+            resident_dict["building"] = building
+            residents_json_list.append(resident_dict)
         return residents_json_list
 
     def convert_to_date_obj(self, date):

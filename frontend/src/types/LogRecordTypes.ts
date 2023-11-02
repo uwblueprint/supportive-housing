@@ -35,7 +35,7 @@ export type PostLogRecordsResponse = Pick<
 > | null;
 
 export type CountLogRecordFilters = {
-  buildingId?: number;
+  buildingId?: number[];
   employeeId?: number[];
   attnTo?: number[];
   dateRange?: string[];
