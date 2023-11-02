@@ -23,7 +23,7 @@ class LogRecordsService(ILogRecordsService):
         self.logger = logger
 
     def add_record(self, log_record):
-        new_log_record = log_record
+        new_log_record = log_record.copy()
 
         tag_names = new_log_record["tags"]
         del new_log_record["tags"]
@@ -159,8 +159,8 @@ class LogRecordsService(ILogRecordsService):
         return sql
     
     def join_tag_attributes(self):
-        return "LEFT JOIN\n \
-                    (SELECT logs.log_id, string_to_array(string_agg(tags.name, ','), ',') AS tag_names FROM log_records logs\n \
+        return "\nLEFT JOIN\n \
+                    (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
                     JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \
@@ -186,10 +186,10 @@ class LogRecordsService(ILogRecordsService):
                 attn_tos.last_name AS attn_to_last_name\n \
                 FROM log_records logs\n \
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-                JOIN users employees ON logs.employee_id = employees.id\n"
+                JOIN users employees ON logs.employee_id = employees.id\n \
+                JOIN residents ON logs.resident_id = residents.id"
+            
             sql += self.join_tag_attributes()
-            sql += "\nJOIN residents ON logs.resident_id = residents.id"
-
             sql += self.filter_log_records(filters)
 
             sql += "\nORDER BY datetime DESC"
