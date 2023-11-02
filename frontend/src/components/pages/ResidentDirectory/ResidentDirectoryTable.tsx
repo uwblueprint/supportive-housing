@@ -107,7 +107,7 @@ const ResidentDirectoryTable = ({
         "Resident has been deleted successfully.",
         "success",
       );
-      const newUserPageNum: number = (
+      const newUserPageNum = (
         residents.length === 1
           ? userPageNum - 1 
           : userPageNum
@@ -190,11 +190,9 @@ const ResidentDirectoryTable = ({
           <EditResident
             resident={editingResident}
             isOpen={isEditModalOpen}
-            toggleClose={() => {
-              handleEditClose()
-              getRecords(userPageNum)
-              }
-            }
+            userPageNum={userPageNum}
+            toggleClose={() => handleEditClose()}
+            getRecords={getRecords}
           />
         )}
         {deletingResident && (

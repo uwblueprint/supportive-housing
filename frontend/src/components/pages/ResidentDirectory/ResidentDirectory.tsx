@@ -65,7 +65,6 @@ const ResidentDirectory = (): React.ReactElement => {
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
           <CreateResident
-            userPageNum={userPageNum}
             getRecords={getResidents}
             setUserPageNum={setUserPageNum}
             countResidents={countResidents}

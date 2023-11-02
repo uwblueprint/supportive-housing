@@ -31,7 +31,6 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { convertToString } from "../../helper/dateHelpers";
 
 type Props = {
-  userPageNum: number;
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   countResidents: () => Promise<void>;
@@ -45,7 +44,6 @@ const BUILDINGS = [
 ];
 
 const CreateResident = ({
-  userPageNum,
   getRecords,
   setUserPageNum,
   countResidents,
@@ -73,6 +71,7 @@ const CreateResident = ({
     });
     getRecords(1);
     countResidents();
+    setUserPageNum(1);
   };
 
   const handleInitialsChange = (e: { target: { value: unknown } }) => {
@@ -146,7 +145,6 @@ const CreateResident = ({
     }
 
     addResident();
-    setUserPageNum(1);
     setIsOpen(false);
     setShowAlert(true);
   };
