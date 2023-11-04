@@ -1,20 +1,16 @@
-from . import db
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
 
+from . import db
 
-class LogRecords(db.Model):
-    __tablename__ = "log_records"
-    log_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    employee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    resident_id = db.Column(db.Integer, db.ForeignKey("residents.id"), nullable=False)
-    datetime = db.Column(db.DateTime(timezone=True), nullable=False)
-    flagged = db.Column(db.Boolean, nullable=False)
-    attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    # TODO: replace open String fields with VarChar(NUM_CHARS)
-    note = db.Column(db.String, nullable=False)
-    building = db.Column(db.String, nullable=False)
-    tags = db.relationship("Tag", secondary="log_record_tag", back_populates="log_records")
+
+class Tag(db.Model):
+    __tablename__ = "tags"
+
+    tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String, nullable=False)
+    status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
+    log_records = db.relationship("LogRecords", secondary="log_record_tag", back_populates="tags")
 
     def to_dict(self, include_relationships=False):
         # define the entities table
