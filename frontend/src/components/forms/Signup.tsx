@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Redirect } from "react-router-dom";
 
-import authAPIClient from "../../APIClients/AuthAPIClient";
+import authAPIClient from "../../APIClients/AuthAPIClient"
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";

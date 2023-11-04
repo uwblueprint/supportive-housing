@@ -40,18 +40,22 @@ class LogRecordsService(ILogRecordsService):
                 logs_list.append(
                     {
                         "log_id": log[0],
-                        "employee_id": log[1],
                         "resident_id": log[2],
                         "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
                         "flagged": log[4],
-                        "attn_to": log[5],
+                        "attn_to": {
+                            "id": log[5],
+                            "first_name": log[11],
+                            "last_name": log[12]
+                        },
+                        "employee": {
+                            "id": log[1],
+                            "first_name": log[9],
+                            "last_name": log[10]
+                        },
                         "note": log[6],
                         "tags": log[7],
                         "building": log[8],
-                        "employee_first_name": log[9],
-                        "employee_last_name": log[10],
-                        "attn_to_first_name": log[11],
-                        "attn_to_last_name": log[12],
                     }
                 )
             return logs_list
@@ -88,17 +92,17 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_date_range(self, date_range):
         sql = ""
         if len(date_range) > 0:
-            if (date_range[0] != ""):
+            if date_range[0] != "":
                 start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
                     hour=0, minute=0
                 )
                 sql += f"\ndatetime>='{start_date}'"
-            if (date_range[-1] != ""):
+            if date_range[-1] != "":
                 end_date = datetime.strptime(
                     date_range[len(date_range) - 1], "%Y-%m-%d"
                 ).replace(hour=23, minute=59)
-                
-                if (sql == ""):
+
+                if sql == "":
                     sql += f"\ndatetime<='{end_date}'"
                 else:
                     sql += f"\nAND datetime<='{end_date}'"
