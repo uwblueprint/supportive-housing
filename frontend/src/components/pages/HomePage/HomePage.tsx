@@ -32,7 +32,7 @@ const HomePage = (): React.ReactElement => {
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [tags, setTags] = useState<Tag[]>([]);
   const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
-const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
+  const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state

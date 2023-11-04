@@ -3,7 +3,9 @@ import { CSVLog } from "../types/CSVLog";
 
 const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
   return {
-    attnTo: logRecord.attnTo ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : "",
+    attnTo: logRecord.attnTo
+      ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}`
+      : "",
     building: logRecord.building.name,
     datetime: logRecord.datetime,
     employee: `${logRecord.employee.firstName} ${logRecord.employee.lastName}`,

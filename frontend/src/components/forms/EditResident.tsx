@@ -69,7 +69,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
       buildingId,
-      dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined
+      dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
     if (res != null) {

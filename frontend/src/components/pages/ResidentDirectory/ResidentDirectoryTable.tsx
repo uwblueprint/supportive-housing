@@ -133,8 +133,9 @@ const ResidentDirectoryTable = ({
           </Thead>
           <Tbody>
             {residents.map((resident) => {
-              const { startDate, endDate, status } =
-                getFormattedDatesAndStatus(resident);
+              const { startDate, endDate, status } = getFormattedDatesAndStatus(
+                resident,
+              );
               // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>

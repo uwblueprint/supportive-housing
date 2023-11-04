@@ -15,9 +15,9 @@ const Text: ComponentStyleConfig = {
     },
     authyDigit: {
       color: "black.default",
-      fontWeight: "500", 
+      fontWeight: "500",
       fontSize: "40px",
-      fontFamily: "DM Sans"
+      fontFamily: "DM Sans",
     },
     loginSecondary: {
       color: "gray.650",

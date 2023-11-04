@@ -122,8 +122,9 @@ class ResidentsService(IResidentsService):
                 )
             else:
                 residents_results = (
-                    Residents.query
-                    .join(Buildings, Buildings.id == Residents.building_id)
+                    Residents.query.join(
+                        Buildings, Buildings.id == Residents.building_id
+                    )
                     .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
                     .with_entities(Residents, Buildings.name.label("building"))

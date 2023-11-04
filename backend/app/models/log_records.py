@@ -14,7 +14,9 @@ class LogRecords(db.Model):
     # TODO: replace open String fields with VarChar(NUM_CHARS)
     note = db.Column(db.String, nullable=False)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
-    tags = db.relationship("Tag", secondary="log_record_tag", back_populates="log_records")
+    tags = db.relationship(
+        "Tag", secondary="log_record_tag", back_populates="log_records"
+    )
     building = db.relationship("Buildings", back_populates="log_record")
 
     def to_dict(self, include_relationships=False):

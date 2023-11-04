@@ -10,7 +10,9 @@ class Tag(db.Model):
     tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, nullable=False)
     status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
-    log_records = db.relationship("LogRecords", secondary="log_record_tag", back_populates="tags")
+    log_records = db.relationship(
+        "LogRecords", secondary="log_record_tag", back_populates="tags"
+    )
 
     def to_dict(self, include_relationships=False):
         # define the entities table

@@ -110,8 +110,12 @@ const SearchAndFilters = ({
     }
   };
 
-  const handleBuildingChange = (selectedBuildings: MultiValue<BuildingLabel>) => {
-    const mutableSelectedBuildings: BuildingLabel[] = Array.from(selectedBuildings);
+  const handleBuildingChange = (
+    selectedBuildings: MultiValue<BuildingLabel>,
+  ) => {
+    const mutableSelectedBuildings: BuildingLabel[] = Array.from(
+      selectedBuildings,
+    );
     setBuildings(mutableSelectedBuildings);
   };
 

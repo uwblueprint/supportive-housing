@@ -7,7 +7,7 @@ type NameRecord = {
 type BuildingRecord = {
   id: number;
   name: string;
-}
+};
 
 export type LogRecord = {
   logId: number;

@@ -6,6 +6,7 @@ from datetime import datetime
 from pytz import timezone
 from sqlalchemy import text
 
+
 class LogRecordsService(ILogRecordsService):
     """
     LogRecordsService implementation with log records management methods
@@ -35,12 +36,12 @@ class LogRecordsService(ILogRecordsService):
             return log_record
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def construct_tags(self, log_record, tag_names):
         for tag_name in tag_names:
             tag = Tag.query.filter_by(name=tag_name).first()
 
-            if not tag: 
+            if not tag:
                 raise Exception(f"Tag with name {tag_name} does not exist")
             log_record.tags.append(tag)
 
@@ -54,18 +55,17 @@ class LogRecordsService(ILogRecordsService):
                         "employee": {
                             "id": log[1],
                             "first_name": log[2],
-                            "last_name": log[3]
+                            "last_name": log[3],
                         },
                         "resident_id": log[4],
                         "attn_to": {
                             "id": log[5],
                             "first_name": log[6],
-                            "last_name": log[7]
-                        } if log[5] else None,
-                        "building": {
-                            "id": log[8],
-                            "name": log[9]
-                        },
+                            "last_name": log[7],
+                        }
+                        if log[5]
+                        else None,
+                        "building": {"id": log[8], "name": log[9]},
                         "tags": log[10] if log[10] else [],
                         "note": log[11],
                         "flagged": log[12],
@@ -80,7 +80,9 @@ class LogRecordsService(ILogRecordsService):
         if type(building_id) == list:
             sql_statement = f"\nlogs.building_id={building_id[0]}"
             for i in range(1, len(building_id)):
-                sql_statement = sql_statement + f"\nOR logs.building_id={building_id[i]}"
+                sql_statement = (
+                    sql_statement + f"\nOR logs.building_id={building_id[i]}"
+                )
             return sql_statement
         return f"\logs.building_id={building_id}"
 
@@ -163,7 +165,7 @@ class LogRecordsService(ILogRecordsService):
                         if filters.get(filter):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
-    
+
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
                     (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
@@ -171,7 +173,7 @@ class LogRecordsService(ILogRecordsService):
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \
                 ) t ON logs.log_id = t.log_id\n"
-            
+
     def get_log_records(
         self, page_number, return_all, results_per_page=10, filters=None
     ):
@@ -196,7 +198,7 @@ class LogRecordsService(ILogRecordsService):
                 JOIN users employees ON logs.employee_id = employees.id\n \
                 JOIN residents ON logs.resident_id = residents.id\n \
                 JOIN buildings on logs.building_id = buildings.id"
-            
+
             sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
@@ -223,7 +225,7 @@ class LogRecordsService(ILogRecordsService):
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id"
-            
+
             sql += f"\n{self.join_tag_attributes()}"
 
             sql += self.filter_log_records(filters)
@@ -262,7 +264,7 @@ class LogRecordsService(ILogRecordsService):
             )
         if "tags" in updated_log_record:
             log_record = LogRecords.query.filter_by(log_id=log_id).first()
-            if (log_record):
+            if log_record:
                 log_record.tags = []
                 self.construct_tags(log_record, updated_log_record["tags"])
         else:
