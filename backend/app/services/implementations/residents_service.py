@@ -26,8 +26,6 @@ class ResidentsService(IResidentsService):
         residents_json_list = []
         for result in resident_results:
             resident, building = result[0], result[1]
-            if resident.date_left:
-                resident["date_left"] = resident.date_left.strftime("%Y-%m-%d")
 
             resident_dict = resident.to_dict()
             resident_dict["building"]["name"] = building
