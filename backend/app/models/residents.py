@@ -32,7 +32,11 @@ class Residents(db.Model):
             attr = getattr(self, field)
             # if it's a regular column, extract the value
             if isinstance(column, ColumnProperty):
-                if (field == "date_joined" or field == "date_left") and attr:
+                if (field == "building_id"):
+                    formatted["building"] = {
+                        "id": attr
+                    }
+                elif (field == "date_joined" or field == "date_left") and attr:
                     formatted[field] = attr.strftime("%Y-%m-%d")
                 else:
                     formatted[field] = attr

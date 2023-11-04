@@ -30,7 +30,7 @@ class ResidentsService(IResidentsService):
                 resident["date_left"] = resident.date_left.strftime("%Y-%m-%d")
 
             resident_dict = resident.to_dict()
-            resident_dict["building"] = building
+            resident_dict["building"]["name"] = building
             residents_json_list.append(resident_dict)
         return residents_json_list
 

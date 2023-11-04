@@ -140,7 +140,7 @@ const ResidentDirectoryTable = ({
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
                   <Td width="20%">{resident.residentId!}</Td>
                   <Td width="15%">{status}</Td>
-                  <Td width="20%">{resident.building}</Td>
+                  <Td width="20%">{resident.building.name}</Td>
                   <Td width="20%">{startDate.date}</Td>
                   <Td width="15%">{endDate ? endDate.date : ""}</Td>
                   <Td width="5%">

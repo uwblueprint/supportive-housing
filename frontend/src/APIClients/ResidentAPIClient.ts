@@ -5,6 +5,7 @@ import {
   GetResidentsReponse,
   CountResidentsResponse,
   CreateResidentParams,
+  EditResidentParams,
 } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
@@ -102,7 +103,7 @@ const editResident = async ({
   dateJoined,
   buildingId,
   dateLeft,
-}: Resident): Promise<boolean> => {
+}: EditResidentParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

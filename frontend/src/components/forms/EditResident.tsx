@@ -65,13 +65,11 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   const editResident = async () => {
     const res = await ResidentAPIClient.editResident({
       id: resident.id,
-      residentId: resident.residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
       buildingId,
-      dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
-      building: resident.building
+      dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined
     });
 
     if (res != null) {
@@ -138,7 +136,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setBuildingId(resident.buildingId);
+    setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
@@ -179,7 +177,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setBuildingId(resident.buildingId);
+    setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
