@@ -22,3 +22,9 @@ export type DecodedJWT =
   | string
   | null
   | { [key: string]: unknown; exp: number };
+
+
+export type ErrorResponse = {
+  errCode: number;
+  errMessage: string;
+}

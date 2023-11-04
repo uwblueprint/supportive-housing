@@ -3,8 +3,10 @@ import {
   MutationFunctionOptions,
   OperationVariables,
 } from "@apollo/client";
+import { AxiosError } from "axios";
+import getLoginErrMessage from '../helper/authErrorMessage'
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
+import { AuthenticatedUser, AuthTokenResponse, ErrorResponse } from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -14,7 +16,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<AuthTokenResponse> => {
+): Promise<AuthTokenResponse | ErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -23,20 +25,17 @@ const login = async (
     );
     return data;
   } catch (error) {
-    return null;
-  }
-};
-
-const loginWithGoogle = async (idToken: string): Promise<AuthTokenResponse> => {
-  try {
-    const { data } = await baseAPIClient.post(
-      "/auth/login",
-      { idToken },
-      { withCredentials: true },
-    );
-    return data;
-  } catch (error) {
-    return null;
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 401) {
+      return {
+        errCode: axiosErr.response.status,
+        errMessage: getLoginErrMessage(axiosErr.response)
+      }
+    }
+    return {
+      errCode: 500,
+      errMessage: "Error logging in. Please try again."
+    }
   }
 };
 
@@ -148,7 +147,6 @@ const refresh = async (): Promise<boolean> => {
 export default {
   login,
   logout,
-  loginWithGoogle,
   twoFa,
   twoFaWithGoogle,
   register,

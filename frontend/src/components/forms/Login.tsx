@@ -1,23 +1,21 @@
-import React, { useContext } from "react";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import React, { useContext, useState } from "react";
 import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+  Box,
+  Button,
+  Flex,
+  Text,
+  FormControl,
+  FormErrorMessage,
+  Input
+} from "@chakra-ui/react";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
+import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 
-type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
-
-type GoogleErrorResponse = {
-  error: string;
-  details: string;
-};
 
 type CredentialsProps = {
   email: string;
@@ -28,6 +26,10 @@ type CredentialsProps = {
   toggle: boolean;
   setToggle: (toggle: boolean) => void;
 };
+
+const isLoginErrorResponse = (res: AuthTokenResponse | ErrorResponse) : res is ErrorResponse => {
+  return (res !== null && 'errCode' in res);
+}
 
 const Login = ({
   email,
@@ -40,12 +42,50 @@ const Login = ({
 }: CredentialsProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
+  const [emailError, setEmailError] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
+  const [loginClicked, setLoginClicked] = useState<boolean>(false);
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (loginClicked) {
+      if (emailRegex.test(inputValue)) {
+        setEmailError(false)
+      } else {
+        setEmailError(true)
+      }
+    }
+    setEmail(inputValue)
+
+    // Clear password error on changing the email
+    setPasswordError(false)
+    setPasswordErrStr("")
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
+    setPassword(inputValue)
+
+    // Clear password error on changing the password
+    setPasswordError(false)
+    setPasswordErrStr("");
+  };
 
   const onLogInClick = async () => {
+    setLoginClicked(true)
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse = await authAPIClient.login(email, password);
-      if (loginResponse) {
+      const loginResponse: AuthTokenResponse | ErrorResponse = await authAPIClient.login(
+        email,
+        password,
+      );
+      if (isLoginErrorResponse(loginResponse)) {
+        setPasswordError(true);
+        setPasswordErrStr(loginResponse.errMessage);
+      }
+      else if (loginResponse) {
         const { requiresTwoFa, authUser } = loginResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
@@ -57,29 +97,11 @@ const Login = ({
           setAuthenticatedUser(authUser);
         }
       }
-      // Otherwise we can display some sort of error
-    } else {
-      // eslint-disable-next-line no-alert
-      window.alert("user not invited");
     }
   };
 
   const onSignUpClick = () => {
     history.push(SIGNUP_PAGE);
-  };
-
-  const onGoogleLoginSuccess = async (tokenId: string) => {
-    setToken(tokenId);
-    const loginResponse = await authAPIClient.loginWithGoogle(tokenId);
-    if (loginResponse) {
-      const { requiresTwoFa, authUser } = loginResponse;
-      if (requiresTwoFa) {
-        setToggle(!toggle);
-      }
-      localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
-      setAuthenticatedUser(authUser);
-    }
-    // Otherwise we can display some sort of error
   };
 
   if (authenticatedUser) {
@@ -92,44 +114,38 @@ const Login = ({
     return (
       <Flex h="100vh">
         <Box w="47%">
-          <Flex
-            h="30%"
-            w="36%"
-            top="27%"
-            left="6%"
-            direction="column"
-            position="absolute"
-            justifyContent="space-between"
-          >
-            <Box display="flex" alignItems="flex-start">
-              <Text variant="login" position="absolute">
+          <Flex marginTop="270px" display="flex" align="center" justify="center">
+            <Flex
+              width="76%"
+              align="flex-start"
+              direction="column"
+              gap="28px"
+            >
+              <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
-            </Box>
-            <Box>
-              <Input
-                variant="login"
-                position="absolute"
-                placeholder="Your email address"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </Box>
-            <Box>
-              <Input
-                variant="login"
-                type="password"
-                position="absolute"
-                placeholder="Your password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </Box>
-            <Box>
+                <FormControl isRequired isInvalid={emailError}>
+                  <Input 
+                    variant="login"
+                    placeholder="Your email address"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                  <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+                </FormControl>
+                <FormControl isRequired isInvalid={passwordError}>
+                  <Input 
+                    variant="login"
+                    type="password"
+                    placeholder="Your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                </FormControl>
               <Button
                 variant="login"
-                position="absolute"
-                disabled={email === "" || password === ""}
+                disabled={email === '' || password === ''}
                 _hover={
                   email && password
                     ? {
@@ -143,22 +159,18 @@ const Login = ({
               >
                 Log In
               </Button>
-            </Box>
-          </Flex>
-          <Flex
-            top="70%"
-            left="6%"
-            width="100%"
-            direction="row"
-            position="absolute"
-            alignContent="center"
-          >
-            <Text variant="loginSecondary" paddingRight="1.1%">
-              Not a member yet?
-            </Text>
-            <Text variant="loginTertiary" onClick={onSignUpClick}>
-              Sign Up Now
-            </Text>
+              <Flex
+                paddingTop="29px"
+                alignContent="center"
+              >
+                <Text variant="loginSecondary" paddingRight="17px">
+                  Not a member yet?
+                </Text>
+                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                  Sign Up Now
+                </Text>
+              </Flex>
+            </Flex>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">
@@ -170,4 +182,4 @@ const Login = ({
   return <></>;
 };
 
-export default Login;
+export default Login
