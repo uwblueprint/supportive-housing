@@ -52,7 +52,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [buildingId, setBuildingId] = useState<number>(resident.buildingId);
+  const [buildingId, setBuildingId] = useState<number>(-1);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
@@ -162,7 +162,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       setMoveOutDateError(true);
       return;
     }
-    if (buildingId === undefined) {
+    if (buildingId === -1) {
       setBuildingError(true);
       return;
     }

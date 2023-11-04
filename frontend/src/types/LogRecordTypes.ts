@@ -4,12 +4,16 @@ type NameRecord = {
   lastName: string;
 };
 
+type BuildingRecord = {
+  id: number;
+  name: string;
+}
+
 export type LogRecord = {
   logId: number;
-  attnTo?: NameRecord;
+  attnTo: NameRecord | null;
   employee: NameRecord;
-  building: string;
-  buildingId: number;
+  building: BuildingRecord;
   datetime: string;
   flagged: boolean;
   note: string;
@@ -28,7 +32,7 @@ export type GetLogRecordCountResponse = {
 export type PostLogRecordsResponse = Pick<
   LogRecord,
   | "attnTo"
-  | "buildingId"
+  | "building"
   | "datetime"
   | "employee"
   | "flagged"

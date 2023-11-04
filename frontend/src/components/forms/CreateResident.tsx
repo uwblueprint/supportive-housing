@@ -41,7 +41,7 @@ const CreateResident = (): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [buildingId, setBuildingId] = useState<number>(0);
+  const [buildingId, setBuildingId] = useState<number>(-1);
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -100,7 +100,7 @@ const CreateResident = (): React.ReactElement => {
     setInitials("");
     setRoomNumber("");
     setMoveInDate(new Date());
-    setBuildingId(0);
+    setBuildingId(-1);
 
     // Reset the error states
     setInitialsError(false);
@@ -119,14 +119,14 @@ const CreateResident = (): React.ReactElement => {
   const handleSubmit = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.length !== 3);
-    setBuildingError(buildingId === 0);
+    setBuildingError(buildingId === -1);
 
     //  Prevents form submission if any required values are incorrect
     if (
       initials.length !== 2 ||
       roomNumber.length !== 3 ||
       moveInDateError ||
-      buildingId === 0
+      buildingId === -1
     ) {
       return;
     }

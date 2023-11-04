@@ -171,37 +171,35 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
                       <Td width="5%">
-                        {record.attnTo &&
-                        record.attnTo.firstName !== null &&
-                        record.attnTo.lastName !== null
+                        {record.attnTo
                           ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
                           : ""}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
-                              aria-label="Options"
-                              icon={<VscKebabVertical />}
-                              w="36px"
-                              variant="ghost"
-                            />
-                            <MenuList>
-                              <MenuItem
-                                onClick={() => handleEditToggle(record.logId)}
-                              >
-                                Edit Log Record
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handleDeleteToggle(record.logId)}
-                              >
-                                Delete Log Record
-                              </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        )}
+                            <Menu>
+                              <MenuButton
+                                as={IconButton}
+                                aria-label="Options"
+                                icon={<VscKebabVertical />}
+                                w="36px"
+                                variant="ghost"
+                              />
+                              <MenuList>
+                                <MenuItem
+                                  onClick={() => handleEditToggle(record.logId)}
+                                >
+                                  Edit Log Record
+                                </MenuItem>
+                                <MenuItem
+                                  onClick={() => handleDeleteToggle(record.logId)}
+                                >
+                                  Delete Log Record
+                                </MenuItem>
+                              </MenuList>
+                            </Menu>
+                          )}
                       </Td>
                     </Tr>
 

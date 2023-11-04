@@ -119,7 +119,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       hour12: false,
     }),
   );
-  const [buildingId, setBuildingId] = useState<number | null>(null);
+  const [buildingId, setBuildingId] = useState<number>(-1);
   const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
@@ -244,7 +244,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
         hour12: false,
       }),
     );
-    setBuildingId(null);
+    setBuildingId(-1);
     setResident(-1);
     setTags([]);
     setAttnTo(-1);
@@ -271,7 +271,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
-    setBuildingError(buildingId === null);
+    setBuildingError(buildingId === -1);
     setResidentError(resident === -1);
     setNotesError(notes === "");
 
@@ -280,7 +280,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       !employee.label ||
       date === null ||
       time === "" ||
-      buildingId === null ||
+      buildingId === -1 ||
       resident === -1 ||
       notes === ""
     ) {

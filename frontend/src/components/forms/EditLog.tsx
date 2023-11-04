@@ -118,7 +118,7 @@ const EditLog = ({
       hour12: false,
     }),
   );
-  const [buildingId, setBuildingId] = useState<number>(logRecord.buildingId);
+  const [buildingId, setBuildingId] = useState<number>(-1);
   const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
@@ -209,13 +209,13 @@ const EditLog = ({
         hour12: false,
       }),
     );
-    setBuildingId(logRecord.buildingId);
+    setBuildingId(logRecord.building.id);
     const residentId = residentOptions.find(
       (item) => item.label === logRecord.residentId,
     )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
-    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo.id : -1);
+    setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
@@ -233,7 +233,7 @@ const EditLog = ({
     setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
-    setBuildingError(buildingId === undefined);
+    setBuildingError(buildingId === -1);
     setResidentError(resident === -1);
     setNotesError(notes === "");
 
@@ -242,7 +242,7 @@ const EditLog = ({
       !employee.label ||
       date === null ||
       time === "" ||
-      buildingId === undefined ||
+      buildingId === -1 ||
       resident === -1 ||
       notes === ""
     ) {

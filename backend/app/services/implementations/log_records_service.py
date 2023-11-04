@@ -4,9 +4,7 @@ from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
 from pytz import timezone
-from sqlalchemy import select, cast, Date, text
-import os
-
+from sqlalchemy import text
 
 class LogRecordsService(ILogRecordsService):
     """
@@ -53,23 +51,25 @@ class LogRecordsService(ILogRecordsService):
                 logs_list.append(
                     {
                         "log_id": log[0],
-                        "resident_id": log[2],
-                        "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
-                        "flagged": log[4],
-                        "attn_to": {
-                            "id": log[5],
-                            "first_name": log[11],
-                            "last_name": log[12]
-                        },
                         "employee": {
                             "id": log[1],
-                            "first_name": log[9],
-                            "last_name": log[10]
+                            "first_name": log[2],
+                            "last_name": log[3]
                         },
-                        "note": log[6],
-                        "tags": log[7],
-                        "building_id": log[8],
-                        "building": log[9],
+                        "resident_id": log[4],
+                        "attn_to": {
+                            "id": log[5],
+                            "first_name": log[6],
+                            "last_name": log[7]
+                        } if log[5] else None,
+                        "building": {
+                            "id": log[8],
+                            "name": log[9]
+                        },
+                        "tags": log[10] if log[10] else [],
+                        "note": log[11],
+                        "flagged": log[12],
+                        "datetime": str(log[13].astimezone(timezone("US/Eastern"))),
                     }
                 )
             return logs_list
@@ -179,17 +179,18 @@ class LogRecordsService(ILogRecordsService):
             sql = "SELECT\n \
                 logs.log_id,\n \
                 logs.employee_id,\n \
-                CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
-                logs.datetime,\n \
-                logs.flagged,\n \
-                logs.attn_to,\n \
-                logs.note,\n \
-                t.tag_names, \n \
-                logs.building,\n \
                 employees.first_name AS employee_first_name,\n \
                 employees.last_name AS employee_last_name,\n \
+                CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
+                logs.attn_to,\n \
                 attn_tos.first_name AS attn_to_first_name,\n \
-                attn_tos.last_name AS attn_to_last_name\n \
+                attn_tos.last_name AS attn_to_last_name,\n \
+                buildings.id AS building_id,\n \
+                buildings.name AS building_name,\n \
+                t.tag_names, \n \
+                logs.note,\n \
+                logs.flagged,\n \
+                logs.datetime\n \
                 FROM log_records logs\n \
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
                 JOIN users employees ON logs.employee_id = employees.id\n \
