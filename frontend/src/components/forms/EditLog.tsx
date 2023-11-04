@@ -266,7 +266,6 @@ const EditLog = ({
       setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
       getRecords(userPageNum);
-      setUserPageNum(userPageNum);
 
       toggleClose();
     } else {
