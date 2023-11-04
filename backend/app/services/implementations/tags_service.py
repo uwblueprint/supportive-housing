@@ -1,5 +1,5 @@
 from ..interfaces.tags_service import ITagsService
-from ...models.tag import Tag
+from ...models.tags import Tag
 from ...models import db
 
 

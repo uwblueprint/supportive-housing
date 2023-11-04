@@ -67,7 +67,7 @@ def get_log_records():
 
 
 @blueprint.route("/count", methods=["GET"], strict_slashes=False)
-# @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def count_log_records():
     """
     Get number of log records. Can optionally add filters.
