@@ -138,7 +138,7 @@ const LogRecordsTable = ({
         <TableContainer
           marginTop="12px"
           height="70vh"
-          overflowY="scroll"
+          overflowY="unset"
           ref={tableRef}
         >
           <Table variant="showTable" verticalAlign="middle">
@@ -169,16 +169,17 @@ const LogRecordsTable = ({
                       <Td whiteSpace="normal" width="70%">
                         {record.note}
                       </Td>
-                      <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
+                      <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
                       <Td width="5%">
-                        {record.attnToFirstName !== null &&
-                        record.attnToLastName !== null
-                          ? `${record.attnToFirstName} ${record.attnToLastName}`
+                        {record.attnTo &&
+                        record.attnTo.firstName !== null &&
+                        record.attnTo.lastName !== null
+                          ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
                           : ""}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
-                          authenticatedUser?.id === record.employeeId) && (
+                          authenticatedUser?.id === record.employee.id) && (
                           <Menu>
                             <MenuButton
                               as={IconButton}
