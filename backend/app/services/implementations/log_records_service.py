@@ -224,10 +224,11 @@ class LogRecordsService(ILogRecordsService):
             COUNT(*)\n \
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id"
+            JOIN users employees ON logs.employee_id = employees.id\n \
+            JOIN residents ON logs.resident_id = residents.id\n \
+            JOIN buildings on logs.building_id = buildings.id"
 
             sql += f"\n{self.join_tag_attributes()}"
-
             sql += self.filter_log_records(filters)
 
             num_results = db.session.execute(text(sql))
