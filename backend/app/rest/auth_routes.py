@@ -128,6 +128,9 @@ def two_fa():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
+
+        auth_service.send_email_verification_link(request.json["email"])
+
         response = jsonify(
             {
                 "access_token": auth_dto.access_token,
@@ -165,13 +168,13 @@ def register():
             request.json["email"], request.json["password"]
         )
 
-        auth_service.send_email_verification_link(request.json["email"])
-
         response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
+        
+        auth_service.send_email_verification_link(request.json["email"])
 
         response["auth_user"] = {
             "access_token": auth_dto.access_token,
