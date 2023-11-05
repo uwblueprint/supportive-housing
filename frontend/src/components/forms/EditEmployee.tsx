@@ -34,12 +34,16 @@ const RoleOptions = [
 type Props = {
   employee: User;
   isOpen: boolean;
+  userPageNum: number;
+  getRecords: (pageNumber: number) => Promise<void>;
   toggleClose: () => void;
 };
 
 const EditEmployee = ({
   employee,
   isOpen,
+  userPageNum,
+  getRecords,
   toggleClose,
 }: Props): React.ReactElement => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
@@ -157,6 +161,7 @@ const EditEmployee = ({
             "Employee has been successfully updated",
             "success",
           );
+          getRecords(userPageNum);
           handleClose();
         } else {
           newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");

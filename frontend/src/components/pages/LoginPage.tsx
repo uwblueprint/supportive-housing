@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Credentials from "./Credentials";
-import Authy from "./Authy";
+import Login from "../forms/Login";
+import Authy from "../auth/Authy";
 
-const Login = (): React.ReactElement => {
+const LoginPage = (): React.ReactElement => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
@@ -10,7 +10,7 @@ const Login = (): React.ReactElement => {
 
   return (
     <>
-      <Credentials
+      <Login
         email={email}
         setEmail={setEmail}
         password={password}
@@ -24,4 +24,4 @@ const Login = (): React.ReactElement => {
   );
 };
 
-export default Login;
+export default LoginPage;

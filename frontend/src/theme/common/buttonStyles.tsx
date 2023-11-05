@@ -65,15 +65,14 @@ const Button: ComponentStyleConfig = {
       lineHeight: "29px",
       color: "white.default",
       borderRadius: "4px",
-      height: "7vh",
+      height: "8vh",
       width: "100%",
       transition: "background-color 0.25s ease !important",
       _active: {
         background: "teal.400",
         boxShadow: "inset 0px 0px 10px #ffffff !important",
       },
-
-    }
+    },
   },
 };
 

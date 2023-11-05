@@ -2,6 +2,7 @@ from ..interfaces.log_records_service import ILogRecordsService
 from ...models.log_records import LogRecords
 from ...models.residents import Residents
 from ...models.user import User
+from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
 from pytz import timezone
@@ -24,14 +25,18 @@ class LogRecordsService(ILogRecordsService):
         self.logger = logger
 
     def add_record(self, log_record):
-        new_log_record = log_record
+        new_log_record = log_record.copy()
         residents = new_log_record["residents"]
+        tag_names = new_log_record["tags"]
+
         del new_log_record["residents"]
+        del new_log_record["tags"]
 
         try:
             new_log_record = LogRecords(**new_log_record)
             self.construct_residents(new_log_record, residents)
-            
+            self.construct_tags(new_log_record, tag_names)
+
             db.session.add(new_log_record)
             db.session.commit()
             return {**log_record, "residents": residents}
@@ -46,6 +51,14 @@ class LogRecordsService(ILogRecordsService):
                 raise Exception(f"Resident with id {resident_id} does not exist")
             log_record.residents.append(resident)
 
+    def construct_tags(self, log_record, tag_names):
+        for tag_name in tag_names:
+            tag = Tag.query.filter_by(name=tag_name).first()
+
+            if not tag: 
+                raise Exception(f"Tag with name {tag_name} does not exist")
+            log_record.tags.append(tag)
+
     def to_json_list(self, logs):
         try:
             logs_list = []
@@ -57,14 +70,19 @@ class LogRecordsService(ILogRecordsService):
                         "residents": log[2],
                         "datetime": str(log[3].astimezone(timezone("US/Eastern"))),
                         "flagged": log[4],
-                        "attn_to": log[5],
+                        "attn_to": {
+                            "id": log[5],
+                            "first_name": log[11],
+                            "last_name": log[12]
+                        },
+                        "employee": {
+                            "id": log[1],
+                            "first_name": log[9],
+                            "last_name": log[10]
+                        },
                         "note": log[6],
-                        "tags": log[7],
+                        "tags ": log[7],
                         "building": log[8],
-                        "employee_first_name": log[9],
-                        "employee_last_name": log[10],
-                        "attn_to_first_name": log[11],
-                        "attn_to_last_name": log[12],
                     }
                 )
             return logs_list
@@ -101,27 +119,29 @@ class LogRecordsService(ILogRecordsService):
     def filter_by_date_range(self, date_range):
         sql = ""
         if len(date_range) > 0:
-            if (date_range[0] != ""):
+            if date_range[0] != "":
                 start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
                     hour=0, minute=0
                 )
                 sql += f"\ndatetime>='{start_date}'"
-            if (date_range[-1] != ""):
+            if date_range[-1] != "":
                 end_date = datetime.strptime(
                     date_range[len(date_range) - 1], "%Y-%m-%d"
                 ).replace(hour=23, minute=59)
-                
-                if (sql == ""):
+
+                if sql == "":
                     sql += f"\ndatetime<='{end_date}'"
                 else:
                     sql += f"\nAND datetime<='{end_date}'"
         return sql
 
     def filter_by_tags(self, tags):
-        sql_statement = f"\n'{tags[0]}'=ANY (tags)"
-        for i in range(1, len(tags)):
-            sql_statement = sql_statement + f"\nOR '{tags[i]}'=ANY (tags)"
-        return sql_statement
+        if len(tags) >= 1:
+            sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
+            for i in range(1, len(tags)):
+                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
+            return sql_statement
+        return f"\n'{tags}'=ANY (tag_names)"
 
     def filter_by_flagged(self, flagged):
         print(flagged)
@@ -151,7 +171,15 @@ class LogRecordsService(ILogRecordsService):
                         if filters.get(filter):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
-
+    
+    def join_tag_attributes(self):
+        return "\nLEFT JOIN\n \
+                    (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
+                    JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
+                    JOIN tags ON lrt.tag_id = tags.tag_id\n \
+                    GROUP BY logs.log_id \n \
+                ) t ON logs.log_id = t.log_id\n"
+            
     def get_log_records(
         self, page_number, return_all, results_per_page=10, filters=None
     ):
@@ -164,7 +192,7 @@ class LogRecordsService(ILogRecordsService):
             logs.flagged,\n \
             logs.attn_to,\n \
             logs.note,\n \
-            logs.tags,\n \
+            t.tag_names, \n \
             logs.building,\n \
             employees.first_name AS employee_first_name,\n \
             employees.last_name AS employee_last_name,\n \
@@ -179,7 +207,8 @@ class LogRecordsService(ILogRecordsService):
                 JOIN residents ON lrr.resident_id = residents.id\n \
                 GROUP BY logs.log_id \n \
             ) r ON logs.log_id = r.log_id\n"
-
+            
+            sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
             sql += "\nORDER BY datetime DESC"
@@ -211,7 +240,8 @@ class LogRecordsService(ILogRecordsService):
                 JOIN residents ON lrr.resident_id = residents.id\n \
                 GROUP BY logs.log_id \n \
             ) r ON logs.log_id = r.log_id\n"
-            
+                        
+            sql += f"\n{self.join_tag_attributes()}"
 
             sql += self.filter_log_records(filters)
 
@@ -231,6 +261,7 @@ class LogRecordsService(ILogRecordsService):
                 "Log record with id {log_id} not found".format(log_id=log_id)
             )
         log_record_to_delete.residents = []
+        log_record_to_delete.tags = []
         db.session.delete(log_record_to_delete)
         db.session.commit()
 
@@ -248,9 +279,10 @@ class LogRecordsService(ILogRecordsService):
                 }
             )
         if "tags" in updated_log_record:
-            LogRecords.query.filter_by(log_id=log_id).update(
-                {LogRecords.tags: updated_log_record["tags"]}
-            )
+            log_record = LogRecords.query.filter_by(log_id=log_id).first()
+            if (log_record):
+                log_record.tags = []
+                self.construct_tags(log_record, updated_log_record["tags"])
         else:
             LogRecords.query.filter_by(log_id=log_id).update(
                 {

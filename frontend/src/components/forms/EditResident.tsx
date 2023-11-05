@@ -45,10 +45,18 @@ const BUILDINGS = [
 type Props = {
   resident: Resident;
   isOpen: boolean;
+  userPageNum: number;
   toggleClose: () => void;
+  getRecords: (pageNumber: number) => Promise<void>;
 };
 
-const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
+const EditResident = ({
+  resident,
+  isOpen,
+  userPageNum,
+  toggleClose,
+  getRecords,
+}: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -79,6 +87,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
         "Resident has been successfully updated",
         "success",
       );
+      getRecords(userPageNum)
     } else {
       newToast(
         "Error updating resident",

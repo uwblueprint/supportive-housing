@@ -39,6 +39,7 @@ import { combineDateTime } from "../../helper/dateHelpers";
 
 type Props = {
   logRecord: LogRecord;
+  userPageNum: number;
   isOpen: boolean;
   toggleClose: () => void;
   employeeOptions: UserLabel[];
@@ -100,6 +101,7 @@ const getCurUserSelectOption = () => {
 
 const EditLog = ({
   logRecord,
+  userPageNum,
   isOpen,
   toggleClose,
   employeeOptions,
@@ -215,7 +217,7 @@ const EditLog = ({
     )?.value;
     setResident(residentId !== undefined ? residentId : -1);
     setTags(logRecord.tags);
-    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo : -1);
+    setAttnTo(logRecord.attnTo !== undefined ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
@@ -263,8 +265,7 @@ const EditLog = ({
     if (res) {
       setAlertData(ALERT_DATA.SUCCESS);
       countRecords();
-      getRecords(1);
-      setUserPageNum(1);
+      getRecords(userPageNum);
 
       toggleClose();
     } else {
@@ -396,7 +397,7 @@ const EditLog = ({
                       onChange={handleAttnToChange}
                       styles={selectStyle}
                       defaultValue={employeeOptions.find(
-                        (item) => item.value === logRecord.attnTo,
+                        (item) => item.value === logRecord.attnTo?.id,
                       )}
                     />
                   </FormControl>
