@@ -81,7 +81,7 @@ class LogRecordsService(ILogRecordsService):
                             "last_name": log[10]
                         },
                         "note": log[6],
-                        "tags ": log[7],
+                        "tags ": log[7] if log[7] else [],
                         "building": log[8],
                     }
                 )
