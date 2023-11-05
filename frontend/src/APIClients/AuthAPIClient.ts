@@ -133,11 +133,11 @@ const isVerified = async (): Promise<boolean> => {
     "accessToken",
   )}`;
   try {
-    await baseAPIClient.get(
+    const { data } = await baseAPIClient.get(
       `/auth/verify`,
       { headers: { Authorization: bearerToken } },
     );
-    return true;
+    return data.verify === "true";
   } catch (error) {
     return false;
   }
