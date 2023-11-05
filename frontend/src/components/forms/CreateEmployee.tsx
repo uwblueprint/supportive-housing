@@ -25,9 +25,18 @@ import commonApiClient from "../../APIClients/CommonAPIClient";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 
+type Props = {
+  getRecords: (pageNumber: number) => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  countUsers: () => Promise<void>;
+}
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
-const CreateEmployee = (): React.ReactElement => {
+const CreateEmployee = ({
+  getRecords,
+  setUserPageNum,
+  countUsers,
+}: Props): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const newToast = CreateToast();
@@ -150,6 +159,9 @@ const CreateEmployee = (): React.ReactElement => {
           `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
           "success",
         );
+        getRecords(1);
+        setUserPageNum(1);
+        countUsers();
         handleClose();
       } else {
         newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");

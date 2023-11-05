@@ -10,7 +10,8 @@ def init_app(app):
     from .user import User
     from .sign_in_logs import SignInLogs
     from .log_records import LogRecords
-    from .tag import Tag
+    from .tags import Tag
+    from .log_record_tags import LogRecordTag
     from .residents import Residents
     from .log_record_residents import LogRecordResidents
 
