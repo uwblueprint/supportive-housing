@@ -1,8 +1,8 @@
 import firebase_admin.auth
 
 from ...utilities.exceptions.firebase_exceptions import (
-    InvalidPasswordException, 
-    TooManyLoginAttemptsException
+    InvalidPasswordException,
+    TooManyLoginAttemptsException,
 )
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO

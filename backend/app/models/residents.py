@@ -10,7 +10,8 @@ class Residents(db.Model):
     room_num = db.Column(db.Integer, nullable=False)
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
-    building = db.Column(db.Enum("144", "402", "362", name="buildings"), nullable=False)
+    building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
+    building = db.relationship("Buildings", back_populates="resident")
 
     resident_id = db.column_property(initial + cast(room_num, String))
 
@@ -31,7 +32,9 @@ class Residents(db.Model):
             attr = getattr(self, field)
             # if it's a regular column, extract the value
             if isinstance(column, ColumnProperty):
-                if (field == "date_joined" or field == "date_left") and attr:
+                if field == "building_id":
+                    formatted["building"] = {"id": attr}
+                elif (field == "date_joined" or field == "date_left") and attr:
                     formatted[field] = attr.strftime("%Y-%m-%d")
                 else:
                     formatted[field] = attr

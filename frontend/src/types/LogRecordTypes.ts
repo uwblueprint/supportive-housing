@@ -4,11 +4,16 @@ type NameRecord = {
   lastName: string;
 };
 
+type BuildingRecord = {
+  id: number;
+  name: string;
+};
+
 export type LogRecord = {
   logId: number;
-  attnTo?: NameRecord;
+  attnTo: NameRecord | null;
   employee: NameRecord;
-  building: string;
+  building: BuildingRecord;
   datetime: string;
   flagged: boolean;
   note: string;
@@ -36,7 +41,7 @@ export type PostLogRecordsResponse = Pick<
 > | null;
 
 export type CountLogRecordFilters = {
-  building?: string;
+  buildingId?: number[];
   employeeId?: number[];
   attnTo?: number[];
   dateRange?: string[];
@@ -52,7 +57,7 @@ export type CreateLogRecordParams = {
   flagged: boolean;
   note: string;
   tags: string[];
-  building: string;
+  buildingId: number;
   attnTo?: number;
 };
 
@@ -64,7 +69,7 @@ export type EditLogRecordParams = {
   flagged: boolean;
   note: string;
   tags: string[];
-  building: string;
+  buildingId: number;
   attnTo?: number;
 };
 

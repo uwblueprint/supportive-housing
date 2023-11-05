@@ -2,8 +2,8 @@ import os
 import requests
 
 from ..utilities.exceptions.firebase_exceptions import (
-    InvalidPasswordException, 
-    TooManyLoginAttemptsException
+    InvalidPasswordException,
+    TooManyLoginAttemptsException,
 )
 
 from ..resources.token import Token
@@ -57,13 +57,21 @@ class FirebaseRestClient:
 
         # Raise an invalid password exception
         # The corresponding error message from Firebase is INVALID_PASSWORD
-        if ("error" in response_json and response_json["error"]["code"] == 400 and response_json["error"]["message"] == "INVALID_PASSWORD"):
+        if (
+            "error" in response_json
+            and response_json["error"]["code"] == 400
+            and response_json["error"]["message"] == "INVALID_PASSWORD"
+        ):
             raise InvalidPasswordException
-        # The corresponding error message from Firebase is 
+        # The corresponding error message from Firebase is
         # 'TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.'
-        elif ("error" in response_json and response_json["error"]["code"] == 400 and response_json["error"]["message"][:27] == "TOO_MANY_ATTEMPTS_TRY_LATER"):
+        elif (
+            "error" in response_json
+            and response_json["error"]["code"] == 400
+            and response_json["error"]["message"][:27] == "TOO_MANY_ATTEMPTS_TRY_LATER"
+        ):
             raise TooManyLoginAttemptsException
-        elif "error" in  response_json and response.status_code != 200:
+        elif "error" in response_json and response.status_code != 200:
             error_message = [
                 "Failed to sign-in via Firebase REST API, status code =",
                 str(response.status_code),

@@ -13,6 +13,7 @@ def init_app(app):
     from .tags import Tag
     from .log_record_tags import LogRecordTag
     from .residents import Residents
+    from .buildings import Buildings
 
     app.app_context().push()
     db.init_app(app)
