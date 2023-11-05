@@ -14,6 +14,11 @@ const Table: ComponentStyleConfig = {
         borderBottom: "1px",
         borderColor: "gray.100",
       },
+      thead: {
+        position: "sticky",
+        top: 0,
+        zIndex: "docked",
+      },
     },
   },
 };

@@ -35,6 +35,7 @@ import ConfirmationModal from "../../common/ConfirmationModal";
 type Props = {
   logRecords: LogRecord[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
@@ -47,6 +48,7 @@ const DELETE_CONFIRMATION_MESSAGE =
 const LogRecordsTable = ({
   logRecords,
   tableRef,
+  userPageNum,
   getRecords,
   countRecords,
   setUserPageNum,
@@ -116,8 +118,16 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
-    handleDeleteToggle(itemId);
+    const newUserPageNum = (
+      logRecords.length === 1
+        ? userPageNum - 1 
+        : userPageNum
+    );
+    countRecords();
     setShowAlert(true);
+    setUserPageNum(newUserPageNum);
+    getRecords(newUserPageNum);
+    handleDeleteToggle(itemId);
   };
 
   useEffect(() => {
@@ -138,7 +148,7 @@ const LogRecordsTable = ({
         <TableContainer
           marginTop="12px"
           height="70vh"
-          overflowY="scroll"
+          overflowY="unset"
           ref={tableRef}
         >
           <Table variant="showTable" verticalAlign="middle">
@@ -169,16 +179,15 @@ const LogRecordsTable = ({
                       <Td whiteSpace="normal" width="70%">
                         {record.note}
                       </Td>
-                      <Td width="5%">{`${record.employeeFirstName} ${record.employeeLastName}`}</Td>
+                      <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
                       <Td width="5%">
-                        {record.attnToFirstName !== null &&
-                        record.attnToLastName !== null
-                          ? `${record.attnToFirstName} ${record.attnToLastName}`
+                        {record.attnTo
+                          ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
                           : ""}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
-                          authenticatedUser?.id === record.employeeId) && (
+                          authenticatedUser?.id === record.employee.id) && (
                           <Menu>
                             <MenuButton
                               as={IconButton}
@@ -206,6 +215,7 @@ const LogRecordsTable = ({
 
                     <EditLog
                       logRecord={record}
+                      userPageNum={userPageNum}
                       isOpen={editOpenMap[record.logId]}
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}

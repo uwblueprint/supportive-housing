@@ -64,9 +64,20 @@ const ResidentDirectory = (): React.ReactElement => {
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
-          <> {CreateResident()} </>
+          <CreateResident
+            getRecords={getResidents}
+            setUserPageNum={setUserPageNum}
+            countResidents={countResidents}
+          />
         </Flex>
-        <ResidentDirectoryTable residents={residents} tableRef={tableRef} />
+        <ResidentDirectoryTable 
+          residents={residents} 
+          tableRef={tableRef}
+          userPageNum={userPageNum}
+          setUserPageNum={setUserPageNum}
+          getRecords={getResidents}
+          countResidents={countResidents}
+        />
         <Pagination
           numRecords={numResidents}
           pageNum={pageNum}

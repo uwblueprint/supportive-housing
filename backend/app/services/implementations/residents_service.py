@@ -1,6 +1,7 @@
 from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
 from ...models.log_records import LogRecords
+from ...models.buildings import Buildings
 from ...models import db
 from datetime import datetime
 from sqlalchemy import select, cast, Date
@@ -20,6 +21,16 @@ class ResidentsService(IResidentsService):
         :type logger: logger
         """
         self.logger = logger
+
+    def to_residents_json_list(self, resident_results):
+        residents_json_list = []
+        for result in resident_results:
+            resident, building = result[0], result[1]
+
+            resident_dict = resident.to_dict()
+            resident_dict["building"]["name"] = building
+            residents_json_list.append(resident_dict)
+        return residents_json_list
 
     def convert_to_date_obj(self, date):
         return datetime.strptime(date, "%Y-%m-%d")
@@ -94,20 +105,33 @@ class ResidentsService(IResidentsService):
     ):
         try:
             if resident_id:
-                residents_results = Residents.query.filter_by(resident_id=resident_id)
+                residents_results = (
+                    Residents.query.join(
+                        Buildings, Buildings.id == Residents.building_id
+                    )
+                    .with_entities(Residents, Buildings.name.label("building"))
+                    .filter_by(resident_id=resident_id)
+                )
             elif return_all:
-                residents_results = Residents.query.all()
+                residents_results = (
+                    Residents.query.join(
+                        Buildings, Buildings.id == Residents.building_id
+                    )
+                    .with_entities(Residents, Buildings.name.label("building"))
+                    .all()
+                )
             else:
                 residents_results = (
-                    Residents.query.limit(results_per_page)
+                    Residents.query.join(
+                        Buildings, Buildings.id == Residents.building_id
+                    )
+                    .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
+                    .with_entities(Residents, Buildings.name.label("building"))
                     .all()
                 )
 
-            residents_results = list(
-                map(lambda resident: resident.to_dict(), residents_results)
-            )
-            return {"residents": residents_results}
+            return {"residents": self.to_residents_json_list(residents_results)}
         except Exception as postgres_error:
             raise postgres_error
 
