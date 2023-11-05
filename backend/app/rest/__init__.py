@@ -8,6 +8,7 @@ def init_app(app):
         log_records_routes,
         residents_routes,
         tags_routes,
+        buildings_routes
     )
 
     app.register_blueprint(user_routes.blueprint)
@@ -18,3 +19,4 @@ def init_app(app):
     app.register_blueprint(log_records_routes.blueprint)
     app.register_blueprint(residents_routes.blueprint)
     app.register_blueprint(tags_routes.blueprint)
+    app.register_blueprint(buildings_routes.blueprint)
