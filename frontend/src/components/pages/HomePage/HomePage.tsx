@@ -8,7 +8,7 @@ import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import SearchAndFilters from "./SearchAndFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
-import { Building } from "../../../types/BuildingTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import { ResidentLabel } from "../../../types/ResidentTypes";
 import { Tag } from "../../../types/TagsTypes";
 import { UserLabel } from "../../../types/UserTypes";
@@ -32,7 +32,7 @@ const HomePage = (): React.ReactElement => {
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [tags, setTags] = useState<Tag[]>([]);
   const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
-  const [building, setBuilding] = useState<Building | null>(null);
+  const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
@@ -55,7 +55,7 @@ const HomePage = (): React.ReactElement => {
   };
 
   const getLogRecords = async (pageNumber: number) => {
-    const buildingValue = building ? building.value : "";
+    const buildingIds = buildings.map((building) => building.value);
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const residentsIds = residents.map((resident) => resident.value);
@@ -63,7 +63,7 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      building: buildingValue,
+      buildingId: buildingIds,
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
@@ -88,7 +88,7 @@ const HomePage = (): React.ReactElement => {
   };
 
   const countLogRecords = async () => {
-    const buildingValue = building ? building.value : "";
+    const buildingIds = buildings.map((building) => building.value);
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const dateRange =
@@ -98,7 +98,7 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
-      building: buildingValue,
+      buildingId: buildingIds,
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange,
@@ -114,7 +114,7 @@ const HomePage = (): React.ReactElement => {
     setUserPageNum(1);
     getLogRecords(1);
   }, [
-    building,
+    buildings,
     employees,
     attentionTos,
     startDate,
@@ -129,7 +129,7 @@ const HomePage = (): React.ReactElement => {
   useEffect(() => {
     countLogRecords();
   }, [
-    building,
+    buildings,
     employees,
     attentionTos,
     startDate,
@@ -170,7 +170,7 @@ const HomePage = (): React.ReactElement => {
           endDate={endDate}
           tags={tags}
           attentionTos={attentionTos}
-          building={building}
+          buildings={buildings}
           flagged={flagged}
           setResidents={setResidents}
           setEmployees={setEmployees}
@@ -178,13 +178,14 @@ const HomePage = (): React.ReactElement => {
           setEndDate={setEndDate}
           setTags={setTags}
           setAttentionTos={setAttentionTos}
-          setBuilding={setBuilding}
+          setBuildings={setBuildings}
           setFlagged={setFlagged}
         />
 
         <LogRecordsTable
           logRecords={logRecords}
           tableRef={tableRef}
+          userPageNum={userPageNum}
           getRecords={getLogRecords}
           countRecords={countLogRecords}
           setUserPageNum={setUserPageNum}

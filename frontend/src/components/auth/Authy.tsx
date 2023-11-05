@@ -1,13 +1,6 @@
 import React, { useContext, useState, useRef } from "react";
 import { Redirect } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Flex,
-  Input,
-  Text,
-  VStack
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE } from "../../constants/Routes";
@@ -73,10 +66,19 @@ const Authy = ({
     return (
       <>
         <Box bg="teal.400" height="100vh" onClick={handleFocus}>
-          <Flex bg="white" height="100vh" width="47%" justifyContent="center" alignItems="center">
+          <Flex
+            bg="white"
+            height="100vh"
+            width="47%"
+            justifyContent="center"
+            alignItems="center"
+          >
             <VStack width="75%" align="flex-start" gap="3vh">
               <Text variant="login">One last step!</Text>
-              <Text variant="loginSecondary">In order to protect your account, please enter the authorization code from the Twilio Authy application.</Text>
+              <Text variant="loginSecondary">
+                In order to protect your account, please enter the authorization
+                code from the Twilio Authy application.
+              </Text>
               <Flex direction="row" width="100%" justifyContent="space-between">
                 {boxIndexes.map((boxIndex) => {
                   return (
@@ -93,19 +95,17 @@ const Authy = ({
                         {authCode.length > boxIndex ? authCode[boxIndex] : " "}
                       </Text>
                     </Flex>
-                  )
+                  );
                 })}
               </Flex>
               <Button
                 variant="login"
                 disabled={authCode.length < 6}
-                _hover={
-                  {
-                    background: "teal.500",
-                    transition:
-                      "transition: background-color 0.5s ease !important",
-                  }
-                }
+                _hover={{
+                  background: "teal.500",
+                  transition:
+                    "transition: background-color 0.5s ease !important",
+                }}
               >
                 Authenticate
               </Button>

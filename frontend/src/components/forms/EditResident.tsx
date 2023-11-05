@@ -37,22 +37,30 @@ import { convertToDate, convertToString } from "../../helper/dateHelpers";
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
-  { label: "144", value: "144" },
-  { label: "362", value: "362" },
-  { label: "402", value: "402" },
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 type Props = {
   resident: Resident;
   isOpen: boolean;
+  userPageNum: number;
   toggleClose: () => void;
+  getRecords: (pageNumber: number) => Promise<void>;
 };
 
-const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
+const EditResident = ({
+  resident,
+  isOpen,
+  userPageNum,
+  toggleClose,
+  getRecords,
+}: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [userBuilding, setUserBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(-1);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
@@ -65,11 +73,10 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   const editResident = async () => {
     const res = await ResidentAPIClient.editResident({
       id: resident.id,
-      residentId: resident.residentId,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
-      building: userBuilding,
+      buildingId,
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
@@ -79,6 +86,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
         "Resident has been successfully updated",
         "success",
       );
+      getRecords(userPageNum)
     } else {
       newToast(
         "Error updating resident",
@@ -123,10 +131,10 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setUserBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
       setBuildingError(false);
     }
   };
@@ -137,7 +145,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setUserBuilding(resident.building);
+    setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
@@ -161,7 +169,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
       setMoveOutDateError(true);
       return;
     }
-    if (userBuilding === "") {
+    if (buildingId === -1) {
       setBuildingError(true);
       return;
     }
@@ -178,7 +186,7 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
-    setUserBuilding(resident.building);
+    setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
@@ -240,7 +248,9 @@ const EditResident = ({ resident, isOpen, toggleClose }: Props) => {
                     <FormLabel>Building</FormLabel>
                     <Select
                       options={BUILDINGS}
-                      placeholder={resident.building}
+                      defaultValue={BUILDINGS.find(
+                        (item) => item.value === buildingId,
+                      )}
                       onChange={handleBuildingChange}
                       styles={selectStyle}
                     />

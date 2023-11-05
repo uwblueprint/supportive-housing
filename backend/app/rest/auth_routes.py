@@ -1,4 +1,8 @@
 import os
+from ..utilities.exceptions.firebase_exceptions import (
+    InvalidPasswordException,
+    TooManyLoginAttemptsException,
+)
 
 from flask import Blueprint, current_app, jsonify, request
 from twilio.rest import Client
@@ -80,6 +84,8 @@ def login():
             **cookie_options,
         )
         return response, 200
+    except (InvalidPasswordException, TooManyLoginAttemptsException) as e:
+        return jsonify({"error": str(e)}), 401
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -150,6 +156,7 @@ def two_fa():
 def register():
     """
     Returns access token and user info in response body and sets refreshToken as an httpOnly cookie
+    Also includes whether the user needs 2FA or not
     """
     try:
         user = CreateUserDTO(**request.json)
@@ -160,17 +167,22 @@ def register():
 
         auth_service.send_email_verification_link(request.json["email"])
 
-        response = jsonify(
-            {
-                "access_token": auth_dto.access_token,
-                "id": auth_dto.id,
-                "first_name": auth_dto.first_name,
-                "last_name": auth_dto.last_name,
-                "email": auth_dto.email,
-                "role": auth_dto.role,
-            }
-        )
+        response = {"requires_two_fa": False, "auth_user": None}
 
+        if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+            response["requires_two_fa"] = True
+            return jsonify(response), 200
+
+        response["auth_user"] = {
+            "access_token": auth_dto.access_token,
+            "id": auth_dto.id,
+            "first_name": auth_dto.first_name,
+            "last_name": auth_dto.last_name,
+            "email": auth_dto.email,
+            "role": auth_dto.role,
+        }
+
+        response = jsonify(response)
         response.set_cookie(
             "refreshToken",
             value=auth_dto.refresh_token,

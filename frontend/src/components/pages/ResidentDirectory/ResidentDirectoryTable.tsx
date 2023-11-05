@@ -27,6 +27,10 @@ import { convertToDate } from "../../../helper/dateHelpers";
 type Props = {
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  getRecords: (pageNumber: number) => Promise<void>;
+  countResidents: () => Promise<void>;
 };
 
 const getFormattedDatesAndStatus = (resident: Resident) => {
@@ -55,6 +59,10 @@ const DELETE_CONFIRMATION_MESSAGE =
 const ResidentDirectoryTable = ({
   residents,
   tableRef,
+  userPageNum,
+  setUserPageNum,
+  getRecords,
+  countResidents,
 }: Props): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
@@ -99,6 +107,14 @@ const ResidentDirectoryTable = ({
         "Resident has been deleted successfully.",
         "success",
       );
+      const newUserPageNum = (
+        residents.length === 1
+          ? userPageNum - 1 
+          : userPageNum
+      );
+      countResidents()
+      getRecords(newUserPageNum)
+      setUserPageNum(newUserPageNum)
       setIsDeleteModalOpen(false);
     }
     setShowAlert(true);
@@ -141,7 +157,7 @@ const ResidentDirectoryTable = ({
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
                   <Td width="20%">{resident.residentId!}</Td>
                   <Td width="15%">{status}</Td>
-                  <Td width="20%">{resident.building}</Td>
+                  <Td width="20%">{resident.building.name}</Td>
                   <Td width="20%">{startDate.date}</Td>
                   <Td width="15%">{endDate ? endDate.date : ""}</Td>
                   <Td width="5%">
@@ -174,7 +190,9 @@ const ResidentDirectoryTable = ({
           <EditResident
             resident={editingResident}
             isOpen={isEditModalOpen}
-            toggleClose={handleEditClose}
+            userPageNum={userPageNum}
+            toggleClose={() => handleEditClose()}
+            getRecords={getRecords}
           />
         )}
         {deletingResident && (
