@@ -24,6 +24,10 @@ import UserAPIClient from "../../../APIClients/UserAPIClient";
 type Props = {
   users: User[];
   tableRef: RefObject<HTMLDivElement>;
+  userPageNum: number;
+  countUsers: () => Promise<void>;
+  getRecords: (pageNumber: number) => Promise<void>;
+  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const ACTIVATE_CONFIRMATION_HEADER = "Activate Employee";
@@ -68,6 +72,10 @@ const getStatusColor = (user: User): string => {
 const EmployeeDirectoryTable = ({
   users,
   tableRef,
+  userPageNum,
+  countUsers,
+  getRecords,
+  setUserPageNum,
 }: Props): React.ReactElement => {
   const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
   const [activatingEmployee, setActivatingEmployee] = useState<User | null>(
@@ -116,6 +124,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully activated.",
         "success",
       );
+      getRecords(userPageNum)
       setIsActivateModalOpen(false);
     } else {
       newToast(
@@ -137,6 +146,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deactivated.",
         "success",
       );
+      getRecords(userPageNum)
       setIsDeactivateModalOpen(false);
     } else {
       newToast(
@@ -155,6 +165,14 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deleted.",
         "success",
       );
+      const newUserPageNum = (
+        users.length === 1
+          ? userPageNum - 1
+          : userPageNum
+      );
+      countUsers();
+      getRecords(newUserPageNum);
+      setUserPageNum(newUserPageNum);
       setIsDeleteModalOpen(false);
     } else {
       newToast(
@@ -246,6 +264,8 @@ const EmployeeDirectoryTable = ({
           <EditEmployee
             employee={editingEmployee}
             isOpen={isEditModalOpen}
+            userPageNum={userPageNum}
+            getRecords={getRecords}
             toggleClose={() => setIsEditModalOpen(false)}
           />
         )}

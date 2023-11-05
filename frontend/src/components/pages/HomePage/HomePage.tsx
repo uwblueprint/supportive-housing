@@ -185,6 +185,7 @@ const HomePage = (): React.ReactElement => {
         <LogRecordsTable
           logRecords={logRecords}
           tableRef={tableRef}
+          userPageNum={userPageNum}
           getRecords={getLogRecords}
           countRecords={countLogRecords}
           setUserPageNum={setUserPageNum}
