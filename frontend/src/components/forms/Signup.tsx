@@ -77,67 +77,54 @@ const Signup = ({
       <Flex h="100vh">
         <Box w="47%">
           <Flex
-            display="flex"
-            alignItems="flex-start"
-            position="absolute"
-            top="17.5%"
-            left="6%"
-            w="100%"
-          >
-            <Text variant="login" position="absolute">
-              Sign Up
-            </Text>
-          </Flex>
-          <Flex
-            h="40%"
-            w="36%"
-            top="28%"
-            left="6%"
+            h="70%"
+            marginTop="15%"
             direction="column"
-            position="absolute"
+            justify="center"
             justifyContent="space-between"
+            align="center"
           >
-            <Box>
+            <Box mr="58%">
+              <Text variant="login">
+                Sign Up
+              </Text>
+            </Box>
+            <Box w="80%">
               <Input
                 variant="login"
-                position="absolute"
                 placeholder="Your first name"
                 value={firstName}
                 onChange={(event) => setFirstName(event.target.value)}
               />
             </Box>
-            <Box>
+            <Box w="80%">
               <Input
                 variant="login"
-                position="absolute"
                 placeholder="Your last name"
                 value={lastName}
                 onChange={(event) => setLastName(event.target.value)}
               />
             </Box>
-            <Box>
+            <Box w="80%">
               <Input
                 variant="login"
-                position="absolute"
                 placeholder="Your email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
             </Box>
-            <Box>
+            <Box w="80%">
               <Input
                 variant="login"
                 type="password"
-                position="absolute"
                 placeholder="Your password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
               />
             </Box>
-            <Box>
+            <Box w="80%">
               <Button
                 variant="login"
-                position="absolute"
                 disabled={
                   email === "" ||
                   password === "" ||
@@ -158,21 +145,20 @@ const Signup = ({
                 Create Account
               </Button>
             </Box>
-          </Flex>
-          <Flex
-            top="80%"
-            left="6%"
-            width="64%"
+          
+            <Flex 
+            width="80%"
             direction="row"
-            position="absolute"
             alignContent="center"
-          >
-            <Text variant="loginSecondary" paddingRight="1.1%">
-              Already have an account?
-            </Text>
-            <Text variant="loginTertiary" onClick={onLogInClick}>
-              Log In Now
-            </Text>
+            marginTop="3%"
+            >
+              <Text variant="loginSecondary" paddingRight="1.1vw">
+                Already have an account?
+              </Text>
+              <Text variant="loginTertiary" onClick={onLogInClick}>
+                Log In Now
+              </Text>
+            </Flex>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">

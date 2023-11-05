@@ -108,13 +108,11 @@ const Login = ({
   }
 
   if (toggle) {
-    // Lock scroll
-    document.body.style.overflow = "hidden";
     return (
-      <Flex h="100vh">
+      <Flex>
         <Box w="47%">
           <Flex
-            marginTop="270px"
+            height="100vh"
             display="flex"
             align="center"
             justify="center"
