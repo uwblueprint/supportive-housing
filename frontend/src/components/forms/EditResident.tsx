@@ -29,18 +29,13 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
+import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
+import { BuildingLabel } from "../../types/BuildingTypes";
 
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-
-// TODO: Connect to Buidings table
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 type Props = {
   resident: Resident;
@@ -57,6 +52,7 @@ const EditResident = ({
   toggleClose,
   getRecords,
 }: Props): React.ReactElement => {
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -86,7 +82,7 @@ const EditResident = ({
         "Resident has been successfully updated",
         "success",
       );
-      getRecords(userPageNum)
+      getRecords(userPageNum);
     } else {
       newToast(
         "Error updating resident",
@@ -98,6 +94,17 @@ const EditResident = ({
 
   const clearMoveOutDate = () => {
     setMoveOutDate(undefined);
+  };
+
+  const getBuildingsOptions = async () => {
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
   };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,6 +149,7 @@ const EditResident = ({
   const handleToggleClose = () => {
     toggleClose();
 
+    getBuildingsOptions();
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
@@ -190,6 +198,7 @@ const EditResident = ({
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
+    getBuildingsOptions();
   }, [resident]);
 
   return (
@@ -247,8 +256,8 @@ const EditResident = ({
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
-                      defaultValue={BUILDINGS.find(
+                      options={buildingOptions}
+                      defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )}
                       onChange={handleBuildingChange}

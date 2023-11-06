@@ -33,6 +33,8 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
+import { BuildingLabel } from "../../types/BuildingTypes";
 import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
@@ -57,13 +59,6 @@ type AlertData = {
 type AlertDataOptions = {
   [key: string]: AlertData;
 };
-
-// Ideally we should be storing this information in the database
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
@@ -110,6 +105,7 @@ const EditLog = ({
   countRecords,
   setUserPageNum,
 }: Props) => {
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
@@ -137,6 +133,17 @@ const EditLog = ({
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
+
+  const getBuildingsOptions = async () => {
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+  };
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -202,6 +209,7 @@ const EditLog = ({
 
   const initializeValues = () => {
     // set state variables
+    getBuildingsOptions();
     setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
     setTime(
@@ -343,11 +351,11 @@ const EditLog = ({
                   <FormControl isRequired isInvalid={buildingError} mt={4}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
+                      options={buildingOptions}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={BUILDINGS.find(
+                      defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )}
                     />

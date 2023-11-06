@@ -7,9 +7,7 @@ class IBuildingsService(ABC):
     """
 
     @abstractmethod
-    def get_buildings(
-        self
-    ):
+    def get_buildings(self):
         """
         Gets buildings in json format.
         """
