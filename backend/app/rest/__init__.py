@@ -8,7 +8,7 @@ def init_app(app):
         log_records_routes,
         residents_routes,
         tags_routes,
-        buildings_routes
+        buildings_routes,
     )
 
     app.register_blueprint(user_routes.blueprint)

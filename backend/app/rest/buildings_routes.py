@@ -5,6 +5,7 @@ from ..services.implementations.buildings_service import BuildingsService
 buildings_service = BuildingsService(current_app.logger)
 blueprint = Blueprint("buildings", __name__, url_prefix="/buildings")
 
+
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_buildings():
