@@ -44,6 +44,7 @@ class LogRecordsService(ILogRecordsService):
             raise postgres_error
         
     def construct_residents(self, log_record, residents):
+        residents = list(set(residents))
         for resident_id in residents:
             resident = Residents.query.filter_by(id=resident_id).first()
 
@@ -172,6 +173,14 @@ class LogRecordsService(ILogRecordsService):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
     
+    def join_resident_attributes(self):
+        return "LEFT JOIN\n \
+                    (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
+                    JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
+                    JOIN residents ON lrr.resident_id = residents.id\n \
+                    GROUP BY logs.log_id \n \
+                ) r ON logs.log_id = r.log_id\n"
+
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
                     (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
@@ -200,14 +209,9 @@ class LogRecordsService(ILogRecordsService):
             attn_tos.last_name AS attn_to_last_name\n \
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id \n \
-            LEFT JOIN\n \
-                (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
-                JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
-                JOIN residents ON lrr.resident_id = residents.id\n \
-                GROUP BY logs.log_id \n \
-            ) r ON logs.log_id = r.log_id\n"
+            JOIN users employees ON logs.employee_id = employees.id \n"
             
+            sql += self.join_resident_attributes()
             sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
@@ -233,14 +237,9 @@ class LogRecordsService(ILogRecordsService):
             COUNT(*)\n \
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
-            JOIN users employees ON logs.employee_id = employees.id\n\
-            LEFT JOIN\n \
-                (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids FROM log_records logs\n \
-                JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
-                JOIN residents ON lrr.resident_id = residents.id\n \
-                GROUP BY logs.log_id \n \
-            ) r ON logs.log_id = r.log_id\n"
+            JOIN users employees ON logs.employee_id = employees.id\n"
                         
+            sql += f"\n{self.join_resident_attributes()}"
             sql += f"\n{self.join_tag_attributes()}"
 
             sql += self.filter_log_records(filters)
@@ -293,8 +292,7 @@ class LogRecordsService(ILogRecordsService):
         log_record = LogRecords.query.filter_by(log_id=log_id).first()
         if log_record:
             log_record.residents = []
-            if "residents" in updated_log_record:
-                self.construct_residents(log_record, updated_log_record["residents"])
+            self.construct_residents(log_record, updated_log_record["residents"])
 
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
