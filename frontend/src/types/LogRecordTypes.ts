@@ -40,7 +40,7 @@ export type CountLogRecordFilters = {
   employeeId?: number[];
   attnTo?: number[];
   dateRange?: string[];
-  residents?: string[];
+  residents?: number[];
   tags?: string[];
   flagged?: boolean;
 };

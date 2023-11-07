@@ -58,7 +58,7 @@ const HomePage = (): React.ReactElement => {
     const buildingValue = building ? building.value : "";
     const employeeIds = employees.map((employee) => employee.value);
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
-    const residentsLabels = residents.map((resident) => resident.label);
+    const residentsIds = residents.map((resident) => resident.value);
     const dateRange = [formatDate(startDate), formatDate(endDate)];
     const tagsValues = tags.map((tag) => tag.value);
 
@@ -67,7 +67,7 @@ const HomePage = (): React.ReactElement => {
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
-      residents: residentsLabels,
+      residents: residentsIds,
       tags: tagsValues,
       flagged,
       resultsPerPage,
@@ -93,7 +93,7 @@ const HomePage = (): React.ReactElement => {
     const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
     const dateRange =
       startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
-    const residentsIds = residents.map((resident) => resident.label);
+    const residentsIds = residents.map((resident) => resident.value);
 
     const tagsValues = tags.map((tag) => tag.value);
 
