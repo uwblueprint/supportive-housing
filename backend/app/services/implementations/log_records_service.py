@@ -102,11 +102,11 @@ class LogRecordsService(ILogRecordsService):
 
     def filter_by_residents(self, residents):
         if type(residents) == list:
-            sql_statement = f"\n'{residents[0]}'=ANY (residents)"
+            sql_statement = f"\n'{residents[0]}'=ANY (resident_ids)"
             for i in range(1, len(residents)):
-                sql_statement = sql_statement + f"\nAND '{residents[i]}'=ANY (residents)"
+                sql_statement = sql_statement + f"\nAND '{residents[i]}'=ANY (resident_ids)"
             return sql_statement
-        return f"\n'{residents}'=ANY (residents)"
+        return f"\n'{residents}'=ANY (resident_ids)"
 
     def filter_by_attn_to(self, attn_to):
         if type(attn_to) == list:
@@ -202,7 +202,7 @@ class LogRecordsService(ILogRecordsService):
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id \n \
             LEFT JOIN\n \
-                (SELECT logs.log_id, ARRAY_AGG(CONCAT(residents.initial, residents.room_num)) AS residents FROM log_records logs\n \
+                (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
                 JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
                 JOIN residents ON lrr.resident_id = residents.id\n \
                 GROUP BY logs.log_id \n \
@@ -235,7 +235,7 @@ class LogRecordsService(ILogRecordsService):
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id\n\
             LEFT JOIN\n \
-                (SELECT logs.log_id, ARRAY_AGG(CONCAT(residents.initial, residents.room_num)) AS residents FROM log_records logs\n \
+                (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids FROM log_records logs\n \
                 JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
                 JOIN residents ON lrr.resident_id = residents.id\n \
                 GROUP BY logs.log_id \n \
