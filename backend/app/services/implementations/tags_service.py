@@ -44,3 +44,15 @@ class TagsService(ITagsService):
         if not create_update_tag:
             raise Exception("Tag with id {tag_id} not found".format(tag_id=tag_id))
         db.session.commit()
+    
+    def create_tag(self, tag):
+        try:
+            new_tag = Tag(**tag)
+            db.session.add(new_tag)
+            db.session.commit()
+            return tag
+        except Exception as error:
+            if type(error).__name__ == "IntegrityError":
+                raise Exception("Tag name {name} already exists".format(name=tag["name"]))
+            else:
+                raise error
