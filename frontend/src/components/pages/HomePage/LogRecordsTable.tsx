@@ -118,11 +118,8 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
-    const newUserPageNum = (
-      logRecords.length === 1
-        ? userPageNum - 1 
-        : userPageNum
-    );
+    const newUserPageNum =
+      logRecords.length === 1 ? userPageNum - 1 : userPageNum;
     countRecords();
     setShowAlert(true);
     setUserPageNum(newUserPageNum);
@@ -175,7 +172,9 @@ const LogRecordsTable = ({
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
-                      <Td whiteSpace="normal" width="5%">{record.residents?.join("\n")}</Td>
+                      <Td whiteSpace="normal" width="5%">
+                        {record.residents?.join("\n")}
+                      </Td>
                       <Td whiteSpace="normal" width="70%">
                         {record.note}
                       </Td>
