@@ -12,7 +12,9 @@ class Residents(db.Model):
     date_left = db.Column(db.Date, nullable=True)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
     building = db.relationship("Buildings", back_populates="resident")
-    log_records = db.relationship("LogRecords", secondary="log_record_residents", back_populates="residents")
+    log_records = db.relationship(
+        "LogRecords", secondary="log_record_residents", back_populates="residents"
+    )
 
     resident_id = db.column_property(initial + cast(room_num, String))
 

@@ -16,7 +16,9 @@ class LogRecords(db.Model):
     tags = db.relationship(
         "Tag", secondary="log_record_tag", back_populates="log_records"
     )
-    residents = db.relationship("Residents", secondary="log_record_residents", back_populates="log_records")
+    residents = db.relationship(
+        "Residents", secondary="log_record_residents", back_populates="log_records"
+    )
     building = db.relationship("Buildings", back_populates="log_record")
 
     def to_dict(self, include_relationships=False):

@@ -41,7 +41,7 @@ class LogRecordsService(ILogRecordsService):
             return {**log_record, "residents": residents}
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def construct_residents(self, log_record, residents):
         residents = list(set(residents))
         for resident_id in residents:
@@ -112,7 +112,9 @@ class LogRecordsService(ILogRecordsService):
         if type(residents) == list:
             sql_statement = f"\n'{residents[0]}'=ANY (resident_ids)"
             for i in range(1, len(residents)):
-                sql_statement = sql_statement + f"\nAND '{residents[i]}'=ANY (resident_ids)"
+                sql_statement = (
+                    sql_statement + f"\nAND '{residents[i]}'=ANY (resident_ids)"
+                )
             return sql_statement
         return f"\n'{residents}'=ANY (resident_ids)"
 
@@ -179,7 +181,7 @@ class LogRecordsService(ILogRecordsService):
                         if filters.get(filter):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
-    
+
     def join_resident_attributes(self):
         return "LEFT JOIN\n \
                     (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
@@ -219,7 +221,7 @@ class LogRecordsService(ILogRecordsService):
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
                 JOIN users employees ON logs.employee_id = employees.id\n \
                 JOIN buildings on logs.building_id = buildings.id"
-            
+
             sql += self.join_resident_attributes()
             sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)

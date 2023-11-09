@@ -8,7 +8,9 @@ class LogRecordResidents(db.Model):
     __tablename__ = "log_record_residents"
 
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    log_record_id = db.Column(db.Integer, db.ForeignKey("log_records.log_id"), nullable=False)
+    log_record_id = db.Column(
+        db.Integer, db.ForeignKey("log_records.log_id"), nullable=False
+    )
     resident_id = db.Column(db.Integer, db.ForeignKey("residents.id"), nullable=False)
 
     def to_dict(self, include_relationships=False):
