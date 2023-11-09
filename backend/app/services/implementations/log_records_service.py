@@ -38,7 +38,7 @@ class LogRecordsService(ILogRecordsService):
 
             db.session.add(new_log_record)
             db.session.commit()
-            return {**log_record, "residents": residents}
+            return log_record
         except Exception as postgres_error:
             raise postgres_error
 
@@ -183,8 +183,8 @@ class LogRecordsService(ILogRecordsService):
         return sql
 
     def join_resident_attributes(self):
-        return "LEFT JOIN\n \
-                    (SELECT logs.log_id, string_to_array(string_agg(CAST(residents.id AS VARCHAR(10)), ','), ',') AS resident_ids, string_to_array(string_agg(CONCAT(residents.initial, residents.room_num), ','), ',') AS residents FROM log_records logs\n \
+        return "\nLEFT JOIN\n \
+                    (SELECT logs.log_id, ARRAY_AGG(residents.id) AS resident_ids, ARRAY_AGG(CONCAT(residents.initial, residents.room_num)) AS residents FROM log_records logs\n \
                     JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
                     JOIN residents ON lrr.resident_id = residents.id\n \
                     GROUP BY logs.log_id \n \
@@ -251,8 +251,8 @@ class LogRecordsService(ILogRecordsService):
             JOIN users employees ON logs.employee_id = employees.id\n \
             JOIN buildings on logs.building_id = buildings.id"
 
-            sql += f"\n{self.join_resident_attributes()}"
-            sql += f"\n{self.join_tag_attributes()}"
+            sql += self.join_resident_attributes()
+            sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
             num_results = db.session.execute(text(sql))
