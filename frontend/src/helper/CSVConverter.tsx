@@ -3,12 +3,15 @@ import { CSVLog } from "../types/CSVLog";
 
 const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
   return {
-    attnTo: logRecord.attnTo != null ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : "",
-    building: logRecord.building,
-    datetime: logRecord.datetime,
-    employee: `${logRecord.employee.firstName} ${logRecord.employee.lastName}`,
+    attnTo:
+      logRecord.attnTo != null
+        ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}`
+        : "",
+    building: `"${logRecord.building.name}"`,
+    datetime: `"${logRecord.datetime}"`,
+    employee: `"${logRecord.employee.firstName} ${logRecord.employee.lastName}"`,
     flagged: logRecord.flagged,
-    note: logRecord.note,
+    note: `"${logRecord.note}"`,
     residents: `"${logRecord.residents.join(", ")}"`,
     tags: logRecord.tags != null ? logRecord.tags.join("; ") : "",
   };

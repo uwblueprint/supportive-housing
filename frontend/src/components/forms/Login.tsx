@@ -6,7 +6,7 @@ import {
   Text,
   FormControl,
   FormErrorMessage,
-  Input
+  Input,
 } from "@chakra-ui/react";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -15,7 +15,6 @@ import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
-
 
 type CredentialsProps = {
   email: string;
@@ -27,9 +26,11 @@ type CredentialsProps = {
   setToggle: (toggle: boolean) => void;
 };
 
-const isLoginErrorResponse = (res: AuthTokenResponse | ErrorResponse) : res is ErrorResponse => {
-  return (res !== null && 'errCode' in res);
-}
+const isLoginErrorResponse = (
+  res: AuthTokenResponse | ErrorResponse,
+): res is ErrorResponse => {
+  return res !== null && "errCode" in res;
+};
 
 const Login = ({
   email,
@@ -52,40 +53,38 @@ const Login = ({
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (loginClicked) {
       if (emailRegex.test(inputValue)) {
-        setEmailError(false)
+        setEmailError(false);
       } else {
-        setEmailError(true)
+        setEmailError(true);
       }
     }
-    setEmail(inputValue)
+    setEmail(inputValue);
 
     // Clear password error on changing the email
-    setPasswordError(false)
-    setPasswordErrStr("")
+    setPasswordError(false);
+    setPasswordErrStr("");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    setPassword(inputValue)
+    setPassword(inputValue);
 
     // Clear password error on changing the password
-    setPasswordError(false)
+    setPasswordError(false);
     setPasswordErrStr("");
   };
 
   const onLogInClick = async () => {
-    setLoginClicked(true)
+    setLoginClicked(true);
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited) {
-      const loginResponse: AuthTokenResponse | ErrorResponse = await authAPIClient.login(
-        email,
-        password,
-      );
+      const loginResponse:
+        | AuthTokenResponse
+        | ErrorResponse = await authAPIClient.login(email, password);
       if (isLoginErrorResponse(loginResponse)) {
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
-      }
-      else if (loginResponse) {
+      } else if (loginResponse) {
         const { requiresTwoFa, authUser } = loginResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
@@ -114,38 +113,38 @@ const Login = ({
     return (
       <Flex h="100vh">
         <Box w="47%">
-          <Flex marginTop="270px" display="flex" align="center" justify="center">
-            <Flex
-              width="76%"
-              align="flex-start"
-              direction="column"
-              gap="28px"
-            >
+          <Flex
+            marginTop="270px"
+            display="flex"
+            align="center"
+            justify="center"
+          >
+            <Flex width="76%" align="flex-start" direction="column" gap="28px">
               <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
-                <FormControl isRequired isInvalid={emailError}>
-                  <Input 
-                    variant="login"
-                    placeholder="Your email address"
-                    value={email}
-                    onChange={handleEmailChange}
-                  />
-                  <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
-                </FormControl>
-                <FormControl isRequired isInvalid={passwordError}>
-                  <Input 
-                    variant="login"
-                    type="password"
-                    placeholder="Your password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                  />
-                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
-                </FormControl>
+              <FormControl isRequired isInvalid={emailError}>
+                <Input
+                  variant="login"
+                  placeholder="Your email address"
+                  value={email}
+                  onChange={handleEmailChange}
+                />
+                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={passwordError}>
+                <Input
+                  variant="login"
+                  type="password"
+                  placeholder="Your password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+              </FormControl>
               <Button
                 variant="login"
-                disabled={email === '' || password === ''}
+                disabled={email === "" || password === ""}
                 _hover={
                   email && password
                     ? {
@@ -159,10 +158,7 @@ const Login = ({
               >
                 Log In
               </Button>
-              <Flex
-                paddingTop="29px"
-                alignContent="center"
-              >
+              <Flex paddingTop="29px" alignContent="center">
                 <Text variant="loginSecondary" paddingRight="17px">
                   Not a member yet?
                 </Text>
@@ -182,4 +178,4 @@ const Login = ({
   return <></>;
 };
 
-export default Login
+export default Login;

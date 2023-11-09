@@ -21,7 +21,7 @@ INSERT INTO log_records (
   attn_to, 
   note, 
   tags, 
-  building 
+  building_id
 ) 
 SELECT
   $EMPLOYEE_ID,
@@ -31,7 +31,7 @@ SELECT
   $ATTN_TO_ID, 
   (ARRAY['Amazing note','This is a note','Bad note','Decent Note','Cool note'])[floor(random() * 5 + 1)], 
   ARRAY['tag1', 'tag2'], 
-  (ARRAY['144', '362', '402'])[floor(random() * 3 + 1)]
+  (ARRAY[1, 2, 3])[floor(random() * 3 + 1)]
 
 FROM generate_series(1, $LOG_RECORD_ROWS);
 "
