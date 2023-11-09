@@ -117,7 +117,7 @@ const Login = ({
             align="center"
             justify="center"
           >
-            <Flex width="76%" align="flex-start" direction="column" gap="28px">
+            <Flex width="80%" align="flex-start" direction="column" gap="28px">
               <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
