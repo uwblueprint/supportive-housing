@@ -5,14 +5,13 @@ import baseAPIClient from "./BaseAPIClient";
 import { GetBuildingsResponse } from "../types/BuildingTypes";
 
 const getBuildings = async (): Promise<GetBuildingsResponse> => {
-  console.log("here");
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
     const { data } = await baseAPIClient.get<GetBuildingsResponse>(
-      `/buildings/`,
+      `/buildings`,
       {
         headers: { Authorization: bearerToken },
       },
