@@ -68,7 +68,7 @@ def update_tag(tag_id):
 
 
 @blueprint.route("/", methods=["POST"], strict_slashes=False)
-# @require_authorization_by_role({"Admin"})
+@require_authorization_by_role({"Admin"})
 def create_tag():
     """
     Create a tag
