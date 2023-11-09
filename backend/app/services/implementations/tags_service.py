@@ -44,10 +44,12 @@ class TagsService(ITagsService):
             db.session.commit()
         except Exception as error:
             if type(error).__name__ == "IntegrityError":
-                raise Exception("Tag name {name} already exists".format(name=updated_name))
+                raise Exception(
+                    "Tag name {name} already exists".format(name=updated_name)
+                )
             else:
                 raise error
-    
+
     def create_tag(self, tag):
         try:
             new_tag = Tag(**tag)
@@ -56,6 +58,8 @@ class TagsService(ITagsService):
             return tag
         except Exception as error:
             if type(error).__name__ == "IntegrityError":
-                raise Exception("Tag name {name} already exists".format(name=tag["name"]))
+                raise Exception(
+                    "Tag name {name} already exists".format(name=tag["name"])
+                )
             else:
                 raise error
