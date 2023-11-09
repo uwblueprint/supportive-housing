@@ -13,6 +13,7 @@ class AuthDTO(Token, UserDTO):
         email,
         role,
         user_status,
+        last_modified,
     ):
         Token.__init__(self, access_token, refresh_token)
-        UserDTO.__init__(self, id, first_name, last_name, email, role, user_status)
+        UserDTO.__init__(self, id, first_name, last_name, email, role, user_status, last_modified)

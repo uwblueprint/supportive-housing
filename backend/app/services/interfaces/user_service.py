@@ -72,7 +72,7 @@ class IUserService(ABC):
         pass
 
     @abstractmethod
-    def get_users(self, return_all, page_number, results_per_page):
+    def get_users(self, return_all, page_number, results_per_page, user):
         """
         Get all users by a specific page and results per page
 
