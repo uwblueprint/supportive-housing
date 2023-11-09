@@ -38,9 +38,9 @@ type Props = {
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
-  { label: "144", value: "144" },
-  { label: "362", value: "362" },
-  { label: "402", value: "402" },
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 const CreateResident = ({
@@ -51,7 +51,7 @@ const CreateResident = ({
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [building, setBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(-1);
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -67,7 +67,7 @@ const CreateResident = ({
       initial: initials.toUpperCase(),
       roomNum: parseInt(roomNumber, 10),
       dateJoined: convertToString(moveInDate),
-      building,
+      buildingId,
     });
     getRecords(1);
     countResidents();
@@ -98,10 +98,10 @@ const CreateResident = ({
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
       setBuildingError(false);
     }
   };
@@ -113,7 +113,7 @@ const CreateResident = ({
     setInitials("");
     setRoomNumber("");
     setMoveInDate(new Date());
-    setBuilding("");
+    setBuildingId(-1);
 
     // Reset the error states
     setInitialsError(false);
@@ -132,14 +132,14 @@ const CreateResident = ({
   const handleSubmit = () => {
     setInitialsError(initials.length !== 2);
     setRoomNumberError(roomNumber.length !== 3);
-    setBuildingError(building === "");
+    setBuildingError(buildingId === -1);
 
     //  Prevents form submission if any required values are incorrect
     if (
       initials.length !== 2 ||
       roomNumber.length !== 3 ||
       moveInDateError ||
-      building === ""
+      buildingId === -1
     ) {
       return;
     }

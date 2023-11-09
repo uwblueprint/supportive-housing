@@ -25,8 +25,10 @@ def upgrade():
         sa.Column("room_num", sa.Integer(), nullable=False),
         sa.Column("date_joined", sa.DateTime(timezone=True), nullable=False),
         sa.Column("date_left", sa.DateTime(timezone=True), nullable=True),
-        sa.Column(
-            "building", sa.Enum("144", "402", "362", name="buildings"), nullable=False
+        sa.Column("building_id", sa.Integer(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["building_id"],
+            ["buildings.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
     )

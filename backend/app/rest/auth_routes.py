@@ -1,7 +1,7 @@
 import os
 from ..utilities.exceptions.firebase_exceptions import (
-    InvalidPasswordException, 
-    TooManyLoginAttemptsException
+    InvalidPasswordException,
+    TooManyLoginAttemptsException,
 )
 
 from flask import Blueprint, current_app, jsonify, request

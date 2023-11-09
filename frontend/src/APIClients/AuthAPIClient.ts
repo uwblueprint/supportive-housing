@@ -4,9 +4,13 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
-import getLoginErrMessage from '../helper/authErrorMessage'
+import getLoginErrMessage from "../helper/authErrorMessage";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { AuthenticatedUser, AuthTokenResponse, ErrorResponse } from "../types/AuthTypes";
+import {
+  AuthenticatedUser,
+  AuthTokenResponse,
+  ErrorResponse,
+} from "../types/AuthTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -29,13 +33,13 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getLoginErrMessage(axiosErr.response)
-      }
+        errMessage: getLoginErrMessage(axiosErr.response),
+      };
     }
     return {
       errCode: 500,
-      errMessage: "Error logging in. Please try again."
-    }
+      errMessage: "Error logging in. Please try again.",
+    };
   }
 };
 

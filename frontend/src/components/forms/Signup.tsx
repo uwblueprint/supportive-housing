@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import authAPIClient from "../../APIClients/AuthAPIClient"
+import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
@@ -138,14 +138,19 @@ const Signup = ({
               <Button
                 variant="login"
                 position="absolute"
-                disabled={email === '' || password === '' || firstName === '' || lastName === ''}
+                disabled={
+                  email === "" ||
+                  password === "" ||
+                  firstName === "" ||
+                  lastName === ""
+                }
                 _hover={
                   email && password && firstName && lastName
                     ? {
-                      background: "teal.500",
-                      transition:
-                        "transition: background-color 0.5s ease !important",
-                    }
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
                     : {}
                 }
                 onClick={onSignupClick}

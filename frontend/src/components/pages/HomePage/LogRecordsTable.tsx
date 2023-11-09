@@ -181,9 +181,7 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
                       <Td width="5%">
-                        {record.attnTo &&
-                        record.attnTo.firstName !== null &&
-                        record.attnTo.lastName !== null
+                        {record.attnTo
                           ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
                           : ""}
                       </Td>

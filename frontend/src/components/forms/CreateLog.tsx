@@ -57,9 +57,9 @@ type AlertDataOptions = {
 
 // Ideally we should be storing this information in the database
 const BUILDINGS = [
-  { label: "144 Erb St. West", value: "144" },
-  { label: "362 Erb St. West", value: "362" },
-  { label: "402 Erb St. West", value: "402" },
+  { label: "144", value: 1 },
+  { label: "362", value: 2 },
+  { label: "402", value: 3 },
 ];
 
 const ALERT_DATA: AlertDataOptions = {
@@ -119,7 +119,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       hour12: false,
     }),
   );
-  const [building, setBuilding] = useState("");
+  const [buildingId, setBuildingId] = useState<number>(-1);
   const [resident, setResident] = useState(-1);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
@@ -163,10 +163,10 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleBuildingChange = (
-    selectedOption: SingleValue<{ label: string; value: string }>,
+    selectedOption: SingleValue<{ label: string; value: number }>,
   ) => {
     if (selectedOption !== null) {
-      setBuilding(selectedOption.value);
+      setBuildingId(selectedOption.value);
     }
 
     setBuildingError(selectedOption === null);
@@ -244,7 +244,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
         hour12: false,
       }),
     );
-    setBuilding("");
+    setBuildingId(-1);
     setResident(-1);
     setTags([]);
     setAttnTo(-1);
@@ -271,7 +271,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
-    setBuildingError(building === "");
+    setBuildingError(buildingId === -1);
     setResidentError(resident === -1);
     setNotesError(notes === "");
 
@@ -280,7 +280,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       !employee.label ||
       date === null ||
       time === "" ||
-      building === "" ||
+      buildingId === -1 ||
       resident === -1 ||
       notes === ""
     ) {
@@ -299,7 +299,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       flagged,
       note: notes,
       tags,
-      building,
+      buildingId,
       attnTo: attentionTo,
     });
     if (res != null) {
