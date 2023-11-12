@@ -407,6 +407,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       closeMenuOnSelect={false}
                       placeholder="Select Resident"
                       onChange={handleResidentsChange}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
