@@ -59,7 +59,7 @@ docker-compose up --build
 ```bash
 bash ./seeding/invite-user.sh
 ```
-- IMPORTANT: If you've reset your local DB and want to re-use an email, ensure it's deleted from Firebase as well (ask the PL for access if you don't have it)
+**IMPORTANT**: If you've reset your local DB and want to re-use an email, ensure it's deleted from Firebase as well (ask the PL for access if you don't have it)
 
 4. Signup for an account on the app! Ensure that you use the values you used in Step 3. Your password can be anything you remember
 
