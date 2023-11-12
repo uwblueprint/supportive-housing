@@ -3,7 +3,6 @@ from ..middlewares.auth import require_authorization_by_role
 from ..services.implementations.residents_service import ResidentsService
 from datetime import datetime
 import json
-from sqlalchemy.exc import IntegrityError
 
 residents_service = ResidentsService(current_app.logger)
 blueprint = Blueprint("residents", __name__, url_prefix="/residents")
@@ -54,6 +53,8 @@ def update_resident(resident_id):
         )
     
     # Check for the existence of a resident prior to adding them
+    print("RESIDENT DATA: ")
+    print(updated_resident)
     resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
     try:
         res = residents_service.get_residents(False, 1, 10, resident_id)
@@ -78,8 +79,6 @@ def update_resident(resident_id):
             ),
             201,
         )
-    except IntegrityError as e:
-        return jsonify({"error": "Resident with id {resident_id} already exists"}), 409 
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
