@@ -85,7 +85,6 @@ bash ./scripts/restart-docker.sh
 ### Seeding
 Before running these scripts, remember to update the `.env` file to ensure you're configuring your data to your needs:
 ```bash
-bash ./seeding/create-user.sh         # Create a user with a specific name and role
 bash ./seeding/create-residents.sh    # Create a number of residents
 bash ./seeding/create-log-records.sh  # Create a number of log records
 ```
