@@ -16,7 +16,6 @@ class Residents(db.Model):
     resident_id = db.column_property(initial + cast(room_num, String))
 
     __table_args__ = (
-        UniqueConstraint('resident_id', name='uq_resident_id'),
         db.CheckConstraint(
             "date_left IS NULL OR date_left > date_joined", name="check_date_left_valid"
         ),

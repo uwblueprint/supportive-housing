@@ -6,6 +6,7 @@ import {
   CountResidentsResponse,
   CreateResidentParams,
   EditResidentParams,
+  ErrorResponse,
 } from "../types/ResidentTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
@@ -60,7 +61,7 @@ const createResident = async ({
   roomNum,
   dateJoined,
   buildingId,
-}: CreateResidentParams): Promise<boolean> => {
+}: CreateResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -73,6 +74,13 @@ const createResident = async ({
     );
     return true;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage: "Resident with the specified user ID already exists."
+      };
+    }
     return false;
   }
 };
@@ -103,7 +111,7 @@ const editResident = async ({
   dateJoined,
   buildingId,
   dateLeft,
-}: EditResidentParams): Promise<boolean> => {
+}: EditResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -116,6 +124,13 @@ const editResident = async ({
     );
     return true;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage: "Resident with the specified user ID already exists."
+      };
+    }
     return false;
   }
 };
