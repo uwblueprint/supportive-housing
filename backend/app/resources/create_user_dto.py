@@ -5,7 +5,6 @@ class CreateUserDTO:
         self.email = kwargs.get("email")
         self.role = kwargs.get("role")
         self.password = kwargs.get("password")
-        self.last_modified = kwargs.get("last_modified")
 
     def validate(self):
         error_list = []

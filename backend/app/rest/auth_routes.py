@@ -72,7 +72,6 @@ def login():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
-            "last_modified": auth_dto.last_modified
         }
 
         sign_in_logs_service.create_sign_in_log(auth_dto.id)
@@ -136,7 +135,6 @@ def two_fa():
                 "last_name": auth_dto.last_name,
                 "email": auth_dto.email,
                 "role": auth_dto.role,
-                "last_modified": auth_dto.last_modified
             }
         )
         response.set_cookie(
@@ -181,7 +179,6 @@ def register():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
-            "last_modified": auth_dto.last_modified
         }
 
         response = jsonify(response)

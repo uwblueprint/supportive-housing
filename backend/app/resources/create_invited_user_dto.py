@@ -4,7 +4,6 @@ class CreateInvitedUserDTO:
         self.role = kwargs.get("role")
         self.first_name = kwargs.get("first_name")
         self.last_name = kwargs.get("last_name")
-        self.last_modified = kwargs.get("last_modified")
 
     def validate(self):
         error_list = []
