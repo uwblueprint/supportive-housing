@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, SIGNUP_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
@@ -42,6 +42,7 @@ const Login = ({
   setToggle,
 }: CredentialsProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -99,13 +100,25 @@ const Login = ({
     }
   };
 
+  useEffect(() => {
+    const checkVerification = async () => {
+      const verify = await authAPIClient.isVerified();
+      setIsVerified(verify);
+    };
+    checkVerification();
+  }, []);
+
   const onSignUpClick = () => {
     history.push(SIGNUP_PAGE);
   };
 
   if (authenticatedUser) {
-    return <Redirect to={HOME_PAGE} />;
+    if (isVerified) {
+      return <Redirect to={HOME_PAGE} />;
+    } 
+    return <Redirect to={VERIFICATION_PAGE} />;
   }
+
 
   if (toggle) {
     // Lock scroll
