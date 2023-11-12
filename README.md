@@ -55,6 +55,16 @@ cd supportive-housing
 docker-compose up --build
 ```
 
+3. Create an Admin user. In `seeding/.env`, ensure `FIRST_NAME`, `LAST_NAME`, and `EMAIL` are set (you should use your Blueprint email/any email you have access to here). Ensure `ROLE` is set to `Admin`. Run:
+```bash
+bash ./seeding/invite-user.sh
+```
+- IMPORTANT: If you've reset your local DB and want to re-use an email, ensure it's deleted from Firebase as well (ask the PL for access if you don't have it)
+
+4. Signup for an account on the app! Ensure that you use the values you used in Step 3. Your password can be anything you remember
+
+5. Verify your email address. You should receive an email in your inbox with a link - once you click the link, you're good to freely use the app! You can invite any other users through the `Employee Directory` within the `Admin Controls`
+
 ## Useful Commands
 
 ### Database Migration
