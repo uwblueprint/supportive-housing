@@ -22,11 +22,11 @@ def add_resident():
         )
 
     # Check for the existence of a resident prior to adding them
-    resident_id = resident.get("initial") + str(resident.get("room_num"))
+    fmt_resident_id = resident.get("initial") + str(resident.get("room_num"))
     try:
-        res = residents_service.get_residents(False, 1, 10, resident_id)
+        res = residents_service.get_residents(False, 1, 10, fmt_resident_id)
         if len(res["residents"]) > 0:
-            return jsonify({"error": "Resident already exists"}), 409
+            return jsonify({"error": "Resident already with id {fmt_resident_id} already exists".format(fmt_resident_id=fmt_resident_id)}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -53,13 +53,14 @@ def update_resident(resident_id):
         )
     
     # Check for the existence of a resident prior to adding them
-    print("RESIDENT DATA: ")
-    print(updated_resident)
-    resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
+    print("WTF")
+    print(resident_id)
+    fmt_resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
     try:
-        res = residents_service.get_residents(False, 1, 10, resident_id)
-        if len(res["residents"]) > 1:
-            return jsonify({"error": "Resident with id {resident_id} already exists"}), 409
+        res = residents_service.get_residents(False, 1, 10, fmt_resident_id)
+        print(res)
+        if len(res["residents"]) == 1 and res["residents"][0]["id"] != resident_id:
+            return jsonify({"error": "Resident with id {fmt_resident_id} already exists".format(fmt_resident_id=fmt_resident_id)}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
