@@ -34,7 +34,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from '../../helper/residentError'
+import isResidentErrorResponse from '../../helper/residentError'
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [
@@ -88,21 +88,20 @@ const EditResident = ({
         "error"
       )
     }
+    else if (res !== null && res) {
+      newToast(
+        "Resident updated",
+        "Resident has been successfully updated",
+        "success",
+      );
+      getRecords(userPageNum)
+    }
     else {
-      if (res != null && res) {
-        newToast(
-          "Resident updated",
-          "Resident has been successfully updated",
-          "success",
-        );
-        getRecords(userPageNum)
-      } else {
-        newToast(
-          "Error updating resident",
-          "Resident was unable to be updated",
-          "error",
-        );
-      }
+      newToast(
+        "Error updating resident",
+        "Resident was unable to be updated",
+        "error",
+      );
     }
   };
 

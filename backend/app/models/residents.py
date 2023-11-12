@@ -1,5 +1,5 @@
 from . import db
-from sqlalchemy import inspect, cast, String, UniqueConstraint
+from sqlalchemy import inspect, cast, String
 from sqlalchemy.orm.properties import ColumnProperty
 
 

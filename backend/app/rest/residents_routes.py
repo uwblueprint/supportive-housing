@@ -57,7 +57,7 @@ def update_resident(resident_id):
     resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
     try:
         res = residents_service.get_residents(False, 1, 10, resident_id)
-        if len(res["residents"]) > 0:
+        if len(res["residents"]) > 1:
             return jsonify({"error": "Resident with id {resident_id} already exists"}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)

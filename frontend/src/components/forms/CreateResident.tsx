@@ -30,7 +30,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/residentError";
+import isResidentErrorResponse from "../../helper/residentError";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -85,6 +85,7 @@ const CreateResident = ({
       getRecords(1);
       countResidents();
       setUserPageNum(1);
+      setShowAlert(true)
     }
   };
 
@@ -160,7 +161,7 @@ const CreateResident = ({
 
     addResident();
     setIsOpen(false);
-    setShowAlert(true);
+    // setShowAlert(true);
   };
 
   // Timer to remove alert
