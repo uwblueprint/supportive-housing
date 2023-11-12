@@ -161,7 +161,6 @@ const CreateResident = ({
 
     addResident();
     setIsOpen(false);
-    // setShowAlert(true);
   };
 
   // Timer to remove alert
