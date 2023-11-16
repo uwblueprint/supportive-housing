@@ -3,7 +3,6 @@ import { Route, Redirect } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 import { LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
-import Verification from "./Verification";
 
 type PrivateRouteProps = {
   component: React.FC;
@@ -34,9 +33,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   }
 
   if (!isVerified) {
-    return (
-      <Route path={VERIFICATION_PAGE} exact component={Verification} />
-    )
+    if (!window.location.href.endsWith("/verification")) {
+      return (
+        <Redirect to={VERIFICATION_PAGE} />
+      )
+    }
   }
 
   return (

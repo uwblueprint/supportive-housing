@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import {
   Box,
@@ -9,20 +9,25 @@ import {
   VStack
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE } from "../../constants/Routes";
-import AuthContext from "../../contexts/AuthContext";
 
 const Verification = (): React.ReactElement => {
   const history = useHistory();
-  const { authenticatedUser } = useContext(AuthContext);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
 
   const handleVerification = async () => {
-    const isVerified = await authAPIClient.isVerified();
+    const verify = await authAPIClient.isVerified();
+    setIsVerified(verify);
+    if (!verify) {
+      alert("ADD toast message");
+    }
+  };
+
+  useEffect(() => {
     if (isVerified) {
       history.push(HOME_PAGE);
     }
-  };
+  }, [isVerified]);
 
   return (
     <>
