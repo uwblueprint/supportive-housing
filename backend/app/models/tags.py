@@ -1,5 +1,6 @@
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
+from sqlalchemy.orm import backref
 
 from . import db
 
@@ -9,7 +10,6 @@ class Tag(db.Model):
 
     tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, nullable=False)
-    status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
     log_records = db.relationship(
         "LogRecords", secondary="log_record_tag", back_populates="tags"
     )
