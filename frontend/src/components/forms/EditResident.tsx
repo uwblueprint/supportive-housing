@@ -31,13 +31,13 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { BuildingLabel } from "../../types/BuildingTypes";
-
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
 
 type Props = {
+  buildingOptions: BuildingLabel[],
   resident: Resident;
   isOpen: boolean;
   userPageNum: number;
@@ -46,17 +46,17 @@ type Props = {
 };
 
 const EditResident = ({
+  buildingOptions,
   resident,
   isOpen,
   userPageNum,
   toggleClose,
   getRecords,
 }: Props): React.ReactElement => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [buildingId, setBuildingId] = useState<number>(-1);
+  const [buildingId, setBuildingId] = useState<number>(resident.building.id);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
@@ -96,16 +96,6 @@ const EditResident = ({
     setMoveOutDate(undefined);
   };
 
-  const getBuildingsOptions = async () => {
-    const buildingsData = await BuildingAPIClient.getBuildings();
-
-    if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
-      );
-      setBuildingOptions(buildingLabels);
-    }
-  };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
@@ -149,7 +139,6 @@ const EditResident = ({
   const handleToggleClose = () => {
     toggleClose();
 
-    getBuildingsOptions();
     setInitials(resident.initial);
     setRoomNumber(resident.roomNum);
     setMoveInDate(convertToDate(resident.dateJoined));
@@ -198,7 +187,6 @@ const EditResident = ({
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
-    getBuildingsOptions();
   }, [resident]);
 
   return (
