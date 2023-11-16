@@ -8,6 +8,7 @@ const SignupPage = (): React.ReactElement => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState(false);
 
   return (
     <>
@@ -22,6 +23,8 @@ const SignupPage = (): React.ReactElement => {
         setPassword={setPassword}
         toggle={toggle}
         setToggle={setToggle}
+        emailError={emailError}
+        setEmailError={setEmailError}
       />
       <Authy email={email} password={password} token="" toggle={!toggle} />
     </>
