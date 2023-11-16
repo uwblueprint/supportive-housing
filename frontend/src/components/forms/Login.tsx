@@ -156,14 +156,16 @@ const Login = ({
               >
                 Log In
               </Button>
-              <Flex paddingTop="29px" alignContent="center">
-                <Text variant="loginSecondary" paddingRight="17px">
-                  Not a member yet?
-                </Text>
-                <Text variant="loginTertiary" onClick={onSignUpClick}>
-                  Sign Up Now
-                </Text>
-              </Flex>
+              <Box w="80%">
+                <Flex gap="10px">
+                  <Text variant="loginSecondary" paddingRight="17px">
+                    Not a member yet?
+                  </Text>
+                  <Text variant="loginTertiary" onClick={onSignUpClick}>
+                    Sign Up Now
+                  </Text>
+                </Flex>
+              </Box>
             </Flex>
           </Flex>
         </Box>

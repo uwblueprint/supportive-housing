@@ -77,14 +77,13 @@ const Signup = ({
       <Flex h="100vh">
         <Box w="47%">
           <Flex
-            h="70%"
-            marginTop="15%"
+            h="100%"
             direction="column"
-            justify="center"
-            justifyContent="space-between"
-            align="center"
+            justifyContent="center"
+            alignItems="center"
+            gap="28px"
           >
-            <Box mr="58%">
+            <Box w="80%" textAlign="left">
               <Text variant="login">
                 Sign Up
               </Text>
@@ -145,20 +144,16 @@ const Signup = ({
                 Create Account
               </Button>
             </Box>
-          
-            <Flex 
-            width="80%"
-            direction="row"
-            alignContent="center"
-            marginTop="3%"
-            >
-              <Text variant="loginSecondary" paddingRight="1.1vw">
-                Already have an account?
-              </Text>
-              <Text variant="loginTertiary" onClick={onLogInClick}>
-                Log In Now
-              </Text>
-            </Flex>
+            <Box w="80%">
+              <Flex gap="10px">
+                <Text variant="loginSecondary" paddingRight="1.1vw">
+                  Already have an account?
+                </Text>
+                <Text variant="loginTertiary" onClick={onLogInClick}>
+                  Log In Now
+                </Text>
+              </Flex>
+            </Box>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">
