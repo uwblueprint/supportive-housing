@@ -1,6 +1,5 @@
-from sqlalchemy import inspect, case, null
+from sqlalchemy import func, inspect, case, null
 from sqlalchemy.orm.properties import ColumnProperty
-from sqlalchemy import func
 
 from . import db
 

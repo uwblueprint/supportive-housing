@@ -125,7 +125,7 @@ class UserService(IUserService):
                     .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
                     .all()
-                    )
+                )
                 
             json_list = list(
                 map(
