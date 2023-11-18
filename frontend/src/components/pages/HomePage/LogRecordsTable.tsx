@@ -28,7 +28,10 @@ import AuthContext from "../../../contexts/AuthContext";
 import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import TagAPIClient from "../../../APIClients/TagAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import { ResidentLabel } from "../../../types/ResidentTypes";
+import { TagLabel } from "../../../types/TagTypes";
 import { UserLabel } from "../../../types/UserTypes";
 import ConfirmationModal from "../../common/ConfirmationModal";
 
@@ -67,7 +70,8 @@ const LogRecordsTable = ({
 
   // Dropdown option states
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<ResidentLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<TagLabel[]>([]);
 
   // Handle delete confirmation toggle
   const handleDeleteToggle = (logId: number) => {
@@ -85,7 +89,7 @@ const LogRecordsTable = ({
     }));
   };
 
-  // fetch resident + employee data for log creation
+  // fetch resident + employee + tag data for log creation
   const getLogEntryOptions = async () => {
     const residentsData = await ResidentAPIClient.getResidents({
       returnAll: true,
@@ -109,6 +113,17 @@ const LogRecordsTable = ({
           value: user.id,
         }));
       setEmployeeOptions(userLabels);
+    }
+
+    const tagsData = await TagAPIClient.getTags();
+    if (tagsData && tagsData.tags.length !== 0) {
+      const tagLabels: TagLabel[] = tagsData.tags
+        .filter((tag) => tag.status === "Active")
+        .map((tag) => ({
+          label: tag.name,
+          value: tag.tagId,
+        }));
+      setTagOptions(tagLabels);
     }
   };
 
@@ -220,6 +235,7 @@ const LogRecordsTable = ({
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
+                      tagOptions={tagOptions}
                       getRecords={getRecords}
                       countRecords={countRecords}
                       setUserPageNum={setUserPageNum}

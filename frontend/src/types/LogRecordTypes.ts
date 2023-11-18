@@ -68,7 +68,7 @@ export type EditLogRecordParams = {
   datetime: Date;
   flagged: boolean;
   note: string;
-  tags: string[];
+  tags: number[];
   buildingId: number;
   attnTo?: number;
 };

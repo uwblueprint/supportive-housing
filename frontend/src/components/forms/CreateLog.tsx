@@ -212,7 +212,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setNotesError(inputValue === "");
   };
 
-  // fetch resident + employee + tags data for log creation
+  // fetch resident + employee + tag data for log creation
   const getLogEntryOptions = async () => {
     const residentsData = await ResidentAPIClient.getResidents({
       returnAll: true,
@@ -310,7 +310,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     // update the table with the new log
     // NOTE: -1 is the default state for attnTo
     const attentionTo = attnTo === -1 ? undefined : attnTo;
-    console.log(tags);
     const res = await LogRecordAPIClient.createLog({
       employeeId: employee.value,
       residentId: resident,
