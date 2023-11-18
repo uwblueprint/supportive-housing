@@ -2,7 +2,7 @@
 export type Tag = {
   tagId: number;
   name: string;
-  status: TagStatus
+  status: TagStatus;
 };
 
 export type TagLabel = {

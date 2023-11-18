@@ -2,9 +2,7 @@ import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import {
-  GetTagsResponse,
-} from "../types/TagTypes";
+import { GetTagsResponse } from "../types/TagTypes";
 
 const getTags = async (): Promise<GetTagsResponse> => {
   try {

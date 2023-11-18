@@ -53,7 +53,6 @@ const BUILDINGS = [
   { label: "402", value: 3 },
 ];
 
-
 const SearchAndFilters = ({
   residents,
   employees,
@@ -113,12 +112,12 @@ const SearchAndFilters = ({
       const labels = tagsData.map((tag: Tag) => {
         return {
           label: tag.name,
-          value: tag.tagId
-        } as TagLabel
+          value: tag.tagId,
+        } as TagLabel;
       });
-      setTagLabels(labels)
+      setTagLabels(labels);
     }
-  }
+  };
 
   const handleBuildingChange = (
     selectedBuildings: MultiValue<BuildingLabel>,
