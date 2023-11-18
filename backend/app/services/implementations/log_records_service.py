@@ -131,12 +131,12 @@ class LogRecordsService(ILogRecordsService):
         return sql
 
     def filter_by_tags(self, tags):
-        if len(tags) >= 1:
-            sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
+        if type(tags) == list:
+            sql_statement = f"\n'{tags[0]}'=ANY (tag_ids)"
             for i in range(1, len(tags)):
-                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
+                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_ids)"
             return sql_statement
-        return f"\n'{tags}'=ANY (tag_names)"
+        return f"\n'{tags}'=ANY (tag_ids)"
 
     def filter_by_flagged(self, flagged):
         print(flagged)
@@ -169,7 +169,7 @@ class LogRecordsService(ILogRecordsService):
 
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
-                    (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
+                    (SELECT logs.log_id, ARRAY_AGG(tags.tag_id) AS tag_ids, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
                     JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \

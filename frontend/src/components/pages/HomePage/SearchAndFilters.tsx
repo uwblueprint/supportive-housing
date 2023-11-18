@@ -21,10 +21,11 @@ import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import { BuildingLabel } from "../../../types/BuildingTypes";
 import { Resident, ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag } from "../../../types/TagTypes";
+import { Tag, TagLabel } from "../../../types/TagTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import TagAPIClient from "../../../APIClients/TagAPIClient";
 import CreateToast from "../../common/Toasts";
 
 type Props = {
@@ -32,7 +33,7 @@ type Props = {
   employees: UserLabel[];
   startDate: Date | undefined;
   endDate: Date | undefined;
-  tags: Tag[];
+  tags: TagLabel[];
   attentionTos: UserLabel[];
   buildings: BuildingLabel[];
   flagged: boolean;
@@ -40,7 +41,7 @@ type Props = {
   setEmployees: React.Dispatch<React.SetStateAction<UserLabel[]>>;
   setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-  setTags: React.Dispatch<React.SetStateAction<Tag[]>>;
+  setTags: React.Dispatch<React.SetStateAction<TagLabel[]>>;
   setAttentionTos: React.Dispatch<React.SetStateAction<UserLabel[]>>;
   setBuildings: React.Dispatch<React.SetStateAction<BuildingLabel[]>>;
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,12 +53,6 @@ const BUILDINGS = [
   { label: "402", value: 3 },
 ];
 
-// Replace this with the tags from the db once the API and table are made
-const TAGS: Tag[] = [
-  { label: "Tag A", value: "A" },
-  { label: "Tag B", value: "B" },
-  { label: "Tag C", value: "C" },
-];
 
 const SearchAndFilters = ({
   residents,
@@ -79,6 +74,7 @@ const SearchAndFilters = ({
 }: Props): React.ReactElement => {
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
+  const [tagLabels, setTagLabels] = useState<TagLabel[]>();
 
   const dateChangeToast = CreateToast();
 
@@ -109,6 +105,20 @@ const SearchAndFilters = ({
       setResidentLabels(labels);
     }
   };
+
+  const getTags = async () => {
+    const data = await TagAPIClient.getTags();
+    const tagsData = data?.tags;
+    if (tagsData) {
+      const labels = tagsData.map((tag: Tag) => {
+        return {
+          label: tag.name,
+          value: tag.tagId
+        } as TagLabel
+      });
+      setTagLabels(labels)
+    }
+  }
 
   const handleBuildingChange = (
     selectedBuildings: MultiValue<BuildingLabel>,
@@ -162,8 +172,8 @@ const SearchAndFilters = ({
     setResidents(mutableSelectedResidents);
   };
 
-  const handleTagsChange = (selectedTags: MultiValue<Tag>) => {
-    const mutableSelectedTags: Tag[] = Array.from(selectedTags);
+  const handleTagsChange = (selectedTags: MultiValue<TagLabel>) => {
+    const mutableSelectedTags: TagLabel[] = Array.from(selectedTags);
     setTags(mutableSelectedTags);
   };
 
@@ -181,6 +191,7 @@ const SearchAndFilters = ({
   useEffect(() => {
     getUsers();
     getResidents();
+    getTags();
   }, []);
 
   return (
@@ -281,13 +292,12 @@ const SearchAndFilters = ({
                       <FormLabel fontWeight="700">Tags</FormLabel>
                       <Select
                         value={tags}
-                        options={TAGS}
+                        options={tagLabels}
                         isMulti
                         closeMenuOnSelect={false}
                         placeholder="Select Tags"
                         onChange={handleTagsChange}
                         styles={selectStyle}
-                        isDisabled
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
