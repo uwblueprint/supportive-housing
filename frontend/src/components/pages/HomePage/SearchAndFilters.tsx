@@ -21,7 +21,7 @@ import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import { BuildingLabel } from "../../../types/BuildingTypes";
 import { Resident, ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag } from "../../../types/TagsTypes";
+import { Tag } from "../../../types/TagTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";

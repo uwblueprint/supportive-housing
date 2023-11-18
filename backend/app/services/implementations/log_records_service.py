@@ -24,12 +24,12 @@ class LogRecordsService(ILogRecordsService):
     def add_record(self, log_record):
         new_log_record = log_record.copy()
 
-        tag_names = new_log_record["tags"]
+        tags = new_log_record["tags"]
         del new_log_record["tags"]
 
         try:
             new_log_record = LogRecords(**new_log_record)
-            self.construct_tags(new_log_record, tag_names)
+            self.construct_tags(new_log_record, tags)
 
             db.session.add(new_log_record)
             db.session.commit()
@@ -37,12 +37,13 @@ class LogRecordsService(ILogRecordsService):
         except Exception as postgres_error:
             raise postgres_error
 
-    def construct_tags(self, log_record, tag_names):
-        for tag_name in tag_names:
-            tag = Tag.query.filter_by(name=tag_name).first()
+    def construct_tags(self, log_record, tags):
+        tags = list(set(tags))
+        for tag_id in tags:
+            tag = Tag.query.filter_by(tag_id=tag_id).first()
 
             if not tag:
-                raise Exception(f"Tag with name {tag_name} does not exist")
+                raise Exception(f"Tag with id {tag_id} does not exist")
             log_record.tags.append(tag)
 
     def to_json_list(self, logs):

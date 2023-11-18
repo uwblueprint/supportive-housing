@@ -10,7 +10,7 @@ import SearchAndFilters from "./SearchAndFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import { BuildingLabel } from "../../../types/BuildingTypes";
 import { ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag } from "../../../types/TagsTypes";
+import { Tag } from "../../../types/TagTypes";
 import { UserLabel } from "../../../types/UserTypes";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 
