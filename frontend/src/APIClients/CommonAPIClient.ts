@@ -1,6 +1,8 @@
+import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
+import { UserStatusErrorResponse } from '../types/UserTypes'
 
 const inviteUser = async (
   email: string,
@@ -24,7 +26,7 @@ const inviteUser = async (
   }
 };
 
-const getUserStatus = async (email: string): Promise<string> => {
+const getUserStatus = async (email: string): Promise<string | UserStatusErrorResponse> => {
   try {
     if (email === "") {
       return "";
@@ -44,6 +46,13 @@ const getUserStatus = async (email: string): Promise<string> => {
     }
     return "Not invited";
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 403) {
+      return {
+        errCode: axiosErr.response.status,
+        errMessage: axiosErr.response.data.error,
+      };
+    }
     return "Not invited";
   }
 };

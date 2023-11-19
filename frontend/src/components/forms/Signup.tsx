@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 import { 
   Box, 
@@ -14,6 +14,13 @@ import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import { UserStatusErrorResponse } from "../../types/UserTypes";
+
+const isUserStatusErrorResponse = (
+  res: string | UserStatusErrorResponse,
+): res is UserStatusErrorResponse => {
+  return res !== null && typeof res !== 'string' && "errCode" in res;
+};
 
 type SignupProps = {
   email: string;
@@ -26,8 +33,6 @@ type SignupProps = {
   setPassword: (password: string) => void;
   toggle: boolean;
   setToggle: (toggle: boolean) => void;
-  emailError: boolean;
-  setEmailError: (emailError: boolean) => void;
 };
 
 const Signup = ({
@@ -41,19 +46,25 @@ const Signup = ({
   setPassword,
   toggle,
   setToggle,
-  emailError,
-  setEmailError
 }: SignupProps): React.ReactElement => {
+  const [signupClicked, setSignupClicked] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<boolean>(false);
+  const [emailErrorStr, setEmailErrorStr] = useState<string>("");
+
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (emailRegex.test(inputValue)) {
-      setEmailError(false)
-    } else {
-      setEmailError(true)
+    if (signupClicked) {
+      if (emailRegex.test(inputValue)) {
+        setEmailErrorStr("")
+        setEmailError(false)
+      } else {
+        setEmailErrorStr("Please enter a valid email.")
+        setEmailError(true)
+      }
     }
     setEmail(inputValue)
   };
@@ -64,24 +75,31 @@ const Signup = ({
   }
 
   const onSignupClick = async () => {
+    setSignupClicked(true)
     const isInvited = await commonApiClient.isUserInvited(email);
-    if (isInvited) {
-      const registerResponse = await authAPIClient.register(
-        firstName,
-        lastName,
-        email,
-        password,
-      );
-      if (registerResponse) {
-        const { requiresTwoFa, authUser } = registerResponse;
-        if (requiresTwoFa) {
-          setToggle(!toggle);
-        } else {
-          localStorage.setItem(
-            AUTHENTICATED_USER_KEY,
-            JSON.stringify(authUser),
-          );
-          setAuthenticatedUser(authUser);
+    if (isInvited !== "Not Invited") {
+      if (isUserStatusErrorResponse(isInvited)) {
+        setEmailErrorStr(isInvited.errMessage)
+        setEmailError(true)
+      }
+      else {
+        const registerResponse = await authAPIClient.register(
+          firstName,
+          lastName,
+          email,
+          password,
+        );
+        if (registerResponse) {
+          const { requiresTwoFa, authUser } = registerResponse;
+          if (requiresTwoFa) {
+            setToggle(!toggle);
+          } else {
+            localStorage.setItem(
+              AUTHENTICATED_USER_KEY,
+              JSON.stringify(authUser),
+            );
+            setAuthenticatedUser(authUser);
+          }
         }
       }
     }
@@ -135,7 +153,7 @@ const Signup = ({
                   value={email}
                   onChange={handleEmailChange}
                 />
-                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+                <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
               </FormControl>
               <FormControl isRequired>
                 <Input

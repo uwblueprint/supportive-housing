@@ -77,7 +77,7 @@ const Login = ({
   const onLogInClick = async () => {
     setLoginClicked(true);
     const isInvited = await commonApiClient.isUserInvited(email);
-    if (isInvited) {
+    if (isInvited !== "Not Invited") {
       const loginResponse:
         | AuthTokenResponse
         | ErrorResponse = await authAPIClient.login(email, password);

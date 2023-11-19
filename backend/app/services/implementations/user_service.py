@@ -4,6 +4,7 @@ from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...models import db
 from ...resources.user_dto import UserDTO
+from ...utilities.exceptions.auth_exceptions import UserNotInvitedException
 
 
 class UserService(IUserService):
@@ -146,7 +147,7 @@ class UserService(IUserService):
             user = User.query.filter_by(email=email).first()
 
             if not user:
-                raise Exception("user with email {email} not found".format(email))
+                raise UserNotInvitedException
 
             return user.user_status
         except Exception as e:
