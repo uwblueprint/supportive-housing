@@ -37,6 +37,8 @@ type SignupProps = {
   setToggle: (toggle: boolean) => void;
 };
 
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const Signup = ({
   email,
   setEmail,
@@ -58,7 +60,6 @@ const Signup = ({
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (signupClicked) {
       if (emailRegex.test(inputValue)) {
         setEmailErrorStr("")
@@ -78,6 +79,13 @@ const Signup = ({
 
   const onSignupClick = async () => {
     setSignupClicked(true)
+
+    if (!emailRegex.test(email)) {
+      setEmailErrorStr("Please enter a valid email.")
+      setEmailError(true)
+      return
+    }
+    
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited !== "Not Invited") {
       if (isUserStatusErrorResponse(isInvited)) {
