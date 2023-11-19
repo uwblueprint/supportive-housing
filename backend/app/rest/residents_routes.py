@@ -111,6 +111,10 @@ def get_residents():
         page_number = int(request.args.get("page_number"))
     except:
         pass
+    try:
+        filters = json.loads(request.args.get("filters"))
+    except:
+        filters = None
 
     results_per_page = 10
     try:
@@ -121,7 +125,7 @@ def get_residents():
     try:
         resident_id = request.args.get("resident_id")
         residents_results = residents_service.get_residents(
-            return_all, page_number, results_per_page, resident_id
+            return_all, page_number, results_per_page, resident_id, filters
         )
         return jsonify(residents_results), 201
     except Exception as e:

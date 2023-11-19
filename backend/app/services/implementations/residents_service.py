@@ -101,7 +101,7 @@ class ResidentsService(IResidentsService):
         db.session.commit()
 
     def get_residents(
-        self, return_all, page_number, results_per_page, resident_id=None
+        self, return_all, page_number, results_per_page, resident_id=None, filters=None
     ):
         try:
             if resident_id:
@@ -120,6 +120,41 @@ class ResidentsService(IResidentsService):
                     .with_entities(Residents, Buildings.name.label("building"))
                     .all()
                 )
+            elif filters:
+                resident_id = filters.get("resident_id")
+                building_id = filters.get("building_id")
+                date_left = None
+                date_joined = None
+
+                if filters.get("date_range") is not None:
+                    date_joined, date_left = filters.get("date_range")  
+                    if date_joined is not None:          
+                        date_joined = datetime.strptime(date_joined, "%Y-%m-%d").replace(
+                            hour=0, minute=0
+                        )
+                    if date_left is not None:
+                        date_left = datetime.strptime(date_left, "%Y-%m-%d").replace(
+                            hour=0, minute=0
+                        )
+
+                residents_results = (
+                    Residents.query.join(
+                        Buildings, Buildings.id == Residents.building_id
+                    )
+                    .with_entities(Residents, Buildings.name.label("building"))
+                )
+
+                if building_id is not None:
+                    residents_results = residents_results.filter(Residents.building_id.in_(building_id))
+                if resident_id is not None:
+                    residents_results = residents_results.filter(Residents.resident_id.in_(resident_id))
+                if date_joined is not None and date_left is not None:
+                    residents_results = residents_results.filter(Residents.date_joined >= date_joined)
+                    residents_results = residents_results.filter(Residents.date_left <= date_left)
+                elif date_joined is not None:
+                    residents_results = residents_results.filter(Residents.date_joined >= date_joined)
+                elif date_left is not None:
+                    residents_results = residents_results.filter(Residents.date_left <= date_left)
             else:
                 residents_results = (
                     Residents.query.join(
