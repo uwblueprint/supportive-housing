@@ -8,7 +8,7 @@ import {
   getLoginErrMessage,
   getRegisterErrMessage
 } 
-from "../helper/authErrorMessage";
+from "../helper/authError";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
   AuthenticatedUser,
