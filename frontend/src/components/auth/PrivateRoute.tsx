@@ -16,7 +16,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   path,
 }: PrivateRouteProps) => {
   const { authenticatedUser } = useContext(AuthContext);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkVerification = async () => {
@@ -24,7 +24,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
       setIsVerified(verify);
     };
     checkVerification();
-  }, []);
+  }, [isVerified]);
 
   if (authenticatedUser === null) {
     return (
@@ -33,7 +33,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   }
 
   if (!isVerified) {
-    if (!window.location.href.endsWith("/verification")) {
+    if (!window.location.pathname.endsWith("/verification")) {
       return (
         <Redirect to={VERIFICATION_PAGE} />
       )

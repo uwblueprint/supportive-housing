@@ -139,8 +139,7 @@ const isVerified = async (): Promise<boolean> => {
       `/auth/verify`,
       { headers: { Authorization: bearerToken } },
     );
-    console.log(data.verified);
-    return data.verified;
+    return data.verified === true;
   } catch (error) {
     return false;
   }
