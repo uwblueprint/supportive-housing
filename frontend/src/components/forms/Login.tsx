@@ -15,6 +15,7 @@ import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
+import { isAuthErrorResponse } from "../../helper/authError";
 
 type CredentialsProps = {
   email: string;
@@ -24,12 +25,6 @@ type CredentialsProps = {
   setToken: (token: string) => void;
   toggle: boolean;
   setToggle: (toggle: boolean) => void;
-};
-
-const isLoginErrorResponse = (
-  res: AuthTokenResponse | ErrorResponse,
-): res is ErrorResponse => {
-  return res !== null && "errCode" in res;
 };
 
 const Login = ({
@@ -81,7 +76,7 @@ const Login = ({
       const loginResponse:
         | AuthTokenResponse
         | ErrorResponse = await authAPIClient.login(email, password);
-      if (isLoginErrorResponse(loginResponse)) {
+      if (isAuthErrorResponse(loginResponse)) {
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
       } else if (loginResponse) {

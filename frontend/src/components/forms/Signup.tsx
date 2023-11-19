@@ -15,6 +15,8 @@ import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { UserStatusErrorResponse } from "../../types/UserTypes";
+import { ErrorResponse } from "../../types/AuthTypes";
+import { isAuthErrorResponse } from "../../helper/authError";
 
 const isUserStatusErrorResponse = (
   res: string | UserStatusErrorResponse,
@@ -90,15 +92,21 @@ const Signup = ({
           password,
         );
         if (registerResponse) {
-          const { requiresTwoFa, authUser } = registerResponse;
-          if (requiresTwoFa) {
-            setToggle(!toggle);
-          } else {
-            localStorage.setItem(
-              AUTHENTICATED_USER_KEY,
-              JSON.stringify(authUser),
-            );
-            setAuthenticatedUser(authUser);
+          if (isAuthErrorResponse(registerResponse)) {
+            setEmailErrorStr(registerResponse.errMessage)
+            setEmailError(true)
+          }
+          else {
+            const { requiresTwoFa, authUser } = registerResponse;
+            if (requiresTwoFa) {
+              setToggle(!toggle);
+            } else {
+              localStorage.setItem(
+                AUTHENTICATED_USER_KEY,
+                JSON.stringify(authUser),
+              );
+              setAuthenticatedUser(authUser);
+            }
           }
         }
       }
