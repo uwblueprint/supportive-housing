@@ -11,7 +11,7 @@ class Tag(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
     last_modified = db.Column(
-        db.DateTime, default=db.func.now(), onupdate=db.func.now()
+        db.DateTime, server_default=db.func.now(), onupdate=db.func.now(), nullable=False
     )
     log_records = db.relationship(
         "LogRecords", secondary="log_record_tag", back_populates="tags"
