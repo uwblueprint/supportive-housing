@@ -405,7 +405,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       options={residentOptions}
                       isMulti
                       closeMenuOnSelect={false}
-                      placeholder="Select Resident"
+                      placeholder="Select Residents"
                       onChange={handleResidentsChange}
                       styles={selectStyle}
                     />

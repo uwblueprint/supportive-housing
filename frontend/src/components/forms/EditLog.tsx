@@ -366,11 +366,12 @@ const EditLog = ({
                       options={residentOptions}
                       isMulti
                       closeMenuOnSelect={false}
-                      placeholder="Select Resident"
+                      placeholder="Select Residents"
                       onChange={handleResidentsChange}
                       defaultValue={residentOptions.filter(
                         (item) => logRecord.residents.includes(item.label),
                       )}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
