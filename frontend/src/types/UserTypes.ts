@@ -34,8 +34,3 @@ export enum UserStatus {
   ACTIVE = "Active",
   DEACTIVATED = "Deactivated",
 }
-
-export type UserStatusErrorResponse = {
-  errCode: number;
-  errMessage: string;
-}

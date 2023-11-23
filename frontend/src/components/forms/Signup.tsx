@@ -14,15 +14,7 @@ import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { UserStatusErrorResponse } from "../../types/UserTypes";
-import { ErrorResponse } from "../../types/AuthTypes";
 import { isAuthErrorResponse } from "../../helper/authError";
-
-const isUserStatusErrorResponse = (
-  res: string | UserStatusErrorResponse,
-): res is UserStatusErrorResponse => {
-  return res !== null && typeof res !== 'string' && "errCode" in res;
-};
 
 type SignupProps = {
   email: string;
@@ -88,7 +80,7 @@ const Signup = ({
     
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited !== "Not Invited") {
-      if (isUserStatusErrorResponse(isInvited)) {
+      if (isAuthErrorResponse(isInvited)) {
         setEmailErrorStr(isInvited.errMessage)
         setEmailError(true)
       }

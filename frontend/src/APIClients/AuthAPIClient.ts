@@ -5,8 +5,7 @@ import {
 } from "@apollo/client";
 import { AxiosError } from "axios";
 import { 
-  getLoginErrMessage,
-  getRegisterErrMessage
+  getAuthErrMessage
 } 
 from "../helper/authError";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
@@ -37,7 +36,7 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getLoginErrMessage(axiosErr.response),
+        errMessage: getAuthErrMessage(axiosErr.response, 'LOGIN'),
       };
     }
     return {
@@ -116,7 +115,7 @@ const register = async (
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getRegisterErrMessage(axiosErr.response),
+        errMessage: getAuthErrMessage(axiosErr.response, 'SIGNUP'),
       };
     }
     return null;
