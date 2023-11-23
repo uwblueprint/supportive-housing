@@ -12,6 +12,7 @@ from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
 from ..utilities.csv_utils import generate_csv_from_list
+from ..utilities.exceptions.auth_exceptions import UserNotInvitedException
 
 
 user_service = UserService(current_app.logger)
@@ -91,6 +92,9 @@ def get_user_status():
         email = request.args.get("email")
         user_status = user_service.get_user_status_by_email(email)
         return jsonify({"user_status": user_status, "email": email}), 201
+    except UserNotInvitedException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 403
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

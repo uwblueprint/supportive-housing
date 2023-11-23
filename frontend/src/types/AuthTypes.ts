@@ -28,3 +28,5 @@ export type ErrorResponse = {
   errCode: number;
   errMessage: string;
 };
+
+export type AuthFlow = 'LOGIN' | 'SIGNUP';

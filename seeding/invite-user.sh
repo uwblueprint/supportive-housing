@@ -12,19 +12,16 @@ run_sql_script "
 INSERT INTO users (
   first_name,
   last_name,
-  auth_id,
-  role
+  role,
+  user_status,
+  email
 )
-SELECT 
+VALUES (
   '$FIRST_NAME',
   '$LAST_NAME',
-  '$AUTH_ID',
-  '$ROLE'
-WHERE NOT EXISTS (
-  SELECT 1
-  FROM users
-  WHERE first_name = '$FIRST_NAME'
-    AND last_name = '$LAST_NAME'
+  '$ROLE',
+  'Invited',
+  '$EMAIL'
 );
 "
 
