@@ -46,6 +46,8 @@ const Signup = ({
   const [signupClicked, setSignupClicked] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [emailErrorStr, setEmailErrorStr] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordErrorStr, setPasswordErrorStr] = useState<string>("");
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
@@ -67,6 +69,17 @@ const Signup = ({
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue)
+
+    if (signupClicked) {
+      if (inputValue.length >= 6) {
+        setPasswordErrorStr("")
+        setPasswordError(false)
+      }
+      else {
+        setPasswordErrorStr("Password must be 6 characters long.")
+        setPasswordError(true)
+      }
+    }
   }
 
   const onSignupClick = async () => {
@@ -75,6 +88,12 @@ const Signup = ({
     if (!emailRegex.test(email)) {
       setEmailErrorStr("Please enter a valid email.")
       setEmailError(true)
+      return
+    }
+
+    if (password.length < 6) {
+      setPasswordErrorStr("Password must be 6 characters long.")
+      setPasswordError(true)
       return
     }
     
@@ -113,7 +132,8 @@ const Signup = ({
     }
   };
 
-  const isCreateAccountBtnDisabled = () => emailError || email === '' || password === '' || firstName === '' || lastName === ''
+  const isCreateAccountBtnDisabled = () => 
+    emailError || passwordError || email === '' || password === '' || firstName === '' || lastName === ''
 
   const onLogInClick = () => {
     history.push(LOGIN_PAGE);
@@ -163,7 +183,7 @@ const Signup = ({
                 />
                 <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={passwordError}>
                 <Input
                   variant="login"
                   type="password"
@@ -171,6 +191,7 @@ const Signup = ({
                   value={password}
                   onChange={handlePasswordChange}
                 />
+                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
               </FormControl>
               <Button
                 variant="login"
