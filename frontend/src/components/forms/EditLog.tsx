@@ -33,7 +33,6 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { BuildingLabel } from "../../types/BuildingTypes";
 import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
@@ -49,6 +48,7 @@ type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  buildingOptions: BuildingLabel[];
 };
 
 type AlertData = {
@@ -104,8 +104,8 @@ const EditLog = ({
   getRecords,
   countRecords,
   setUserPageNum,
+  buildingOptions,
 }: Props) => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
@@ -133,17 +133,6 @@ const EditLog = ({
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
-
-  const getBuildingsOptions = async () => {
-    const buildingsData = await BuildingAPIClient.getBuildings();
-
-    if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
-      );
-      setBuildingOptions(buildingLabels);
-    }
-  };
 
   const handleDateChange = (newDate: Date) => {
     setDate(newDate);
@@ -209,7 +198,6 @@ const EditLog = ({
 
   const initializeValues = () => {
     // set state variables
-    getBuildingsOptions();
     setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
     setTime(
