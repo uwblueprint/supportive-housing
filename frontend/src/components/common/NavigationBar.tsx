@@ -15,6 +15,7 @@ import {
   HOME_PAGE,
   RESIDENT_DIRECTORY_PAGE,
   EMPLOYEE_DIRECTORY_PAGE,
+  TAGS_PAGE
 } from "../../constants/Routes";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -32,6 +33,8 @@ const NavigationBar = (): React.ReactElement => {
 
   const navigateToEmployeeDirectory = () =>
     history.push(EMPLOYEE_DIRECTORY_PAGE);
+
+  const navigateToTags = () => history.push(TAGS_PAGE);
 
   const handleLogout = async () => {
     const success = await authAPIClient.logout(authenticatedUser?.id);
@@ -101,6 +104,9 @@ const NavigationBar = (): React.ReactElement => {
                   <MenuList>
                     <MenuItem onClick={navigateToEmployeeDirectory}>
                       Employee Directory
+                    </MenuItem>
+                    <MenuItem onClick={navigateToTags}>
+                      Tags
                     </MenuItem>
                   </MenuList>
                 )}

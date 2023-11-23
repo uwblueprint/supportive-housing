@@ -29,6 +29,7 @@ import { AuthenticatedUser } from "./types/AuthTypes";
 
 import customTheme from "./theme";
 import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
+import TagsPage from "./components/pages/AdminControls/Tags";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -75,6 +76,11 @@ const App = (): React.ReactElement => {
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
                   component={EmployeeDirectoryPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.TAGS_PAGE}
+                  component={TagsPage}
                 />
 
                 <Route exact path="*" component={NotFound} />
