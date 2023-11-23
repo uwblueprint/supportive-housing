@@ -4,7 +4,10 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
-import getLoginErrMessage from "../helper/authErrorMessage";
+import { 
+  getAuthErrMessage
+} 
+from "../helper/authError";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
   AuthenticatedUser,
@@ -33,7 +36,7 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getLoginErrMessage(axiosErr.response),
+        errMessage: getAuthErrMessage(axiosErr.response, 'LOGIN'),
       };
     }
     return {
@@ -99,7 +102,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<AuthTokenResponse> => {
+): Promise<AuthTokenResponse | ErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
@@ -108,6 +111,13 @@ const register = async (
     );
     return data;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errCode: axiosErr.response.status,
+        errMessage: getAuthErrMessage(axiosErr.response, 'SIGNUP'),
+      };
+    }
     return null;
   }
 };
