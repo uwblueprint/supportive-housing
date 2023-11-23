@@ -20,7 +20,9 @@ class User(db.Model):
     )
     email = db.Column(db.String, nullable=False)
     last_modified = db.deferred(
-        db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+        db.Column(
+            db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
+        )
     )
 
     __table_args__ = (

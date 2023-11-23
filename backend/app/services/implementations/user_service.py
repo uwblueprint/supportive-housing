@@ -113,20 +113,15 @@ class UserService(IUserService):
     def get_users(self, return_all, page_number, results_per_page):
         try:
             if return_all:
-                users = (
-                    User.query
-                    .order_by(User.last_modified.desc())
-                    .all()
-                )
+                users = User.query.order_by(User.last_modified.desc()).all()
             else:
                 users = (
-                    User.query
-                    .order_by(User.last_modified.desc())
+                    User.query.order_by(User.last_modified.desc())
                     .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
                     .all()
                 )
-                
+
             json_list = list(
                 map(
                     lambda user: UserService.__user_to_dict_and_remove_auth_id(user),
