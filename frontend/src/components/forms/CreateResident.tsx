@@ -34,7 +34,7 @@ type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   countResidents: () => Promise<void>;
-}
+};
 
 // TODO: Connect to Buidings table
 const BUILDINGS = [

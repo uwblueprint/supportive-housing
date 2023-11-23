@@ -86,7 +86,7 @@ const EditResident = ({
         "Resident has been successfully updated",
         "success",
       );
-      getRecords(userPageNum)
+      getRecords(userPageNum);
     } else {
       newToast(
         "Error updating resident",
