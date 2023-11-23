@@ -70,8 +70,8 @@ const ResidentDirectory = (): React.ReactElement => {
             countResidents={countResidents}
           />
         </Flex>
-        <ResidentDirectoryTable 
-          residents={residents} 
+        <ResidentDirectoryTable
+          residents={residents}
           tableRef={tableRef}
           userPageNum={userPageNum}
           setUserPageNum={setUserPageNum}

@@ -124,7 +124,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully activated.",
         "success",
       );
-      getRecords(userPageNum)
+      getRecords(userPageNum);
       setIsActivateModalOpen(false);
     } else {
       newToast(
@@ -146,7 +146,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deactivated.",
         "success",
       );
-      getRecords(userPageNum)
+      getRecords(userPageNum);
       setIsDeactivateModalOpen(false);
     } else {
       newToast(
@@ -165,11 +165,7 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deleted.",
         "success",
       );
-      const newUserPageNum = (
-        users.length === 1
-          ? userPageNum - 1
-          : userPageNum
-      );
+      const newUserPageNum = users.length === 1 ? userPageNum - 1 : userPageNum;
       countUsers();
       getRecords(newUserPageNum);
       setUserPageNum(newUserPageNum);

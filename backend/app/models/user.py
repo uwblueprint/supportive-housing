@@ -1,4 +1,4 @@
-from sqlalchemy import inspect, case, null
+from sqlalchemy import func, inspect, case, null
 from sqlalchemy.orm.properties import ColumnProperty
 
 from . import db
@@ -19,6 +19,11 @@ class User(db.Model):
         nullable=False,
     )
     email = db.Column(db.String, nullable=False)
+    last_modified = db.deferred(
+        db.Column(
+            db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
+        )
+    )
 
     __table_args__ = (
         db.CheckConstraint(
