@@ -73,6 +73,7 @@ def login():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": False,
         }
 
         sign_in_logs_service.create_sign_in_log(auth_dto.id)
@@ -139,6 +140,7 @@ def two_fa():
                 "last_name": auth_dto.last_name,
                 "email": auth_dto.email,
                 "role": auth_dto.role,
+                "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
             }
         )
         response.set_cookie(
@@ -183,6 +185,7 @@ def register():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
 
         response = jsonify(response)

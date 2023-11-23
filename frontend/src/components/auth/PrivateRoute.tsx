@@ -15,16 +15,20 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   exact,
   path,
 }: PrivateRouteProps) => {
-  const { authenticatedUser } = useContext(AuthContext);
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   useEffect(() => {
     const checkVerification = async () => {
-      const verify = await authAPIClient.isVerified();
-      setIsVerified(verify);
+      if (authenticatedUser) {
+        const authUser = authenticatedUser;
+        if (authUser.verified === false) {
+          authUser.verified = await authAPIClient.isVerified();
+          setAuthenticatedUser(authUser);
+        }
+      }
     };
     checkVerification();
-  }, [isVerified]);
+  }, []);
 
   if (authenticatedUser === null) {
     return (
@@ -32,7 +36,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     )
   }
 
-  if (!isVerified) {
+  if (authenticatedUser.verified === false) {
     if (!window.location.pathname.endsWith("/verification")) {
       return (
         <Redirect to={VERIFICATION_PAGE} />

@@ -16,6 +16,7 @@ export type AuthenticatedUser = {
   email: string;
   role: UserRole;
   accessToken: string;
+  verified: boolean;
 };
 
 export type DecodedJWT =

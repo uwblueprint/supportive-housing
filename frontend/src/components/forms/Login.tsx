@@ -42,7 +42,7 @@ const Login = ({
   setToggle,
 }: CredentialsProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -100,25 +100,9 @@ const Login = ({
     }
   };
 
-  useEffect(() => {
-    const checkVerification = async () => {
-      const verify = await authAPIClient.isVerified();
-      setIsVerified(verify);
-    };
-    checkVerification();
-  }, []);
-
   const onSignUpClick = () => {
     history.push(SIGNUP_PAGE);
   };
-
-  if (authenticatedUser) {
-    if (isVerified) {
-      return <Redirect to={HOME_PAGE} />;
-    } 
-    return <Redirect to={VERIFICATION_PAGE} />;
-  }
-
 
   if (toggle) {
     // Lock scroll
@@ -161,10 +145,10 @@ const Login = ({
                 _hover={
                   email && password
                     ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
+                      background: "teal.500",
+                      transition:
+                        "transition: background-color 0.5s ease !important",
+                    }
                     : {}
                 }
                 onClick={onLogInClick}
