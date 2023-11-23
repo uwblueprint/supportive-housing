@@ -8,10 +8,12 @@ import {
   VStack
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
+import CreateToast from "../common/Toasts";
 import AuthContext from "../../contexts/AuthContext";
 import { HOME_PAGE } from "../../constants/Routes";
 
 const Verification = (): React.ReactElement => {
+  const newToast = CreateToast();
   const history = useHistory();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
@@ -24,7 +26,7 @@ const Verification = (): React.ReactElement => {
       console.log(authenticatedUser);
       
       if (authenticatedUser.verified === false) {
-        alert("ADD toast message");
+        newToast("Not Verified", "Please check your email for the verification email.", "error");
       } else {
         history.push(HOME_PAGE);
       }
