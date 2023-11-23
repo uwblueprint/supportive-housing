@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
-import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 import { LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 
@@ -15,20 +14,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   exact,
   path,
 }: PrivateRouteProps) => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-
-  useEffect(() => {
-    const checkVerification = async () => {
-      if (authenticatedUser) {
-        const authUser = authenticatedUser;
-        if (authUser.verified === false) {
-          authUser.verified = await authAPIClient.isVerified();
-          setAuthenticatedUser(authUser);
-        }
-      }
-    };
-    checkVerification();
-  }, []);
+  const { authenticatedUser } = useContext(AuthContext);
 
   if (authenticatedUser === null) {
     return (
