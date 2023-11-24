@@ -85,6 +85,20 @@ const LogRecordsTable = ({
     }));
   };
 
+  const formatTags = (strArr: string[]) => {
+    const strLength = strArr.length;
+    if (strLength === 0) {
+      return "";
+    }
+    if (strLength === 1) {
+      return strArr[0];
+    }
+    if (strLength === 2) {
+      return strArr.join(", ");
+    }
+    return `${strArr.slice(0, 2).join(", ")}, ...`;
+  };
+
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
     const residentsData = await ResidentAPIClient.getResidents({
@@ -157,6 +171,7 @@ const LogRecordsTable = ({
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
+                <Th>Tags</Th>
                 <Th> </Th>
               </Tr>
             </Thead>
@@ -175,7 +190,7 @@ const LogRecordsTable = ({
                       <Td whiteSpace="normal" width="5%">
                         {record.residents?.join("\n")}
                       </Td>
-                      <Td whiteSpace="normal" width="70%">
+                      <Td whiteSpace="normal" width="65%">
                         {record.note}
                       </Td>
                       <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
@@ -183,6 +198,9 @@ const LogRecordsTable = ({
                         {record.attnTo
                           ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
                           : ""}
+                      </Td>
+                      <Td width="5%">
+                        {formatTags(record.tags)}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
