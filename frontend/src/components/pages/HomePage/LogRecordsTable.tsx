@@ -85,18 +85,18 @@ const LogRecordsTable = ({
     }));
   };
 
-  const formatTags = (strArr: string[]) => {
-    const strLength = strArr.length;
-    if (strLength === 0) {
-      return "";
-    }
+  const formatList = (strArr: string[]) => {
+    const strLength = strArr?.length;
     if (strLength === 1) {
       return strArr[0];
     }
     if (strLength === 2) {
-      return strArr.join(", ");
+      return strArr?.join(", ");
     }
-    return `${strArr.slice(0, 2).join(", ")}, ...`;
+    if (strLength > 2) {
+      return `${strArr?.slice(0, 2).join(", ")}, ...`;
+    }
+    return "";
   };
 
   // fetch resident + employee data for log creation
@@ -188,7 +188,7 @@ const LogRecordsTable = ({
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
                       <Td whiteSpace="normal" width="5%">
-                        {record.residents?.join("\n")}
+                        {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="65%">
                         {record.note}
@@ -200,7 +200,7 @@ const LogRecordsTable = ({
                           : ""}
                       </Td>
                       <Td width="5%">
-                        {formatTags(record.tags)}
+                        {formatList(record.tags)}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||

@@ -218,7 +218,7 @@ const EditLog = ({
     );
     setBuildingId(logRecord.building.id);
     const residentIds = residentOptions.filter(
-      (item) => logRecord.residents.includes(item.label),
+      (item) => logRecord.residents && logRecord.residents.includes(item.label),
     ).map((item) => item.value);
     setResidents(residentIds);
     setTags(logRecord.tags);
@@ -369,7 +369,7 @@ const EditLog = ({
                       placeholder="Select Residents"
                       onChange={handleResidentsChange}
                       defaultValue={residentOptions.filter(
-                        (item) => logRecord.residents.includes(item.label),
+                        (item) => logRecord.residents && logRecord.residents.includes(item.label),
                       )}
                       styles={selectStyle}
                     />
