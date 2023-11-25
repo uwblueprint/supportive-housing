@@ -85,6 +85,16 @@ const LogRecordsTable = ({
     }));
   };
 
+  const formatNote = (note: string) => {
+    if (note && note.length > 0) {
+      if (note.length > 150) {
+        return note.substring(0, 150).concat("...");
+      }
+      return note;
+    }
+    return "";
+  };
+
   const formatList = (strArr: string[]) => {
     const strLength = strArr?.length;
     if (strLength === 1) {
@@ -191,7 +201,7 @@ const LogRecordsTable = ({
                         {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="65%">
-                        {record.note}
+                        {formatNote(record.note)}
                       </Td>
                       <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
                       <Td width="5%">
