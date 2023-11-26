@@ -3,11 +3,14 @@ import { Box, Flex, Spacer } from "@chakra-ui/react";
 import ResidentDirectoryTable from "./ResidentDirectoryTable";
 import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import Pagination from "../../common/Pagination";
 import CreateResident from "../../forms/CreateResident";
 
 const ResidentDirectory = (): React.ReactElement => {
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([])
   const [residents, setResidents] = useState<Resident[]>([]);
   const [numResidents, setNumResidents] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
@@ -15,6 +18,17 @@ const ResidentDirectory = (): React.ReactElement => {
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
   const tableRef = useRef<HTMLDivElement>(null);
+
+  const getBuildingOptions = async () => {
+    const data = await BuildingAPIClient.getBuildings();
+
+    if (data){
+      const buildingLabels: BuildingLabel[] = data.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+  };
 
   const getResidents = async (pageNumber: number) => {
     const data = await ResidentAPIClient.getResidents({
@@ -44,6 +58,7 @@ const ResidentDirectory = (): React.ReactElement => {
   useEffect(() => {
     setUserPageNum(1);
     getResidents(1);
+    getBuildingOptions();
   }, [resultsPerPage]);
 
   useEffect(() => {
@@ -71,6 +86,7 @@ const ResidentDirectory = (): React.ReactElement => {
           />
         </Flex>
         <ResidentDirectoryTable 
+          buildingOptions={buildingOptions}
           residents={residents} 
           tableRef={tableRef}
           userPageNum={userPageNum}

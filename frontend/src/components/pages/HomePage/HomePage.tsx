@@ -67,7 +67,7 @@ const HomePage = (): React.ReactElement => {
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
-      residentId: residentsIds,
+      residents: residentsIds,
       tags: tagsValues,
       flagged,
       resultsPerPage,
@@ -102,7 +102,7 @@ const HomePage = (): React.ReactElement => {
       employeeId: employeeIds,
       attnTo: attentionToIds,
       dateRange,
-      residentId: residentsIds,
+      residents: residentsIds,
       tags: tagsValues,
       flagged,
     });

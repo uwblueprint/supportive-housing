@@ -1,5 +1,7 @@
 from ..interfaces.log_records_service import ILogRecordsService
 from ...models.log_records import LogRecords
+from ...models.residents import Residents
+from ...models.user import User
 from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
@@ -25,17 +27,30 @@ class LogRecordsService(ILogRecordsService):
         new_log_record = log_record.copy()
 
         tags = new_log_record["tags"]
+        residents = new_log_record["residents"]
+
         del new_log_record["tags"]
+        del new_log_record["residents"]
 
         try:
             new_log_record = LogRecords(**new_log_record)
             self.construct_tags(new_log_record, tags)
+            self.construct_residents(new_log_record, residents)
 
             db.session.add(new_log_record)
             db.session.commit()
             return log_record
         except Exception as postgres_error:
             raise postgres_error
+
+    def construct_residents(self, log_record, residents):
+        residents = list(set(residents))
+        for resident_id in residents:
+            resident = Residents.query.filter_by(id=resident_id).first()
+
+            if not resident:
+                raise Exception(f"Resident with id {resident_id} does not exist")
+            log_record.residents.append(resident)
 
     def construct_tags(self, log_record, tags):
         tags = list(set(tags))
@@ -58,7 +73,7 @@ class LogRecordsService(ILogRecordsService):
                             "first_name": log[2],
                             "last_name": log[3],
                         },
-                        "resident_id": log[4],
+                        "residents": log[4],
                         "attn_to": {
                             "id": log[5],
                             "first_name": log[6],
@@ -95,13 +110,15 @@ class LogRecordsService(ILogRecordsService):
             return sql_statement
         return f"\nemployee_id={employee_id}"
 
-    def filter_by_resident_id(self, resident_id):
-        if type(resident_id) == list:
-            sql_statement = f"\nresident_id={resident_id[0]}"
-            for i in range(1, len(resident_id)):
-                sql_statement = sql_statement + f"\nOR resident_id={resident_id[i]}"
+    def filter_by_residents(self, residents):
+        if type(residents) == list:
+            sql_statement = f"\n'{residents[0]}'=ANY (resident_ids)"
+            for i in range(1, len(residents)):
+                sql_statement = (
+                    sql_statement + f"\nAND '{residents[i]}'=ANY (resident_ids)"
+                )
             return sql_statement
-        return f"\nresident_id={resident_id}"
+        return f"\n'{residents}'=ANY (resident_ids)"
 
     def filter_by_attn_to(self, attn_to):
         if type(attn_to) == list:
@@ -151,7 +168,7 @@ class LogRecordsService(ILogRecordsService):
             options = {
                 "building_id": self.filter_by_building_id,
                 "employee_id": self.filter_by_employee_id,
-                "resident_id": self.filter_by_resident_id,
+                "residents": self.filter_by_residents,
                 "attn_to": self.filter_by_attn_to,
                 "date_range": self.filter_by_date_range,
                 "tags": self.filter_by_tags,
@@ -166,6 +183,14 @@ class LogRecordsService(ILogRecordsService):
                         if filters.get(filter):
                             sql = sql + "\nAND " + options[filter](filters.get(filter))
         return sql
+
+    def join_resident_attributes(self):
+        return "\nLEFT JOIN\n \
+                    (SELECT logs.log_id, ARRAY_AGG(residents.id) AS resident_ids, ARRAY_AGG(CONCAT(residents.initial, residents.room_num)) AS residents FROM log_records logs\n \
+                    JOIN log_record_residents lrr ON logs.log_id = lrr.log_record_id\n \
+                    JOIN residents ON lrr.resident_id = residents.id\n \
+                    GROUP BY logs.log_id \n \
+                ) r ON logs.log_id = r.log_id\n"
 
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
@@ -184,7 +209,7 @@ class LogRecordsService(ILogRecordsService):
                 logs.employee_id,\n \
                 employees.first_name AS employee_first_name,\n \
                 employees.last_name AS employee_last_name,\n \
-                CONCAT(residents.initial, residents.room_num) AS resident_id,\n \
+                r.residents,\n \
                 logs.attn_to,\n \
                 attn_tos.first_name AS attn_to_first_name,\n \
                 attn_tos.last_name AS attn_to_last_name,\n \
@@ -197,9 +222,9 @@ class LogRecordsService(ILogRecordsService):
                 FROM log_records logs\n \
                 LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
                 JOIN users employees ON logs.employee_id = employees.id\n \
-                JOIN residents ON logs.resident_id = residents.id\n \
                 JOIN buildings on logs.building_id = buildings.id"
 
+            sql += self.join_resident_attributes()
             sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
@@ -226,10 +251,10 @@ class LogRecordsService(ILogRecordsService):
             FROM log_records logs\n \
             LEFT JOIN users attn_tos ON logs.attn_to = attn_tos.id\n \
             JOIN users employees ON logs.employee_id = employees.id\n \
-            JOIN residents ON logs.resident_id = residents.id\n \
             JOIN buildings on logs.building_id = buildings.id"
 
-            sql += f"\n{self.join_tag_attributes()}"
+            sql += self.join_resident_attributes()
+            sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
             num_results = db.session.execute(text(sql))
@@ -247,6 +272,7 @@ class LogRecordsService(ILogRecordsService):
             raise Exception(
                 "Log record with id {log_id} not found".format(log_id=log_id)
             )
+        log_record_to_delete.residents = []
         log_record_to_delete.tags = []
         db.session.delete(log_record_to_delete)
         db.session.commit()
@@ -275,10 +301,15 @@ class LogRecordsService(ILogRecordsService):
                     LogRecords.tags: None,
                 }
             )
+
+        log_record = LogRecords.query.filter_by(log_id=log_id).first()
+        if log_record:
+            log_record.residents = []
+            self.construct_residents(log_record, updated_log_record["residents"])
+
         updated_log_record = LogRecords.query.filter_by(log_id=log_id).update(
             {
                 LogRecords.employee_id: updated_log_record["employee_id"],
-                LogRecords.resident_id: updated_log_record["resident_id"],
                 LogRecords.flagged: updated_log_record["flagged"],
                 LogRecords.building_id: updated_log_record["building_id"],
                 LogRecords.note: updated_log_record["note"],

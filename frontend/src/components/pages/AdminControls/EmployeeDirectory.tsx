@@ -71,10 +71,10 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         </Flex>
 
-        <EmployeeDirectoryTable 
-          users={users} 
-          tableRef={tableRef} 
-          userPageNum={userPageNum} 
+        <EmployeeDirectoryTable
+          users={users}
+          tableRef={tableRef}
+          userPageNum={userPageNum}
           setUserPageNum={setUserPageNum}
           getRecords={getUsers}
           countUsers={countUsers}

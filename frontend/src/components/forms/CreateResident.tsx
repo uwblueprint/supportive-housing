@@ -28,26 +28,22 @@ import { Col, Row } from "react-bootstrap";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
+import { BuildingLabel } from "../../types/BuildingTypes";
 import { convertToString } from "../../helper/dateHelpers";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   countResidents: () => Promise<void>;
-}
-
-// TODO: Connect to Buidings table
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
+};
 
 const CreateResident = ({
   getRecords,
   setUserPageNum,
   countResidents,
 }: Props): React.ReactElement => {
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -106,8 +102,21 @@ const CreateResident = ({
     }
   };
 
+  const getBuildingsOptions = async () => {
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+  };
+
   const handleOpen = () => {
     setIsOpen(true);
+
+    getBuildingsOptions();
 
     // Reset the input states
     setInitials("");
@@ -223,7 +232,7 @@ const CreateResident = ({
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
+                      options={buildingOptions}
                       placeholder="Select building"
                       onChange={handleBuildingChange}
                       styles={selectStyle}
