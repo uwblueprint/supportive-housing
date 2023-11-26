@@ -16,7 +16,7 @@ const countLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
-  residentId = [],
+  residents = [],
   tags = [],
   flagged = false,
 }: CountLogRecordFilters): Promise<GetLogRecordCountResponse> => {
@@ -32,7 +32,7 @@ const countLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
-          residentId,
+          residents,
           tags,
           flagged,
         },
@@ -51,7 +51,7 @@ const filterLogRecords = async ({
   employeeId = [],
   attnTo = [],
   dateRange = [],
-  residentId = [],
+  residents = [],
   tags = [],
   flagged = false,
   returnAll = false,
@@ -70,7 +70,7 @@ const filterLogRecords = async ({
           employeeId,
           attnTo,
           dateRange,
-          residentId,
+          residents,
           tags,
           flagged,
         },
@@ -89,7 +89,7 @@ const filterLogRecords = async ({
 
 const createLog = async ({
   employeeId,
-  residentId,
+  residents,
   datetime,
   flagged,
   note,
@@ -106,7 +106,7 @@ const createLog = async ({
       "/log_records/",
       {
         employeeId,
-        residentId,
+        residents,
         datetime,
         flagged,
         note,
@@ -140,7 +140,7 @@ const deleteLogRecord = async (logId: number): Promise<boolean> => {
 const editLogRecord = async ({
   logId,
   employeeId,
-  residentId,
+  residents,
   datetime,
   flagged,
   note,
@@ -157,7 +157,7 @@ const editLogRecord = async ({
       `/log_records/${logId}`,
       {
         employeeId,
-        residentId,
+        residents,
         datetime,
         flagged,
         note,

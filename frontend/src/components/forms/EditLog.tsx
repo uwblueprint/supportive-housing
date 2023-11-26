@@ -35,6 +35,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { BuildingLabel } from "../../types/BuildingTypes";
 import { UserLabel } from "../../types/UserTypes";
+import { ResidentLabel } from "../../types/ResidentTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
 
@@ -117,7 +118,7 @@ const EditLog = ({
     }),
   );
   const [buildingId, setBuildingId] = useState<number>(-1);
-  const [resident, setResident] = useState(-1);
+  const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
@@ -164,13 +165,17 @@ const EditLog = ({
     setBuildingError(selectedOption === null);
   };
 
-  const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setResident(selectedOption.value);
-      setResidentError(false);
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
+    if (mutableSelectedResidents !== null) {
+      setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
     }
+    setResidentError(mutableSelectedResidents.length === 0);
+    
   };
 
   const handleTagsChange = (
@@ -208,10 +213,10 @@ const EditLog = ({
       }),
     );
     setBuildingId(logRecord.building.id);
-    const residentId = residentOptions.find(
-      (item) => item.label === logRecord.residentId,
-    )?.value;
-    setResident(residentId !== undefined ? residentId : -1);
+    const residentIds = residentOptions.filter(
+      (item) => logRecord.residents.includes(item.label),
+    ).map((item) => item.value);
+    setResidents(residentIds);
     setTags(logRecord.tags);
     setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
@@ -232,7 +237,7 @@ const EditLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
-    setResidentError(resident === -1);
+    setResidentError(residents.length === 0);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -241,7 +246,7 @@ const EditLog = ({
       date === null ||
       time === "" ||
       buildingId === -1 ||
-      resident === -1 ||
+      residents.length === 0 ||
       notes === ""
     ) {
       return;
@@ -250,7 +255,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residentId: resident,
+      residents,
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -352,15 +357,17 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                    <FormLabel>Resident</FormLabel>
+                  <FormLabel>Residents</FormLabel>
                     <Select
                       options={residentOptions}
-                      placeholder="Select Resident"
-                      onChange={handleResidentChange}
-                      styles={selectStyle}
-                      defaultValue={residentOptions.find(
-                        (item) => item.label === logRecord.residentId,
+                      isMulti
+                      closeMenuOnSelect={false}
+                      placeholder="Select Residents"
+                      onChange={handleResidentsChange}
+                      defaultValue={residentOptions.filter(
+                        (item) => logRecord.residents.includes(item.label),
                       )}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>

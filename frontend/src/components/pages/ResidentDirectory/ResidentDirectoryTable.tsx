@@ -110,14 +110,11 @@ const ResidentDirectoryTable = ({
         "Resident has been deleted successfully.",
         "success",
       );
-      const newUserPageNum = (
-        residents.length === 1
-          ? userPageNum - 1 
-          : userPageNum
-      );
-      countResidents()
-      getRecords(newUserPageNum)
-      setUserPageNum(newUserPageNum)
+      const newUserPageNum =
+        residents.length === 1 ? userPageNum - 1 : userPageNum;
+      countResidents();
+      getRecords(newUserPageNum);
+      setUserPageNum(newUserPageNum);
       setIsDeleteModalOpen(false);
     }
     setShowAlert(true);

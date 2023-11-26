@@ -14,6 +14,7 @@ def init_app(app):
     from .log_record_tags import LogRecordTag
     from .residents import Residents
     from .buildings import Buildings
+    from .log_record_residents import LogRecordResidents
 
     app.app_context().push()
     db.init_app(app)

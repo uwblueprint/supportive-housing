@@ -19,7 +19,7 @@ class TagsService(ITagsService):
 
     def get_tags(self):
         try:
-            tags_results = Tag.query.all()
+            tags_results = Tag.query.order_by(Tag.last_modified.desc()).all()
             tags_results = list(map(lambda tag: tag.to_dict(), tags_results))
             return {"tags": tags_results}
         except Exception as postgres_error:

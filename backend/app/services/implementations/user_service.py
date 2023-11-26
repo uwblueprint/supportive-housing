@@ -4,6 +4,9 @@ from ..interfaces.user_service import IUserService
 from ...models.user import User
 from ...models import db
 from ...resources.user_dto import UserDTO
+from ...utilities.exceptions.auth_exceptions import (
+  UserNotInvitedException, EmailAlreadyInUseException
+)
 
 
 class UserService(IUserService):
@@ -113,10 +116,11 @@ class UserService(IUserService):
     def get_users(self, return_all, page_number, results_per_page):
         try:
             if return_all:
-                users = User.query.all()
+                users = User.query.order_by(User.last_modified.desc()).all()
             else:
                 users = (
-                    User.query.limit(results_per_page)
+                    User.query.order_by(User.last_modified.desc())
+                    .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
                     .all()
                 )
@@ -146,7 +150,7 @@ class UserService(IUserService):
             user = User.query.filter_by(email=email).first()
 
             if not user:
-                raise Exception("user with email {email} not found".format(email))
+                raise UserNotInvitedException
 
             return user.user_status
         except Exception as e:
@@ -210,7 +214,11 @@ class UserService(IUserService):
         firebase_user = None
 
         try:
-            if self.get_user_status_by_email(user.email) == "Invited":
+            cur_user_status = self.get_user_status_by_email(user.email)
+            
+            if cur_user_status == "Active":
+                raise EmailAlreadyInUseException
+            if cur_user_status == "Invited":
                 if signup_method == "PASSWORD":
                     firebase_user = firebase_admin.auth.create_user(
                         email=user.email, password=user.password
