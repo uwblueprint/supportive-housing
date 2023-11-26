@@ -86,9 +86,10 @@ const LogRecordsTable = ({
   };
 
   const formatNote = (note: string) => {
+    const noteLimit = 150;
     if (note && note.length > 0) {
-      if (note.length > 150) {
-        return note.substring(0, 150).concat("...");
+      if (note.length > noteLimit) {
+        return note.substring(0, noteLimit).concat("...");
       }
       return note;
     }
