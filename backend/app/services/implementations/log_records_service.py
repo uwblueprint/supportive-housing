@@ -26,16 +26,16 @@ class LogRecordsService(ILogRecordsService):
     def add_record(self, log_record):
         new_log_record = log_record.copy()
 
-        tags = new_log_record["tags"]
         residents = new_log_record["residents"]
+        tags = new_log_record["tags"]
 
-        del new_log_record["tags"]
         del new_log_record["residents"]
+        del new_log_record["tags"]
 
         try:
             new_log_record = LogRecords(**new_log_record)
-            self.construct_tags(new_log_record, tags)
             self.construct_residents(new_log_record, residents)
+            self.construct_tags(new_log_record, tags)
 
             db.session.add(new_log_record)
             db.session.commit()
