@@ -29,7 +29,9 @@ import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import { UserLabel } from "../../../types/UserTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import ConfirmationModal from "../../common/ConfirmationModal";
 
 type Props = {
@@ -56,6 +58,8 @@ const LogRecordsTable = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [showAlert, setShowAlert] = useState(false);
+
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
 
   // Menu states
   const [deleteOpenMap, setDeleteOpenMap] = useState<{
@@ -100,6 +104,15 @@ const LogRecordsTable = ({
       setResidentOptions(residentLabels);
     }
 
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
       const userLabels: UserLabel[] = usersData.users
@@ -118,11 +131,8 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
-    const newUserPageNum = (
-      logRecords.length === 1
-        ? userPageNum - 1 
-        : userPageNum
-    );
+    const newUserPageNum =
+      logRecords.length === 1 ? userPageNum - 1 : userPageNum;
     countRecords();
     setShowAlert(true);
     setUserPageNum(newUserPageNum);
@@ -156,7 +166,7 @@ const LogRecordsTable = ({
               <Tr>
                 <Th>Date</Th>
                 <Th>Time</Th>
-                <Th>Resident</Th>
+                <Th>Residents</Th>
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
@@ -175,7 +185,9 @@ const LogRecordsTable = ({
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
-                      <Td width="5%">{record.residentId}</Td>
+                      <Td whiteSpace="normal" width="5%">
+                        {record.residents?.join("\n")}
+                      </Td>
                       <Td whiteSpace="normal" width="70%">
                         {record.note}
                       </Td>
@@ -223,6 +235,7 @@ const LogRecordsTable = ({
                       getRecords={getRecords}
                       countRecords={countRecords}
                       setUserPageNum={setUserPageNum}
+                      buildingOptions={buildingOptions}
                     />
 
                     <ConfirmationModal
