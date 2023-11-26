@@ -26,6 +26,7 @@ import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 
 import EditLog from "../../forms/EditLog";
+import ViewLog from "../../forms/ViewLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
@@ -68,6 +69,9 @@ const LogRecordsTable = ({
   const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>(
     {},
   );
+  const [viewOpenMap, setViewOpenMap] = useState<{ [key: number]: boolean }>(
+    {},
+  );
 
   // Dropdown option states
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
@@ -86,6 +90,14 @@ const LogRecordsTable = ({
     setEditOpenMap((prevEditOpenMap) => ({
       ...prevEditOpenMap,
       [logId]: !prevEditOpenMap[logId],
+    }));
+  };
+
+  // Handle view form toggle
+  const handleViewToggle = (logId: number) => {
+    setViewOpenMap((prevViewOpenMap) => ({
+      ...prevViewOpenMap,
+      [logId]: !prevViewOpenMap[logId],
     }));
   };
 
@@ -210,6 +222,11 @@ const LogRecordsTable = ({
                             />
                             <MenuList>
                               <MenuItem
+                                onClick={() => handleViewToggle(record.logId)}
+                              >
+                                View Log Record
+                              </MenuItem>
+                              <MenuItem
                                 onClick={() => handleEditToggle(record.logId)}
                               >
                                 Edit Log Record
@@ -235,6 +252,15 @@ const LogRecordsTable = ({
                       getRecords={getRecords}
                       countRecords={countRecords}
                       setUserPageNum={setUserPageNum}
+                      buildingOptions={buildingOptions}
+                    />
+
+                    <ViewLog
+                      logRecord={record}
+                      isOpen={viewOpenMap[record.logId]}
+                      toggleClose={() => handleViewToggle(record.logId)}
+                      employeeOptions={employeeOptions}
+                      residentOptions={residentOptions}
                       buildingOptions={buildingOptions}
                     />
 
