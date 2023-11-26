@@ -20,10 +20,8 @@ const Verification = (): React.ReactElement => {
   const handleVerification = async () => {
     if (authenticatedUser) {
       const authUser = authenticatedUser;
-      console.log(authUser.verified);
       authUser.verified = await authAPIClient.isVerified();
       setAuthenticatedUser(authUser);
-      console.log(authenticatedUser);
       
       if (authenticatedUser.verified === false) {
         newToast("Not Verified", "Please check your email for the verification email.", "error");

@@ -10,7 +10,7 @@ import {
   Text 
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -50,7 +50,6 @@ const Signup = ({
   const [passwordErrorStr, setPasswordErrorStr] = useState<string>("");
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const [isVerified, setIsVerified] = useState<boolean>(false);
   const history = useHistory();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,7 +132,6 @@ const Signup = ({
     }
   };
 
-
   const isCreateAccountBtnDisabled = () => 
     emailError || passwordError || email === '' || password === '' || firstName === '' || lastName === ''
 
@@ -142,10 +140,7 @@ const Signup = ({
   };
 
   if (authenticatedUser) {
-    if (isVerified) {
-      return <Redirect to={HOME_PAGE} />;
-    } 
-    return <Redirect to={VERIFICATION_PAGE} />;
+    return <Redirect to={HOME_PAGE} />;
   }
 
   if (toggle) {

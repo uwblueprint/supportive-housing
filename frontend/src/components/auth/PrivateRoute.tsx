@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import { LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 
@@ -15,6 +15,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   path,
 }: PrivateRouteProps) => {
   const { authenticatedUser } = useContext(AuthContext);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   if (authenticatedUser === null) {
     return (
@@ -23,7 +25,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   }
 
   if (authenticatedUser.verified === false) {
-    if (!window.location.pathname.endsWith("/verification")) {
+    if (!currentPath.endsWith("/verification")) {
       return (
         <Redirect to={VERIFICATION_PAGE} />
       )

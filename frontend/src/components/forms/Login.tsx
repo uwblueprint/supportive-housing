@@ -36,8 +36,7 @@ const Login = ({
   toggle,
   setToggle,
 }: CredentialsProps): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const { setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
