@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
 import { BuildingLabel } from "../../../types/BuildingTypes";
-import { Resident } from "../../../types/ResidentTypes";
+import { Resident, ResidentStatus } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
@@ -35,19 +35,43 @@ type Props = {
   countResidents: () => Promise<void>;
 };
 
+const getStatusColor = (status: string): string => {
+  let color = "";
+
+  switch (status) {
+    case ResidentStatus.CURRENT:
+      color = "green.400";
+      break;
+    case ResidentStatus.FUTURE:
+      color = "teal.400";
+      break;
+    case ResidentStatus.PAST:
+      color = "gray.300";
+      break;
+    default:
+      color = "black";
+  }
+
+  return color;
+};
+
 const getFormattedDatesAndStatus = (resident: Resident) => {
   const startDateObj = convertToDate(resident.dateJoined);
   const startDate = getFormattedDateAndTime(startDateObj, true);
 
   let endDate;
+  let status = ResidentStatus.CURRENT;
+  const currentDate = new Date();
   if (resident.dateLeft != null) {
     const endDateObj = convertToDate(resident.dateLeft);
     endDate = getFormattedDateAndTime(endDateObj, true);
+    if (endDateObj < currentDate) {
+      status = ResidentStatus.PAST;
+    }
   }
-  const status =
-    resident.dateJoined !== null && resident.dateLeft !== null
-      ? "Past"
-      : "Current";
+  if (currentDate < startDateObj) {
+    status = ResidentStatus.FUTURE;
+  }
   return {
     startDate,
     endDate,
@@ -67,7 +91,7 @@ const ResidentDirectoryTable = ({
   getRecords,
   countResidents,
 }: Props): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
   const newToast = CreateToast();
 
@@ -156,7 +180,18 @@ const ResidentDirectoryTable = ({
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
                   <Td width="20%">{resident.residentId!}</Td>
-                  <Td width="15%">{status}</Td>
+                  <Td width="15%"
+                    textStyle="user-status-label"
+                    textAlign="center"
+                  >
+                    <Box
+                      backgroundColor={getStatusColor(status)}
+                      borderRadius="40px"
+                      padding="6px 0px"
+                    >
+                      {status}
+                    </Box>
+                  </Td>
                   <Td width="20%">{resident.building.name}</Td>
                   <Td width="20%">{startDate.date}</Td>
                   <Td width="15%">{endDate ? endDate.date : ""}</Td>

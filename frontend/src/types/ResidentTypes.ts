@@ -34,3 +34,9 @@ export type CreateResidentParams = Omit<
 export type EditResidentParams = Omit<Resident, "residentId" | "building"> & {
   buildingId: number;
 };
+
+export enum ResidentStatus {
+  FUTURE = "Future",
+  PAST = "Past",
+  CURRENT = "Current",
+}
