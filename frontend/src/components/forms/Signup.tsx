@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { 
-  Box, 
-  Button, 
-  Flex, 
-  FormControl, 
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
   FormErrorMessage,
-  Input, 
-  Text 
+  Input,
+  Text
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
@@ -82,8 +82,10 @@ const Signup = ({
     }
   }
 
-  const onSignupClick = async () => {
-    setSignupClicked(true)
+  const onSignupClick = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setSignupClicked(true);
 
     if (!emailRegex.test(email)) {
       setEmailErrorStr("Please enter a valid email.")
@@ -96,7 +98,7 @@ const Signup = ({
       setPasswordError(true)
       return
     }
-    
+
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited !== "Not Invited") {
       if (isAuthErrorResponse(isInvited)) {
@@ -132,7 +134,7 @@ const Signup = ({
     }
   };
 
-  const isCreateAccountBtnDisabled = () => 
+  const isCreateAccountBtnDisabled = () =>
     emailError || passwordError || email === '' || password === '' || firstName === '' || lastName === ''
 
   const onLogInClick = () => {
@@ -143,17 +145,18 @@ const Signup = ({
     return <Redirect to={HOME_PAGE} />;
   }
 
-  if (toggle) {   
+  if (toggle) {
     return (
-      <Flex h="100vh">
-        <Box w="47%">
-          <Flex
-            h="100%"
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            gap="28px"
-          >
+      <form onSubmit={onSignupClick}>
+        <Flex h="100vh">
+          <Box w="47%">
+            <Flex
+              h="100%"
+              direction="column"
+              justifyContent="center"
+              alignItems="center"
+              gap="28px"
+            >
               <Box w="80%" textAlign="left">
                 <Text variant="login">
                   Sign Up
@@ -202,36 +205,37 @@ const Signup = ({
                 <Button
                   variant="login"
                   disabled={isCreateAccountBtnDisabled()}
+                  type="submit"
                   _hover={
                     email && password && firstName && lastName
                       ? {
-                          background: "teal.500",
-                          transition:
-                            "transition: background-color 0.5s ease !important",
-                        }
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
                       : {}
                   }
-                  onClick={onSignupClick}
                 >
                   Create Account
                 </Button>
               </Box>
-            <Box w="80%">
-              <Flex gap="10px">
-                <Text variant="loginSecondary" paddingRight="1.1vw">
-                  Already have an account?
+              <Box w="80%">
+                <Flex gap="10px">
+                  <Text variant="loginSecondary" paddingRight="1.1vw">
+                    Already have an account?
                 </Text>
-                <Text variant="loginTertiary" onClick={onLogInClick}>
-                  Log In Now
+                  <Text variant="loginTertiary" onClick={onLogInClick}>
+                    Log In Now
                 </Text>
-              </Flex>
-            </Box>
-          </Flex>
-        </Box>
-        <Box flex="1" bg="teal.400">
-          {/* Background */}
-        </Box>
-      </Flex>
+                </Flex>
+              </Box>
+            </Flex>
+          </Box>
+          <Box flex="1" bg="teal.400">
+            {/* Background */}
+          </Box>
+        </Flex>
+      </form>
     );
   }
   return <></>;

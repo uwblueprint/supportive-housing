@@ -69,7 +69,9 @@ const Login = ({
     setPasswordErrStr("");
   };
 
-  const onLogInClick = async () => {
+  const onLogInClick = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     setLoginClicked(true);
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited !== "Not Invited") {
@@ -104,70 +106,72 @@ const Login = ({
 
   if (toggle) {
     return (
-      <Flex>
-        <Box w="47%">
-          <Flex
-            height="100vh"
-            display="flex"
-            align="center"
-            justify="center"
-          >
-            <Flex width="80%" align="flex-start" direction="column" gap="28px">
-              <Text variant="login" paddingBottom="12px">
-                Log In
+      <form onSubmit={onLogInClick}>
+        <Flex>
+          <Box w="47%">
+            <Flex
+              height="100vh"
+              display="flex"
+              align="center"
+              justify="center"
+            >
+              <Flex width="80%" align="flex-start" direction="column" gap="28px">
+                <Text variant="login" paddingBottom="12px">
+                  Log In
               </Text>
-              <FormControl isRequired isInvalid={emailError}>
-                <Input
+                <FormControl isRequired isInvalid={emailError}>
+                  <Input
+                    variant="login"
+                    placeholder="Your email address"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                  <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+                </FormControl>
+                <FormControl isRequired isInvalid={passwordError}>
+                  <Input
+                    variant="login"
+                    type="password"
+                    placeholder="Your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                </FormControl>
+                <Button
                   variant="login"
-                  placeholder="Your email address"
-                  value={email}
-                  onChange={handleEmailChange}
-                />
-                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
-              </FormControl>
-              <FormControl isRequired isInvalid={passwordError}>
-                <Input
-                  variant="login"
-                  type="password"
-                  placeholder="Your password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                />
-                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
-              </FormControl>
-              <Button
-                variant="login"
-                disabled={email === "" || password === ""}
-                _hover={
-                  email && password
-                    ? {
+                  disabled={email === "" || password === ""}
+                  type="submit"
+                  _hover={
+                    email && password
+                      ? {
                         background: "teal.500",
                         transition:
                           "transition: background-color 0.5s ease !important",
                       }
-                    : {}
-                }
-                onClick={onLogInClick}
-              >
-                Log In
+                      : {}
+                  }
+                >
+                  Log In
               </Button>
-              <Box w="80%">
-                <Flex gap="10px">
-                  <Text variant="loginSecondary" paddingRight="17px">
-                    Not a member yet?
+                <Box w="80%">
+                  <Flex gap="10px">
+                    <Text variant="loginSecondary" paddingRight="17px">
+                      Not a member yet?
                   </Text>
-                  <Text variant="loginTertiary" onClick={onSignUpClick}>
-                    Sign Up Now
+                    <Text variant="loginTertiary" onClick={onSignUpClick}>
+                      Sign Up Now
                   </Text>
-                </Flex>
-              </Box>
+                  </Flex>
+                </Box>
+              </Flex>
             </Flex>
-          </Flex>
-        </Box>
-        <Box flex="1" bg="teal.400">
-          {/* Background */}
-        </Box>
-      </Flex>
+          </Box>
+          <Box flex="1" bg="teal.400">
+            {/* Background */}
+          </Box>
+        </Flex>
+      </form>
     );
   }
   return <></>;
