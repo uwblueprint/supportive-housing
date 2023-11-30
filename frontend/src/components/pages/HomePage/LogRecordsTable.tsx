@@ -259,6 +259,7 @@ const LogRecordsTable = ({
                       logRecord={record}
                       isOpen={viewOpenMap[record.logId]}
                       toggleClose={() => handleViewToggle(record.logId)}
+                      toggleEdit={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
                       buildingOptions={buildingOptions}

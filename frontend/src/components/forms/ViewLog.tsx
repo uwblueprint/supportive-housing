@@ -32,6 +32,7 @@ type Props = {
   logRecord: LogRecord;
   isOpen: boolean;
   toggleClose: () => void;
+  toggleEdit: () => void;
   employeeOptions: UserLabel[];
   residentOptions: UserLabel[];
   buildingOptions: BuildingLabel[];
@@ -53,6 +54,7 @@ const ViewLog = ({
   logRecord,
   isOpen,
   toggleClose,
+  toggleEdit,
   employeeOptions,
   residentOptions,
   buildingOptions,
@@ -88,6 +90,11 @@ const ViewLog = ({
     return dateObj.toISOString().slice(0, 10);
   }
 
+  const handleEdit = () => {
+    toggleClose();
+    setTimeout(toggleEdit, 400);
+  }
+
   useEffect(() => {
     if (isOpen) {
       initializeValues();
@@ -109,6 +116,7 @@ const ViewLog = ({
                     <FormLabel>Employee</FormLabel>
                     <Select
                       isDisabled
+                      components={{ DropdownIndicator:() => null }}
                       defaultValue={getCurUserSelectOption()}
                       styles={selectStyle}
                     />
@@ -159,6 +167,7 @@ const ViewLog = ({
                     <Select
                       isDisabled
                       isMulti
+                      components={{ DropdownIndicator: () => null, MultiValueRemove: () => null }}
                       defaultValue={residentOptions.filter(
                         (item) => logRecord.residents.includes(item.label),
                       )}
@@ -173,9 +182,9 @@ const ViewLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
                       isDisabled
                       isMulti
+                      components={{ DropdownIndicator:() => null }}
                       placeholder="No Tags"
                       styles={selectStyle}
                     />
@@ -196,6 +205,16 @@ const ViewLog = ({
                 </Col>
               </Row>
 
+              <Checkbox
+                isDisabled
+                colorScheme="gray"
+                style={{ paddingTop: "1rem" }}
+                marginBottom="16px"
+                defaultChecked={flagged}
+              >
+                <Text>Flag this Report</Text>
+              </Checkbox>
+
               <Row>
                 <Col>
                   <FormControl mt={4}>
@@ -209,16 +228,6 @@ const ViewLog = ({
                 </Col>
               </Row>
 
-              <Checkbox
-                isDisabled
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                marginBottom="16px"
-                defaultChecked={flagged}
-              >
-                <Text>Flag this Report</Text>
-              </Checkbox>
-
               <Divider />
 
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
@@ -229,7 +238,7 @@ const ViewLog = ({
                 >
                   Cancel
                 </Button>
-                <Button onClick={() => {}} variant="primary" type="submit">
+                <Button onClick={handleEdit} variant="primary" type="submit">
                   Edit
                 </Button>
               </Box>
