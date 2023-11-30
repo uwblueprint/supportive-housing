@@ -2,7 +2,6 @@
 export type Tag = {
   tagId: number;
   name: string;
-  status: TagStatus;
 };
 
 export type TagLabel = {
@@ -13,8 +12,3 @@ export type TagLabel = {
 export type GetTagsResponse = {
   tags: Tag[];
 } | null;
-
-export enum TagStatus {
-  ACTIVE = "Active",
-  DELETED = "Deleted",
-}

@@ -131,7 +131,6 @@ const LogRecordsTable = ({
     const tagsData = await TagAPIClient.getTags();
     if (tagsData && tagsData.tags.length !== 0) {
       const tagLabels: TagLabel[] = tagsData.tags
-        .filter((tag) => tag.status === "Active")
         .map((tag) => ({
           label: tag.name,
           value: tag.tagId,
