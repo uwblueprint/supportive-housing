@@ -3,6 +3,7 @@ from ..utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
 )
+from ..utilities.exceptions.auth_exceptions import EmailAlreadyInUseException
 
 from flask import Blueprint, current_app, jsonify, request
 from twilio.rest import Client
@@ -188,6 +189,9 @@ def register():
             **cookie_options,
         )
         return response, 200
+    except EmailAlreadyInUseException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

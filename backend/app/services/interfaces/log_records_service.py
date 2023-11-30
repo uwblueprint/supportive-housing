@@ -13,7 +13,7 @@ class ILogRecordsService(ABC):
 
         :param user_id: user id of the user adding the log record
         :type user_id: int
-        :param resident_id: resident's id
+        :param residents: list of resident ids
         :param flagged: checkbox if attention is needed
         :type flagged: boolean
         :param note: note that user inputs

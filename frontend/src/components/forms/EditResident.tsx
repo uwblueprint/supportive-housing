@@ -29,20 +29,15 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Card, Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
-
+import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
+import { BuildingLabel } from "../../types/BuildingTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
 
-// TODO: Connect to Buidings table
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
-
 type Props = {
+  buildingOptions: BuildingLabel[],
   resident: Resident;
   isOpen: boolean;
   userPageNum: number;
@@ -51,6 +46,7 @@ type Props = {
 };
 
 const EditResident = ({
+  buildingOptions,
   resident,
   isOpen,
   userPageNum,
@@ -60,7 +56,7 @@ const EditResident = ({
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState(-1);
   const [moveInDate, setMoveInDate] = useState(new Date());
-  const [buildingId, setBuildingId] = useState<number>(-1);
+  const [buildingId, setBuildingId] = useState<number>(resident.building.id);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
 
   const [initialsError, setInitialsError] = useState(false);
@@ -86,7 +82,7 @@ const EditResident = ({
         "Resident has been successfully updated",
         "success",
       );
-      getRecords(userPageNum)
+      getRecords(userPageNum);
     } else {
       newToast(
         "Error updating resident",
@@ -99,6 +95,7 @@ const EditResident = ({
   const clearMoveOutDate = () => {
     setMoveOutDate(undefined);
   };
+
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
@@ -247,8 +244,8 @@ const EditResident = ({
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
-                      defaultValue={BUILDINGS.find(
+                      options={buildingOptions}
+                      defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )}
                       onChange={handleBuildingChange}
