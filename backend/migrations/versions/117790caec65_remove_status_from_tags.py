@@ -1,4 +1,4 @@
-"""empty message
+"""remove status from tags
 
 Revision ID: 117790caec65
 Revises: 8b5132609f1f
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '117790caec65'
-down_revision = '8b5132609f1f'
+down_revision = '0dbe140cf6f5'
 branch_labels = None
 depends_on = None
 
