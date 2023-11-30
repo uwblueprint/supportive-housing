@@ -40,7 +40,7 @@ const Pagination = ({
   setResultsPerPage,
   getRecords,
 }: Props): React.ReactElement => {
-  const numPages = Math.ceil(numRecords / resultsPerPage);
+  const numPages = Math.ceil(Math.max(1, numRecords) / resultsPerPage);
 
   const handleNumberInputChange = (
     newUserPageNumString: string,
