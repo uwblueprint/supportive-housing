@@ -17,6 +17,7 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
+  Spinner,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
 
@@ -154,6 +155,14 @@ const LogRecordsTable = ({
 
   return (
     <>
+      <Spinner />
+      <Spinner
+        thickness="4px"
+        speed="0.65s"
+        emptyColor="gray.200"
+        color="blue.500"
+        size="xl"
+      />
       <Box>
         <TableContainer
           marginTop="12px"
