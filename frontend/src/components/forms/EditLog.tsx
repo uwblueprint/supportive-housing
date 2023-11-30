@@ -33,9 +33,10 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import { UserLabel } from "../../types/UserTypes";
 import { ResidentLabel } from "../../types/ResidentTypes";
+import { BuildingLabel } from "../../types/BuildingTypes";
+import { TagLabel } from "../../types/TagTypes";
+import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
 
@@ -45,7 +46,8 @@ type Props = {
   isOpen: boolean;
   toggleClose: () => void;
   employeeOptions: UserLabel[];
-  residentOptions: UserLabel[];
+  residentOptions: ResidentLabel[];
+  tagOptions: TagLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
@@ -102,6 +104,7 @@ const EditLog = ({
   toggleClose,
   employeeOptions,
   residentOptions,
+  tagOptions,
   getRecords,
   countRecords,
   setUserPageNum,
@@ -119,7 +122,7 @@ const EditLog = ({
   );
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<number[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
@@ -179,10 +182,14 @@ const EditLog = ({
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<{ label: string; value: string }>,
+    selectedTags: MultiValue<TagLabel>,
   ) => {
-    const newTagsList = selectedTags.map((tag) => tag.value);
-    setTags(newTagsList);
+    const mutableSelectedTags: TagLabel[] = Array.from(
+      selectedTags,
+    );
+    if (mutableSelectedTags !== null) {
+      setTags(mutableSelectedTags.map((tagLabel) => tagLabel.value));
+    }
   };
 
   const handleAttnToChange = (
@@ -217,7 +224,10 @@ const EditLog = ({
       (item) => logRecord.residents.includes(item.label),
     ).map((item) => item.value);
     setResidents(residentIds);
-    setTags(logRecord.tags);
+    const tagIds = tagOptions.filter(
+      (item) => logRecord.tags.includes(item.label),
+    ).map((item) => item.value);
+    setTags(tagIds);
     setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
@@ -379,14 +389,15 @@ const EditLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
-                      isDisabled
-                      options={TAGS}
+                      options={tagOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
                       onChange={handleTagsChange}
                       styles={selectStyle}
+                      defaultValue={tagOptions.filter(
+                        (item) => logRecord.tags.includes(item.label),
+                      )}
                     />
                   </FormControl>
                 </Col>
