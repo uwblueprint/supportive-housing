@@ -1,6 +1,5 @@
 from sqlalchemy import inspect
 from sqlalchemy.orm.properties import ColumnProperty
-from sqlalchemy.orm import backref
 
 from . import db
 
