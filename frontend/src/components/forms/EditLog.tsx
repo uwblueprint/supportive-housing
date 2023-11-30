@@ -33,6 +33,7 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { BuildingLabel } from "../../types/BuildingTypes";
 import { UserLabel } from "../../types/UserTypes";
 import { ResidentLabel } from "../../types/ResidentTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
@@ -48,6 +49,7 @@ type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  buildingOptions: BuildingLabel[];
 };
 
 type AlertData = {
@@ -58,13 +60,6 @@ type AlertData = {
 type AlertDataOptions = {
   [key: string]: AlertData;
 };
-
-// Ideally we should be storing this information in the database
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
@@ -110,6 +105,7 @@ const EditLog = ({
   getRecords,
   countRecords,
   setUserPageNum,
+  buildingOptions,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
@@ -348,11 +344,11 @@ const EditLog = ({
                   <FormControl isRequired isInvalid={buildingError} mt={4}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
+                      options={buildingOptions}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={BUILDINGS.find(
+                      defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )}
                     />

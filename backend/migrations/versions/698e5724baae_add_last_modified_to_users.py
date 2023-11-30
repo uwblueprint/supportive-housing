@@ -1,4 +1,4 @@
-"""last_modified_column
+"""add last_modified to users
 
 Revision ID: 698e5724baae
 Revises: 8b5132609f1f
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "698e5724baae"
-down_revision = "0ea2257f1dc6"
+down_revision = "0c76a8fe211d"
 branch_labels = None
 depends_on = None
 

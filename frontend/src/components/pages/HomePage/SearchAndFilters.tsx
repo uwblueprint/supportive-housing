@@ -25,6 +25,7 @@ import { Tag } from "../../../types/TagsTypes";
 import { User, UserLabel } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import CreateToast from "../../common/Toasts";
 
 type Props = {
@@ -45,12 +46,6 @@ type Props = {
   setBuildings: React.Dispatch<React.SetStateAction<BuildingLabel[]>>;
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
-// Ideally we should be storing this information in the database
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 // Replace this with the tags from the db once the API and table are made
 const TAGS: Tag[] = [
@@ -77,10 +72,22 @@ const SearchAndFilters = ({
   setBuildings,
   setFlagged,
 }: Props): React.ReactElement => {
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [userLabels, setUserLabels] = useState<UserLabel[]>();
   const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
 
   const dateChangeToast = CreateToast();
+
+  const getBuildingsOptions = async () => {
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+  };
 
   const getUsers = async () => {
     const data = await UserAPIClient.getUsers({ returnAll: true });
@@ -179,6 +186,7 @@ const SearchAndFilters = ({
   };
 
   useEffect(() => {
+    getBuildingsOptions();
     getUsers();
     getResidents();
   }, []);
@@ -306,7 +314,7 @@ const SearchAndFilters = ({
                       <FormLabel fontWeight="700">Building</FormLabel>
                       <Select
                         value={buildings}
-                        options={BUILDINGS}
+                        options={buildingOptions}
                         isMulti
                         placeholder="Building No."
                         onChange={handleBuildingChange}
