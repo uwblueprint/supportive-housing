@@ -15,6 +15,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import { Resident } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
@@ -25,6 +26,7 @@ import ConfirmationModal from "../../common/ConfirmationModal";
 import { convertToDate } from "../../../helper/dateHelpers";
 
 type Props = {
+  buildingOptions: BuildingLabel[];
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
   userPageNum: number;
@@ -57,6 +59,7 @@ const DELETE_CONFIRMATION_MESSAGE =
   "This is a permanent action. Residents can only be deleted if there are no log records associated with them.";
 
 const ResidentDirectoryTable = ({
+  buildingOptions,
   residents,
   tableRef,
   userPageNum,
@@ -185,6 +188,7 @@ const ResidentDirectoryTable = ({
         </Table>
         {editingResident && (
           <EditResident
+            buildingOptions={buildingOptions}
             resident={editingResident}
             isOpen={isEditModalOpen}
             userPageNum={userPageNum}

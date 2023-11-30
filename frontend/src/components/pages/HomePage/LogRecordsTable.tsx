@@ -29,7 +29,9 @@ import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import { UserLabel } from "../../../types/UserTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import ConfirmationModal from "../../common/ConfirmationModal";
 
 type Props = {
@@ -56,6 +58,8 @@ const LogRecordsTable = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [showAlert, setShowAlert] = useState(false);
+
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
 
   // Menu states
   const [deleteOpenMap, setDeleteOpenMap] = useState<{
@@ -98,6 +102,15 @@ const LogRecordsTable = ({
         value: r.id!,
       }));
       setResidentOptions(residentLabels);
+    }
+
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
     }
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
@@ -222,6 +235,7 @@ const LogRecordsTable = ({
                       getRecords={getRecords}
                       countRecords={countRecords}
                       setUserPageNum={setUserPageNum}
+                      buildingOptions={buildingOptions}
                     />
 
                     <ConfirmationModal

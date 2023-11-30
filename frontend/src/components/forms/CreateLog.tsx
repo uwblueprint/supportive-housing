@@ -34,6 +34,8 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
+import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
+import { BuildingLabel } from "../../types/BuildingTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
@@ -56,11 +58,6 @@ type AlertDataOptions = {
 };
 
 // Ideally we should be storing this information in the database
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
@@ -128,6 +125,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
   const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
 
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -210,6 +208,15 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
   // fetch resident + employee data for log creation
   const getLogEntryOptions = async () => {
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+
     const residentsData = await ResidentAPIClient.getResidents({
       returnAll: true,
     });
@@ -390,7 +397,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                   <FormControl isRequired isInvalid={buildingError} mt={4}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
+                      options={buildingOptions}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
