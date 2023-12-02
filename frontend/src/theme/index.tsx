@@ -3,7 +3,7 @@ import { extendTheme } from "@chakra-ui/react";
 import colors from "./colors";
 import fontStyles from "./fontStyles";
 import Button from "./common/buttonStyles";
-import Spinner from "./common/spinnerStyles"
+import Spinner from "./common/spinnerStyles";
 import Table from "./common/tableStyles";
 import Text from "./common/textStyles";
 import { Input, Textarea } from "./forms/inputStyles";

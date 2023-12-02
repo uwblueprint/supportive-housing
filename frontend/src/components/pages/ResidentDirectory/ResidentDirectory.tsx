@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 import ResidentDirectoryTable from "./ResidentDirectoryTable";
 import NavigationBar from "../../common/NavigationBar";
 import { Resident } from "../../../types/ResidentTypes";
@@ -10,9 +10,9 @@ import Pagination from "../../common/Pagination";
 import CreateResident from "../../forms/CreateResident";
 
 const ResidentDirectory = (): React.ReactElement => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([])
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [residents, setResidents] = useState<Resident[]>([]);
-  const [numResidents, setNumResidents] = useState<number>(0);
+  const [numResidents, setNumResidents] = useState<number>(-1);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
@@ -22,7 +22,7 @@ const ResidentDirectory = (): React.ReactElement => {
   const getBuildingOptions = async () => {
     const data = await BuildingAPIClient.getBuildings();
 
-    if (data){
+    if (data) {
       const buildingLabels: BuildingLabel[] = data.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
@@ -85,24 +85,44 @@ const ResidentDirectory = (): React.ReactElement => {
             countResidents={countResidents}
           />
         </Flex>
-        <ResidentDirectoryTable 
-          buildingOptions={buildingOptions}
-          residents={residents} 
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          getRecords={getResidents}
-          countResidents={countResidents}
-        />
-        <Pagination
-          numRecords={numResidents}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getResidents}
-        />
+
+        {numResidents < 0 ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            {numResidents === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <ResidentDirectoryTable
+                  buildingOptions={buildingOptions}
+                  residents={residents}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  getRecords={getResidents}
+                  countResidents={countResidents}
+                />
+                <Pagination
+                  numRecords={numResidents}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getResidents}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

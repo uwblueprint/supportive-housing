@@ -17,7 +17,6 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
-  Spinner,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
 
@@ -131,11 +130,10 @@ const LogRecordsTable = ({
 
     const tagsData = await TagAPIClient.getTags();
     if (tagsData && tagsData.tags.length !== 0) {
-      const tagLabels: TagLabel[] = tagsData.tags
-        .map((tag) => ({
-          label: tag.name,
-          value: tag.tagId,
-        }));
+      const tagLabels: TagLabel[] = tagsData.tags.map((tag) => ({
+        label: tag.name,
+        value: tag.tagId,
+      }));
       setTagOptions(tagLabels);
     }
   };
@@ -169,14 +167,6 @@ const LogRecordsTable = ({
 
   return (
     <>
-      <Spinner />
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="blue.500"
-        size="xl"
-      />
       <Box>
         <TableContainer
           marginTop="12px"

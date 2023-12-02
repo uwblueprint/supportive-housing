@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -37,7 +37,7 @@ const HomePage = (): React.ReactElement => {
 
   // Record/page state
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
-  const [numRecords, setNumRecords] = useState<number>(0);
+  const [numRecords, setNumRecords] = useState<number>(-1);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
@@ -182,23 +182,42 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable
-          logRecords={logRecords}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          getRecords={getLogRecords}
-          countRecords={countLogRecords}
-          setUserPageNum={setUserPageNum}
-        />
-        <Pagination
-          numRecords={numRecords}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getLogRecords}
-        />
+        {numRecords < 0 ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            {numRecords === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <LogRecordsTable
+                  logRecords={logRecords}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  getRecords={getLogRecords}
+                  countRecords={countLogRecords}
+                  setUserPageNum={setUserPageNum}
+                />
+                <Pagination
+                  numRecords={numRecords}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getLogRecords}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );
