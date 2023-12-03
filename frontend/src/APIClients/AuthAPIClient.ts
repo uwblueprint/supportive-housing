@@ -139,6 +139,22 @@ const resetPassword = async (email: string | undefined): Promise<boolean> => {
   }
 };
 
+const isVerified = async (): Promise<boolean> => {
+  const bearerToken = `Bearer ${getLocalStorageObjProperty(
+    AUTHENTICATED_USER_KEY,
+    "accessToken",
+  )}`;
+  try {
+    const { data } = await baseAPIClient.get(
+      `/auth/verify`,
+      { headers: { Authorization: bearerToken } },
+    );
+    return data.verified === true;
+  } catch (error) {
+    return false;
+  }
+};
+
 // for testing only, refresh does not need to be exposed in the client
 const refresh = async (): Promise<boolean> => {
   try {
@@ -165,5 +181,6 @@ export default {
   twoFaWithGoogle,
   register,
   resetPassword,
+  isVerified,
   refresh,
 };

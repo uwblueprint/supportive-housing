@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, SIGNUP_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthTokenResponse } from "../../types/AuthTypes";
 import { AuthErrorResponse } from "../../types/ErrorTypes"
@@ -37,7 +37,7 @@ const Login = ({
   toggle,
   setToggle,
 }: CredentialsProps): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -99,10 +99,6 @@ const Login = ({
     history.push(SIGNUP_PAGE);
   };
 
-  if (authenticatedUser) {
-    return <Redirect to={HOME_PAGE} />;
-  }
-
   if (toggle) {
     return (
       <Flex>
@@ -142,10 +138,10 @@ const Login = ({
                 _hover={
                   email && password
                     ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
+                      background: "teal.500",
+                      transition:
+                        "transition: background-color 0.5s ease !important",
+                    }
                     : {}
                 }
                 onClick={onLogInClick}
