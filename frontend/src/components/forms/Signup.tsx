@@ -14,7 +14,7 @@ import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { isAuthErrorResponse } from "../../helper/authError";
+import { isAuthErrorResponse } from "../../helper/error";
 
 type SignupProps = {
   email: string;

@@ -7,13 +7,13 @@ import { AxiosError } from "axios";
 import { 
   getAuthErrMessage
 } 
-from "../helper/authError";
+from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
   AuthenticatedUser,
   AuthTokenResponse,
-  ErrorResponse,
 } from "../types/AuthTypes";
+import { AuthErrorResponse } from "../types/ErrorTypes"
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -23,7 +23,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<AuthTokenResponse | ErrorResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -102,7 +102,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<AuthTokenResponse | ErrorResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
