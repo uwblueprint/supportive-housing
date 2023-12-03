@@ -227,5 +227,6 @@ class AuthService(IAuthService):
             )
             firebase_user = firebase_admin.auth.get_user(decoded_id_token["uid"])
             return firebase_user.email_verified
-        except:
+        except Exception as e:
+            print(e)
             return False

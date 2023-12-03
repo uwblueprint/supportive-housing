@@ -18,7 +18,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const location = useLocation();
   const currentPath = location.pathname;
 
-  if (authenticatedUser === null) {
+  if (!authenticatedUser) {
     return (
       <Redirect to={LOGIN_PAGE} />
     )
