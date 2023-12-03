@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
 
+import { PassThrough } from "stream";
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
 import { User } from "../../../types/UserTypes";
 import SignInLogsTable from "./SignInLogsTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+
 
 
 const SignInLogsPage = (): React.ReactElement => {
@@ -18,6 +20,7 @@ const SignInLogsPage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
+  // Change to get filter logs !!
   const getUsers = async (pageNumber: number) => {
     const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
@@ -34,10 +37,20 @@ const SignInLogsPage = (): React.ReactElement => {
     }
   };
 
-  const countUsers = async () => {
-    const data = await UserAPIClient.countUsers();
-    setNumUsers(data ? data.numResults : 0);
+  // Dummy data
+  type MyDictionary = {
+    [key: string]: any;
   };
+
+  // Create an array of dictionaries
+  const signInLogs: MyDictionary[] = [
+    { id: 1, date: "2023-12-03T13:30:00.000Z" , name: "Aathithan Chandrabalan" },
+    { id: 1, date: "2023-12-01T12:30:00.000Z" , name: "Phil Dunphry" },
+    { id: 1, date: "2023-12-04T15:11:00.000Z" , name: "Connor Bechthold" },
+    { id: 1, date: "2023-12-05T19:45:00.000Z" , name: "Bob Cob" },
+    { id: 1, date: "2023-12-05T21:23:00.000Z" , name: "Jessica P" },
+    
+  ];
 
   return (
     <Box>
@@ -55,6 +68,7 @@ const SignInLogsPage = (): React.ReactElement => {
         </Flex>
 
         <SignInLogsTable
+          signInLogs={signInLogs}
           tableRef={tableRef}
         />
         <Pagination

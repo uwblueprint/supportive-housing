@@ -2,18 +2,24 @@ import React, { RefObject } from "react";
 import {
   Box,
   Table,
+  Tbody,
   TableContainer,
   Th,
+  Td,
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { User } from "../../../types/UserTypes";
+import { User } from "../../../types/UserTypes"; // Needs to be changed !!
+
+import getFormattedDateAndTime from "../../../utils/DateUtils";
 
 type Props = {
+  signInLogs: { id: number; date: string; name: string }[];
   tableRef: RefObject<HTMLDivElement>;
 };
 
 const SignInLogsTable = ({
+  signInLogs,
   tableRef,
 }: Props): React.ReactElement => {
   
@@ -29,13 +35,27 @@ const SignInLogsTable = ({
           <Thead>
             <Tr>
               <Th>Employee Name</Th>
-              <Th> </Th>
               <Th>Date</Th>
-              <Th> </Th>
-              <Th> </Th>
               <Th>Time</Th>
             </Tr>
           </Thead>
+          <Tbody>
+            {signInLogs.map((log) => {
+              const dateObj = new Date(log.date);
+              
+              const { date, time } = getFormattedDateAndTime(dateObj);
+
+              return (
+                
+                <Tr key={log.id} style={{ verticalAlign: "middle" }}>
+                  <Td width="33%">{`${log.name}`}</Td>
+                  <Td width="33%">{date}</Td>
+                  <Td width="5%">{time}</Td>
+                </Tr>
+              );
+            })}
+
+          </Tbody>
 
           
         </Table>
