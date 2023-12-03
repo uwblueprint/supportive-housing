@@ -45,7 +45,7 @@ const SignInLogsPage = (): React.ReactElement => {
   // Create an array of dictionaries
   const signInLogs: MyDictionary[] = [
     { id: 1, date: "2023-12-03T13:30:00.000Z" , name: "Aathithan Chandrabalan" },
-    { id: 1, date: "2023-12-01T12:30:00.000Z" , name: "Phil Dunphry" },
+    { id: 1, date: "2023-12-01T12:30:00.000Z" , name: "Phil Dunphy" },
     { id: 1, date: "2023-12-04T15:11:00.000Z" , name: "Connor Bechthold" },
     { id: 1, date: "2023-12-05T19:45:00.000Z" , name: "Bob Cob" },
     { id: 1, date: "2023-12-05T21:23:00.000Z" , name: "Jessica P" },
