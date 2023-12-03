@@ -10,7 +10,7 @@ import SearchAndFilters from "./SearchAndFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import { BuildingLabel } from "../../../types/BuildingTypes";
 import { ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag } from "../../../types/TagsTypes";
+import { TagLabel } from "../../../types/TagTypes";
 import { UserLabel } from "../../../types/UserTypes";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 
@@ -30,7 +30,7 @@ const HomePage = (): React.ReactElement => {
   const [employees, setEmployees] = useState<UserLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<TagLabel[]>([]);
   const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
   const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
   const [flagged, setFlagged] = useState(false);

@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { ErrorResponse } from "../types/AuthTypes";
+import { AuthErrorResponse } from "../types/ErrorTypes";
 
 const inviteUser = async (
   email: string,
@@ -26,7 +26,7 @@ const inviteUser = async (
   }
 };
 
-const getUserStatus = async (email: string): Promise<string | ErrorResponse> => {
+const getUserStatus = async (email: string): Promise<string | AuthErrorResponse> => {
   try {
     if (email === "") {
       return "";

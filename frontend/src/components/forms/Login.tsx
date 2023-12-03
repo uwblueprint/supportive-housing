@@ -13,9 +13,10 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthErrorResponse } from "../../types/ErrorTypes"
 import commonApiClient from "../../APIClients/CommonAPIClient";
-import { isAuthErrorResponse } from "../../helper/authError";
+import { isAuthErrorResponse } from "../../helper/error";
 
 type CredentialsProps = {
   email: string;
@@ -75,7 +76,7 @@ const Login = ({
     if (isInvited !== "Not Invited") {
       const loginResponse:
         | AuthTokenResponse
-        | ErrorResponse = await authAPIClient.login(email, password);
+        | AuthErrorResponse = await authAPIClient.login(email, password);
       if (isAuthErrorResponse(loginResponse)) {
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
