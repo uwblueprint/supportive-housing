@@ -35,6 +35,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
+import { isResidentErrorResponse } from "../../helper/error"
 
 type Props = {
   buildingOptions: BuildingLabel[],
@@ -76,13 +77,21 @@ const EditResident = ({
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
-    if (res != null) {
+    if (isResidentErrorResponse(res)) {
+      newToast(
+        "Error updating resident",
+        res.errMessage,
+        "error"
+      )
+    }
+    else if (res !== null && res) {
       newToast(
         "Resident updated",
         "Resident has been successfully updated",
         "success",
       );
       getRecords(userPageNum);
+      toggleClose();
     } else {
       newToast(
         "Error updating resident",
@@ -176,7 +185,6 @@ const EditResident = ({
     setRoomNumberError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
-    toggleClose();
   };
 
   useEffect(() => {
