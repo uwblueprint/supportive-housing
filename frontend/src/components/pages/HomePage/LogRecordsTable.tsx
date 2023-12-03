@@ -50,6 +50,28 @@ const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
 const DELETE_CONFIRMATION_MESSAGE =
   "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from your system.";
 
+const formatNote = (note: string) => {
+  const NOTE_LIMIT = 150;
+  if (note.length > NOTE_LIMIT) {
+    return note.substring(0, NOTE_LIMIT).concat("...");
+  }
+  return note;
+};
+
+const formatList = (strArr: string[]) => {
+  const strLength = strArr?.length;
+  if (strLength === 1) {
+    return strArr[0];
+  }
+  if (strLength === 2) {
+    return strArr?.join(", ");
+  }
+  if (strLength > 2) {
+    return `${strArr?.slice(0, 2).join(", ")}, ...`;
+  }
+  return "";
+};
+
 const LogRecordsTable = ({
   logRecords,
   tableRef,
@@ -183,6 +205,7 @@ const LogRecordsTable = ({
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
+                <Th>Tags</Th>
                 <Th> </Th>
               </Tr>
             </Thead>
@@ -199,42 +222,45 @@ const LogRecordsTable = ({
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
                       <Td whiteSpace="normal" width="5%">
-                        {record.residents?.join("\n")}
+                        {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="70%">
-                        {record.note}
+                        {formatNote(record.note)}
                       </Td>
-                      <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
-                      <Td width="5%">
+                      <Td width="2.5%">{`${record.employee.firstName}`}</Td>
+                      <Td width="2.5%">
                         {record.attnTo
-                          ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
+                          ? `${record.attnTo.firstName}`
                           : ""}
+                      </Td>
+                      <Td width="5%">
+                        {formatList(record.tags)}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
-                              aria-label="Options"
-                              icon={<VscKebabVertical />}
-                              w="36px"
-                              variant="ghost"
-                            />
-                            <MenuList>
-                              <MenuItem
-                                onClick={() => handleEditToggle(record.logId)}
-                              >
-                                Edit Log Record
+                            <Menu>
+                              <MenuButton
+                                as={IconButton}
+                                aria-label="Options"
+                                icon={<VscKebabVertical />}
+                                w="36px"
+                                variant="ghost"
+                              />
+                              <MenuList>
+                                <MenuItem
+                                  onClick={() => handleEditToggle(record.logId)}
+                                >
+                                  Edit Log Record
                               </MenuItem>
-                              <MenuItem
-                                onClick={() => handleDeleteToggle(record.logId)}
-                              >
-                                Delete Log Record
+                                <MenuItem
+                                  onClick={() => handleDeleteToggle(record.logId)}
+                                >
+                                  Delete Log Record
                               </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        )}
+                              </MenuList>
+                            </Menu>
+                          )}
                       </Td>
                     </Tr>
 

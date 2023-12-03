@@ -221,7 +221,7 @@ const EditLog = ({
     );
     setBuildingId(logRecord.building.id);
     const residentIds = residentOptions.filter(
-      (item) => logRecord.residents.includes(item.label),
+      (item) => logRecord.residents && logRecord.residents.includes(item.label),
     ).map((item) => item.value);
     setResidents(residentIds);
     const tagIds = tagOptions.filter(
