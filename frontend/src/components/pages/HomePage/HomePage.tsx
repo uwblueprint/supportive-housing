@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -42,6 +42,9 @@ const HomePage = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
+  // Table Loaded
+  const [tableLoaded, setTableLoaded] = useState(false)
+
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -61,6 +64,8 @@ const HomePage = (): React.ReactElement => {
     const residentsIds = residents.map((resident) => resident.value);
     const dateRange = [formatDate(startDate), formatDate(endDate)];
     const tagsValues = tags.map((tag) => tag.value);
+
+    setTableLoaded(false)
 
     const data = await LogRecordAPIClient.filterLogRecords({
       buildingId: buildingIds,
@@ -85,6 +90,8 @@ const HomePage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true)
   };
 
   const countLogRecords = async () => {
@@ -182,23 +189,42 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable
-          logRecords={logRecords}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          getRecords={getLogRecords}
-          countRecords={countLogRecords}
-          setUserPageNum={setUserPageNum}
-        />
-        <Pagination
-          numRecords={numRecords}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getLogRecords}
-        />
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            {numRecords === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <LogRecordsTable
+                  logRecords={logRecords}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  getRecords={getLogRecords}
+                  countRecords={countLogRecords}
+                  setUserPageNum={setUserPageNum}
+                />
+                <Pagination
+                  numRecords={numRecords}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getLogRecords}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

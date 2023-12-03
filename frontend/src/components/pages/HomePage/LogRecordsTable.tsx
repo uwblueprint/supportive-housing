@@ -130,11 +130,10 @@ const LogRecordsTable = ({
 
     const tagsData = await TagAPIClient.getTags();
     if (tagsData && tagsData.tags.length !== 0) {
-      const tagLabels: TagLabel[] = tagsData.tags
-        .map((tag) => ({
-          label: tag.name,
-          value: tag.tagId,
-        }));
+      const tagLabels: TagLabel[] = tagsData.tags.map((tag) => ({
+        label: tag.name,
+        value: tag.tagId,
+      }));
       setTagOptions(tagLabels);
     }
   };

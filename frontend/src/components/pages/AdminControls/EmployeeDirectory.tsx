@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Spinner } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
@@ -18,10 +18,13 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
+  const [tableLoaded, setTableLoaded] = useState(false)
+
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
+    setTableLoaded(false)
     const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
     // Reset table scroll
@@ -35,6 +38,8 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+    
+    setTableLoaded(true)
   };
 
   const countUsers = async () => {
@@ -71,23 +76,34 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         </Flex>
 
-        <EmployeeDirectoryTable
-          users={users}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          getRecords={getUsers}
-          countUsers={countUsers}
-        />
-        <Pagination
-          numRecords={numUsers}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getUsers}
-        />
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            <EmployeeDirectoryTable
+              users={users}
+              tableRef={tableRef}
+              userPageNum={userPageNum}
+              setUserPageNum={setUserPageNum}
+              getRecords={getUsers}
+              countUsers={countUsers}
+            />
+            <Pagination
+              numRecords={numUsers}
+              pageNum={pageNum}
+              userPageNum={userPageNum}
+              setUserPageNum={setUserPageNum}
+              resultsPerPage={resultsPerPage}
+              setResultsPerPage={setResultsPerPage}
+              getRecords={getUsers}
+            />
+          </Box>
+        )}
       </Box>
     </Box>
   );
