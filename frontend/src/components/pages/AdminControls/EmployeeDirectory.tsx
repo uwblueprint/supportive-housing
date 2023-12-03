@@ -13,15 +13,18 @@ import CreateEmployee from "../../forms/CreateEmployee";
 
 const EmployeeDirectoryPage = (): React.ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
-  const [numUsers, setNumUsers] = useState<number>(-1);
+  const [numUsers, setNumUsers] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
+
+  const [tableLoaded, setTableLoaded] = useState(false)
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
+    setTableLoaded(false)
     const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
     // Reset table scroll
@@ -35,6 +38,8 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+    
+    setTableLoaded(true)
   };
 
   const countUsers = async () => {
@@ -71,7 +76,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         </Flex>
 
-        {numUsers < 0 ? (
+        {!tableLoaded ? (
           <Spinner
             thickness="4px"
             speed="0.65s"

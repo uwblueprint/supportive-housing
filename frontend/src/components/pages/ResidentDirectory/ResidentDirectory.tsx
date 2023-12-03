@@ -12,10 +12,12 @@ import CreateResident from "../../forms/CreateResident";
 const ResidentDirectory = (): React.ReactElement => {
   const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [residents, setResidents] = useState<Resident[]>([]);
-  const [numResidents, setNumResidents] = useState<number>(-1);
+  const [numResidents, setNumResidents] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
+
+  const [tableLoaded, setTableLoaded] = useState(false)
 
   const tableRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,7 @@ const ResidentDirectory = (): React.ReactElement => {
   };
 
   const getResidents = async (pageNumber: number) => {
+    setTableLoaded(false)
     const data = await ResidentAPIClient.getResidents({
       returnAll: false,
       pageNumber,
@@ -48,6 +51,7 @@ const ResidentDirectory = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+    setTableLoaded(true)
   };
 
   const countResidents = async () => {
@@ -86,7 +90,7 @@ const ResidentDirectory = (): React.ReactElement => {
           />
         </Flex>
 
-        {numResidents < 0 ? (
+        {!tableLoaded ? (
           <Spinner
             thickness="4px"
             speed="0.65s"

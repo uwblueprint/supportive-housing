@@ -37,10 +37,13 @@ const HomePage = (): React.ReactElement => {
 
   // Record/page state
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
-  const [numRecords, setNumRecords] = useState<number>(-1);
+  const [numRecords, setNumRecords] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
+
+  // Table Loaded
+  const [tableLoaded, setTableLoaded] = useState(false)
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
@@ -61,6 +64,8 @@ const HomePage = (): React.ReactElement => {
     const residentsIds = residents.map((resident) => resident.value);
     const dateRange = [formatDate(startDate), formatDate(endDate)];
     const tagsValues = tags.map((tag) => tag.value);
+
+    setTableLoaded(false)
 
     const data = await LogRecordAPIClient.filterLogRecords({
       buildingId: buildingIds,
@@ -85,6 +90,8 @@ const HomePage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true)
   };
 
   const countLogRecords = async () => {
@@ -182,7 +189,7 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        {numRecords < 0 ? (
+        {!tableLoaded ? (
           <Spinner
             thickness="4px"
             speed="0.65s"
