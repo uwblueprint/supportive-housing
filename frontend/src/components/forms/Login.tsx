@@ -13,9 +13,10 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthErrorResponse } from "../../types/ErrorTypes"
 import commonApiClient from "../../APIClients/CommonAPIClient";
-import { isAuthErrorResponse } from "../../helper/authError";
+import { isAuthErrorResponse } from "../../helper/error";
 
 type CredentialsProps = {
   email: string;
@@ -75,7 +76,7 @@ const Login = ({
     if (isInvited !== "Not Invited") {
       const loginResponse:
         | AuthTokenResponse
-        | ErrorResponse = await authAPIClient.login(email, password);
+        | AuthErrorResponse = await authAPIClient.login(email, password);
       if (isAuthErrorResponse(loginResponse)) {
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
@@ -103,18 +104,16 @@ const Login = ({
   }
 
   if (toggle) {
-    // Lock scroll
-    document.body.style.overflow = "hidden";
     return (
-      <Flex h="100vh">
+      <Flex>
         <Box w="47%">
           <Flex
-            marginTop="270px"
+            height="100vh"
             display="flex"
             align="center"
             justify="center"
           >
-            <Flex width="76%" align="flex-start" direction="column" gap="28px">
+            <Flex width="80%" align="flex-start" direction="column" gap="28px">
               <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
@@ -153,14 +152,16 @@ const Login = ({
               >
                 Log In
               </Button>
-              <Flex paddingTop="29px" alignContent="center">
-                <Text variant="loginSecondary" paddingRight="17px">
-                  Not a member yet?
-                </Text>
-                <Text variant="loginTertiary" onClick={onSignUpClick}>
-                  Sign Up Now
-                </Text>
-              </Flex>
+              <Box w="80%">
+                <Flex gap="10px">
+                  <Text variant="loginSecondary" paddingRight="17px">
+                    Not a member yet?
+                  </Text>
+                  <Text variant="loginTertiary" onClick={onSignUpClick}>
+                    Sign Up Now
+                  </Text>
+                </Flex>
+              </Box>
             </Flex>
           </Flex>
         </Box>

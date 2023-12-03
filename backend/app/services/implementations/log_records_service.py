@@ -25,8 +25,9 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record.copy()
+
         residents = new_log_record["residents"]
-        tag_names = new_log_record["tags"]
+        tags = new_log_record["tags"]
 
         del new_log_record["residents"]
         del new_log_record["tags"]
@@ -34,7 +35,7 @@ class LogRecordsService(ILogRecordsService):
         try:
             new_log_record = LogRecords(**new_log_record)
             self.construct_residents(new_log_record, residents)
-            self.construct_tags(new_log_record, tag_names)
+            self.construct_tags(new_log_record, tags)
 
             db.session.add(new_log_record)
             db.session.commit()
@@ -51,12 +52,13 @@ class LogRecordsService(ILogRecordsService):
                 raise Exception(f"Resident with id {resident_id} does not exist")
             log_record.residents.append(resident)
 
-    def construct_tags(self, log_record, tag_names):
-        for tag_name in tag_names:
-            tag = Tag.query.filter_by(name=tag_name).first()
+    def construct_tags(self, log_record, tags):
+        tags = list(set(tags))
+        for tag_id in tags:
+            tag = Tag.query.filter_by(tag_id=tag_id).first()
 
             if not tag:
-                raise Exception(f"Tag with name {tag_name} does not exist")
+                raise Exception(f"Tag with id {tag_id} does not exist")
             log_record.tags.append(tag)
 
     def to_json_list(self, logs):
@@ -146,12 +148,12 @@ class LogRecordsService(ILogRecordsService):
         return sql
 
     def filter_by_tags(self, tags):
-        if len(tags) >= 1:
-            sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
+        if type(tags) == list:
+            sql_statement = f"\n'{tags[0]}'=ANY (tag_ids)"
             for i in range(1, len(tags)):
-                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
+                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_ids)"
             return sql_statement
-        return f"\n'{tags}'=ANY (tag_names)"
+        return f"\n'{tags}'=ANY (tag_ids)"
 
     def filter_by_flagged(self, flagged):
         print(flagged)
@@ -192,7 +194,7 @@ class LogRecordsService(ILogRecordsService):
 
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
-                    (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
+                    (SELECT logs.log_id, ARRAY_AGG(tags.tag_id) AS tag_ids, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
                     JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \

@@ -9,7 +9,6 @@ class Tag(db.Model):
 
     tag_id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String, unique=True, nullable=False)
-    status = db.Column(db.Enum("Deleted", "Active", name="status"), nullable=False)
     last_modified = db.Column(
         db.DateTime, server_default=db.func.now(), onupdate=db.func.now(), nullable=False
     )
