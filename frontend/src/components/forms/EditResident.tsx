@@ -91,6 +91,7 @@ const EditResident = ({
         "success",
       );
       getRecords(userPageNum);
+      toggleClose();
     } else {
       newToast(
         "Error updating resident",
@@ -184,7 +185,6 @@ const EditResident = ({
     setRoomNumberError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
-    toggleClose();
   };
 
   useEffect(() => {
