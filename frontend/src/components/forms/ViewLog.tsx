@@ -26,6 +26,7 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import selectStyle from "../../theme/forms/selectStyles";
 import { BuildingLabel } from "../../types/BuildingTypes";
 import { UserLabel } from "../../types/UserTypes";
+import { TagLabel } from "../../types/TagTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 
 type Props = {
@@ -36,6 +37,7 @@ type Props = {
   employeeOptions: UserLabel[];
   residentOptions: UserLabel[];
   buildingOptions: BuildingLabel[];
+  tagOptions: TagLabel[];
 };
 
 // Helper to get the currently logged in user
@@ -58,6 +60,7 @@ const ViewLog = ({
   employeeOptions,
   residentOptions,
   buildingOptions,
+  tagOptions,
 }: Props) => {
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
@@ -154,7 +157,7 @@ const ViewLog = ({
                     <FormLabel>Building</FormLabel>
                     <Input
                       isDisabled
-                      styles={selectStyle}
+                      style={selectStyle}
                       defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )?.label}
@@ -184,8 +187,11 @@ const ViewLog = ({
                     <Select
                       isDisabled
                       isMulti
-                      components={{ DropdownIndicator:() => null }}
+                      components={{ DropdownIndicator: () => null, MultiValueRemove: () => null }}
                       placeholder="No Tags"
+                      defaultValue={tagOptions.filter(
+                        (item) => logRecord.tags.includes(item.label),
+                      )}
                       styles={selectStyle}
                     />
                   </FormControl>
@@ -199,7 +205,7 @@ const ViewLog = ({
                       defaultValue={employeeOptions.find(
                         (item) => item.value === logRecord.attnTo?.id,
                       )?.label}
-                      styles={selectStyle}
+                      style={selectStyle}
                     />
                   </FormControl>
                 </Col>

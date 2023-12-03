@@ -278,6 +278,7 @@ const LogRecordsTable = ({
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
                       buildingOptions={buildingOptions}
+                      tagOptions={tagOptions}
                     />
 
                     <ConfirmationModal
