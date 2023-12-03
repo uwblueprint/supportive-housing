@@ -180,8 +180,8 @@ const ResidentDirectoryTable = ({
               // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
-                  <Td width="20%">{resident.residentId!}</Td>
-                  <Td width="15%"
+                  <Td width="10%">{resident.residentId!}</Td>
+                  <Td width="25%"
                     textStyle="user-status-label"
                     textAlign="center"
                   >
@@ -189,6 +189,7 @@ const ResidentDirectoryTable = ({
                       backgroundColor={getStatusColor(status)}
                       borderRadius="40px"
                       padding="6px 0px"
+                      marginX="20%"
                     >
                       {status}
                     </Box>
