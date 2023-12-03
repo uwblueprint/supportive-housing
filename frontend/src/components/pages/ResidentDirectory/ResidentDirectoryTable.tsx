@@ -62,6 +62,7 @@ const getFormattedDatesAndStatus = (resident: Resident) => {
   let endDate;
   let status = ResidentStatus.CURRENT;
   const currentDate = new Date();
+  currentDate.setHours(0,0,0,0);
   if (resident.dateLeft != null) {
     const endDateObj = convertToDate(resident.dateLeft);
     endDate = getFormattedDateAndTime(endDateObj, true);
@@ -164,7 +165,7 @@ const ResidentDirectoryTable = ({
           <Thead>
             <Tr>
               <Th>Resident</Th>
-              <Th>Status</Th>
+              <Th textAlign="center">Status</Th>
               <Th>Building</Th>
               <Th>Residency Start Date</Th>
               <Th>Residency End Date</Th>
