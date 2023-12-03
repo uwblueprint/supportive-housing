@@ -6,8 +6,8 @@ import {
   CountResidentsResponse,
   CreateResidentParams,
   EditResidentParams,
-  ErrorResponse,
 } from "../types/ResidentTypes";
+import { ResidentErrorResponse } from "../types/ErrorTypes"
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -61,7 +61,7 @@ const createResident = async ({
   roomNum,
   dateJoined,
   buildingId,
-}: CreateResidentParams): Promise<boolean | ErrorResponse> => {
+}: CreateResidentParams): Promise<boolean | ResidentErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -111,7 +111,7 @@ const editResident = async ({
   dateJoined,
   buildingId,
   dateLeft,
-}: EditResidentParams): Promise<boolean | ErrorResponse> => {
+}: EditResidentParams): Promise<boolean | ResidentErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

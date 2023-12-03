@@ -34,7 +34,3 @@ export type CreateResidentParams = Omit<
 export type EditResidentParams = Omit<Resident, "residentId" | "building"> & {
   buildingId: number;
 };
-
-export type ErrorResponse = {
-  errMessage: string;
-}

@@ -35,7 +35,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-import isResidentErrorResponse from '../../helper/residentError'
+import { isResidentErrorResponse } from "../../helper/error"
 
 type Props = {
   buildingOptions: BuildingLabel[],

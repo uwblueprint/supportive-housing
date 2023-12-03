@@ -32,7 +32,7 @@ import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { BuildingLabel } from "../../types/BuildingTypes";
 import { convertToString } from "../../helper/dateHelpers";
-import isResidentErrorResponse from "../../helper/residentError";
+import { isResidentErrorResponse } from "../../helper/error"
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -82,6 +82,7 @@ const CreateResident = ({
       countResidents();
       setUserPageNum(1);
       setShowAlert(true)
+      setIsOpen(false);
     }
   };
 
@@ -169,7 +170,6 @@ const CreateResident = ({
     }
 
     addResident();
-    setIsOpen(false);
   };
 
   // Timer to remove alert
