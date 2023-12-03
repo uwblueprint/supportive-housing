@@ -31,6 +31,7 @@ import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import TagAPIClient from "../../APIClients/TagAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
@@ -39,7 +40,8 @@ import { BuildingLabel } from "../../types/BuildingTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { UserLabel } from "../../types/UserTypes";
-import { ResidentLabel } from "../../types/ResidentTypes";
+import { Resident, ResidentLabel } from "../../types/ResidentTypes";
+import { TagLabel } from "../../types/TagTypes";
 import combineDateTime from "../../helper/combineDateTime";
 
 type Props = {
@@ -118,14 +120,15 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   );
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<number[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<ResidentLabel[]>([]);
   const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<TagLabel[]>([]);
 
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -184,10 +187,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<{ label: string; value: string }>,
+    selectedTags: MultiValue<TagLabel>,
   ) => {
-    const newTagsList = selectedTags.map((tag) => tag.value);
-    setTags(newTagsList);
+    const mutableSelectedTags: TagLabel[] = Array.from(
+      selectedTags,
+    );
+    if (mutableSelectedTags !== null) {
+      setTags(mutableSelectedTags.map((tagLabel) => tagLabel.value));
+    }
   };
 
   const handleAttnToChange = (
@@ -206,7 +213,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setNotesError(inputValue === "");
   };
 
-  // fetch resident + employee data for log creation
+  // fetch resident + employee + tag data for log creation
   const getLogEntryOptions = async () => {
     const buildingsData = await BuildingAPIClient.getBuildings();
 
@@ -238,6 +245,16 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
           value: user.id,
         }));
       setEmployeeOptions(userLabels);
+    }
+
+    const tagsData = await TagAPIClient.getTags();
+    if (tagsData && tagsData.tags.length !== 0) {
+      const tagLabels: TagLabel[] = tagsData.tags
+        .map((tag) => ({
+          label: tag.name,
+          value: tag.tagId,
+        }));
+      setTagOptions(tagLabels);
     }
   };
 
@@ -426,9 +443,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
-                      isDisabled
-                      options={TAGS}
+                      options={tagOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"

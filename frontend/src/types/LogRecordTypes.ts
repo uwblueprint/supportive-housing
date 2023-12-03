@@ -46,7 +46,7 @@ export type CountLogRecordFilters = {
   attnTo?: number[];
   dateRange?: string[];
   residents?: number[];
-  tags?: string[];
+  tags?: number[];
   flagged?: boolean;
 };
 
@@ -56,7 +56,7 @@ export type CreateLogRecordParams = {
   datetime: Date;
   flagged: boolean;
   note: string;
-  tags: string[];
+  tags: number[];
   buildingId: number;
   attnTo?: number;
 };
@@ -68,7 +68,7 @@ export type EditLogRecordParams = {
   datetime: Date;
   flagged: boolean;
   note: string;
-  tags: string[];
+  tags: number[];
   buildingId: number;
   attnTo?: number;
 };
