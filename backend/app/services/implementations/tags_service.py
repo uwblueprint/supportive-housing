@@ -29,9 +29,9 @@ class TagsService(ITagsService):
     def delete_tag(self, tag_id):
         tags_to_delete = Tag.query.filter_by(tag_id=tag_id).first()
         if not tags_to_delete:
-           raise Exception(
-               "Log record with id {log_id} not found".format(log_id=log_id)
-               )
+            raise Exception(
+                "Log record with id {log_id} not found".format(log_id=log_id)
+            )
         tags_to_delete.log_records = []
         db.session.delete(tags_to_delete)
         db.session.commit()
