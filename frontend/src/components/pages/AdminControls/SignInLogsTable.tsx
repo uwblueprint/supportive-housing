@@ -9,12 +9,11 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { User } from "../../../types/UserTypes"; // Needs to be changed !!
-
 import getFormattedDateAndTime from "../../../utils/DateUtils";
+import { SignInLog } from "../../../types/SignInLogsTypes";
 
 type Props = {
-  signInLogs: { id: number; date: string; name: string }[];
+  signInLogs: SignInLog[];
   tableRef: RefObject<HTMLDivElement>;
 };
 
@@ -46,7 +45,6 @@ const SignInLogsTable = ({
               const { date, time } = getFormattedDateAndTime(dateObj);
 
               return (
-                
                 <Tr key={log.id} style={{ verticalAlign: "middle" }}>
                   <Td width="33%">{`${log.name}`}</Td>
                   <Td width="33%">{date}</Td>
@@ -54,10 +52,7 @@ const SignInLogsTable = ({
                 </Tr>
               );
             })}
-
           </Tbody>
-
-          
         </Table>
       </TableContainer>
     </Box>

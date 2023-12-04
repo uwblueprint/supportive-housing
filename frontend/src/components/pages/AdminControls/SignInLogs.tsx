@@ -1,14 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Flex } from "@chakra-ui/react";
-
-import { PassThrough } from "stream";
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
 import { User } from "../../../types/UserTypes";
 import SignInLogsTable from "./SignInLogsTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
-
-
+import { SignInLog } from "../../../types/SignInLogsTypes";
 
 const SignInLogsPage = (): React.ReactElement => {
   const [users, setUsers] = useState<User[]>([]);
@@ -37,19 +34,13 @@ const SignInLogsPage = (): React.ReactElement => {
     }
   };
 
-  // Dummy data
-  type MyDictionary = {
-    [key: string]: any;
-  };
-
   // Create an array of dictionaries
-  const signInLogs: MyDictionary[] = [
+  const signInLogs: SignInLog[] = [
     { id: 1, date: "2023-12-03T13:30:00.000Z" , name: "Aathithan Chandrabalan" },
     { id: 1, date: "2023-12-01T12:30:00.000Z" , name: "Phil Dunphy" },
     { id: 1, date: "2023-12-04T15:11:00.000Z" , name: "Connor Bechthold" },
     { id: 1, date: "2023-12-05T19:45:00.000Z" , name: "Bob Cob" },
     { id: 1, date: "2023-12-05T21:23:00.000Z" , name: "Jessica P" },
-    
   ];
 
   return (
