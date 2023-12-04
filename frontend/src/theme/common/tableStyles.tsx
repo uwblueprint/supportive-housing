@@ -17,7 +17,6 @@ const Table: ComponentStyleConfig = {
       thead: {
         position: "sticky",
         top: 0,
-        zIndex: 1,
       },
     },
   },

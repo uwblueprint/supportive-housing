@@ -202,7 +202,7 @@ const SearchAndFilters = ({
   }, []);
 
   return (
-    <Card style={{ textAlign: "left", zIndex: 9999 }}>
+    <Card style={{ textAlign: "left" }}>
       <Box padding="8px 16px 20px">
         <Text fontSize="12px" fontWeight="700" color="#6D8788" align="left">
           FILTER BY
