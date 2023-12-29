@@ -29,7 +29,7 @@ type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   countUsers: () => Promise<void>;
-}
+};
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
 const CreateEmployee = ({

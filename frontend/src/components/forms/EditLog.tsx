@@ -33,6 +33,9 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import { ResidentLabel } from "../../types/ResidentTypes";
+import { BuildingLabel } from "../../types/BuildingTypes";
+import { TagLabel } from "../../types/TagTypes";
 import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
@@ -43,10 +46,12 @@ type Props = {
   isOpen: boolean;
   toggleClose: () => void;
   employeeOptions: UserLabel[];
-  residentOptions: UserLabel[];
+  residentOptions: ResidentLabel[];
+  tagOptions: TagLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  buildingOptions: BuildingLabel[];
 };
 
 type AlertData = {
@@ -57,13 +62,6 @@ type AlertData = {
 type AlertDataOptions = {
   [key: string]: AlertData;
 };
-
-// Ideally we should be storing this information in the database
-const BUILDINGS = [
-  { label: "144", value: 1 },
-  { label: "362", value: 2 },
-  { label: "402", value: 3 },
-];
 
 const ALERT_DATA: AlertDataOptions = {
   DEFAULT: {
@@ -106,9 +104,11 @@ const EditLog = ({
   toggleClose,
   employeeOptions,
   residentOptions,
+  tagOptions,
   getRecords,
   countRecords,
   setUserPageNum,
+  buildingOptions,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
@@ -121,8 +121,8 @@ const EditLog = ({
     }),
   );
   const [buildingId, setBuildingId] = useState<number>(-1);
-  const [resident, setResident] = useState(-1);
-  const [tags, setTags] = useState<string[]>([]);
+  const [residents, setResidents] = useState<number[]>([]);
+  const [tags, setTags] = useState<number[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
@@ -168,20 +168,28 @@ const EditLog = ({
     setBuildingError(selectedOption === null);
   };
 
-  const handleResidentChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleResidentsChange = (
+    selectedResidents: MultiValue<ResidentLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setResident(selectedOption.value);
-      setResidentError(false);
+    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+      selectedResidents,
+    );
+    if (mutableSelectedResidents !== null) {
+      setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
     }
+    setResidentError(mutableSelectedResidents.length === 0);
+    
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<{ label: string; value: string }>,
+    selectedTags: MultiValue<TagLabel>,
   ) => {
-    const newTagsList = selectedTags.map((tag) => tag.value);
-    setTags(newTagsList);
+    const mutableSelectedTags: TagLabel[] = Array.from(
+      selectedTags,
+    );
+    if (mutableSelectedTags !== null) {
+      setTags(mutableSelectedTags.map((tagLabel) => tagLabel.value));
+    }
   };
 
   const handleAttnToChange = (
@@ -212,11 +220,14 @@ const EditLog = ({
       }),
     );
     setBuildingId(logRecord.building.id);
-    const residentId = residentOptions.find(
-      (item) => item.label === logRecord.residentId,
-    )?.value;
-    setResident(residentId !== undefined ? residentId : -1);
-    setTags(logRecord.tags);
+    const residentIds = residentOptions.filter(
+      (item) => logRecord.residents && logRecord.residents.includes(item.label),
+    ).map((item) => item.value);
+    setResidents(residentIds);
+    const tagIds = tagOptions.filter(
+      (item) => logRecord.tags.includes(item.label),
+    ).map((item) => item.value);
+    setTags(tagIds);
     setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
@@ -236,7 +247,7 @@ const EditLog = ({
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
-    setResidentError(resident === -1);
+    setResidentError(residents.length === 0);
     setNotesError(notes === "");
 
     // If any required fields are empty, prevent form submission
@@ -245,7 +256,7 @@ const EditLog = ({
       date === null ||
       time === "" ||
       buildingId === -1 ||
-      resident === -1 ||
+      residents.length === 0 ||
       notes === ""
     ) {
       return;
@@ -254,7 +265,7 @@ const EditLog = ({
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
       employeeId: employee.value,
-      residentId: resident,
+      residents,
       datetime: combineDateTime(date, time),
       flagged,
       note: notes,
@@ -343,11 +354,11 @@ const EditLog = ({
                   <FormControl isRequired isInvalid={buildingError} mt={4}>
                     <FormLabel>Building</FormLabel>
                     <Select
-                      options={BUILDINGS}
+                      options={buildingOptions}
                       placeholder="Building No."
                       onChange={handleBuildingChange}
                       styles={selectStyle}
-                      defaultValue={BUILDINGS.find(
+                      defaultValue={buildingOptions.find(
                         (item) => item.value === buildingId,
                       )}
                     />
@@ -356,15 +367,17 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                    <FormLabel>Resident</FormLabel>
+                  <FormLabel>Residents</FormLabel>
                     <Select
                       options={residentOptions}
-                      placeholder="Select Resident"
-                      onChange={handleResidentChange}
-                      styles={selectStyle}
-                      defaultValue={residentOptions.find(
-                        (item) => item.label === logRecord.residentId,
+                      isMulti
+                      closeMenuOnSelect={false}
+                      placeholder="Select Residents"
+                      onChange={handleResidentsChange}
+                      defaultValue={residentOptions.filter(
+                        (item) => logRecord.residents && logRecord.residents.includes(item.label),
                       )}
+                      styles={selectStyle}
                     />
                     <FormErrorMessage>Resident is required.</FormErrorMessage>
                   </FormControl>
@@ -376,14 +389,15 @@ const EditLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
-                      isDisabled
-                      options={TAGS}
+                      options={tagOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
                       onChange={handleTagsChange}
                       styles={selectStyle}
+                      defaultValue={tagOptions.filter(
+                        (item) => logRecord.tags.includes(item.label),
+                      )}
                     />
                   </FormControl>
                 </Col>

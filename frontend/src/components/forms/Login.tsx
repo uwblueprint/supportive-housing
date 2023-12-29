@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,10 +11,12 @@ import {
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import { HOME_PAGE, SIGNUP_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { ErrorResponse, AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthTokenResponse } from "../../types/AuthTypes";
+import { AuthErrorResponse } from "../../types/ErrorTypes"
 import commonApiClient from "../../APIClients/CommonAPIClient";
+import { isAuthErrorResponse } from "../../helper/error";
 
 type CredentialsProps = {
   email: string;
@@ -26,12 +28,6 @@ type CredentialsProps = {
   setToggle: (toggle: boolean) => void;
 };
 
-const isLoginErrorResponse = (
-  res: AuthTokenResponse | ErrorResponse,
-): res is ErrorResponse => {
-  return res !== null && "errCode" in res;
-};
-
 const Login = ({
   email,
   setEmail,
@@ -41,7 +37,7 @@ const Login = ({
   toggle,
   setToggle,
 }: CredentialsProps): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -77,11 +73,11 @@ const Login = ({
   const onLogInClick = async () => {
     setLoginClicked(true);
     const isInvited = await commonApiClient.isUserInvited(email);
-    if (isInvited) {
+    if (isInvited !== "Not Invited") {
       const loginResponse:
         | AuthTokenResponse
-        | ErrorResponse = await authAPIClient.login(email, password);
-      if (isLoginErrorResponse(loginResponse)) {
+        | AuthErrorResponse = await authAPIClient.login(email, password);
+      if (isAuthErrorResponse(loginResponse)) {
         setPasswordError(true);
         setPasswordErrStr(loginResponse.errMessage);
       } else if (loginResponse) {
@@ -103,23 +99,17 @@ const Login = ({
     history.push(SIGNUP_PAGE);
   };
 
-  if (authenticatedUser) {
-    return <Redirect to={HOME_PAGE} />;
-  }
-
   if (toggle) {
-    // Lock scroll
-    document.body.style.overflow = "hidden";
     return (
-      <Flex h="100vh">
+      <Flex>
         <Box w="47%">
           <Flex
-            marginTop="270px"
+            height="100vh"
             display="flex"
             align="center"
             justify="center"
           >
-            <Flex width="76%" align="flex-start" direction="column" gap="28px">
+            <Flex width="80%" align="flex-start" direction="column" gap="28px">
               <Text variant="login" paddingBottom="12px">
                 Log In
               </Text>
@@ -148,24 +138,26 @@ const Login = ({
                 _hover={
                   email && password
                     ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
+                      background: "teal.500",
+                      transition:
+                        "transition: background-color 0.5s ease !important",
+                    }
                     : {}
                 }
                 onClick={onLogInClick}
               >
                 Log In
               </Button>
-              <Flex paddingTop="29px" alignContent="center">
-                <Text variant="loginSecondary" paddingRight="17px">
-                  Not a member yet?
-                </Text>
-                <Text variant="loginTertiary" onClick={onSignUpClick}>
-                  Sign Up Now
-                </Text>
-              </Flex>
+              <Box w="80%">
+                <Flex gap="10px">
+                  <Text variant="loginSecondary" paddingRight="17px">
+                    Not a member yet?
+                  </Text>
+                  <Text variant="loginTertiary" onClick={onSignUpClick}>
+                    Sign Up Now
+                  </Text>
+                </Flex>
+              </Box>
             </Flex>
           </Flex>
         </Box>

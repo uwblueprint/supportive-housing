@@ -65,3 +65,18 @@ def update_tag(tag_id):
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/", methods=["POST"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+def create_tag():
+    """
+    Create a tag
+    """
+    tag = request.json
+    try:
+        created_tag = tags_service.create_tag(tag)
+        return jsonify(created_tag), 201
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500

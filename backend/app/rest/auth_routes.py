@@ -3,6 +3,7 @@ from ..utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
 )
+from ..utilities.exceptions.auth_exceptions import EmailAlreadyInUseException
 
 from flask import Blueprint, current_app, jsonify, request
 from twilio.rest import Client
@@ -10,6 +11,7 @@ from twilio.rest import Client
 from ..middlewares.auth import (
     require_authorization_by_user_id,
     require_authorization_by_email,
+    get_access_token,
 )
 from ..middlewares.validate import validate_request
 from ..resources.create_user_dto import CreateUserDTO
@@ -72,6 +74,7 @@ def login():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
 
         sign_in_logs_service.create_sign_in_log(auth_dto.id)
@@ -127,6 +130,9 @@ def two_fa():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
+
+        auth_service.send_email_verification_link(request.json["email"])
+
         response = jsonify(
             {
                 "access_token": auth_dto.access_token,
@@ -135,6 +141,7 @@ def two_fa():
                 "last_name": auth_dto.last_name,
                 "email": auth_dto.email,
                 "role": auth_dto.role,
+                "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
             }
         )
         response.set_cookie(
@@ -164,13 +171,13 @@ def register():
             request.json["email"], request.json["password"]
         )
 
-        auth_service.send_email_verification_link(request.json["email"])
-
         response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
+        
+        auth_service.send_email_verification_link(request.json["email"])
 
         response["auth_user"] = {
             "access_token": auth_dto.access_token,
@@ -179,6 +186,7 @@ def register():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
 
         response = jsonify(response)
@@ -188,6 +196,9 @@ def register():
             **cookie_options,
         )
         return response, 200
+    except EmailAlreadyInUseException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -236,6 +247,18 @@ def reset_password(email):
     try:
         auth_service.reset_password(email)
         return "", 204
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+@blueprint.route("/verify", methods=["GET"], strict_slashes=False)
+def is_verified():
+    """
+    Checks if a user with a specified email is verified. 
+    """
+    try:
+        access_token = get_access_token(request)
+        return jsonify({"verified": auth_service.is_authorized_by_token(access_token)}), 200
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

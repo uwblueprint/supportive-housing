@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
-import { Route, Redirect } from "react-router-dom";
-
+import React, { useContext, useState, useEffect } from "react";
+import { Route, Redirect, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
-import { LOGIN_PAGE } from "../../constants/Routes";
+import { LOGIN_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
 
 type PrivateRouteProps = {
   component: React.FC;
@@ -16,12 +15,26 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   path,
 }: PrivateRouteProps) => {
   const { authenticatedUser } = useContext(AuthContext);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  return authenticatedUser ? (
+  if (!authenticatedUser) {
+    return (
+      <Redirect to={LOGIN_PAGE} />
+    )
+  }
+
+  if (authenticatedUser.verified === false) {
+    if (!currentPath.endsWith("/verification")) {
+      return (
+        <Redirect to={VERIFICATION_PAGE} />
+      )
+    }
+  }
+
+  return (
     <Route path={path} exact={exact} component={component} />
-  ) : (
-    <Redirect to={LOGIN_PAGE} />
-  );
+  )
 };
 
 export default PrivateRoute;

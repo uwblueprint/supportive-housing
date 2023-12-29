@@ -4,13 +4,16 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
-import getLoginErrMessage from "../helper/authErrorMessage";
+import { 
+  getAuthErrMessage
+} 
+from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
   AuthenticatedUser,
   AuthTokenResponse,
-  ErrorResponse,
 } from "../types/AuthTypes";
+import { AuthErrorResponse } from "../types/ErrorTypes"
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -20,7 +23,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<AuthTokenResponse | ErrorResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -33,7 +36,7 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getLoginErrMessage(axiosErr.response),
+        errMessage: getAuthErrMessage(axiosErr.response, 'LOGIN'),
       };
     }
     return {
@@ -99,7 +102,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<AuthTokenResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
@@ -108,6 +111,13 @@ const register = async (
     );
     return data;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errCode: axiosErr.response.status,
+        errMessage: getAuthErrMessage(axiosErr.response, 'SIGNUP'),
+      };
+    }
     return null;
   }
 };
@@ -124,6 +134,22 @@ const resetPassword = async (email: string | undefined): Promise<boolean> => {
       { headers: { Authorization: bearerToken } },
     );
     return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const isVerified = async (): Promise<boolean> => {
+  const bearerToken = `Bearer ${getLocalStorageObjProperty(
+    AUTHENTICATED_USER_KEY,
+    "accessToken",
+  )}`;
+  try {
+    const { data } = await baseAPIClient.get(
+      `/auth/verify`,
+      { headers: { Authorization: bearerToken } },
+    );
+    return data.verified === true;
   } catch (error) {
     return false;
   }
@@ -155,5 +181,6 @@ export default {
   twoFaWithGoogle,
   register,
   resetPassword,
+  isVerified,
   refresh,
 };

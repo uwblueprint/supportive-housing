@@ -7,11 +7,9 @@ import { ChakraProvider } from "@chakra-ui/react";
 import LoginPage from "./components/pages/LoginPage";
 import SignupPage from "./components/pages/SignupPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
-import CreatePage from "./components/pages/CreatePage";
-import DisplayPage from "./components/pages/DisplayPage";
+import Verification from "./components/auth/Verification";
 import HomePage from "./components/pages/HomePage/HomePage";
 import NotFound from "./components/pages/NotFound";
-import UpdatePage from "./components/pages/UpdatePage";
 import * as Routes from "./constants/Routes";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import AuthContext from "./contexts/AuthContext";
@@ -21,14 +19,13 @@ import SampleContext, {
 } from "./contexts/SampleContext";
 import sampleContextReducer from "./reducers/SampleContextReducer";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
-import EditTeamInfoPage from "./components/pages/EditTeamPage";
-import HooksDemo from "./components/pages/HooksDemo";
 import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
 
 import customTheme from "./theme";
 import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
+import SignInLogsPage from "./components/pages/AdminControls/SignInLogs";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -63,6 +60,11 @@ const App = (): React.ReactElement => {
                 <Route exact path={Routes.SIGNUP_PAGE} component={SignupPage} />
                 <PrivateRoute
                   exact
+                  path={Routes.VERIFICATION_PAGE}
+                  component={Verification}
+                />
+                <PrivateRoute
+                  exact
                   path={Routes.HOME_PAGE}
                   component={HomePage}
                 />
@@ -75,6 +77,11 @@ const App = (): React.ReactElement => {
                   exact
                   path={Routes.EMPLOYEE_DIRECTORY_PAGE}
                   component={EmployeeDirectoryPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.SIGN_IN_LOGS_PAGE}
+                  component={SignInLogsPage}
                 />
 
                 <Route exact path="*" component={NotFound} />

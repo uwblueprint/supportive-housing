@@ -1,11 +1,20 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import { 
+  Box, 
+  Button, 
+  Flex, 
+  FormControl, 
+  FormErrorMessage,
+  Input, 
+  Text 
+} from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import { isAuthErrorResponse } from "../../helper/error";
 
 type SignupProps = {
   email: string;
@@ -20,6 +29,8 @@ type SignupProps = {
   setToggle: (toggle: boolean) => void;
 };
 
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const Signup = ({
   email,
   setEmail,
@@ -32,37 +43,97 @@ const Signup = ({
   toggle,
   setToggle,
 }: SignupProps): React.ReactElement => {
+  const [signupClicked, setSignupClicked] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<boolean>(false);
+  const [emailErrorStr, setEmailErrorStr] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<boolean>(false);
+  const [passwordErrorStr, setPasswordErrorStr] = useState<string>("");
+
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
+    if (signupClicked) {
+      if (emailRegex.test(inputValue)) {
+        setEmailErrorStr("")
+        setEmailError(false)
+      } else {
+        setEmailErrorStr("Please enter a valid email.")
+        setEmailError(true)
+      }
+    }
+    setEmail(inputValue)
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value as string;
+    setPassword(inputValue)
+
+    if (signupClicked) {
+      if (inputValue.length >= 6) {
+        setPasswordErrorStr("")
+        setPasswordError(false)
+      }
+      else {
+        setPasswordErrorStr("Password must be 6 characters long.")
+        setPasswordError(true)
+      }
+    }
+  }
+
   const onSignupClick = async () => {
+    setSignupClicked(true)
+
+    if (!emailRegex.test(email)) {
+      setEmailErrorStr("Please enter a valid email.")
+      setEmailError(true)
+      return
+    }
+
+    if (password.length < 6) {
+      setPasswordErrorStr("Password must be 6 characters long.")
+      setPasswordError(true)
+      return
+    }
+    
     const isInvited = await commonApiClient.isUserInvited(email);
-    if (isInvited) {
-      const registerResponse = await authAPIClient.register(
-        firstName,
-        lastName,
-        email,
-        password,
-      );
-      if (registerResponse) {
-        const { requiresTwoFa, authUser } = registerResponse;
-        if (requiresTwoFa) {
-          setToggle(!toggle);
-        } else {
-          localStorage.setItem(
-            AUTHENTICATED_USER_KEY,
-            JSON.stringify(authUser),
-          );
-          setAuthenticatedUser(authUser);
+    if (isInvited !== "Not Invited") {
+      if (isAuthErrorResponse(isInvited)) {
+        setEmailErrorStr(isInvited.errMessage)
+        setEmailError(true)
+      }
+      else {
+        const registerResponse = await authAPIClient.register(
+          firstName,
+          lastName,
+          email,
+          password,
+        );
+        if (registerResponse) {
+          if (isAuthErrorResponse(registerResponse)) {
+            setEmailErrorStr(registerResponse.errMessage)
+            setEmailError(true)
+          }
+          else {
+            const { requiresTwoFa, authUser } = registerResponse;
+            if (requiresTwoFa) {
+              setToggle(!toggle);
+            } else {
+              localStorage.setItem(
+                AUTHENTICATED_USER_KEY,
+                JSON.stringify(authUser),
+              );
+              setAuthenticatedUser(authUser);
+            }
+          }
         }
       }
-    } else {
-      // TODO: make this alert better and also differentiate between
-      // when a user is not invited and when a user's account already exists
-      // eslint-disable-next-line no-alert
-      window.alert("user not invited");
     }
   };
+
+  const isCreateAccountBtnDisabled = () => 
+    emailError || passwordError || email === '' || password === '' || firstName === '' || lastName === ''
 
   const onLogInClick = () => {
     history.push(LOGIN_PAGE);
@@ -72,107 +143,89 @@ const Signup = ({
     return <Redirect to={HOME_PAGE} />;
   }
 
-  if (toggle) {
+  if (toggle) {   
     return (
       <Flex h="100vh">
         <Box w="47%">
           <Flex
-            display="flex"
-            alignItems="flex-start"
-            position="absolute"
-            top="17.5%"
-            left="6%"
-            w="100%"
-          >
-            <Text variant="login" position="absolute">
-              Sign Up
-            </Text>
-          </Flex>
-          <Flex
-            h="40%"
-            w="36%"
-            top="28%"
-            left="6%"
+            h="100%"
             direction="column"
-            position="absolute"
-            justifyContent="space-between"
+            justifyContent="center"
+            alignItems="center"
+            gap="28px"
           >
-            <Box>
-              <Input
-                variant="login"
-                position="absolute"
-                placeholder="Your first name"
-                value={firstName}
-                onChange={(event) => setFirstName(event.target.value)}
-              />
+              <Box w="80%" textAlign="left">
+                <Text variant="login">
+                  Sign Up
+                </Text>
+              </Box>
+              <Box w="80%">
+                <Input
+                  variant="login"
+                  placeholder="Your first name"
+                  value={firstName}
+                  onChange={(event) => setFirstName(event.target.value)}
+                />
+              </Box>
+              <Box w="80%">
+                <Input
+                  variant="login"
+                  placeholder="Your last name"
+                  value={lastName}
+                  onChange={(event) => setLastName(event.target.value)}
+                />
+              </Box>
+              <Box w="80%">
+                <FormControl isRequired isInvalid={emailError}>
+                  <Input
+                    variant="login"
+                    placeholder="Your email"
+                    value={email}
+                    onChange={handleEmailChange}
+                  />
+                  <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box w="80%">
+                <FormControl isRequired isInvalid={passwordError}>
+                  <Input
+                    variant="login"
+                    type="password"
+                    placeholder="Your password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                  />
+                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                </FormControl>
+              </Box>
+              <Box w="80%">
+                <Button
+                  variant="login"
+                  disabled={isCreateAccountBtnDisabled()}
+                  _hover={
+                    email && password && firstName && lastName
+                      ? {
+                          background: "teal.500",
+                          transition:
+                            "transition: background-color 0.5s ease !important",
+                        }
+                      : {}
+                  }
+                  onClick={onSignupClick}
+                >
+                  Create Account
+                </Button>
+              </Box>
+            <Box w="80%">
+              <Flex gap="10px">
+                <Text variant="loginSecondary" paddingRight="1.1vw">
+                  Already have an account?
+                </Text>
+                <Text variant="loginTertiary" onClick={onLogInClick}>
+                  Log In Now
+                </Text>
+              </Flex>
             </Box>
-            <Box>
-              <Input
-                variant="login"
-                position="absolute"
-                placeholder="Your last name"
-                value={lastName}
-                onChange={(event) => setLastName(event.target.value)}
-              />
-            </Box>
-            <Box>
-              <Input
-                variant="login"
-                position="absolute"
-                placeholder="Your email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-              />
-            </Box>
-            <Box>
-              <Input
-                variant="login"
-                type="password"
-                position="absolute"
-                placeholder="Your password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </Box>
-            <Box>
-              <Button
-                variant="login"
-                position="absolute"
-                disabled={
-                  email === "" ||
-                  password === "" ||
-                  firstName === "" ||
-                  lastName === ""
-                }
-                _hover={
-                  email && password && firstName && lastName
-                    ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
-                    : {}
-                }
-                onClick={onSignupClick}
-              >
-                Create Account
-              </Button>
-            </Box>
-          </Flex>
-          <Flex
-            top="80%"
-            left="6%"
-            width="100%"
-            direction="row"
-            position="absolute"
-            alignContent="center"
-          >
-            <Text variant="loginSecondary" paddingRight="1.1%">
-              Already have an account?
-            </Text>
-            <Text variant="loginTertiary" onClick={onLogInClick}>
-              Log In Now
-            </Text>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">

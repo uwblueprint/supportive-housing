@@ -28,8 +28,13 @@ import AuthContext from "../../../contexts/AuthContext";
 import EditLog from "../../forms/EditLog";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
+import TagAPIClient from "../../../APIClients/TagAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
+import { ResidentLabel } from "../../../types/ResidentTypes";
+import { TagLabel } from "../../../types/TagTypes";
 import { UserLabel } from "../../../types/UserTypes";
+import { BuildingLabel } from "../../../types/BuildingTypes";
 import ConfirmationModal from "../../common/ConfirmationModal";
 
 type Props = {
@@ -45,6 +50,28 @@ const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
 const DELETE_CONFIRMATION_MESSAGE =
   "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from your system.";
 
+const formatNote = (note: string) => {
+  const NOTE_LIMIT = 150;
+  if (note.length > NOTE_LIMIT) {
+    return note.substring(0, NOTE_LIMIT).concat("...");
+  }
+  return note;
+};
+
+const formatList = (strArr: string[]) => {
+  const strLength = strArr?.length;
+  if (strLength === 1) {
+    return strArr[0];
+  }
+  if (strLength === 2) {
+    return strArr?.join(", ");
+  }
+  if (strLength > 2) {
+    return `${strArr?.slice(0, 2).join(", ")}, ...`;
+  }
+  return "";
+};
+
 const LogRecordsTable = ({
   logRecords,
   tableRef,
@@ -57,6 +84,8 @@ const LogRecordsTable = ({
 
   const [showAlert, setShowAlert] = useState(false);
 
+  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
+
   // Menu states
   const [deleteOpenMap, setDeleteOpenMap] = useState<{
     [key: number]: boolean;
@@ -67,7 +96,8 @@ const LogRecordsTable = ({
 
   // Dropdown option states
   const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<ResidentLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<TagLabel[]>([]);
 
   // Handle delete confirmation toggle
   const handleDeleteToggle = (logId: number) => {
@@ -85,7 +115,7 @@ const LogRecordsTable = ({
     }));
   };
 
-  // fetch resident + employee data for log creation
+  // fetch resident + employee + tag data for log creation
   const getLogEntryOptions = async () => {
     const residentsData = await ResidentAPIClient.getResidents({
       returnAll: true,
@@ -100,6 +130,15 @@ const LogRecordsTable = ({
       setResidentOptions(residentLabels);
     }
 
+    const buildingsData = await BuildingAPIClient.getBuildings();
+
+    if (buildingsData && buildingsData.buildings.length !== 0) {
+      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+        (building) => ({ label: building.name!, value: building.id! }),
+      );
+      setBuildingOptions(buildingLabels);
+    }
+
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
       const userLabels: UserLabel[] = usersData.users
@@ -110,6 +149,15 @@ const LogRecordsTable = ({
         }));
       setEmployeeOptions(userLabels);
     }
+
+    const tagsData = await TagAPIClient.getTags();
+    if (tagsData && tagsData.tags.length !== 0) {
+      const tagLabels: TagLabel[] = tagsData.tags.map((tag) => ({
+        label: tag.name,
+        value: tag.tagId,
+      }));
+      setTagOptions(tagLabels);
+    }
   };
 
   const deleteLogRecord = async (itemId: number) => {
@@ -118,11 +166,8 @@ const LogRecordsTable = ({
     } catch (error) {
       return;
     }
-    const newUserPageNum = (
-      logRecords.length === 1
-        ? userPageNum - 1 
-        : userPageNum
-    );
+    const newUserPageNum =
+      logRecords.length === 1 ? userPageNum - 1 : userPageNum;
     countRecords();
     setShowAlert(true);
     setUserPageNum(newUserPageNum);
@@ -156,10 +201,11 @@ const LogRecordsTable = ({
               <Tr>
                 <Th>Date</Th>
                 <Th>Time</Th>
-                <Th>Resident</Th>
+                <Th>Residents</Th>
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
+                <Th>Tags</Th>
                 <Th> </Th>
               </Tr>
             </Thead>
@@ -175,41 +221,46 @@ const LogRecordsTable = ({
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
-                      <Td width="5%">{record.residentId}</Td>
-                      <Td whiteSpace="normal" width="70%">
-                        {record.note}
+                      <Td whiteSpace="normal" width="5%">
+                        {formatList(record.residents)}
                       </Td>
-                      <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
-                      <Td width="5%">
+                      <Td whiteSpace="normal" width="70%">
+                        {formatNote(record.note)}
+                      </Td>
+                      <Td width="2.5%">{`${record.employee.firstName}`}</Td>
+                      <Td width="2.5%">
                         {record.attnTo
-                          ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
+                          ? `${record.attnTo.firstName}`
                           : ""}
+                      </Td>
+                      <Td width="5%">
+                        {formatList(record.tags)}
                       </Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
-                              aria-label="Options"
-                              icon={<VscKebabVertical />}
-                              w="36px"
-                              variant="ghost"
-                            />
-                            <MenuList>
-                              <MenuItem
-                                onClick={() => handleEditToggle(record.logId)}
-                              >
-                                Edit Log Record
+                            <Menu>
+                              <MenuButton
+                                as={IconButton}
+                                aria-label="Options"
+                                icon={<VscKebabVertical />}
+                                w="36px"
+                                variant="ghost"
+                              />
+                              <MenuList>
+                                <MenuItem
+                                  onClick={() => handleEditToggle(record.logId)}
+                                >
+                                  Edit Log Record
                               </MenuItem>
-                              <MenuItem
-                                onClick={() => handleDeleteToggle(record.logId)}
-                              >
-                                Delete Log Record
+                                <MenuItem
+                                  onClick={() => handleDeleteToggle(record.logId)}
+                                >
+                                  Delete Log Record
                               </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        )}
+                              </MenuList>
+                            </Menu>
+                          )}
                       </Td>
                     </Tr>
 
@@ -220,9 +271,11 @@ const LogRecordsTable = ({
                       toggleClose={() => handleEditToggle(record.logId)}
                       employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
+                      tagOptions={tagOptions}
                       getRecords={getRecords}
                       countRecords={countRecords}
                       setUserPageNum={setUserPageNum}
+                      buildingOptions={buildingOptions}
                     />
 
                     <ConfirmationModal
