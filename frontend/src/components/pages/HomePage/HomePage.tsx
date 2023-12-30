@@ -68,9 +68,9 @@ const HomePage = (): React.ReactElement => {
     setTableLoaded(false)
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
       residents: residentsIds,
       tags: tagsValues,
@@ -105,9 +105,9 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange,
       residents: residentsIds,
       tags: tagsValues,

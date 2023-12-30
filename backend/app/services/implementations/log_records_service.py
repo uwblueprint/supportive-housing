@@ -92,23 +92,23 @@ class LogRecordsService(ILogRecordsService):
         except Exception as postgres_error:
             raise postgres_error
 
-    def filter_by_building_id(self, building_id):
-        if type(building_id) == list:
-            sql_statement = f"\nlogs.building_id={building_id[0]}"
-            for i in range(1, len(building_id)):
+    def filter_by_buildings(self, buildings):
+        if type(buildings) == list:
+            sql_statement = f"\nlogs.building_id={buildings[0]}"
+            for i in range(1, len(buildings)):
                 sql_statement = (
-                    sql_statement + f"\nOR logs.building_id={building_id[i]}"
+                    sql_statement + f"\nOR logs.building_id={buildings[i]}"
                 )
             return sql_statement
-        return f"\logs.building_id={building_id}"
+        return f"\logs.building_id={buildings}"
 
-    def filter_by_employee_id(self, employee_id):
-        if type(employee_id) == list:
-            sql_statement = f"\nemployee_id={employee_id[0]}"
-            for i in range(1, len(employee_id)):
-                sql_statement = sql_statement + f"\nOR employee_id={employee_id[i]}"
+    def filter_by_employees(self, employees):
+        if type(employees) == list:
+            sql_statement = f"\nemployee_id={employees[0]}"
+            for i in range(1, len(employees)):
+                sql_statement = sql_statement + f"\nOR employee_id={employees[i]}"
             return sql_statement
-        return f"\nemployee_id={employee_id}"
+        return f"\nemployee_id={employees}"
 
     def filter_by_residents(self, residents):
         if type(residents) == list:
@@ -120,13 +120,13 @@ class LogRecordsService(ILogRecordsService):
             return sql_statement
         return f"\n'{residents}'=ANY (resident_ids)"
 
-    def filter_by_attn_to(self, attn_to):
-        if type(attn_to) == list:
-            sql_statement = f"\nattn_to={attn_to[0]}"
-            for i in range(1, len(attn_to)):
-                sql_statement = sql_statement + f"\nOR attn_to={attn_to[i]}"
+    def filter_by_attn_tos(self, attn_tos):
+        if type(attn_tos) == list:
+            sql_statement = f"\nattn_to={attn_tos[0]}"
+            for i in range(1, len(attn_tos)):
+                sql_statement = sql_statement + f"\nOR attn_to={attn_tos[i]}"
             return sql_statement
-        return f"\nattn_to={attn_to}"
+        return f"\nattn_to={attn_tos}"
 
     def filter_by_date_range(self, date_range):
         sql = ""
@@ -166,10 +166,10 @@ class LogRecordsService(ILogRecordsService):
             is_first_filter = True
 
             options = {
-                "building_id": self.filter_by_building_id,
-                "employee_id": self.filter_by_employee_id,
+                "buildings": self.filter_by_buildings,
+                "employees": self.filter_by_employees,
                 "residents": self.filter_by_residents,
-                "attn_to": self.filter_by_attn_to,
+                "attn_tos": self.filter_by_attn_tos,
                 "date_range": self.filter_by_date_range,
                 "tags": self.filter_by_tags,
                 "flagged": self.filter_by_flagged,

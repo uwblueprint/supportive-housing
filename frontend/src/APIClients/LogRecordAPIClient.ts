@@ -12,9 +12,9 @@ import {
 } from "../types/LogRecordTypes";
 
 const countLogRecords = async ({
-  buildingId = [],
-  employeeId = [],
-  attnTo = [],
+  buildings = [],
+  employees = [],
+  attnTos = [],
   dateRange = [],
   residents = [],
   tags = [],
@@ -28,9 +28,9 @@ const countLogRecords = async ({
     const { data } = await baseAPIClient.get(`/log_records/count`, {
       params: {
         filters: {
-          buildingId,
-          employeeId,
-          attnTo,
+          buildings,
+          employees,
+          attnTos,
           dateRange,
           residents,
           tags,
@@ -47,9 +47,9 @@ const countLogRecords = async ({
 };
 
 const filterLogRecords = async ({
-  buildingId = [],
-  employeeId = [],
-  attnTo = [],
+  buildings = [],
+  employees = [],
+  attnTos = [],
   dateRange = [],
   residents = [],
   tags = [],
@@ -66,9 +66,9 @@ const filterLogRecords = async ({
     const { data } = await baseAPIClient.get(`/log_records`, {
       params: {
         filters: {
-          buildingId,
-          employeeId,
-          attnTo,
+          buildings,
+          employees,
+          attnTos,
           dateRange,
           residents,
           tags,
