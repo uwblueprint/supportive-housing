@@ -78,7 +78,7 @@ const createResident = async ({
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
-        errMessage: "Resident with the specified user ID already exists."
+        errMessage: axiosErr.response.data.error ?? `Resident with the specified user ID already exists.`
       };
     }
     return false;
@@ -128,7 +128,7 @@ const editResident = async ({
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
-        errMessage: "Resident with the specified user ID already exists."
+        errMessage: axiosErr.response.data.error ?? "Resident with the specified user ID already exists."
       };
     }
     return false;
