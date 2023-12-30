@@ -11,6 +11,7 @@ export type Resident = {
   dateJoined: string;
   dateLeft?: string;
   building: BuildingRecord;
+  status: ResidentStatus;
 };
 
 export type ResidentLabel = {
@@ -28,10 +29,10 @@ export type CountResidentsResponse = {
 
 export type CreateResidentParams = Omit<
   Resident,
-  "id" | "residentId" | "dateLeft" | "building"
+  "id" | "residentId" | "dateLeft" | "building" | "status"
 > & { buildingId: number };
 
-export type EditResidentParams = Omit<Resident, "residentId" | "building"> & {
+export type EditResidentParams = Omit<Resident, "residentId" | "building" | "status"> & {
   buildingId: number;
 };
 

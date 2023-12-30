@@ -55,28 +55,19 @@ const getStatusColor = (status: string): string => {
   return color;
 };
 
-const getFormattedDatesAndStatus = (resident: Resident) => {
+const getFormattedDates = (resident: Resident) => {
   const startDateObj = convertToDate(resident.dateJoined);
   const startDate = getFormattedDateAndTime(startDateObj, true);
 
   let endDate;
-  let status = ResidentStatus.CURRENT;
-  const currentDate = new Date();
-  currentDate.setHours(0,0,0,0);
   if (resident.dateLeft != null) {
     const endDateObj = convertToDate(resident.dateLeft);
     endDate = getFormattedDateAndTime(endDateObj, true);
-    if (endDateObj < currentDate) {
-      status = ResidentStatus.PAST;
-    }
   }
-  if (currentDate < startDateObj) {
-    status = ResidentStatus.FUTURE;
-  }
+
   return {
     startDate,
     endDate,
-    status,
   };
 };
 
@@ -174,9 +165,7 @@ const ResidentDirectoryTable = ({
           </Thead>
           <Tbody>
             {residents.map((resident) => {
-              const { startDate, endDate, status } = getFormattedDatesAndStatus(
-                resident,
-              );
+              const { startDate, endDate } = getFormattedDates(resident);
               // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
@@ -186,12 +175,12 @@ const ResidentDirectoryTable = ({
                     textAlign="center"
                   >
                     <Box
-                      backgroundColor={getStatusColor(status)}
+                      backgroundColor={getStatusColor(resident.status)}
                       borderRadius="40px"
                       padding="6px 0px"
                       marginX="20%"
                     >
-                      {status}
+                      {resident.status}
                     </Box>
                   </Td>
                   <Td width="20%">{resident.building.name}</Td>
