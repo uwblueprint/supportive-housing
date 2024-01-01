@@ -13,38 +13,42 @@ import {
   FormControl,
   FormLabel,
   Text,
+  IconButton,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
 import Select, { MultiValue, SingleValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
-import { BuildingLabel } from "../../../types/BuildingTypes";
-import { Resident, ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag, TagLabel } from "../../../types/TagTypes";
-import { User, UserLabel } from "../../../types/UserTypes";
+import { Resident } from "../../../types/ResidentTypes";
+import { Tag } from "../../../types/TagTypes";
+import { User } from "../../../types/UserTypes";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import TagAPIClient from "../../../APIClients/TagAPIClient";
 import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import CreateToast from "../../common/Toasts";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 type Props = {
-  residents: ResidentLabel[];
-  employees: UserLabel[];
+  residents: SelectLabel[];
+  employees: SelectLabel[];
   startDate: Date | undefined;
   endDate: Date | undefined;
-  tags: TagLabel[];
-  attentionTos: UserLabel[];
-  buildings: BuildingLabel[];
+  tags: SelectLabel[];
+  attentionTos: SelectLabel[];
+  buildings: SelectLabel[];
   flagged: boolean;
-  setResidents: React.Dispatch<React.SetStateAction<ResidentLabel[]>>;
-  setEmployees: React.Dispatch<React.SetStateAction<UserLabel[]>>;
+  setResidents: React.Dispatch<React.SetStateAction<SelectLabel[]>>;
+  setEmployees: React.Dispatch<React.SetStateAction<SelectLabel[]>>;
   setStartDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
-  setTags: React.Dispatch<React.SetStateAction<TagLabel[]>>;
-  setAttentionTos: React.Dispatch<React.SetStateAction<UserLabel[]>>;
-  setBuildings: React.Dispatch<React.SetStateAction<BuildingLabel[]>>;
+  setTags: React.Dispatch<React.SetStateAction<SelectLabel[]>>;
+  setAttentionTos: React.Dispatch<React.SetStateAction<SelectLabel[]>>;
+  setBuildings: React.Dispatch<React.SetStateAction<SelectLabel[]>>;
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -66,10 +70,10 @@ const SearchAndFilters = ({
   setBuildings,
   setFlagged,
 }: Props): React.ReactElement => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
-  const [userLabels, setUserLabels] = useState<UserLabel[]>();
-  const [residentLabels, setResidentLabels] = useState<ResidentLabel[]>();
-  const [tagLabels, setTagLabels] = useState<TagLabel[]>();
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
+  const [userLabels, setUserLabels] = useState<SelectLabel[]>();
+  const [residentLabels, setResidentLabels] = useState<SelectLabel[]>();
+  const [tagLabels, setTagLabels] = useState<SelectLabel[]>();
 
   const dateChangeToast = CreateToast();
 
@@ -77,7 +81,7 @@ const SearchAndFilters = ({
     const buildingsData = await BuildingAPIClient.getBuildings();
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+      const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);
@@ -92,7 +96,7 @@ const SearchAndFilters = ({
         return {
           label: `${user.firstName} ${user.lastName}`,
           value: user.id,
-        } as UserLabel;
+        } as SelectLabel;
       });
       setUserLabels(labels);
     }
@@ -106,7 +110,7 @@ const SearchAndFilters = ({
         return {
           label: `${resident.residentId}`,
           value: resident.id,
-        } as ResidentLabel;
+        } as SelectLabel;
       });
       setResidentLabels(labels);
     }
@@ -120,28 +124,28 @@ const SearchAndFilters = ({
         return {
           label: tag.name,
           value: tag.tagId,
-        } as TagLabel;
+        } as SelectLabel;
       });
       setTagLabels(labels);
     }
   };
 
   const handleBuildingChange = (
-    selectedBuildings: MultiValue<BuildingLabel>,
+    selectedBuildings: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedBuildings: BuildingLabel[] = Array.from(
+    const mutableSelectedBuildings: SelectLabel[] = Array.from(
       selectedBuildings,
     );
     setBuildings(mutableSelectedBuildings);
   };
 
-  const handleAttnToChange = (selectedAttnTos: MultiValue<UserLabel>) => {
-    const mutableSelectedAttnTos: UserLabel[] = Array.from(selectedAttnTos);
+  const handleAttnToChange = (selectedAttnTos: MultiValue<SelectLabel>) => {
+    const mutableSelectedAttnTos: SelectLabel[] = Array.from(selectedAttnTos);
     setAttentionTos(mutableSelectedAttnTos);
   };
 
-  const handleEmployeesChange = (selectedEmployees: MultiValue<UserLabel>) => {
-    const mutableSelectedEmployees: UserLabel[] = Array.from(selectedEmployees);
+  const handleEmployeesChange = (selectedEmployees: MultiValue<SelectLabel>) => {
+    const mutableSelectedEmployees: SelectLabel[] = Array.from(selectedEmployees);
     setEmployees(mutableSelectedEmployees);
   };
 
@@ -170,16 +174,16 @@ const SearchAndFilters = ({
   };
 
   const handleResidentsChange = (
-    selectedResidents: MultiValue<ResidentLabel>,
+    selectedResidents: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+    const mutableSelectedResidents: SelectLabel[] = Array.from(
       selectedResidents,
     );
     setResidents(mutableSelectedResidents);
   };
 
-  const handleTagsChange = (selectedTags: MultiValue<TagLabel>) => {
-    const mutableSelectedTags: TagLabel[] = Array.from(selectedTags);
+  const handleTagsChange = (selectedTags: MultiValue<SelectLabel>) => {
+    const mutableSelectedTags: SelectLabel[] = Array.from(selectedTags);
     setTags(mutableSelectedTags);
   };
 
@@ -216,7 +220,7 @@ const SearchAndFilters = ({
                 options={residentLabels}
                 isMulti
                 closeMenuOnSelect={false}
-                placeholder="Select Resident"
+                placeholder="Select Residents"
                 onChange={handleResidentsChange}
                 styles={selectStyle}
               />
@@ -228,27 +232,34 @@ const SearchAndFilters = ({
                 options={userLabels}
                 isMulti
                 closeMenuOnSelect={false}
-                placeholder="Select Employee"
+                placeholder="Select Employees"
                 onChange={handleEmployeesChange}
                 styles={selectStyle}
               />
             </GridItem>
-            <GridItem colSpan={2}>
+            <GridItem colSpan={3}>
               <FormLabel fontWeight="700">Date</FormLabel>
               <Grid templateColumns="repeat(7, 1fr)">
                 <GridItem colSpan={3}>
-                  <SingleDatepicker
-                    name="start-date-input"
-                    date={startDate}
-                    onDateChange={handleStartDateChange}
-                    propsConfigs={{
-                      ...singleDatePickerStyle,
-                      inputProps: {
-                        ...singleDatePickerStyle.inputProps,
-                        placeholder: "Start Date",
-                      },
-                    }}
-                  />
+                  <InputGroup>
+                    <SingleDatepicker
+                      name="start-date-input"
+                      date={startDate}
+                      onDateChange={handleStartDateChange}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "Start Date",
+                        },
+                      }}
+                    />
+                    {startDate &&
+                      <InputRightElement>
+                        <IconButton onClick={() => setStartDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                      </InputRightElement>
+                    }   
+                  </InputGroup>
                 </GridItem>
                 <GridItem
                   colSpan={1}
@@ -261,25 +272,27 @@ const SearchAndFilters = ({
                   </Text>
                 </GridItem>
                 <GridItem colSpan={3}>
-                  <SingleDatepicker
-                    name="end-date-input"
-                    date={endDate}
-                    onDateChange={handleEndDateChange}
-                    propsConfigs={{
-                      ...singleDatePickerStyle,
-                      inputProps: {
-                        ...singleDatePickerStyle.inputProps,
-                        placeholder: "End Date",
-                      },
-                    }}
-                  />
+                  <InputGroup>
+                    <SingleDatepicker
+                      name="end-date-input"
+                      date={endDate}
+                      onDateChange={handleEndDateChange}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "End Date",
+                        },
+                      }}
+                    />
+                    {endDate &&
+                      <InputRightElement>
+                        <IconButton onClick={() => setEndDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                      </InputRightElement>
+                    } 
+                  </InputGroup>
                 </GridItem>
               </Grid>
-            </GridItem>
-            <GridItem colSpan={1} paddingTop="32px" justifySelf="left">
-              <Button variant="secondary" onClick={handleClearAll}>
-                Clear all
-              </Button>
             </GridItem>
           </Grid>
         </FormControl>

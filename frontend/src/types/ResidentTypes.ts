@@ -14,14 +14,31 @@ export type Resident = {
   status: ResidentStatus;
 };
 
-export type ResidentLabel = {
+export type StatusLabel = {
   label: string;
-  value: number;
+  value: string;
+};
+
+export type GetResidentsParams = {
+  returnAll?: boolean;
+  pageNumber?: number;
+  resultsPerPage?: number;
+  residents?: number[];
+  buildings?: number[];
+  statuses?: string[];
+  dateRange?: (string | null)[];
 };
 
 export type GetResidentsReponse = {
   residents: Resident[];
 } | null;
+
+export type CountResidentsParams = {
+  residents?: number[];
+  buildings?: number[];
+  statuses?: string[];
+  dateRange?: (string | null)[];
+};
 
 export type CountResidentsResponse = {
   numResults: number;

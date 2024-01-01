@@ -10,11 +10,6 @@ export type User = {
 
 export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
 
-export type UserLabel = {
-  label: string;
-  value: number;
-};
-
 export type GetUsersResponse = {
   users: User[];
 } | null;

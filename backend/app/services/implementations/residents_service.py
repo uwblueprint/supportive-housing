@@ -75,6 +75,60 @@ class ResidentsService(IResidentsService):
 
         return False
 
+    def construct_filters(self, query, filters, current_date):
+
+        residents = filters.get("residents")
+        buildings = filters.get("buildings")
+        statuses = filters.get("statuses")
+        date_left = None
+        date_joined = None
+
+        if filters.get("date_range") is not None:
+            date_joined, date_left = filters.get("date_range")
+            if date_joined is not None:
+                date_joined = datetime.strptime(
+                    date_joined, "%Y-%m-%d"
+                ).replace(hour=0, minute=0)
+            if date_left is not None:
+                date_left = datetime.strptime(date_left, "%Y-%m-%d").replace(
+                    hour=0, minute=0
+                )
+
+        if buildings is not None:
+            query = query.filter(
+                Residents.building_id.in_(buildings)
+            )
+        if residents is not None:
+            query = query.filter(
+                Residents.id.in_(residents)
+            )
+        if statuses is not None:
+            conditions = []
+            
+            #Construct the conditions for each case
+            for status in statuses:
+                if status == "Future":
+                    conditions.append(Residents.date_joined > current_date);
+                elif status == "Current":
+                    conditions.append(and_(Residents.date_joined <= current_date, 
+                        or_(Residents.date_left.is_(None), Residents.date_left >= current_date)))
+                elif status == "Past":
+                    conditions.append(Residents.date_left < current_date)
+
+            #OR them together and add to filter
+            query = query.filter(or_(*conditions))
+
+        if date_joined is not None:
+            query = query.filter(
+                Residents.date_joined >= date_joined
+            )
+        if date_left is not None:
+            query = query.filter(
+                Residents.date_left <= date_left
+                    )
+
+        return query
+
     def add_resident(self, resident):
         try:
             new_resident = Residents(**resident)
@@ -153,60 +207,7 @@ class ResidentsService(IResidentsService):
                 .with_entities(Residents, Buildings.name.label("building"))
             )
             if filters:
-                residents = filters.get("residents")
-                buildings = filters.get("buildings")
-                statuses = filters.get("statuses")
-                date_left = None
-                date_joined = None
-
-                if filters.get("date_range") is not None:
-                    date_joined, date_left = filters.get("date_range")
-                    if date_joined is not None:
-                        date_joined = datetime.strptime(
-                            date_joined, "%Y-%m-%d"
-                        ).replace(hour=0, minute=0)
-                    if date_left is not None:
-                        date_left = datetime.strptime(date_left, "%Y-%m-%d").replace(
-                            hour=0, minute=0
-                        )
-                
-                if filters.get("current_date") is not None:
-                    current_date = filters.get("current_date")
-                    current_date = datetime.strptime(date_joined, "%Y-%m-%d").replace(hour=0, minute=0)
-
-                if buildings is not None:
-                    residents_results = residents_results.filter(
-                        Residents.building_id.in_(buildings)
-                    )
-                if residents is not None:
-                    residents_results = residents_results.filter(
-                        Residents.id.in_(residents)
-                    )
-                if statuses is not None:
-                    conditions = []
-                    
-                    #Construct the conditions for each case
-                    for status in statuses:
-                        if status == "Future":
-                            conditions.append(Residents.date_joined > current_date);
-                        elif status == "Current":
-                            conditions.append(and_(Residents.date_joined <= current_date, 
-                                or_(Residents.date_left.is_(None), Residents.date_left >= current_date)))
-                        elif status == "Past":
-                            conditions.append(Residents.date_left < current_date)
-
-                    #OR them together and add to filter
-                    residents_results = residents_results.filter(or_(*conditions))
-
-                else:
-                    if date_joined is not None:
-                        residents_results = residents_results.filter(
-                            Residents.date_joined >= date_joined
-                        )
-                    if date_left is not None:
-                        residents_results = residents_results.filter(
-                            Residents.date_left <= date_left
-                        )
+                residents_results = self.construct_filters(residents_results, filters, current_date)
 
             if not return_all:
                 residents_results = residents_results.limit(results_per_page).offset((page_number - 1) * results_per_page)
@@ -218,9 +219,21 @@ class ResidentsService(IResidentsService):
         except Exception as postgres_error:
             raise postgres_error
 
-    def count_residents(self):
+    def count_residents(self, filters):
         try:
-            count = Residents.query.count()
+
+            residents_results = (
+                Residents.query.join(
+                    Buildings, Buildings.id == Residents.building_id
+                )
+                .with_entities(Residents, Buildings.name.label("building"))
+            )
+
+            if filters:
+                current_date = datetime.now(timezone('US/Eastern')).strftime('%Y-%m-%d')
+                residents_results = self.construct_filters(residents_results, filters, current_date)
+
+            count = residents_results.count()
             return {"num_results": count}
 
         except Exception as postgres_error:

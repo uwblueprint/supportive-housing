@@ -159,10 +159,15 @@ def get_residents():
 @require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def count_residents():
     """
-    Get number of residents
+    Get number of residents. Can optionally add filters
     """
     try:
-        residents = residents_service.count_residents()
+        filters = json.loads(request.args.get("filters"))
+    except:
+        filters = None
+
+    try:
+        residents = residents_service.count_residents(filters)
         return jsonify(residents), 201
     except Exception as e:
         error_message = getattr(e, "message", None)

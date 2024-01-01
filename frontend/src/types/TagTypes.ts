@@ -4,11 +4,6 @@ export type Tag = {
   name: string;
 };
 
-export type TagLabel = {
-  label: string;
-  value: number;
-};
-
 export type GetTagsResponse = {
   tags: Tag[];
 } | null;

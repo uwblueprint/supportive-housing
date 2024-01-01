@@ -73,6 +73,11 @@ const Button: ComponentStyleConfig = {
         boxShadow: "inset 0px 0px 10px #ffffff !important",
       },
     },
+    icon: {
+      _focus: {
+        boxShadow: 'none !important',
+    }
+    }
   },
 };
 
