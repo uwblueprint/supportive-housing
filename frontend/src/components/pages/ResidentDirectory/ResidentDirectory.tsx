@@ -7,7 +7,7 @@ import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import Pagination from "../../common/Pagination";
 import CreateResident from "../../forms/CreateResident";
-import Filters from "./Filters"
+import ResidentDirectoryFilters from "./ResidentDirectoryFilters"
 import { SelectLabel } from "../../../types/SharedTypes";
 import { convertToString } from "../../../helper/dateHelpers";
 
@@ -137,7 +137,7 @@ const ResidentDirectory = (): React.ReactElement => {
           />
         </Flex>
 
-        <Filters
+        <ResidentDirectoryFilters
           residentSelections={residentSelections}
           buildingSelections={buildingSelections}
           statusSelections={statusSelections}

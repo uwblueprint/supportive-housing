@@ -52,7 +52,7 @@ type Props = {
   setFlagged: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const SearchAndFilters = ({
+const HomePageFilters = ({
   residents,
   employees,
   startDate,
@@ -373,4 +373,4 @@ const SearchAndFilters = ({
   );
 };
 
-export default SearchAndFilters;
+export default HomePageFilters;

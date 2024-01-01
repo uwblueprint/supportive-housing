@@ -37,7 +37,7 @@ type Props = {
   setEndDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
 };
 
-const Filters = ({
+const ResidentDirectoryFilters = ({
   residentSelections,
   buildingSelections,
   statusSelections,
@@ -242,4 +242,4 @@ const Filters = ({
   );
 };
 
-export default Filters;
+export default ResidentDirectoryFilters;
