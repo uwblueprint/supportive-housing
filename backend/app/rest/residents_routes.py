@@ -132,6 +132,10 @@ def get_residents():
         page_number = int(request.args.get("page_number"))
     except:
         pass
+    try:
+        filters = json.loads(request.args.get("filters"))
+    except:
+        filters = None
 
     filters = None
     try:
