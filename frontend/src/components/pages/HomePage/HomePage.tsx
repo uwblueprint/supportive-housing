@@ -6,13 +6,10 @@ import NavigationBar from "../../common/NavigationBar";
 import CreateLog from "../../forms/CreateLog";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
-import SearchAndFilters from "./SearchAndFilters";
+import HomePageFilters from "./HomePageFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
-import { BuildingLabel } from "../../../types/BuildingTypes";
-import { ResidentLabel } from "../../../types/ResidentTypes";
-import { TagLabel } from "../../../types/TagTypes";
-import { UserLabel } from "../../../types/UserTypes";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -26,13 +23,13 @@ const HomePage = (): React.ReactElement => {
   */
   // TODO: search by resident
   // Filter state
-  const [residents, setResidents] = useState<ResidentLabel[]>([]);
-  const [employees, setEmployees] = useState<UserLabel[]>([]);
+  const [residents, setResidents] = useState<SelectLabel[]>([]);
+  const [employees, setEmployees] = useState<SelectLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [tags, setTags] = useState<TagLabel[]>([]);
-  const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
-  const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
+  const [tags, setTags] = useState<SelectLabel[]>([]);
+  const [attentionTos, setAttentionTos] = useState<SelectLabel[]>([]);
+  const [buildings, setBuildings] = useState<SelectLabel[]>([]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
@@ -68,9 +65,9 @@ const HomePage = (): React.ReactElement => {
     setTableLoaded(false)
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
       residents: residentsIds,
       tags: tagsValues,
@@ -105,9 +102,9 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange,
       residents: residentsIds,
       tags: tagsValues,
@@ -170,7 +167,7 @@ const HomePage = (): React.ReactElement => {
           </Flex>
         </Flex>
 
-        <SearchAndFilters
+        <HomePageFilters
           residents={residents}
           employees={employees}
           startDate={startDate}

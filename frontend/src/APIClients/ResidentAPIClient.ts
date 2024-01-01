@@ -6,6 +6,8 @@ import {
   CountResidentsResponse,
   CreateResidentParams,
   EditResidentParams,
+  GetResidentsParams,
+  CountResidentsParams,
 } from "../types/ResidentTypes";
 import { ResidentErrorResponse } from "../types/ErrorTypes"
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
@@ -15,7 +17,11 @@ const getResidents = async ({
   returnAll = false,
   pageNumber = 1,
   resultsPerPage = 10,
-}): Promise<GetResidentsReponse> => {
+  residents,
+  buildings,
+  statuses,
+  dateRange
+}: GetResidentsParams): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -25,6 +31,12 @@ const getResidents = async ({
       `/residents/`,
       {
         params: {
+          filters: {
+            residents,
+            buildings,
+            statuses,
+            dateRange
+          },
           returnAll,
           pageNumber,
           resultsPerPage,
@@ -38,7 +50,12 @@ const getResidents = async ({
   }
 };
 
-const countResidents = async (): Promise<CountResidentsResponse> => {
+const countResidents = async ({
+  residents,
+  buildings,
+  statuses,
+  dateRange
+}: CountResidentsParams): Promise<CountResidentsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -47,6 +64,14 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
     const { data } = await baseAPIClient.get<CountResidentsResponse>(
       `/residents/count`,
       {
+        params: {
+          filters: {
+            residents,
+            buildings,
+            statuses,
+            dateRange
+          },
+        },
         headers: { Authorization: bearerToken },
       },
     );

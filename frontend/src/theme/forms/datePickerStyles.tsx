@@ -21,6 +21,9 @@ export const singleDatePickerStyle = {
     _focus: {
       borderColor: colors.teal[400],
     },
+    _placeholder: {
+      color: colors.gray[500],
+    }
   },
   popoverCompProps: {
     popoverContentProps: {

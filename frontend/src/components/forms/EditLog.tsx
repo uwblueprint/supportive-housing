@@ -33,25 +33,22 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { ResidentLabel } from "../../types/ResidentTypes";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import { TagLabel } from "../../types/TagTypes";
-import { UserLabel } from "../../types/UserTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
   logRecord: LogRecord;
   userPageNum: number;
   isOpen: boolean;
   toggleClose: () => void;
-  employeeOptions: UserLabel[];
-  residentOptions: ResidentLabel[];
-  tagOptions: TagLabel[];
+  employeeOptions: SelectLabel[];
+  residentOptions: SelectLabel[];
+  tagOptions: SelectLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-  buildingOptions: BuildingLabel[];
+  buildingOptions: SelectLabel[];
 };
 
 type AlertData = {
@@ -111,7 +108,7 @@ const EditLog = ({
   buildingOptions,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
+  const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -169,9 +166,9 @@ const EditLog = ({
   };
 
   const handleResidentsChange = (
-    selectedResidents: MultiValue<ResidentLabel>,
+    selectedResidents: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+    const mutableSelectedResidents: SelectLabel[] = Array.from(
       selectedResidents,
     );
     if (mutableSelectedResidents !== null) {
@@ -182,9 +179,9 @@ const EditLog = ({
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<TagLabel>,
+    selectedTags: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedTags: TagLabel[] = Array.from(
+    const mutableSelectedTags: SelectLabel[] = Array.from(
       selectedTags,
     );
     if (mutableSelectedTags !== null) {

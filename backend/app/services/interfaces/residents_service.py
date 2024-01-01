@@ -67,9 +67,11 @@ class IResidentsService(ABC):
         pass
 
     @abstractmethod
-    def count_residents(self):
+    def count_residents(self, filters):
         """
         Count the total number of residents
+        :param filters: filters for the query
+        :type filters: json
         :return: count of residents
         :rtype: int
         :raises Exception: if resident count fails

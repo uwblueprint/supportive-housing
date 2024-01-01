@@ -1,11 +1,12 @@
+from flask import current_app
 from ..interfaces.residents_service import IResidentsService
 from ...models.residents import Residents
 from ...models.log_record_residents import LogRecordResidents
 from ...models.buildings import Buildings
 from ...models import db
 from datetime import datetime
-from sqlalchemy import select, cast, Date
-import json
+from sqlalchemy.sql.expression import or_, and_
+from pytz import timezone
 
 
 class ResidentsService(IResidentsService):
@@ -22,22 +23,38 @@ class ResidentsService(IResidentsService):
         """
         self.logger = logger
 
-    def to_resident_json(self, resident):
+    def to_resident_json(self, resident, current_date):
         resident, building = resident[0], resident[1]
 
         resident_dict = resident.to_dict()
         resident_dict["building"]["name"] = building
+        resident_dict["status"] = self.get_resident_status(current_date, 
+            resident_dict["date_joined"], resident_dict["date_left"]
+        )
+
         return resident_dict
 
-    def to_residents_json_list(self, resident_results):
+    def to_residents_json_list(self, residents, current_date):
         residents_json_list = []
-        for result in resident_results:
+        for result in residents:
             resident, building = result[0], result[1]
 
             resident_dict = resident.to_dict()
             resident_dict["building"]["name"] = building
+            resident_dict["status"] = self.get_resident_status(current_date, 
+                resident_dict["date_joined"], resident_dict["date_left"]
+            )
+            
             residents_json_list.append(resident_dict)
         return residents_json_list
+    
+    def get_resident_status(self, current_date, date_joined, date_left):
+        if current_date < date_joined:
+            return "Future"
+        elif date_left is None or current_date <= date_left:
+            return "Current"
+        else:
+            return "Past"
 
     def convert_to_date_obj(self, date):
         return datetime.strptime(date, "%Y-%m-%d")
@@ -57,6 +74,60 @@ class ResidentsService(IResidentsService):
                 return True
 
         return False
+
+    def construct_filters(self, query, filters, current_date):
+
+        residents = filters.get("residents")
+        buildings = filters.get("buildings")
+        statuses = filters.get("statuses")
+        date_left = None
+        date_joined = None
+
+        if filters.get("date_range") is not None:
+            date_joined, date_left = filters.get("date_range")
+            if date_joined is not None:
+                date_joined = datetime.strptime(
+                    date_joined, "%Y-%m-%d"
+                ).replace(hour=0, minute=0)
+            if date_left is not None:
+                date_left = datetime.strptime(date_left, "%Y-%m-%d").replace(
+                    hour=0, minute=0
+                )
+
+        if buildings is not None:
+            query = query.filter(
+                Residents.building_id.in_(buildings)
+            )
+        if residents is not None:
+            query = query.filter(
+                Residents.id.in_(residents)
+            )
+        if statuses is not None:
+            conditions = []
+            
+            #Construct the conditions for each case
+            for status in statuses:
+                if status == "Future":
+                    conditions.append(Residents.date_joined > current_date);
+                elif status == "Current":
+                    conditions.append(and_(Residents.date_joined <= current_date, 
+                        or_(Residents.date_left.is_(None), Residents.date_left >= current_date)))
+                elif status == "Past":
+                    conditions.append(Residents.date_left < current_date)
+
+            #OR them together and add to filter
+            query = query.filter(or_(*conditions))
+
+        if date_joined is not None:
+            query = query.filter(
+                Residents.date_joined >= date_joined
+            )
+        if date_left is not None:
+            query = query.filter(
+                Residents.date_left <= date_left
+                    )
+
+        return query
 
     def add_resident(self, resident):
         try:
@@ -109,6 +180,8 @@ class ResidentsService(IResidentsService):
 
     def get_resident_by_id(self, resident_id):
         try:
+            current_date = datetime.now(timezone('US/Eastern')).strftime('%Y-%m-%d')
+
             resident = (
                 Residents.query.join(
                     Buildings, Buildings.id == Residents.building_id
@@ -117,7 +190,7 @@ class ResidentsService(IResidentsService):
                 .filter_by(resident_id=resident_id)
                 .first()
             )
-            return self.to_resident_json(resident) 
+            return self.to_resident_json(resident, current_date) if resident else None
         except Exception as postgres_error:
             raise postgres_error
 
@@ -125,76 +198,42 @@ class ResidentsService(IResidentsService):
         self, return_all, page_number, results_per_page, filters=None
     ):
         try:
-            if return_all:
-                residents_results = (
-                    Residents.query.join(
-                        Buildings, Buildings.id == Residents.building_id
-                    )
-                    .with_entities(Residents, Buildings.name.label("building"))
-                    .all()
-                )
-            elif filters:
-                resident_id = filters.get("resident_id")
-                building_id = filters.get("building_id")
-                date_left = None
-                date_joined = None
+            current_date = datetime.now(timezone('US/Eastern')).strftime('%Y-%m-%d')
 
-                if filters.get("date_range") is not None:
-                    date_joined, date_left = filters.get("date_range")
-                    if date_joined is not None:
-                        date_joined = datetime.strptime(
-                            date_joined, "%Y-%m-%d"
-                        ).replace(hour=0, minute=0)
-                    if date_left is not None:
-                        date_left = datetime.strptime(date_left, "%Y-%m-%d").replace(
-                            hour=0, minute=0
-                        )
-
-                residents_results = Residents.query.join(
+            residents_results = (
+                Residents.query.join(
                     Buildings, Buildings.id == Residents.building_id
-                ).with_entities(Residents, Buildings.name.label("building"))
-
-                if building_id is not None:
-                    residents_results = residents_results.filter(
-                        Residents.building_id.in_(building_id)
-                    )
-                if resident_id is not None:
-                    residents_results = residents_results.filter(
-                        Residents.resident_id.in_(resident_id)
-                    )
-                if date_joined is not None and date_left is not None:
-                    residents_results = residents_results.filter(
-                        Residents.date_joined >= date_joined
-                    )
-                    residents_results = residents_results.filter(
-                        Residents.date_left <= date_left
-                    )
-                elif date_joined is not None:
-                    residents_results = residents_results.filter(
-                        Residents.date_joined >= date_joined
-                    )
-                elif date_left is not None:
-                    residents_results = residents_results.filter(
-                        Residents.date_left <= date_left
-                    )
-            else:
-                residents_results = (
-                    Residents.query.join(
-                        Buildings, Buildings.id == Residents.building_id
-                    )
-                    .limit(results_per_page)
-                    .offset((page_number - 1) * results_per_page)
-                    .with_entities(Residents, Buildings.name.label("building"))
-                    .all()
                 )
+                .with_entities(Residents, Buildings.name.label("building"))
+            )
+            if filters:
+                residents_results = self.construct_filters(residents_results, filters, current_date)
 
-            return {"residents": self.to_residents_json_list(residents_results)}
+            if not return_all:
+                residents_results = residents_results.limit(results_per_page).offset((page_number - 1) * results_per_page)
+            
+            residents_results = residents_results.all()
+
+            return {"residents": self.to_residents_json_list(residents_results, current_date)}
+        
         except Exception as postgres_error:
             raise postgres_error
 
-    def count_residents(self):
+    def count_residents(self, filters):
         try:
-            count = Residents.query.count()
+
+            residents_results = (
+                Residents.query.join(
+                    Buildings, Buildings.id == Residents.building_id
+                )
+                .with_entities(Residents, Buildings.name.label("building"))
+            )
+
+            if filters:
+                current_date = datetime.now(timezone('US/Eastern')).strftime('%Y-%m-%d')
+                residents_results = self.construct_filters(residents_results, filters, current_date)
+
+            count = residents_results.count()
             return {"num_results": count}
 
         except Exception as postgres_error:

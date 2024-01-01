@@ -2,30 +2,41 @@ import React, { useState, useRef, useEffect } from "react";
 import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 import ResidentDirectoryTable from "./ResidentDirectoryTable";
 import NavigationBar from "../../common/NavigationBar";
-import { Resident } from "../../../types/ResidentTypes";
-import { BuildingLabel } from "../../../types/BuildingTypes";
+import { Resident, StatusLabel } from "../../../types/ResidentTypes";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import Pagination from "../../common/Pagination";
 import CreateResident from "../../forms/CreateResident";
+import ResidentDirectoryFilters from "./ResidentDirectoryFilters"
+import { SelectLabel } from "../../../types/SharedTypes";
+import { convertToString } from "../../../helper/dateHelpers";
 
 const ResidentDirectory = (): React.ReactElement => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
   const [residents, setResidents] = useState<Resident[]>([]);
+
+  // Pagination
   const [numResidents, setNumResidents] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
-
   const [tableLoaded, setTableLoaded] = useState(false)
-
   const tableRef = useRef<HTMLDivElement>(null);
+
+  // Options
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
+
+  // Filter state
+  const [residentSelections, setResidentSelections] = useState<SelectLabel[]>([]);
+  const [buildingSelections, setBuildingSelections] = useState<SelectLabel[]>([]);
+  const [statusSelections, setStatusSelections] = useState<StatusLabel[]>([]);
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
 
   const getBuildingOptions = async () => {
     const data = await BuildingAPIClient.getBuildings();
 
     if (data) {
-      const buildingLabels: BuildingLabel[] = data.buildings.map(
+      const buildingLabels: SelectLabel[] = data.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);
@@ -33,11 +44,25 @@ const ResidentDirectory = (): React.ReactElement => {
   };
 
   const getResidents = async (pageNumber: number) => {
+
+    const residentIds = residentSelections.length > 0 ? residentSelections.map((resident) => resident.value) : undefined;
+    const buildingIds = buildingSelections.length > 0 ? buildingSelections.map((building) => building.value) : undefined;
+    const statuses = statusSelections.length > 0 ? statusSelections.map((employee) => employee.value) : undefined;
+
+    let dateRange;
+    if (startDate || endDate) {
+      dateRange = [startDate ? convertToString(startDate) : null, endDate ? convertToString(endDate) : null]
+    }
+
     setTableLoaded(false)
     const data = await ResidentAPIClient.getResidents({
       returnAll: false,
       pageNumber,
       resultsPerPage,
+      residents: residentIds,
+      buildings: buildingIds,
+      statuses,
+      dateRange
     });
 
     // Reset table scroll
@@ -55,18 +80,40 @@ const ResidentDirectory = (): React.ReactElement => {
   };
 
   const countResidents = async () => {
-    const data = await ResidentAPIClient.countResidents();
+
+    const residentIds = residentSelections.length > 0 ? residentSelections.map((resident) => resident.value) : undefined;
+    const buildingIds = buildingSelections.length > 0 ? buildingSelections.map((building) => building.value) : undefined;
+    const statuses = statusSelections.length > 0 ? statusSelections.map((employee) => employee.value) : undefined;
+
+    let dateRange;
+    if (startDate || endDate) {
+      dateRange = [startDate ? convertToString(startDate) : null, endDate ? convertToString(endDate) : null]
+    }
+
+    const data = await ResidentAPIClient.countResidents({
+      residents: residentIds,
+      buildings: buildingIds,
+      statuses,
+      dateRange
+    });
     setNumResidents(data ? data.numResults : 0);
   };
 
   useEffect(() => {
     setUserPageNum(1);
     getResidents(1);
-    getBuildingOptions();
-  }, [resultsPerPage]);
+    countResidents();
+  }, [resultsPerPage, 
+      residentSelections, 
+      buildingSelections, 
+      statusSelections, 
+      startDate, 
+      endDate
+    ]
+  );
 
   useEffect(() => {
-    countResidents();
+    getBuildingOptions();
   }, []);
 
   return (
@@ -89,6 +136,20 @@ const ResidentDirectory = (): React.ReactElement => {
             countResidents={countResidents}
           />
         </Flex>
+
+        <ResidentDirectoryFilters
+          residentSelections={residentSelections}
+          buildingSelections={buildingSelections}
+          statusSelections={statusSelections}
+          buildingOptions={buildingOptions}
+          startDate={startDate}
+          endDate={endDate}
+          setResidentSelections={setResidentSelections}
+          setBuildingSelections={setBuildingSelections}
+          setStatusSelections={setStatusSelections}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+        />
 
         {!tableLoaded ? (
           <Spinner
