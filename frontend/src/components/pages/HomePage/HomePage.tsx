@@ -6,7 +6,7 @@ import NavigationBar from "../../common/NavigationBar";
 import CreateLog from "../../forms/CreateLog";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
-import SearchAndFilters from "./SearchAndFilters";
+import HomePageFilters from "./HomePageFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import { SelectLabel } from "../../../types/SharedTypes";
@@ -167,7 +167,7 @@ const HomePage = (): React.ReactElement => {
           </Flex>
         </Flex>
 
-        <SearchAndFilters
+        <HomePageFilters
           residents={residents}
           employees={employees}
           startDate={startDate}
