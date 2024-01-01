@@ -15,7 +15,6 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
-import { BuildingLabel } from "../../../types/BuildingTypes";
 import { Resident, ResidentStatus } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
@@ -24,9 +23,10 @@ import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { convertToDate } from "../../../helper/dateHelpers";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 type Props = {
-  buildingOptions: BuildingLabel[];
+  buildingOptions: SelectLabel[];
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
   userPageNum: number;
