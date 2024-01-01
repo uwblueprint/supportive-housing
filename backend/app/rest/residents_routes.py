@@ -24,9 +24,9 @@ def add_resident():
     # Check for the existence of a resident prior to adding them
     fmt_resident_id = resident.get("initial") + str(resident.get("room_num"))
     try:
-        res = residents_service.get_residents(False, 1, 10, fmt_resident_id)
-        if len(res["residents"]) > 0:
-            return jsonify({"error": "Resident already with id {fmt_resident_id} already exists".format(fmt_resident_id=fmt_resident_id)}), 409
+        existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
+        if existing_resident:
+            return jsonify({"error": "Resident with ID {fmt_resident_id} already exists.".format(fmt_resident_id=fmt_resident_id)}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -55,9 +55,9 @@ def update_resident(resident_id):
     # Check for the existence of a resident prior to adding them
     fmt_resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
     try:
-        res = residents_service.get_residents(False, 1, 10, fmt_resident_id)
-        if len(res["residents"]) == 1 and res["residents"][0]["id"] != resident_id:
-            return jsonify({"error": "Resident with id {fmt_resident_id} already exists".format(fmt_resident_id=fmt_resident_id)}), 409
+        existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
+        if existing_resident and existing_resident["id"] != resident_id:
+            return jsonify({"error": "Resident with ID {fmt_resident_id} already exists.".format(fmt_resident_id=fmt_resident_id)}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -132,6 +132,10 @@ def get_residents():
         page_number = int(request.args.get("page_number"))
     except:
         pass
+    try:
+        filters = json.loads(request.args.get("filters"))
+    except:
+        filters = None
 
     results_per_page = 10
     try:
@@ -140,9 +144,8 @@ def get_residents():
         pass
 
     try:
-        resident_id = request.args.get("resident_id")
         residents_results = residents_service.get_residents(
-            return_all, page_number, results_per_page, resident_id
+            return_all, page_number, results_per_page, filters
         )
         return jsonify(residents_results), 201
     except Exception as e:

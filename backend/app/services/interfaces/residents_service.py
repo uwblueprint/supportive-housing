@@ -50,14 +50,19 @@ class IResidentsService(ABC):
 
     @abstractmethod
     def get_residents(
-        self, return_all, page_number, results_per_page, resident_id=None
+        self, return_all, page_number, results_per_page, filters=None
     ):
         """
         Gets residents in json format.
-        :param resident_id: id of resident to be deleted in the format of initial+room_num
-        :type resident_id: string
-        :param id: id of resident to be deleted, the primary key of the resident
-        :type resident_id: initial
+        :param return_all: whether to return all associated records or paginate
+        :type return_all: boolean
+        :param page_number: page number of records to retrieve
+        :type page_number: int
+        :param results_per_page: max number of records to retrieve for the page
+        :type results_per_page: int
+        :param filters: filters to apply to the query in json format
+        :type filters: json
+        :raises Exception: if resident retrieval fails
         """
         pass
 
