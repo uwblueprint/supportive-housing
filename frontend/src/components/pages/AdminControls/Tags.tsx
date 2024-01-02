@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 
 import NavigationBar from "../../common/NavigationBar";
 import CreateTag from "../../forms/CreateTag";
@@ -18,9 +18,16 @@ const TagsPage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
+  const [tableLoaded, setTableLoaded] = useState(false);
+
   const getTags = async (pageNumber: number) => {
-    /* TODO: pass pageNum & numResultPerPage to getTags?? */
-    const data = await TagAPIClient.getTags();
+
+    setTableLoaded(false);
+
+    const data = await TagAPIClient.getTags({
+      pageNumber,
+      resultsPerPage
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
@@ -33,11 +40,13 @@ const TagsPage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true);
   };
 
   const countTags = async () => {
-    const data = await TagAPIClient.getTags();
-    setNumTags(data ? data.tags.length : 0);
+    const data = await TagAPIClient.countTags();
+    setNumTags(data ? data.numResults : 0);
   };
 
   useEffect(() => {
@@ -67,24 +76,46 @@ const TagsPage = (): React.ReactElement => {
           />
         </Flex>
 
-        <TagsTable
-          tags={tags}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          getRecords={getTags}
-          countTags={countTags}
-        />
+        {
+          !tableLoaded ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              size="xl"
+            />
+          ) : (
+            <Box>
+              {numTags === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <TagsTable
+                  tags={tags}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  getRecords={getTags}
+                  countTags={countTags}
+                />
 
-        <Pagination
-          numRecords={numTags}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getTags}
-        />
+                <Pagination
+                  numRecords={numTags}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getTags}
+                />
+              </Box>
+            )
+              }
+            </Box>
+          )
+        }
       </Box>
     </Box>
   );
