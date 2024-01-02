@@ -93,7 +93,6 @@ const ResidentDirectoryFilters = ({
       selectedResidents,
     );
     setResidentSelections(mutableSelectedResidents);
-    console.log(residentSelections);
   };
 
   const handleStatusesChange = (selectedStatuses: MultiValue<StatusLabel>) => {
