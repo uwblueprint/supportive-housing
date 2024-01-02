@@ -1,5 +1,10 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { CountSignInLogsParams, CountSignInLogsResponse, GetSignInLogsParams, GetSignInLogsResponse } from "../types/SignInLogsTypes";
+import {
+  CountSignInLogsParams,
+  CountSignInLogsResponse,
+  GetSignInLogsParams,
+  GetSignInLogsResponse,
+} from "../types/SignInLogsTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -21,7 +26,7 @@ const getSignInLogs = async ({
           pageNumber,
           resultsPerPage,
           startDate,
-          endDate
+          endDate,
         },
         headers: { Authorization: bearerToken },
       },
@@ -34,7 +39,7 @@ const getSignInLogs = async ({
 
 const countSignInLogs = async ({
   startDate,
-  endDate
+  endDate,
 }: CountSignInLogsParams): Promise<CountSignInLogsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -46,7 +51,7 @@ const countSignInLogs = async ({
       {
         params: {
           startDate,
-          endDate
+          endDate,
         },
         headers: { Authorization: bearerToken },
       },
@@ -59,5 +64,5 @@ const countSignInLogs = async ({
 
 export default {
   getSignInLogs,
-  countSignInLogs
+  countSignInLogs,
 };

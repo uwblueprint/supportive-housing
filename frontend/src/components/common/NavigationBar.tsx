@@ -33,9 +33,8 @@ const NavigationBar = (): React.ReactElement => {
 
   const navigateToEmployeeDirectory = () =>
     history.push(EMPLOYEE_DIRECTORY_PAGE);
-  
-  const navigateToSignInLogs = () =>
-    history.push(SIGN_IN_LOGS_PAGE);
+
+  const navigateToSignInLogs = () => history.push(SIGN_IN_LOGS_PAGE);
 
   const handleLogout = async () => {
     const success = await authAPIClient.logout(authenticatedUser?.id);

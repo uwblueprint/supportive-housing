@@ -18,7 +18,11 @@ import Select, { MultiValue, SingleValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import selectStyle from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
-import { Resident, ResidentStatus, StatusLabel } from "../../../types/ResidentTypes";
+import {
+  Resident,
+  ResidentStatus,
+  StatusLabel,
+} from "../../../types/ResidentTypes";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import CreateToast from "../../common/Toasts";
 import { SelectLabel } from "../../../types/SharedTypes";
@@ -50,11 +54,11 @@ const Filters = ({
   setStartDate,
   setEndDate,
 }: Props): React.ReactElement => {
-
-  const statusOptions: StatusLabel[] = [{label: ResidentStatus.CURRENT, value: ResidentStatus.CURRENT},
-    {label: ResidentStatus.PAST, value: ResidentStatus.PAST},
-    {label: ResidentStatus.FUTURE, value: ResidentStatus.FUTURE}
-  ]
+  const statusOptions: StatusLabel[] = [
+    { label: ResidentStatus.CURRENT, value: ResidentStatus.CURRENT },
+    { label: ResidentStatus.PAST, value: ResidentStatus.PAST },
+    { label: ResidentStatus.FUTURE, value: ResidentStatus.FUTURE },
+  ];
 
   const [residentOptions, setResidentOptions] = useState<SelectLabel[]>();
   const dateChangeToast = CreateToast();
@@ -89,15 +93,11 @@ const Filters = ({
       selectedResidents,
     );
     setResidentSelections(mutableSelectedResidents);
-    console.log(residentSelections)
+    console.log(residentSelections);
   };
 
-  const handleStatusesChange = (
-    selectedStatuses: MultiValue<StatusLabel>,
-  ) => {
-    const mutableSelectedStatuses: StatusLabel[] = Array.from(
-      selectedStatuses,
-    );
+  const handleStatusesChange = (selectedStatuses: MultiValue<StatusLabel>) => {
+    const mutableSelectedStatuses: StatusLabel[] = Array.from(selectedStatuses);
     setStatusSelections(mutableSelectedStatuses);
   };
 
@@ -195,11 +195,23 @@ const Filters = ({
                         },
                       }}
                     />
-                    {startDate &&
+                    {startDate && (
                       <InputRightElement>
-                        <IconButton onClick={() => setStartDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                        <IconButton
+                          onClick={() => setStartDate(undefined)}
+                          aria-label="clear"
+                          variant="icon"
+                          icon={
+                            <SmallCloseIcon
+                              boxSize="5"
+                              color="gray.200"
+                              _hover={{ color: "gray.400" }}
+                              transition="color 0.1s ease-in-out"
+                            />
+                          }
+                        />
                       </InputRightElement>
-                    }
+                    )}
                   </InputGroup>
                 </GridItem>
                 <GridItem
@@ -226,11 +238,23 @@ const Filters = ({
                         },
                       }}
                     />
-                    {endDate &&
+                    {endDate && (
                       <InputRightElement>
-                        <IconButton onClick={() => setEndDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                        <IconButton
+                          onClick={() => setEndDate(undefined)}
+                          aria-label="clear"
+                          variant="icon"
+                          icon={
+                            <SmallCloseIcon
+                              boxSize="5"
+                              color="gray.200"
+                              _hover={{ color: "gray.400" }}
+                              transition="color 0.1s ease-in-out"
+                            />
+                          }
+                        />
                       </InputRightElement>
-                    }
+                    )}
                   </InputGroup>
                 </GridItem>
               </Grid>

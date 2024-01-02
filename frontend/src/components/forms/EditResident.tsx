@@ -31,11 +31,11 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/error"
+import { isResidentErrorResponse } from "../../helper/error";
 import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
-  buildingOptions: SelectLabel[],
+  buildingOptions: SelectLabel[];
   resident: Resident;
   isOpen: boolean;
   userPageNum: number;
@@ -75,13 +75,8 @@ const EditResident = ({
     });
 
     if (isResidentErrorResponse(res)) {
-      newToast(
-        "Error updating resident",
-        res.errMessage,
-        "error"
-      )
-    }
-    else if (res !== null && res) {
+      newToast("Error updating resident", res.errMessage, "error");
+    } else if (res !== null && res) {
       newToast(
         "Resident updated",
         "Resident has been successfully updated",
@@ -101,7 +96,6 @@ const EditResident = ({
   const clearMoveOutDate = () => {
     setMoveOutDate(undefined);
   };
-
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;

@@ -26,7 +26,9 @@ const inviteUser = async (
   }
 };
 
-const getUserStatus = async (email: string): Promise<string | AuthErrorResponse> => {
+const getUserStatus = async (
+  email: string,
+): Promise<string | AuthErrorResponse> => {
   try {
     if (email === "") {
       return "";

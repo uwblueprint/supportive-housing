@@ -49,9 +49,7 @@ class IResidentsService(ABC):
         pass
 
     @abstractmethod
-    def get_residents(
-        self, return_all, page_number, results_per_page, filters=None
-    ):
+    def get_residents(self, return_all, page_number, results_per_page, filters=None):
         """
         Gets residents in json format.
         :param return_all: whether to return all associated records or paginate

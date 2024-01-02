@@ -49,7 +49,10 @@ export type CreateResidentParams = Omit<
   "id" | "residentId" | "dateLeft" | "building" | "status"
 > & { buildingId: number };
 
-export type EditResidentParams = Omit<Resident, "residentId" | "building" | "status"> & {
+export type EditResidentParams = Omit<
+  Resident,
+  "residentId" | "building" | "status"
+> & {
   buildingId: number;
 };
 
