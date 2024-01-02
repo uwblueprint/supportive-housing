@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
-import CreateLog from "../../forms/CreateLog";
-import commonAPIClient from "../../../APIClients/CommonAPIClient";
-import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
 import EmployeeDirectoryTable from "./EmployeeDirectoryTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
@@ -85,23 +82,32 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         ) : (
           <Box>
-            <EmployeeDirectoryTable
-              users={users}
-              tableRef={tableRef}
-              userPageNum={userPageNum}
-              setUserPageNum={setUserPageNum}
-              getRecords={getUsers}
-              countUsers={countUsers}
-            />
-            <Pagination
-              numRecords={numUsers}
-              pageNum={pageNum}
-              userPageNum={userPageNum}
-              setUserPageNum={setUserPageNum}
-              resultsPerPage={resultsPerPage}
-              setResultsPerPage={setResultsPerPage}
-              getRecords={getUsers}
-            />
+            {
+              numUsers === 0 ? 
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+              :
+              <Box>
+                <EmployeeDirectoryTable
+                  users={users}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  getRecords={getUsers}
+                  countUsers={countUsers}
+                />
+                <Pagination
+                  numRecords={numUsers}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getUsers}
+                />
+              </Box>
+            }
           </Box>
         )}
       </Box>

@@ -14,78 +14,100 @@ blueprint = Blueprint("sign-in-logs", __name__, url_prefix="/sign-in-logs")
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def filter_logs():
-    email = None
-    start_date = None
-    end_date = None
+
+    page_number = 1
     try:
-        email = request.args.get("email")
+        page_number = int(request.args.get("page_number"))
     except:
         pass
 
+    results_per_page = 10
+    try:
+        results_per_page = int(request.args.get("results_per_page"))
+    except:
+        pass
+
+    start_date = None
+    end_date = None
     try:
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
     except:
         pass
 
-    user_id = None
-
-    if email:
-        if type(email) is not str:
-            return jsonify({"error": "email query parameter must be a string"}), 400
-        else:
-            try:
-                user_id = user_service.get_user_by_email(email).id
-            except Exception as e:
-                error_message = getattr(e, "message", None)
-                return (
-                    jsonify({"error": (error_message if error_message else str(e))}),
-                    500,
-                )
-
     if start_date and end_date:
-        try:
-            start_date = datetime.strptime(start_date, "%Y-%m-%d")
-            end_date = datetime.strptime(end_date, "%Y-%m-%d").replace(
-                hour=23, minute=59
-            )
-        except Exception as e:
-            return (
-                jsonify({"error": "Date is not in correct format"}),
-                500,
-            )
         if start_date > end_date:
             return jsonify({"error": "start_date must be before end"}), 400
-
-    if email and start_date and end_date:
-        try:
-            logs = sign_in_logs_service.get_sign_in_logs_by_date_range_and_id(
-                start_date, end_date, user_id
-            )
-            return logs, 200
-        except Exception as e:
-            error_message = getattr(e, "message", None)
-            return (
-                jsonify({"error": (error_message if error_message else str(e))}),
-                500,
-            )
-    elif email and not (start_date and end_date):
-        try:
-            logs = sign_in_logs_service.get_sign_in_logs_by_id(user_id)
-            return logs, 200
-        except Exception as e:
-            error_message = getattr(e, "message", None)
-            return (
-                jsonify({"error": (error_message if error_message else str(e))}),
-                500,
-            )
-    elif start_date and end_date:
+        
         try:
             # return as json object
             logs = sign_in_logs_service.get_sign_in_logs_by_date_range(
+                page_number, results_per_page, start_date, end_date
+            )
+            return jsonify({"sign_in_logs": logs}), 200
+
+        except Exception as e:
+            error_message = getattr(e, "message", None)
+            return (
+                jsonify({"error": (error_message if error_message else str(e))}),
+                500,
+            )
+    else:
+        return jsonify({"error": "Not enough information provided."})
+    
+    # Commented out for possible future use
+
+    # email = None
+    # user_id = None
+    # try:
+    #     email = request.args.get("email")
+    # except:
+    #     pass
+
+    # if email and start_date and end_date:
+    #     try:
+    #         logs = sign_in_logs_service.get_sign_in_logs_by_date_range_and_id(
+    #             start_date, end_date, user_id
+    #         )
+    #         return jsonify({"sign_in_logs": logs}), 200
+    #     except Exception as e:
+    #         error_message = getattr(e, "message", None)
+    #         return (
+    #             jsonify({"error": (error_message if error_message else str(e))}),
+    #             500,
+    #         )
+    # elif email and not (start_date and end_date):
+    #     try:
+    #         logs = sign_in_logs_service.get_sign_in_logs_by_id(user_id)
+    #         return jsonify({"sign_in_logs": logs}), 200
+    #     except Exception as e:
+    #         error_message = getattr(e, "message", None)
+    #         return (
+    #             jsonify({"error": (error_message if error_message else str(e))}),
+    #             500,
+    #         )
+
+@blueprint.route("/count", methods=["GET"], strict_slashes=False)
+@require_authorization_by_role({"Admin"})
+def count_logs():
+
+    start_date = None
+    end_date = None
+    try:
+        start_date = request.args.get("start_date")
+        end_date = request.args.get("end_date")
+    except:
+        pass
+
+    if start_date and end_date:
+        if start_date > end_date:
+            return jsonify({"error": "start_date must be before end"}), 400
+        
+        try:
+            count = sign_in_logs_service.count_sign_in_logs_by_date_range(
                 start_date, end_date
             )
-            return logs, 200
+            return jsonify({"num_results": count}), 200
 
         except Exception as e:
             error_message = getattr(e, "message", None)

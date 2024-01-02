@@ -132,6 +132,7 @@ def two_fa():
             )
 
         auth_service.send_email_verification_link(request.json["email"])
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
 
         response = jsonify(
             {
@@ -149,7 +150,6 @@ def two_fa():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
-        sign_in_logs_service.create_sign_in_log(auth_dto.id)
         return response, 200
 
     except Exception as e:
@@ -188,6 +188,8 @@ def register():
             "role": auth_dto.role,
             "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
+
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
 
         response = jsonify(response)
         response.set_cookie(

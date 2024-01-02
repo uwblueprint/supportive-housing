@@ -143,6 +143,12 @@ def get_residents():
     except:
         pass
 
+    filters = None
+    try:
+        filters = json.loads(request.args.get("filters"))
+    except:
+        pass
+
     results_per_page = 10
     try:
         results_per_page = int(request.args.get("results_per_page"))
