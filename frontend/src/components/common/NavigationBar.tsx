@@ -15,6 +15,7 @@ import {
   HOME_PAGE,
   RESIDENT_DIRECTORY_PAGE,
   EMPLOYEE_DIRECTORY_PAGE,
+  SIGN_IN_LOGS_PAGE,
   TAGS_PAGE
 } from "../../constants/Routes";
 
@@ -33,6 +34,8 @@ const NavigationBar = (): React.ReactElement => {
 
   const navigateToEmployeeDirectory = () =>
     history.push(EMPLOYEE_DIRECTORY_PAGE);
+
+  const navigateToSignInLogs = () => history.push(SIGN_IN_LOGS_PAGE);
 
   const navigateToTags = () => history.push(TAGS_PAGE);
 
@@ -104,6 +107,9 @@ const NavigationBar = (): React.ReactElement => {
                   <MenuList>
                     <MenuItem onClick={navigateToEmployeeDirectory}>
                       Employee Directory
+                    </MenuItem>
+                    <MenuItem onClick={navigateToSignInLogs}>
+                      Sign In Logs
                     </MenuItem>
                     <MenuItem onClick={navigateToTags}>
                       Tags

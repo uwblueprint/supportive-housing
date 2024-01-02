@@ -5,7 +5,8 @@ from ...models.user import User
 from ...models import db
 from ...resources.user_dto import UserDTO
 from ...utilities.exceptions.auth_exceptions import (
-  UserNotInvitedException, EmailAlreadyInUseException
+    UserNotInvitedException,
+    EmailAlreadyInUseException,
 )
 
 
@@ -215,7 +216,7 @@ class UserService(IUserService):
 
         try:
             cur_user_status = self.get_user_status_by_email(user.email)
-            
+
             if cur_user_status == "Active":
                 raise EmailAlreadyInUseException
             if cur_user_status == "Invited":
