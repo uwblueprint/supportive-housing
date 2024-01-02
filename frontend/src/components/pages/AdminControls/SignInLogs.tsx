@@ -1,15 +1,14 @@
-import React, { useRef, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
-import { User } from "../../../types/UserTypes";
 import SignInLogsTable from "./SignInLogsTable";
-import UserAPIClient from "../../../APIClients/UserAPIClient";
 import { SignInLog } from "../../../types/SignInLogsTypes";
+import SignInLogsAPIClient from "../../../APIClients/SignInLogsAPIClient";
 
 const SignInLogsPage = (): React.ReactElement => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [numUsers, setNumUsers] = useState<number>(0);
+  const [signInLogs, setSignInLogs] = useState<SignInLog[]>([]);
+  const [numSignInLogs, setNumSignInLogs] = useState<number>(0);
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
@@ -17,31 +16,70 @@ const SignInLogsPage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  // Change to get filter logs !!
-  const getUsers = async (pageNumber: number) => {
-    const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
+  const [tableLoaded, setTableLoaded] = useState(false)
+
+  const getSignInLogs = async (pageNumber: number) => {
+
+    // Start date - 30 days in the past
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30)
+    startDate.setHours(0, 0, 0, 0);
+
+    // End date - current day
+    const endDate = new Date()
+    endDate.setHours(23, 59, 59, 999)
+
+    setTableLoaded(false)
+
+    const data = await SignInLogsAPIClient.getSignInLogs({ 
+      pageNumber,
+      resultsPerPage,
+      startDate: startDate.toISOString(), 
+      endDate: endDate.toISOString()
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
 
-    setUsers(data ? data.users : []);
+    setSignInLogs(data ? data.signInLogs : []);
 
-    if (!data || data.users.length === 0) {
+    if (!data || data.signInLogs.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true)
   };
 
-  // Create an array of dictionaries
-  const signInLogs: SignInLog[] = [
-    { id: 1, date: "2023-12-03T13:30:00.000Z" , name: "Aathithan Chandrabalan" },
-    { id: 1, date: "2023-12-01T12:30:00.000Z" , name: "Phil Dunphy" },
-    { id: 1, date: "2023-12-04T15:11:00.000Z" , name: "Connor Bechthold" },
-    { id: 1, date: "2023-12-05T19:45:00.000Z" , name: "Bob Cob" },
-    { id: 1, date: "2023-12-05T21:23:00.000Z" , name: "Jessica P" },
-  ];
+  const countSignInLogs = async () => {
+
+    // Start date - 30 days in the past
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30)
+    startDate.setHours(0, 0, 0, 0);
+
+    // End date - current day
+    const endDate = new Date()
+    endDate.setHours(23, 59, 59, 999)
+
+    const data = await SignInLogsAPIClient.countSignInLogs({
+      startDate: startDate.toISOString(), 
+      endDate: endDate.toISOString()
+    });
+
+    setNumSignInLogs(data ? data.numResults : 0);
+  };
+
+  useEffect(() => {
+    setUserPageNum(1);
+    getSignInLogs(1);
+  }, [resultsPerPage]);
+
+  useEffect(() => {
+    countSignInLogs();
+  }, []);
 
   return (
     <Box>
@@ -58,19 +96,37 @@ const SignInLogsPage = (): React.ReactElement => {
           <Box textStyle="hero-table">Sign In Logs</Box>
         </Flex>
 
-        <SignInLogsTable
-          signInLogs={signInLogs}
-          tableRef={tableRef}
-        />
-        <Pagination
-          numRecords={numUsers}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getUsers}
-        />
+        {!tableLoaded ? 
+          <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          size="xl"
+          />
+        : <Box>
+          {numSignInLogs === 0 ?
+        <Text textAlign="center" paddingTop="5%">
+                No results found.
+        </Text>
+        :
+        <Box>
+
+          <SignInLogsTable
+            signInLogs={signInLogs}
+            tableRef={tableRef}
+          />
+          <Pagination
+            numRecords={numSignInLogs}
+            pageNum={pageNum}
+            userPageNum={userPageNum}
+            setUserPageNum={setUserPageNum}
+            resultsPerPage={resultsPerPage}
+            setResultsPerPage={setResultsPerPage}
+            getRecords={getSignInLogs}
+          />
+        </Box>}
+        </Box>
+        }
       </Box>
     </Box>
   );

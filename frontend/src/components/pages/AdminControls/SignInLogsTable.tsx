@@ -40,13 +40,13 @@ const SignInLogsTable = ({
           </Thead>
           <Tbody>
             {signInLogs.map((log) => {
-              const dateObj = new Date(log.date);
+              const dateObj = new Date(log.time);
               
               const { date, time } = getFormattedDateAndTime(dateObj);
 
               return (
                 <Tr key={log.id} style={{ verticalAlign: "middle" }}>
-                  <Td width="33%">{`${log.name}`}</Td>
+                  <Td width="33%">{`${log.firstName} ${log.lastName}`}</Td>
                   <Td width="33%">{date}</Td>
                   <Td width="5%">{time}</Td>
                 </Tr>
