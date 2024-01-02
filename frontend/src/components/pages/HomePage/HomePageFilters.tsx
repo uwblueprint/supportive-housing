@@ -130,9 +130,7 @@ const HomePageFilters = ({
     }
   };
 
-  const handleBuildingChange = (
-    selectedBuildings: MultiValue<SelectLabel>,
-  ) => {
+  const handleBuildingChange = (selectedBuildings: MultiValue<SelectLabel>) => {
     const mutableSelectedBuildings: SelectLabel[] = Array.from(
       selectedBuildings,
     );
@@ -144,8 +142,12 @@ const HomePageFilters = ({
     setAttentionTos(mutableSelectedAttnTos);
   };
 
-  const handleEmployeesChange = (selectedEmployees: MultiValue<SelectLabel>) => {
-    const mutableSelectedEmployees: SelectLabel[] = Array.from(selectedEmployees);
+  const handleEmployeesChange = (
+    selectedEmployees: MultiValue<SelectLabel>,
+  ) => {
+    const mutableSelectedEmployees: SelectLabel[] = Array.from(
+      selectedEmployees,
+    );
     setEmployees(mutableSelectedEmployees);
   };
 
@@ -254,11 +256,23 @@ const HomePageFilters = ({
                         },
                       }}
                     />
-                    {startDate &&
+                    {startDate && (
                       <InputRightElement>
-                        <IconButton onClick={() => setStartDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                        <IconButton
+                          onClick={() => setStartDate(undefined)}
+                          aria-label="clear"
+                          variant="icon"
+                          icon={
+                            <SmallCloseIcon
+                              boxSize="5"
+                              color="gray.200"
+                              _hover={{ color: "gray.400" }}
+                              transition="color 0.1s ease-in-out"
+                            />
+                          }
+                        />
                       </InputRightElement>
-                    }   
+                    )}
                   </InputGroup>
                 </GridItem>
                 <GridItem
@@ -285,11 +299,23 @@ const HomePageFilters = ({
                         },
                       }}
                     />
-                    {endDate &&
+                    {endDate && (
                       <InputRightElement>
-                        <IconButton onClick={() => setEndDate(undefined)} aria-label="clear" variant="icon" icon={<SmallCloseIcon boxSize="5" color="gray.200" _hover={{ color: 'gray.400' }} transition="color 0.1s ease-in-out"/>}/>
+                        <IconButton
+                          onClick={() => setEndDate(undefined)}
+                          aria-label="clear"
+                          variant="icon"
+                          icon={
+                            <SmallCloseIcon
+                              boxSize="5"
+                              color="gray.200"
+                              _hover={{ color: "gray.400" }}
+                              transition="color 0.1s ease-in-out"
+                            />
+                          }
+                        />
                       </InputRightElement>
-                    } 
+                    )}
                   </InputGroup>
                 </GridItem>
               </Grid>

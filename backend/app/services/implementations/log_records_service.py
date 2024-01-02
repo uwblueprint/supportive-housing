@@ -96,9 +96,7 @@ class LogRecordsService(ILogRecordsService):
         if type(buildings) == list:
             sql_statement = f"\nlogs.building_id={buildings[0]}"
             for i in range(1, len(buildings)):
-                sql_statement = (
-                    sql_statement + f"\nOR logs.building_id={buildings[i]}"
-                )
+                sql_statement = sql_statement + f"\nOR logs.building_id={buildings[i]}"
             return sql_statement
         return f"\logs.building_id={buildings}"
 

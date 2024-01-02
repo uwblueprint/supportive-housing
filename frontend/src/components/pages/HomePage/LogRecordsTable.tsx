@@ -120,10 +120,12 @@ const LogRecordsTable = ({
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: SelectLabel[] = residentsData.residents.map((r) => ({
-        label: r.residentId!,
-        value: r.id!,
-      }));
+      const residentLabels: SelectLabel[] = residentsData.residents.map(
+        (r) => ({
+          label: r.residentId!,
+          value: r.id!,
+        }),
+      );
       setResidentOptions(residentLabels);
     }
 
@@ -226,38 +228,34 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="2.5%">{`${record.employee.firstName}`}</Td>
                       <Td width="2.5%">
-                        {record.attnTo
-                          ? `${record.attnTo.firstName}`
-                          : ""}
+                        {record.attnTo ? `${record.attnTo.firstName}` : ""}
                       </Td>
-                      <Td width="5%">
-                        {formatList(record.tags)}
-                      </Td>
+                      <Td width="5%">{formatList(record.tags)}</Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (
-                            <Menu>
-                              <MenuButton
-                                as={IconButton}
-                                aria-label="Options"
-                                icon={<VscKebabVertical />}
-                                w="36px"
-                                variant="ghost"
-                              />
-                              <MenuList>
-                                <MenuItem
-                                  onClick={() => handleEditToggle(record.logId)}
-                                >
-                                  Edit Log Record
+                          <Menu>
+                            <MenuButton
+                              as={IconButton}
+                              aria-label="Options"
+                              icon={<VscKebabVertical />}
+                              w="36px"
+                              variant="ghost"
+                            />
+                            <MenuList>
+                              <MenuItem
+                                onClick={() => handleEditToggle(record.logId)}
+                              >
+                                Edit Log Record
                               </MenuItem>
-                                <MenuItem
-                                  onClick={() => handleDeleteToggle(record.logId)}
-                                >
-                                  Delete Log Record
+                              <MenuItem
+                                onClick={() => handleDeleteToggle(record.logId)}
+                              >
+                                Delete Log Record
                               </MenuItem>
-                              </MenuList>
-                            </Menu>
-                          )}
+                            </MenuList>
+                          </Menu>
+                        )}
                       </Td>
                     </Tr>
 

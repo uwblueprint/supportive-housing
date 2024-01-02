@@ -29,4 +29,4 @@ export type ErrorResponse = {
   errMessage: string;
 };
 
-export type AuthFlow = 'LOGIN' | 'SIGNUP';
+export type AuthFlow = "LOGIN" | "SIGNUP";

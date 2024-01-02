@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import { 
-  Box, 
-  Button, 
-  Flex, 
-  FormControl, 
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
   FormErrorMessage,
-  Input, 
-  Text 
+  Input,
+  Text,
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
@@ -56,54 +56,52 @@ const Signup = ({
     const inputValue = e.target.value as string;
     if (signupClicked) {
       if (emailRegex.test(inputValue)) {
-        setEmailErrorStr("")
-        setEmailError(false)
+        setEmailErrorStr("");
+        setEmailError(false);
       } else {
-        setEmailErrorStr("Please enter a valid email.")
-        setEmailError(true)
+        setEmailErrorStr("Please enter a valid email.");
+        setEmailError(true);
       }
     }
-    setEmail(inputValue)
+    setEmail(inputValue);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    setPassword(inputValue)
+    setPassword(inputValue);
 
     if (signupClicked) {
       if (inputValue.length >= 6) {
-        setPasswordErrorStr("")
-        setPasswordError(false)
-      }
-      else {
-        setPasswordErrorStr("Password must be 6 characters long.")
-        setPasswordError(true)
+        setPasswordErrorStr("");
+        setPasswordError(false);
+      } else {
+        setPasswordErrorStr("Password must be 6 characters long.");
+        setPasswordError(true);
       }
     }
-  }
+  };
 
   const onSignupClick = async () => {
-    setSignupClicked(true)
+    setSignupClicked(true);
 
     if (!emailRegex.test(email)) {
-      setEmailErrorStr("Please enter a valid email.")
-      setEmailError(true)
-      return
+      setEmailErrorStr("Please enter a valid email.");
+      setEmailError(true);
+      return;
     }
 
     if (password.length < 6) {
-      setPasswordErrorStr("Password must be 6 characters long.")
-      setPasswordError(true)
-      return
+      setPasswordErrorStr("Password must be 6 characters long.");
+      setPasswordError(true);
+      return;
     }
-    
+
     const isInvited = await commonApiClient.isUserInvited(email);
     if (isInvited !== "Not Invited") {
       if (isAuthErrorResponse(isInvited)) {
-        setEmailErrorStr(isInvited.errMessage)
-        setEmailError(true)
-      }
-      else {
+        setEmailErrorStr(isInvited.errMessage);
+        setEmailError(true);
+      } else {
         const registerResponse = await authAPIClient.register(
           firstName,
           lastName,
@@ -112,10 +110,9 @@ const Signup = ({
         );
         if (registerResponse) {
           if (isAuthErrorResponse(registerResponse)) {
-            setEmailErrorStr(registerResponse.errMessage)
-            setEmailError(true)
-          }
-          else {
+            setEmailErrorStr(registerResponse.errMessage);
+            setEmailError(true);
+          } else {
             const { requiresTwoFa, authUser } = registerResponse;
             if (requiresTwoFa) {
               setToggle(!toggle);
@@ -132,8 +129,13 @@ const Signup = ({
     }
   };
 
-  const isCreateAccountBtnDisabled = () => 
-    emailError || passwordError || email === '' || password === '' || firstName === '' || lastName === ''
+  const isCreateAccountBtnDisabled = () =>
+    emailError ||
+    passwordError ||
+    email === "" ||
+    password === "" ||
+    firstName === "" ||
+    lastName === "";
 
   const onLogInClick = () => {
     history.push(LOGIN_PAGE);
@@ -143,7 +145,7 @@ const Signup = ({
     return <Redirect to={HOME_PAGE} />;
   }
 
-  if (toggle) {   
+  if (toggle) {
     return (
       <Flex h="100vh">
         <Box w="47%">
@@ -154,68 +156,66 @@ const Signup = ({
             alignItems="center"
             gap="28px"
           >
-              <Box w="80%" textAlign="left">
-                <Text variant="login">
-                  Sign Up
-                </Text>
-              </Box>
-              <Box w="80%">
+            <Box w="80%" textAlign="left">
+              <Text variant="login">Sign Up</Text>
+            </Box>
+            <Box w="80%">
+              <Input
+                variant="login"
+                placeholder="Your first name"
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+              />
+            </Box>
+            <Box w="80%">
+              <Input
+                variant="login"
+                placeholder="Your last name"
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+              />
+            </Box>
+            <Box w="80%">
+              <FormControl isRequired isInvalid={emailError}>
                 <Input
                   variant="login"
-                  placeholder="Your first name"
-                  value={firstName}
-                  onChange={(event) => setFirstName(event.target.value)}
+                  placeholder="Your email"
+                  value={email}
+                  onChange={handleEmailChange}
                 />
-              </Box>
-              <Box w="80%">
+                <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box w="80%">
+              <FormControl isRequired isInvalid={passwordError}>
                 <Input
                   variant="login"
-                  placeholder="Your last name"
-                  value={lastName}
-                  onChange={(event) => setLastName(event.target.value)}
+                  type="password"
+                  placeholder="Your password"
+                  value={password}
+                  onChange={handlePasswordChange}
                 />
-              </Box>
-              <Box w="80%">
-                <FormControl isRequired isInvalid={emailError}>
-                  <Input
-                    variant="login"
-                    placeholder="Your email"
-                    value={email}
-                    onChange={handleEmailChange}
-                  />
-                  <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box w="80%">
-                <FormControl isRequired isInvalid={passwordError}>
-                  <Input
-                    variant="login"
-                    type="password"
-                    placeholder="Your password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                  />
-                  <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
-                </FormControl>
-              </Box>
-              <Box w="80%">
-                <Button
-                  variant="login"
-                  disabled={isCreateAccountBtnDisabled()}
-                  _hover={
-                    email && password && firstName && lastName
-                      ? {
-                          background: "teal.500",
-                          transition:
-                            "transition: background-color 0.5s ease !important",
-                        }
-                      : {}
-                  }
-                  onClick={onSignupClick}
-                >
-                  Create Account
-                </Button>
-              </Box>
+                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+              </FormControl>
+            </Box>
+            <Box w="80%">
+              <Button
+                variant="login"
+                disabled={isCreateAccountBtnDisabled()}
+                _hover={
+                  email && password && firstName && lastName
+                    ? {
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
+                    : {}
+                }
+                onClick={onSignupClick}
+              >
+                Create Account
+              </Button>
+            </Box>
             <Box w="80%">
               <Flex gap="10px">
                 <Text variant="loginSecondary" paddingRight="1.1vw">

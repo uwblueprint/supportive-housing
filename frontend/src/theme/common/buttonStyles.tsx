@@ -75,9 +75,9 @@ const Button: ComponentStyleConfig = {
     },
     icon: {
       _focus: {
-        boxShadow: 'none !important',
-    }
-    }
+        boxShadow: "none !important",
+      },
+    },
   },
 };
 

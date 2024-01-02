@@ -14,7 +14,6 @@ blueprint = Blueprint("sign-in-logs", __name__, url_prefix="/sign-in-logs")
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def filter_logs():
-
     page_number = 1
     try:
         page_number = int(request.args.get("page_number"))
@@ -38,7 +37,7 @@ def filter_logs():
     if start_date and end_date:
         if start_date > end_date:
             return jsonify({"error": "start_date must be before end"}), 400
-        
+
         try:
             # return as json object
             logs = sign_in_logs_service.get_sign_in_logs_by_date_range(
@@ -54,7 +53,7 @@ def filter_logs():
             )
     else:
         return jsonify({"error": "Not enough information provided."})
-    
+
     # Commented out for possible future use
 
     # email = None
@@ -87,10 +86,10 @@ def filter_logs():
     #             500,
     #         )
 
+
 @blueprint.route("/count", methods=["GET"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 def count_logs():
-
     start_date = None
     end_date = None
     try:
@@ -102,7 +101,7 @@ def count_logs():
     if start_date and end_date:
         if start_date > end_date:
             return jsonify({"error": "start_date must be before end"}), 400
-        
+
         try:
             count = sign_in_logs_service.count_sign_in_logs_by_date_range(
                 start_date, end_date

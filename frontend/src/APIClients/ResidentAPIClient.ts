@@ -9,7 +9,7 @@ import {
   GetResidentsParams,
   CountResidentsParams,
 } from "../types/ResidentTypes";
-import { ResidentErrorResponse } from "../types/ErrorTypes"
+import { ResidentErrorResponse } from "../types/ErrorTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -20,7 +20,7 @@ const getResidents = async ({
   residents,
   buildings,
   statuses,
-  dateRange
+  dateRange,
 }: GetResidentsParams): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -35,7 +35,7 @@ const getResidents = async ({
             residents,
             buildings,
             statuses,
-            dateRange
+            dateRange,
           },
           returnAll,
           pageNumber,
@@ -54,7 +54,7 @@ const countResidents = async ({
   residents,
   buildings,
   statuses,
-  dateRange
+  dateRange,
 }: CountResidentsParams): Promise<CountResidentsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -69,7 +69,7 @@ const countResidents = async ({
             residents,
             buildings,
             statuses,
-            dateRange
+            dateRange,
           },
         },
         headers: { Authorization: bearerToken },
@@ -103,7 +103,9 @@ const createResident = async ({
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
-        errMessage: axiosErr.response.data.error ?? `Resident with the specified user ID already exists.`
+        errMessage:
+          axiosErr.response.data.error ??
+          `Resident with the specified user ID already exists.`,
       };
     }
     return false;
@@ -153,7 +155,9 @@ const editResident = async ({
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
-        errMessage: axiosErr.response.data.error ?? "Resident with the specified user ID already exists."
+        errMessage:
+          axiosErr.response.data.error ??
+          "Resident with the specified user ID already exists.",
       };
     }
     return false;

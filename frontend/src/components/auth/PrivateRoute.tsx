@@ -19,22 +19,16 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   const currentPath = location.pathname;
 
   if (!authenticatedUser) {
-    return (
-      <Redirect to={LOGIN_PAGE} />
-    )
+    return <Redirect to={LOGIN_PAGE} />;
   }
 
   if (authenticatedUser.verified === false) {
     if (!currentPath.endsWith("/verification")) {
-      return (
-        <Redirect to={VERIFICATION_PAGE} />
-      )
+      return <Redirect to={VERIFICATION_PAGE} />;
     }
   }
 
-  return (
-    <Route path={path} exact={exact} component={component} />
-  )
+  return <Route path={path} exact={exact} component={component} />;
 };
 
 export default PrivateRoute;

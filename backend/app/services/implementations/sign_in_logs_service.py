@@ -52,54 +52,52 @@ class SignInLogService(ISignInLogService):
     def get_sign_in_logs_by_id(self, user_id):
         try:
             sign_in_logs = (
-                SignInLogs.query.join(
-                    User, User.id == SignInLogs.id
-                )
+                SignInLogs.query.join(User, User.id == SignInLogs.id)
                 .with_entities(SignInLogs, User.first_name, User.last_name)
-                .filter_by(id=user_id).order_by(
-                    SignInLogs.time.desc()
-                )
+                .filter_by(id=user_id)
+                .order_by(SignInLogs.time.desc())
             )
             return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:
             raise postgres_error
 
-    def get_sign_in_logs_by_date_range(self, page_number, results_per_page, start_date, end_date):
-
-        start_date_utc = datetime.fromisoformat(start_date.replace("Z", "+00:00")).replace(tzinfo=utc)
-        end_date_utc = datetime.fromisoformat(end_date.replace("Z", "+00:00")).replace(tzinfo=utc)
+    def get_sign_in_logs_by_date_range(
+        self, page_number, results_per_page, start_date, end_date
+    ):
+        start_date_utc = datetime.fromisoformat(
+            start_date.replace("Z", "+00:00")
+        ).replace(tzinfo=utc)
+        end_date_utc = datetime.fromisoformat(end_date.replace("Z", "+00:00")).replace(
+            tzinfo=utc
+        )
 
         try:
             sign_in_logs = (
-                SignInLogs.query.join(
-                    User, User.id == SignInLogs.id
-                )
+                SignInLogs.query.join(User, User.id == SignInLogs.id)
                 .with_entities(SignInLogs, User.first_name, User.last_name)
                 .filter(
                     SignInLogs.time >= start_date_utc, SignInLogs.time <= end_date_utc
                 )
-                .order_by(
-                    SignInLogs.time.desc()
-                )
+                .order_by(SignInLogs.time.desc())
                 .limit(results_per_page)
                 .offset((page_number - 1) * results_per_page)
             )
             return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:
             raise postgres_error
-        
-    def count_sign_in_logs_by_date_range(self, start_date, end_date):
 
-        start_date_utc = datetime.fromisoformat(start_date.replace("Z", "+00:00")).replace(tzinfo=utc)
-        end_date_utc = datetime.fromisoformat(end_date.replace("Z", "+00:00")).replace(tzinfo=utc)
+    def count_sign_in_logs_by_date_range(self, start_date, end_date):
+        start_date_utc = datetime.fromisoformat(
+            start_date.replace("Z", "+00:00")
+        ).replace(tzinfo=utc)
+        end_date_utc = datetime.fromisoformat(end_date.replace("Z", "+00:00")).replace(
+            tzinfo=utc
+        )
 
         try:
-            count = (
-                SignInLogs.query.filter(
-                    SignInLogs.time >= start_date_utc, SignInLogs.time <= end_date_utc
-                )
-                .count()
-            )
+            count = SignInLogs.query.filter(
+                SignInLogs.time >= start_date_utc, SignInLogs.time <= end_date_utc
+            ).count()
             return count
         except Exception as postgres_error:
             raise postgres_error
@@ -107,17 +105,11 @@ class SignInLogService(ISignInLogService):
     def get_sign_in_logs_by_date_range_and_id(self, start_date, end_date, user_id):
         try:
             sign_in_logs = (
-                SignInLogs.query.join(
-                    User, User.id == SignInLogs.id
-                )
+                SignInLogs.query.join(User, User.id == SignInLogs.id)
                 .with_entities(SignInLogs, User.first_name, User.last_name)
-                .filter(
-                    SignInLogs.time >= start_date, SignInLogs.time <= end_date
-                )
+                .filter(SignInLogs.time >= start_date, SignInLogs.time <= end_date)
                 .filter_by(id=user_id)
-                .order_by(
-                    SignInLogs.time.desc()
-                )
+                .order_by(SignInLogs.time.desc())
             )
             return self.get_sign_in_logs_list(sign_in_logs)
         except Exception as postgres_error:

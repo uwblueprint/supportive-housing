@@ -21,7 +21,6 @@ const SignInLogsTable = ({
   signInLogs,
   tableRef,
 }: Props): React.ReactElement => {
-  
   return (
     <Box>
       <TableContainer
@@ -41,7 +40,7 @@ const SignInLogsTable = ({
           <Tbody>
             {signInLogs.map((log) => {
               const dateObj = new Date(log.time);
-              
+
               const { date, time } = getFormattedDateAndTime(dateObj);
 
               return (

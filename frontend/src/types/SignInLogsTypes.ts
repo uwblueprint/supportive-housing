@@ -1,16 +1,16 @@
 export type SignInLog = {
   id: number;
-  firstName: string,
-  lastName: string,
-  time: string
-}
+  firstName: string;
+  lastName: string;
+  time: string;
+};
 
 export type GetSignInLogsParams = {
   pageNumber?: number;
   resultsPerPage?: number;
   startDate: string;
   endDate: string;
-}
+};
 
 export type GetSignInLogsResponse = {
   signInLogs: SignInLog[];

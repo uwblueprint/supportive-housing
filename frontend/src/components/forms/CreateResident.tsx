@@ -31,7 +31,7 @@ import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/error"
+import { isResidentErrorResponse } from "../../helper/error";
 import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
@@ -71,17 +71,12 @@ const CreateResident = ({
     });
 
     if (isResidentErrorResponse(res)) {
-      newToast(
-        "Error creating resident",
-        res.errMessage,
-        "error"
-      )
-    }
-    else if (res) {
+      newToast("Error creating resident", res.errMessage, "error");
+    } else if (res) {
       getRecords(1);
       countResidents();
       setUserPageNum(1);
-      setShowAlert(true)
+      setShowAlert(true);
       setIsOpen(false);
     }
   };

@@ -176,7 +176,7 @@ def register():
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
-        
+
         auth_service.send_email_verification_link(request.json["email"])
 
         response["auth_user"] = {
@@ -253,14 +253,18 @@ def reset_password(email):
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
+
 @blueprint.route("/verify", methods=["GET"], strict_slashes=False)
 def is_verified():
     """
-    Checks if a user with a specified email is verified. 
+    Checks if a user with a specified email is verified.
     """
     try:
         access_token = get_access_token(request)
-        return jsonify({"verified": auth_service.is_authorized_by_token(access_token)}), 200
+        return (
+            jsonify({"verified": auth_service.is_authorized_by_token(access_token)}),
+            200,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

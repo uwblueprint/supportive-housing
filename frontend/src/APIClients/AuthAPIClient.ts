@@ -4,16 +4,10 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
-import { 
-  getAuthErrMessage
-} 
-from "../helper/error";
+import { getAuthErrMessage } from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import {
-  AuthenticatedUser,
-  AuthTokenResponse,
-} from "../types/AuthTypes";
-import { AuthErrorResponse } from "../types/ErrorTypes"
+import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
+import { AuthErrorResponse } from "../types/ErrorTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -36,7 +30,7 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getAuthErrMessage(axiosErr.response, 'LOGIN'),
+        errMessage: getAuthErrMessage(axiosErr.response, "LOGIN"),
       };
     }
     return {
@@ -115,7 +109,7 @@ const register = async (
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getAuthErrMessage(axiosErr.response, 'SIGNUP'),
+        errMessage: getAuthErrMessage(axiosErr.response, "SIGNUP"),
       };
     }
     return null;
@@ -145,10 +139,9 @@ const isVerified = async (): Promise<boolean> => {
     "accessToken",
   )}`;
   try {
-    const { data } = await baseAPIClient.get(
-      `/auth/verify`,
-      { headers: { Authorization: bearerToken } },
-    );
+    const { data } = await baseAPIClient.get(`/auth/verify`, {
+      headers: { Authorization: bearerToken },
+    });
     return data.verified === true;
   } catch (error) {
     return false;

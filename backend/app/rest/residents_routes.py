@@ -26,7 +26,16 @@ def add_resident():
     try:
         existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
         if existing_resident:
-            return jsonify({"error": "Resident with ID {fmt_resident_id} already exists.".format(fmt_resident_id=fmt_resident_id)}), 409
+            return (
+                jsonify(
+                    {
+                        "error": "Resident with ID {fmt_resident_id} already exists.".format(
+                            fmt_resident_id=fmt_resident_id
+                        )
+                    }
+                ),
+                409,
+            )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -51,17 +60,27 @@ def update_resident(resident_id):
             jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
             400,
         )
-    
+
     # Check for the existence of a resident prior to adding them
-    fmt_resident_id = updated_resident.get("initial") + str(updated_resident.get("room_num"))
+    fmt_resident_id = updated_resident.get("initial") + str(
+        updated_resident.get("room_num")
+    )
     try:
         existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
         if existing_resident and existing_resident["id"] != resident_id:
-            return jsonify({"error": "Resident with ID {fmt_resident_id} already exists.".format(fmt_resident_id=fmt_resident_id)}), 409
+            return (
+                jsonify(
+                    {
+                        "error": "Resident with ID {fmt_resident_id} already exists.".format(
+                            fmt_resident_id=fmt_resident_id
+                        )
+                    }
+                ),
+                409,
+            )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
-
 
     try:
         updated_resident = residents_service.update_resident(

@@ -23,7 +23,7 @@ export const singleDatePickerStyle = {
     },
     _placeholder: {
       color: colors.gray[500],
-    }
+    },
   },
   popoverCompProps: {
     popoverContentProps: {

@@ -219,7 +219,7 @@ class AuthService(IAuthService):
             )
         except:
             return False
-        
+
     def is_authorized_by_token(self, access_token):
         try:
             decoded_id_token = firebase_admin.auth.verify_id_token(

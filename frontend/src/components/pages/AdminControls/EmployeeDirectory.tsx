@@ -15,13 +15,13 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
-  const [tableLoaded, setTableLoaded] = useState(false)
+  const [tableLoaded, setTableLoaded] = useState(false);
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
-    setTableLoaded(false)
+    setTableLoaded(false);
     const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
     // Reset table scroll
@@ -35,8 +35,8 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
-    
-    setTableLoaded(true)
+
+    setTableLoaded(true);
   };
 
   const countUsers = async () => {
@@ -82,12 +82,11 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         ) : (
           <Box>
-            {
-              numUsers === 0 ? 
+            {numUsers === 0 ? (
               <Text textAlign="center" paddingTop="5%">
                 No results found.
               </Text>
-              :
+            ) : (
               <Box>
                 <EmployeeDirectoryTable
                   users={users}
@@ -107,7 +106,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
                   getRecords={getUsers}
                 />
               </Box>
-            }
+            )}
           </Box>
         )}
       </Box>

@@ -11,10 +11,14 @@ import {
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { HOME_PAGE, SIGNUP_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
+import {
+  HOME_PAGE,
+  SIGNUP_PAGE,
+  VERIFICATION_PAGE,
+} from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthTokenResponse } from "../../types/AuthTypes";
-import { AuthErrorResponse } from "../../types/ErrorTypes"
+import { AuthErrorResponse } from "../../types/ErrorTypes";
 import commonApiClient from "../../APIClients/CommonAPIClient";
 import { isAuthErrorResponse } from "../../helper/error";
 
@@ -103,12 +107,7 @@ const Login = ({
     return (
       <Flex>
         <Box w="47%">
-          <Flex
-            height="100vh"
-            display="flex"
-            align="center"
-            justify="center"
-          >
+          <Flex height="100vh" display="flex" align="center" justify="center">
             <Flex width="80%" align="flex-start" direction="column" gap="28px">
               <Text variant="login" paddingBottom="12px">
                 Log In
@@ -138,10 +137,10 @@ const Login = ({
                 _hover={
                   email && password
                     ? {
-                      background: "teal.500",
-                      transition:
-                        "transition: background-color 0.5s ease !important",
-                    }
+                        background: "teal.500",
+                        transition:
+                          "transition: background-color 0.5s ease !important",
+                      }
                     : {}
                 }
                 onClick={onLogInClick}
