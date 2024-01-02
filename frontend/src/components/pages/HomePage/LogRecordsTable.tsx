@@ -149,7 +149,7 @@ const LogRecordsTable = ({
       setEmployeeOptions(userLabels);
     }
 
-    const tagsData = await TagAPIClient.getTags();
+    const tagsData = await TagAPIClient.getTags({ returnAll: true });
     if (tagsData && tagsData.tags.length !== 0) {
       const tagLabels: SelectLabel[] = tagsData.tags.map((tag) => ({
         label: tag.name,

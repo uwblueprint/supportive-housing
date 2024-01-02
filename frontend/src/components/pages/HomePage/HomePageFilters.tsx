@@ -117,7 +117,7 @@ const HomePageFilters = ({
   };
 
   const getTags = async () => {
-    const data = await TagAPIClient.getTags();
+    const data = await TagAPIClient.getTags({ returnAll: true });
     const tagsData = data?.tags;
     if (tagsData) {
       const labels = tagsData.map((tag: Tag) => {
