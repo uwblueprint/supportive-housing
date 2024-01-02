@@ -20,18 +20,20 @@ class TagsService(ITagsService):
 
     def get_tags(self, return_all, page_number, results_per_page):
         try:
-            tags_results = Tag.query.order_by(Tag.last_modified.desc());
+            tags_results = Tag.query.order_by(Tag.last_modified.desc())
 
             if return_all:
                 tags_results = tags_results.all()
             else:
-                tags_results = tags_results.limit(results_per_page).offset((page_number - 1) * results_per_page)
-                
+                tags_results = tags_results.limit(results_per_page).offset(
+                    (page_number - 1) * results_per_page
+                )
+
             tags_results = list(map(lambda tag: tag.to_dict(), tags_results))
             return {"tags": tags_results}
         except Exception as postgres_error:
             raise postgres_error
-        
+
     def count_tags(self):
         try:
             count = Tag.query.count()

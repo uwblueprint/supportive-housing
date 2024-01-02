@@ -21,12 +21,11 @@ const TagsPage = (): React.ReactElement => {
   const [tableLoaded, setTableLoaded] = useState(false);
 
   const getTags = async (pageNumber: number) => {
-
     setTableLoaded(false);
 
     const data = await TagAPIClient.getTags({
       pageNumber,
-      resultsPerPage
+      resultsPerPage,
     });
 
     // Reset table scroll
@@ -72,21 +71,20 @@ const TagsPage = (): React.ReactElement => {
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Tags</Box>
           <CreateTag
-            /* TODO: create tag modal */
+          /* TODO: create tag modal */
           />
         </Flex>
 
-        {
-          !tableLoaded ? (
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              size="xl"
-            />
-          ) : (
-            <Box>
-              {numTags === 0 ? (
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            {numTags === 0 ? (
               <Text textAlign="center" paddingTop="5%">
                 No results found.
               </Text>
@@ -111,11 +109,9 @@ const TagsPage = (): React.ReactElement => {
                   getRecords={getTags}
                 />
               </Box>
-            )
-              }
-            </Box>
-          )
-        }
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

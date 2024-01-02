@@ -16,7 +16,7 @@ import {
   RESIDENT_DIRECTORY_PAGE,
   EMPLOYEE_DIRECTORY_PAGE,
   SIGN_IN_LOGS_PAGE,
-  TAGS_PAGE
+  TAGS_PAGE,
 } from "../../constants/Routes";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -111,9 +111,7 @@ const NavigationBar = (): React.ReactElement => {
                     <MenuItem onClick={navigateToSignInLogs}>
                       Sign In Logs
                     </MenuItem>
-                    <MenuItem onClick={navigateToTags}>
-                      Tags
-                    </MenuItem>
+                    <MenuItem onClick={navigateToTags}>Tags</MenuItem>
                   </MenuList>
                 )}
               </Menu>

@@ -1,14 +1,11 @@
 import React from "react";
-import {
-  Button
-} from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
 const CreateTag = (): React.ReactElement => {
-  
   const handleOpen = () => {
     /* TODO */
-  }
+  };
 
   return (
     <>

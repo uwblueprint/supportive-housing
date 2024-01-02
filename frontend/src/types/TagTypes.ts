@@ -8,7 +8,7 @@ export type GetTagsParams = {
   returnAll?: boolean;
   pageNumber?: number;
   resultsPerPage?: number;
-}
+};
 
 export type GetTagsResponse = {
   tags: Tag[];

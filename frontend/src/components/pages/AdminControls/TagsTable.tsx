@@ -45,9 +45,7 @@ const TagsTable = ({
         <Table variant="showTable" verticalAlign="middle">
           <Thead>
             <Tr>
-              <Th>
-                Tag Name
-              </Th>
+              <Th>Tag Name</Th>
               <Th> </Th>
             </Tr>
           </Thead>
@@ -66,12 +64,8 @@ const TagsTable = ({
                         variant="ghost"
                       />
                       <MenuList>
-                        <MenuItem>
-                          Edit Tag
-                        </MenuItem>
-                        <MenuItem>
-                          Delete Tag
-                        </MenuItem>
+                        <MenuItem>Edit Tag</MenuItem>
+                        <MenuItem>Delete Tag</MenuItem>
                       </MenuList>
                     </Menu>
                   </Td>

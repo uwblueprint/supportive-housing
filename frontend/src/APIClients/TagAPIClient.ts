@@ -2,7 +2,11 @@ import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
-import { CountTagsResponse, GetTagsParams, GetTagsResponse } from "../types/TagTypes";
+import {
+  CountTagsResponse,
+  GetTagsParams,
+  GetTagsResponse,
+} from "../types/TagTypes";
 
 const getTags = async ({
   returnAll = false,
@@ -18,7 +22,7 @@ const getTags = async ({
       params: {
         returnAll,
         pageNumber,
-        resultsPerPage
+        resultsPerPage,
       },
       headers: { Authorization: bearerToken },
     });
@@ -34,12 +38,9 @@ const countTags = async (): Promise<CountTagsResponse> => {
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-    const { data } = await baseAPIClient.get<CountTagsResponse>(
-      `/tags/count`,
-      {
-        headers: { Authorization: bearerToken },
-      },
-    );
+    const { data } = await baseAPIClient.get<CountTagsResponse>(`/tags/count`, {
+      headers: { Authorization: bearerToken },
+    });
     return data;
   } catch (error) {
     return null;
