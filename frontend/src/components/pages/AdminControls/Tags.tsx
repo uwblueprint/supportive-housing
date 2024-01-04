@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import NavigationBar from "../../common/NavigationBar";
 import CreateTag from "../../forms/CreateTag";
@@ -70,8 +70,11 @@ const TagsPage = (): React.ReactElement => {
       >
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Tags</Box>
+          <Spacer />
           <CreateTag
-          /* TODO: create tag modal */
+            getTags={getTags}
+            countTags={countTags}
+            setUserPageNum={setUserPageNum}
           />
         </Flex>
 

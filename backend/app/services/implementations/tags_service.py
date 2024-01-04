@@ -2,6 +2,9 @@ from ..interfaces.tags_service import ITagsService
 from ...models.tags import Tag
 from ...models.log_record_tags import LogRecordTag
 from ...models import db
+from ...utilities.exceptions.duplicate_entity_exceptions import (
+    DuplicateTagException,
+)
 
 
 class TagsService(ITagsService):
@@ -78,8 +81,6 @@ class TagsService(ITagsService):
             return tag
         except Exception as error:
             if type(error).__name__ == "IntegrityError":
-                raise Exception(
-                    "Tag name {name} already exists".format(name=tag["name"])
-                )
+                raise DuplicateTagException(new_tag.name)
             else:
                 raise error
