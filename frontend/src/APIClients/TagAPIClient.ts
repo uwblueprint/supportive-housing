@@ -80,5 +80,5 @@ const createTag = async ({
 export default {
   countTags,
   getTags,
-  createTag
+  createTag,
 };

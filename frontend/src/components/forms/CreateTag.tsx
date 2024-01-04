@@ -1,5 +1,20 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, FormErrorMessage, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  FormErrorMessage,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { Col, Row } from "react-bootstrap";
 import CreateToast from "../common/Toasts";
@@ -15,9 +30,8 @@ type Props = {
 const CreateTag = ({
   getTags,
   setUserPageNum,
-  countTags
+  countTags,
 }: Props): React.ReactElement => {
-
   const [tagName, setTagName] = useState("");
 
   const [isOpen, setIsOpen] = useState(false);
@@ -26,14 +40,14 @@ const CreateTag = ({
   const [tagNameError, setTagNameError] = useState(false);
 
   const handleClose = () => {
-    setTagName("")
-    setTagNameError(false)
-    setIsOpen(false)
+    setTagName("");
+    setTagNameError(false);
+    setIsOpen(false);
   };
 
   const addTag = async () => {
     const res = await TagAPIClient.createTag({
-      name: tagName
+      name: tagName,
     });
 
     if (isErrorResponse(res)) {
@@ -47,7 +61,7 @@ const CreateTag = ({
     } else {
       newToast("Error adding tag", "Unable to add tag.", "error");
     }
-  }
+  };
 
   const handleTagNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -59,19 +73,23 @@ const CreateTag = ({
 
   const handleSubmit = () => {
     if (tagName.length === 0) {
-      setTagNameError(true)
-      return
+      setTagNameError(true);
+      return;
     }
 
-    addTag()
-  }
+    addTag();
+  };
 
   return (
     <>
-      <Button leftIcon={<AddIcon />} variant="primary" onClick={() => setIsOpen(true)}>
+      <Button
+        leftIcon={<AddIcon />}
+        variant="primary"
+        onClick={() => setIsOpen(true)}
+      >
         Add Tag
       </Button>
-      
+
       <Box>
         <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
@@ -89,9 +107,7 @@ const CreateTag = ({
                       value={tagName}
                       onChange={handleTagNameChange}
                     />
-                    <FormErrorMessage>
-                      Tag name is required.
-                    </FormErrorMessage>
+                    <FormErrorMessage>Tag name is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
