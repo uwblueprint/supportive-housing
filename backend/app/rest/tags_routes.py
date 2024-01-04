@@ -1,6 +1,7 @@
 from flask import Blueprint, current_app, jsonify, request
 from ..middlewares.auth import require_authorization_by_role
 from ..services.implementations.tags_service import TagsService
+from ..utilities.exceptions.duplicate_entity_exceptions import DuplicateTagException
 
 tags_service = TagsService(current_app.logger)
 blueprint = Blueprint("tags", __name__, url_prefix="/tags")
@@ -111,6 +112,9 @@ def create_tag():
     try:
         created_tag = tags_service.create_tag(tag)
         return jsonify(created_tag), 201
+    except DuplicateTagException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

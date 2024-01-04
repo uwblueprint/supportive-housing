@@ -1,4 +1,4 @@
-export type ResidentErrorResponse = {
+export type ErrorResponse = {
   errMessage: string;
 };
 

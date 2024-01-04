@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { AuthTokenResponse, AuthFlow } from "../types/AuthTypes";
-import { AuthErrorResponse, ResidentErrorResponse } from "../types/ErrorTypes";
+import { AuthErrorResponse, ErrorResponse } from "../types/ErrorTypes";
 
 export const getAuthErrMessage = (
   axiosErrRes: AxiosError["response"],
@@ -20,8 +20,8 @@ export const isAuthErrorResponse = (
   return res !== null && typeof res !== "string" && "errCode" in res;
 };
 
-export const isResidentErrorResponse = (
-  res: boolean | ResidentErrorResponse,
-): res is ResidentErrorResponse => {
+export const isErrorResponse = (
+  res: boolean | ErrorResponse,
+): res is ErrorResponse => {
   return typeof res !== "boolean" && "errMessage" in res;
 };

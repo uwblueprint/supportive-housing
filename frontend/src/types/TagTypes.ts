@@ -17,3 +17,5 @@ export type GetTagsResponse = {
 export type CountTagsResponse = {
   numResults: number;
 } | null;
+
+export type CreateTagParams = Omit<Tag, "tagId">;

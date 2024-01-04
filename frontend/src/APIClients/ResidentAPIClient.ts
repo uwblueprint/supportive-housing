@@ -9,7 +9,7 @@ import {
   GetResidentsParams,
   CountResidentsParams,
 } from "../types/ResidentTypes";
-import { ResidentErrorResponse } from "../types/ErrorTypes";
+import { ErrorResponse } from "../types/ErrorTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -86,7 +86,7 @@ const createResident = async ({
   roomNum,
   dateJoined,
   buildingId,
-}: CreateResidentParams): Promise<boolean | ResidentErrorResponse> => {
+}: CreateResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -138,7 +138,7 @@ const editResident = async ({
   dateJoined,
   buildingId,
   dateLeft,
-}: EditResidentParams): Promise<boolean | ResidentErrorResponse> => {
+}: EditResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,

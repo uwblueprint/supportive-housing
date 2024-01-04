@@ -31,7 +31,7 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/error";
+import { isErrorResponse } from "../../helper/error";
 import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
@@ -74,7 +74,7 @@ const EditResident = ({
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
-    if (isResidentErrorResponse(res)) {
+    if (isErrorResponse(res)) {
       newToast("Error updating resident", res.errMessage, "error");
     } else if (res !== null && res) {
       newToast(
