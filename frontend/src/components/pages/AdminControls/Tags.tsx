@@ -98,7 +98,7 @@ const TagsPage = (): React.ReactElement => {
                   tableRef={tableRef}
                   userPageNum={userPageNum}
                   setUserPageNum={setUserPageNum}
-                  getRecords={getTags}
+                  getTags={getTags}
                   countTags={countTags}
                 />
 

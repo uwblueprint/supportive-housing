@@ -97,6 +97,9 @@ def update_tag(tag_id):
             ),
             201,
         )
+    except DuplicateTagException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

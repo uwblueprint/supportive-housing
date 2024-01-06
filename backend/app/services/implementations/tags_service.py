@@ -67,9 +67,7 @@ class TagsService(ITagsService):
             db.session.commit()
         except Exception as error:
             if type(error).__name__ == "IntegrityError":
-                raise Exception(
-                    "Tag name {name} already exists".format(name=updated_name)
-                )
+                raise DuplicateTagException(updated_name)
             else:
                 raise error
 

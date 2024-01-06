@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React, { RefObject, useState } from "react";
 import {
   Box,
   IconButton,
@@ -16,13 +16,14 @@ import {
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
 import { Tag } from "../../../types/TagTypes";
+import EditTag from "../../forms/EditTag";
 
 type Props = {
   tags: Tag[];
   tableRef: RefObject<HTMLDivElement>;
   userPageNum: number;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-  getRecords: (pageNumber: number) => Promise<void>;
+  getTags: (pageNumber: number) => Promise<void>;
   countTags: () => Promise<void>;
 };
 
@@ -31,9 +32,17 @@ const TagsTable = ({
   tableRef,
   userPageNum,
   setUserPageNum,
-  getRecords,
+  getTags,
   countTags,
 }: Props): React.ReactElement => {
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEditClick = (tag: Tag) => {
+    setEditingTag(tag);
+    setIsEditModalOpen(true);
+  };
+
   return (
     <Box>
       <TableContainer
@@ -64,7 +73,9 @@ const TagsTable = ({
                         variant="ghost"
                       />
                       <MenuList>
-                        <MenuItem>Edit Tag</MenuItem>
+                        <MenuItem onClick={() => handleEditClick(tag)}>
+                          Edit Tag
+                        </MenuItem>
                         <MenuItem>Delete Tag</MenuItem>
                       </MenuList>
                     </Menu>
@@ -74,6 +85,16 @@ const TagsTable = ({
             })}
           </Tbody>
         </Table>
+
+        {editingTag && (
+          <EditTag
+            tag={editingTag}
+            isOpen={isEditModalOpen}
+            userPageNum={userPageNum}
+            getTags={getTags}
+            toggleClose={() => setIsEditModalOpen(false)}
+          />
+        )}
       </TableContainer>
     </Box>
   );
