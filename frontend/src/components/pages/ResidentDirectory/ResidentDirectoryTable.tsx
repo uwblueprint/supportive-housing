@@ -15,8 +15,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
-import { BuildingLabel } from "../../../types/BuildingTypes";
-import { Resident } from "../../../types/ResidentTypes";
+import { Resident, ResidentStatus } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import getFormattedDateAndTime from "../../../utils/DateUtils";
@@ -24,9 +23,10 @@ import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { convertToDate } from "../../../helper/dateHelpers";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 type Props = {
-  buildingOptions: BuildingLabel[];
+  buildingOptions: SelectLabel[];
   residents: Resident[];
   tableRef: RefObject<HTMLDivElement>;
   userPageNum: number;
@@ -35,7 +35,27 @@ type Props = {
   countResidents: () => Promise<void>;
 };
 
-const getFormattedDatesAndStatus = (resident: Resident) => {
+const getStatusColor = (status: string): string => {
+  let color = "";
+
+  switch (status) {
+    case ResidentStatus.CURRENT:
+      color = "green.400";
+      break;
+    case ResidentStatus.FUTURE:
+      color = "teal.400";
+      break;
+    case ResidentStatus.PAST:
+      color = "gray.300";
+      break;
+    default:
+      color = "black";
+  }
+
+  return color;
+};
+
+const getFormattedDates = (resident: Resident) => {
   const startDateObj = convertToDate(resident.dateJoined);
   const startDate = getFormattedDateAndTime(startDateObj, true);
 
@@ -44,14 +64,10 @@ const getFormattedDatesAndStatus = (resident: Resident) => {
     const endDateObj = convertToDate(resident.dateLeft);
     endDate = getFormattedDateAndTime(endDateObj, true);
   }
-  const status =
-    resident.dateJoined !== null && resident.dateLeft !== null
-      ? "Past"
-      : "Current";
+
   return {
     startDate,
     endDate,
-    status,
   };
 };
 
@@ -67,7 +83,7 @@ const ResidentDirectoryTable = ({
   getRecords,
   countResidents,
 }: Props): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser } = useContext(AuthContext);
   const [showAlert, setShowAlert] = useState(false);
   const newToast = CreateToast();
 
@@ -140,7 +156,7 @@ const ResidentDirectoryTable = ({
           <Thead>
             <Tr>
               <Th>Resident</Th>
-              <Th>Status</Th>
+              <Th textAlign="center">Status</Th>
               <Th>Building</Th>
               <Th>Residency Start Date</Th>
               <Th>Residency End Date</Th>
@@ -149,14 +165,25 @@ const ResidentDirectoryTable = ({
           </Thead>
           <Tbody>
             {residents.map((resident) => {
-              const { startDate, endDate, status } = getFormattedDatesAndStatus(
-                resident,
-              );
+              const { startDate, endDate } = getFormattedDates(resident);
               // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
-                  <Td width="20%">{resident.residentId!}</Td>
-                  <Td width="15%">{status}</Td>
+                  <Td width="10%">{resident.residentId!}</Td>
+                  <Td
+                    width="25%"
+                    textStyle="user-status-label"
+                    textAlign="center"
+                  >
+                    <Box
+                      backgroundColor={getStatusColor(resident.status)}
+                      borderRadius="40px"
+                      padding="6px 0px"
+                      marginX="20%"
+                    >
+                      {resident.status}
+                    </Box>
+                  </Td>
                   <Td width="20%">{resident.building.name}</Td>
                   <Td width="20%">{startDate.date}</Td>
                   <Td width="15%">{endDate ? endDate.date : ""}</Td>

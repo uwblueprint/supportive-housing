@@ -30,9 +30,9 @@ import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
-import { BuildingLabel } from "../../types/BuildingTypes";
 import { convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/error"
+import { isErrorResponse } from "../../helper/error";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -45,7 +45,7 @@ const CreateResident = ({
   setUserPageNum,
   countResidents,
 }: Props): React.ReactElement => {
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
@@ -70,18 +70,13 @@ const CreateResident = ({
       buildingId,
     });
 
-    if (isResidentErrorResponse(res)) {
-      newToast(
-        "Error creating resident",
-        res.errMessage,
-        "error"
-      )
-    }
-    else if (res) {
+    if (isErrorResponse(res)) {
+      newToast("Error creating resident", res.errMessage, "error");
+    } else if (res) {
       getRecords(1);
       countResidents();
       setUserPageNum(1);
-      setShowAlert(true)
+      setShowAlert(true);
       setIsOpen(false);
     }
   };
@@ -122,7 +117,7 @@ const CreateResident = ({
     const buildingsData = await BuildingAPIClient.getBuildings();
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+      const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);

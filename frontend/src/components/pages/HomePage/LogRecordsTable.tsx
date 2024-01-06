@@ -32,11 +32,8 @@ import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import TagAPIClient from "../../../APIClients/TagAPIClient";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
 import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
-import { ResidentLabel } from "../../../types/ResidentTypes";
-import { TagLabel } from "../../../types/TagTypes";
-import { UserLabel } from "../../../types/UserTypes";
-import { BuildingLabel } from "../../../types/BuildingTypes";
 import ConfirmationModal from "../../common/ConfirmationModal";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 type Props = {
   logRecords: LogRecord[];
@@ -51,6 +48,28 @@ const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
 const DELETE_CONFIRMATION_MESSAGE =
   "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from your system.";
 
+const formatNote = (note: string) => {
+  const NOTE_LIMIT = 150;
+  if (note.length > NOTE_LIMIT) {
+    return note.substring(0, NOTE_LIMIT).concat("...");
+  }
+  return note;
+};
+
+const formatList = (strArr: string[]) => {
+  const strLength = strArr?.length;
+  if (strLength === 1) {
+    return strArr[0];
+  }
+  if (strLength === 2) {
+    return strArr?.join(", ");
+  }
+  if (strLength > 2) {
+    return `${strArr?.slice(0, 2).join(", ")}, ...`;
+  }
+  return "";
+};
+
 const LogRecordsTable = ({
   logRecords,
   tableRef,
@@ -63,7 +82,7 @@ const LogRecordsTable = ({
 
   const [showAlert, setShowAlert] = useState(false);
 
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
 
   // Menu states
   const [deleteOpenMap, setDeleteOpenMap] = useState<{
@@ -77,9 +96,9 @@ const LogRecordsTable = ({
   );
 
   // Dropdown option states
-  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<ResidentLabel[]>([]);
-  const [tagOptions, setTagOptions] = useState<TagLabel[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<SelectLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<SelectLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<SelectLabel[]>([]);
 
   // Handle delete confirmation toggle
   const handleDeleteToggle = (logId: number) => {
@@ -113,17 +132,19 @@ const LogRecordsTable = ({
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: UserLabel[] = residentsData.residents.map((r) => ({
-        label: r.residentId!,
-        value: r.id!,
-      }));
+      const residentLabels: SelectLabel[] = residentsData.residents.map(
+        (r) => ({
+          label: r.residentId!,
+          value: r.id!,
+        }),
+      );
       setResidentOptions(residentLabels);
     }
 
     const buildingsData = await BuildingAPIClient.getBuildings();
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+      const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);
@@ -131,7 +152,7 @@ const LogRecordsTable = ({
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users
+      const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
           label: user.firstName,
@@ -140,13 +161,12 @@ const LogRecordsTable = ({
       setEmployeeOptions(userLabels);
     }
 
-    const tagsData = await TagAPIClient.getTags();
+    const tagsData = await TagAPIClient.getTags({ returnAll: true });
     if (tagsData && tagsData.tags.length !== 0) {
-      const tagLabels: TagLabel[] = tagsData.tags
-        .map((tag) => ({
-          label: tag.name,
-          value: tag.tagId,
-        }));
+      const tagLabels: SelectLabel[] = tagsData.tags.map((tag) => ({
+        label: tag.name,
+        value: tag.tagId,
+      }));
       setTagOptions(tagLabels);
     }
   };
@@ -196,6 +216,7 @@ const LogRecordsTable = ({
                 <Th>Note</Th>
                 <Th>Employee</Th>
                 <Th>Attn To</Th>
+                <Th>Tags</Th>
                 <Th> </Th>
               </Tr>
             </Thead>
@@ -212,17 +233,16 @@ const LogRecordsTable = ({
                       <Td width="5%">{date}</Td>
                       <Td width="5%">{time}</Td>
                       <Td whiteSpace="normal" width="5%">
-                        {record.residents?.join("\n")}
+                        {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="70%">
-                        {record.note}
+                        {formatNote(record.note)}
                       </Td>
-                      <Td width="5%">{`${record.employee.firstName} ${record.employee.lastName}`}</Td>
-                      <Td width="5%">
-                        {record.attnTo
-                          ? `${record.attnTo.firstName} ${record.attnTo.lastName}`
-                          : ""}
+                      <Td width="2.5%">{`${record.employee.firstName}`}</Td>
+                      <Td width="2.5%">
+                        {record.attnTo ? `${record.attnTo.firstName}` : ""}
                       </Td>
+                      <Td width="5%">{formatList(record.tags)}</Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (

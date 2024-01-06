@@ -36,13 +36,11 @@ import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
-import { BuildingLabel } from "../../types/BuildingTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { UserLabel } from "../../types/UserTypes";
-import { Resident, ResidentLabel } from "../../types/ResidentTypes";
-import { TagLabel } from "../../types/TagTypes";
+import { Resident } from "../../types/ResidentTypes";
 import combineDateTime from "../../helper/combineDateTime";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -109,7 +107,7 @@ const getCurUserSelectOption = () => {
 
 const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
+  const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -125,10 +123,10 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
-  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<ResidentLabel[]>([]);
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
-  const [tagOptions, setTagOptions] = useState<TagLabel[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<SelectLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<SelectLabel[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<SelectLabel[]>([]);
 
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -174,9 +172,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleResidentsChange = (
-    selectedResidents: MultiValue<ResidentLabel>,
+    selectedResidents: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+    const mutableSelectedResidents: SelectLabel[] = Array.from(
       selectedResidents,
     );
     if (mutableSelectedResidents !== null) {
@@ -187,9 +185,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<TagLabel>,
+    selectedTags: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedTags: TagLabel[] = Array.from(
+    const mutableSelectedTags: SelectLabel[] = Array.from(
       selectedTags,
     );
     if (mutableSelectedTags !== null) {
@@ -218,7 +216,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     const buildingsData = await BuildingAPIClient.getBuildings();
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+      const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);
@@ -230,7 +228,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: ResidentLabel[] = residentsData.residents.map(
+      const residentLabels: SelectLabel[] = residentsData.residents.map(
         (r) => ({ label: r.residentId!, value: r.id! }),
       );
       setResidentOptions(residentLabels);
@@ -238,7 +236,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users
+      const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
           label: user.firstName,
@@ -247,9 +245,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       setEmployeeOptions(userLabels);
     }
 
-    const tagsData = await TagAPIClient.getTags();
+    const tagsData = await TagAPIClient.getTags({ returnAll: true });
     if (tagsData && tagsData.tags.length !== 0) {
-      const tagLabels: TagLabel[] = tagsData.tags
+      const tagLabels: SelectLabel[] = tagsData.tags
         .map((tag) => ({
           label: tag.name,
           value: tag.tagId,

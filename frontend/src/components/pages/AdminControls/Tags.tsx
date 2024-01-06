@@ -1,35 +1,39 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
+import React, { useState, useRef, useEffect } from "react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
-import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
-import { User } from "../../../types/UserTypes";
-import EmployeeDirectoryTable from "./EmployeeDirectoryTable";
-import UserAPIClient from "../../../APIClients/UserAPIClient";
-import CreateEmployee from "../../forms/CreateEmployee";
+import CreateTag from "../../forms/CreateTag";
+import TagsTable from "./TagsTable";
+import Pagination from "../../common/Pagination";
+import { Tag } from "../../../types/TagTypes";
+import TagAPIClient from "../../../APIClients/TagAPIClient";
 
-const EmployeeDirectoryPage = (): React.ReactElement => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [numUsers, setNumUsers] = useState<number>(0);
-  const [resultsPerPage, setResultsPerPage] = useState<number>(25);
+const TagsPage = (): React.ReactElement => {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [numTags, setNumTags] = useState<number>(0);
   const [pageNum, setPageNum] = useState<number>(1);
-  const [userPageNum, setUserPageNum] = useState(pageNum);
-
-  const [tableLoaded, setTableLoaded] = useState(false);
+  const [userPageNum, setUserPageNum] = useState<number>(pageNum);
+  const [resultsPerPage, setResultsPerPage] = useState<number>(25);
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const getUsers = async (pageNumber: number) => {
+  const [tableLoaded, setTableLoaded] = useState(false);
+
+  const getTags = async (pageNumber: number) => {
     setTableLoaded(false);
-    const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
+
+    const data = await TagAPIClient.getTags({
+      pageNumber,
+      resultsPerPage,
+    });
 
     // Reset table scroll
     tableRef.current?.scrollTo(0, 0);
 
-    setUsers(data ? data.users : []);
+    setTags(data ? data.tags : []);
 
-    if (!data || data.users.length === 0) {
+    if (!data || data.tags.length === 0) {
       setUserPageNum(0);
       setPageNum(0);
     } else {
@@ -39,18 +43,18 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     setTableLoaded(true);
   };
 
-  const countUsers = async () => {
-    const data = await UserAPIClient.countUsers();
-    setNumUsers(data ? data.numResults : 0);
+  const countTags = async () => {
+    const data = await TagAPIClient.countTags();
+    setNumTags(data ? data.numResults : 0);
   };
 
   useEffect(() => {
     setUserPageNum(1);
-    getUsers(1);
+    getTags(1);
   }, [resultsPerPage]);
 
   useEffect(() => {
-    countUsers();
+    countTags();
   }, []);
 
   return (
@@ -65,11 +69,12 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
         color="blue.600"
       >
         <Flex marginBottom="16px" justify="space-between">
-          <Box textStyle="hero-table">Employee Directory</Box>
-          <CreateEmployee
-            getRecords={getUsers}
+          <Box textStyle="hero-table">Tags</Box>
+          <Spacer />
+          <CreateTag
+            getTags={getTags}
+            countTags={countTags}
             setUserPageNum={setUserPageNum}
-            countUsers={countUsers}
           />
         </Flex>
 
@@ -82,28 +87,29 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         ) : (
           <Box>
-            {numUsers === 0 ? (
+            {numTags === 0 ? (
               <Text textAlign="center" paddingTop="5%">
                 No results found.
               </Text>
             ) : (
               <Box>
-                <EmployeeDirectoryTable
-                  users={users}
+                <TagsTable
+                  tags={tags}
                   tableRef={tableRef}
                   userPageNum={userPageNum}
                   setUserPageNum={setUserPageNum}
-                  getRecords={getUsers}
-                  countUsers={countUsers}
+                  getTags={getTags}
+                  countTags={countTags}
                 />
+
                 <Pagination
-                  numRecords={numUsers}
+                  numRecords={numTags}
                   pageNum={pageNum}
                   userPageNum={userPageNum}
                   setUserPageNum={setUserPageNum}
                   resultsPerPage={resultsPerPage}
                   setResultsPerPage={setResultsPerPage}
-                  getRecords={getUsers}
+                  getRecords={getTags}
                 />
               </Box>
             )}
@@ -114,4 +120,4 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   );
 };
 
-export default EmployeeDirectoryPage;
+export default TagsPage;

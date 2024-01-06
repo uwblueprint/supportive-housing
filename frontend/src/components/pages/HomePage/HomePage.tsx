@@ -1,18 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
 import CreateLog from "../../forms/CreateLog";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
-import SearchAndFilters from "./SearchAndFilters";
+import HomePageFilters from "./HomePageFilters";
 import ExportCSVButton from "../../common/ExportCSVButton";
-import { BuildingLabel } from "../../../types/BuildingTypes";
-import { ResidentLabel } from "../../../types/ResidentTypes";
-import { TagLabel } from "../../../types/TagTypes";
-import { UserLabel } from "../../../types/UserTypes";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -26,13 +23,13 @@ const HomePage = (): React.ReactElement => {
   */
   // TODO: search by resident
   // Filter state
-  const [residents, setResidents] = useState<ResidentLabel[]>([]);
-  const [employees, setEmployees] = useState<UserLabel[]>([]);
+  const [residents, setResidents] = useState<SelectLabel[]>([]);
+  const [employees, setEmployees] = useState<SelectLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [tags, setTags] = useState<TagLabel[]>([]);
-  const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
-  const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
+  const [tags, setTags] = useState<SelectLabel[]>([]);
+  const [attentionTos, setAttentionTos] = useState<SelectLabel[]>([]);
+  const [buildings, setBuildings] = useState<SelectLabel[]>([]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
@@ -41,6 +38,9 @@ const HomePage = (): React.ReactElement => {
   const [resultsPerPage, setResultsPerPage] = useState<number>(25);
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
+
+  // Table Loaded
+  const [tableLoaded, setTableLoaded] = useState(false);
 
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
@@ -62,10 +62,12 @@ const HomePage = (): React.ReactElement => {
     const dateRange = [formatDate(startDate), formatDate(endDate)];
     const tagsValues = tags.map((tag) => tag.value);
 
+    setTableLoaded(false);
+
     const data = await LogRecordAPIClient.filterLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
       residents: residentsIds,
       tags: tagsValues,
@@ -85,6 +87,8 @@ const HomePage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true);
   };
 
   const countLogRecords = async () => {
@@ -98,9 +102,9 @@ const HomePage = (): React.ReactElement => {
     const tagsValues = tags.map((tag) => tag.value);
 
     const data = await LogRecordAPIClient.countLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange,
       residents: residentsIds,
       tags: tagsValues,
@@ -163,7 +167,7 @@ const HomePage = (): React.ReactElement => {
           </Flex>
         </Flex>
 
-        <SearchAndFilters
+        <HomePageFilters
           residents={residents}
           employees={employees}
           startDate={startDate}
@@ -182,23 +186,42 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable
-          logRecords={logRecords}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          getRecords={getLogRecords}
-          countRecords={countLogRecords}
-          setUserPageNum={setUserPageNum}
-        />
-        <Pagination
-          numRecords={numRecords}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getLogRecords}
-        />
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+          />
+        ) : (
+          <Box>
+            {numRecords === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <LogRecordsTable
+                  logRecords={logRecords}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  getRecords={getLogRecords}
+                  countRecords={countLogRecords}
+                  setUserPageNum={setUserPageNum}
+                />
+                <Pagination
+                  numRecords={numRecords}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getLogRecords}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

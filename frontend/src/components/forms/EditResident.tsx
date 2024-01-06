@@ -23,22 +23,19 @@ import {
   ScaleFade,
   Divider,
 } from "@chakra-ui/react";
-import type { AlertStatus } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
-import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
-import { BuildingLabel } from "../../types/BuildingTypes";
 import selectStyle from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
-import { isResidentErrorResponse } from "../../helper/error"
+import { isErrorResponse } from "../../helper/error";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
-  buildingOptions: BuildingLabel[],
+  buildingOptions: SelectLabel[];
   resident: Resident;
   isOpen: boolean;
   userPageNum: number;
@@ -77,14 +74,9 @@ const EditResident = ({
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
-    if (isResidentErrorResponse(res)) {
-      newToast(
-        "Error updating resident",
-        res.errMessage,
-        "error"
-      )
-    }
-    else if (res !== null && res) {
+    if (isErrorResponse(res)) {
+      newToast("Error updating resident", res.errMessage, "error");
+    } else if (res !== null && res) {
       newToast(
         "Resident updated",
         "Resident has been successfully updated",
@@ -104,7 +96,6 @@ const EditResident = ({
   const clearMoveOutDate = () => {
     setMoveOutDate(undefined);
   };
-
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;

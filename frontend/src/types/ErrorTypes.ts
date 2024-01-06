@@ -1,6 +1,6 @@
-export type ResidentErrorResponse = {
+export type ErrorResponse = {
   errMessage: string;
-}
+};
 
 export type AuthErrorResponse = {
   errCode: number;
