@@ -107,9 +107,29 @@ const editTag = async ({
   }
 };
 
+const deleteTag = async (tagId: number): Promise<number> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.delete(`/tags/${tagId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return 200;
+  } catch (error: any) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response) {
+      return axiosErr.response.status;
+    }
+    return 500;
+  }
+};
+
 export default {
   countTags,
   getTags,
   createTag,
   editTag,
+  deleteTag,
 };

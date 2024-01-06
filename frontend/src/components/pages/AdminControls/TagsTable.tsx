@@ -17,6 +17,9 @@ import {
 import { VscKebabVertical } from "react-icons/vsc";
 import { Tag } from "../../../types/TagTypes";
 import EditTag from "../../forms/EditTag";
+import ConfirmationModal from "../../common/ConfirmationModal";
+import TagAPIClient from "../../../APIClients/TagAPIClient";
+import CreateToast from "../../common/Toasts";
 
 type Props = {
   tags: Tag[];
@@ -27,6 +30,10 @@ type Props = {
   countTags: () => Promise<void>;
 };
 
+const DELETE_CONFIRMATION_HEADER = "Delete Tag";
+const DELETE_CONFIRMATION_MESSAGE =
+  "Are you sure you want to delete this tag? Deleting a tag will permanently remove it from your system.";
+
 const TagsTable = ({
   tags,
   tableRef,
@@ -36,11 +43,35 @@ const TagsTable = ({
   countTags,
 }: Props): React.ReactElement => {
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
+  const [deletingTag, setDeletingTag] = useState<Tag | null>(null);
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const newToast = CreateToast();
 
   const handleEditClick = (tag: Tag) => {
     setEditingTag(tag);
     setIsEditModalOpen(true);
+  };
+
+  const handleDeleteClick = (tag: Tag) => {
+    setDeletingTag(tag);
+    setIsDeleteModalOpen(true);
+  };
+
+  const deleteTag = async (tagId: number) => {
+    const statusCode = await TagAPIClient.deleteTag(tagId);
+    if (statusCode === 200) {
+      newToast("Tag Deleted", "Tag has been successfully deleted.", "success");
+      const newUserPageNum = tags.length === 1 ? userPageNum - 1 : userPageNum;
+      countTags();
+      getTags(newUserPageNum);
+      setUserPageNum(newUserPageNum);
+      setIsDeleteModalOpen(false);
+    } else {
+      newToast("Error Deleting Tag.", "Tag was unable to be deleted.", "error");
+    }
   };
 
   return (
@@ -76,7 +107,9 @@ const TagsTable = ({
                         <MenuItem onClick={() => handleEditClick(tag)}>
                           Edit Tag
                         </MenuItem>
-                        <MenuItem>Delete Tag</MenuItem>
+                        <MenuItem onClick={() => handleDeleteClick(tag)}>
+                          Delete Tag
+                        </MenuItem>
                       </MenuList>
                     </Menu>
                   </Td>
@@ -93,6 +126,15 @@ const TagsTable = ({
             userPageNum={userPageNum}
             getTags={getTags}
             toggleClose={() => setIsEditModalOpen(false)}
+          />
+        )}
+        {deletingTag && (
+          <ConfirmationModal
+            header={DELETE_CONFIRMATION_HEADER}
+            message={DELETE_CONFIRMATION_MESSAGE}
+            isOpen={isDeleteModalOpen}
+            action={() => deleteTag(deletingTag.tagId)}
+            toggleClose={() => setIsDeleteModalOpen(false)}
           />
         )}
       </TableContainer>
