@@ -7,6 +7,7 @@ import {
   CreateTagParams,
   GetTagsParams,
   GetTagsResponse,
+  Tag,
 } from "../types/TagTypes";
 import { ErrorResponse } from "../types/ErrorTypes";
 
@@ -77,8 +78,58 @@ const createTag = async ({
   }
 };
 
+const editTag = async ({
+  tagId,
+  name,
+}: Tag): Promise<boolean | ErrorResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.put(
+      `/tags/${tagId}`,
+      { name },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          "Tag with the specified name already exists.",
+      };
+    }
+    return false;
+  }
+};
+
+const deleteTag = async (tagId: number): Promise<number> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.delete(`/tags/${tagId}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return 200;
+  } catch (error: any) {
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response) {
+      return axiosErr.response.status;
+    }
+    return 500;
+  }
+};
+
 export default {
   countTags,
   getTags,
   createTag,
+  editTag,
+  deleteTag,
 };
