@@ -26,7 +26,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import CreateToast from "../common/Toasts";
 
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";

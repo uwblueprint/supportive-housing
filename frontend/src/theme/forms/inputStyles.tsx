@@ -23,7 +23,7 @@ const Input: ComponentStyleConfig = {
         color: "teal.300",
         height: "36px",
         _placeholder: {
-          color: "gray.600",
+          color: "gray.500",
         },
         _hover: {
           borderColor: "teal.400",
@@ -77,7 +77,7 @@ const Textarea: ComponentStyleConfig = {
       color: "teal.300",
       height: "36px",
       _placeholder: {
-        color: "gray.600",
+        color: "gray.500",
       },
       _hover: {
         borderColor: "teal.400",

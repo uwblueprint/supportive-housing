@@ -18,26 +18,25 @@ import {
   ModalHeader,
   Text,
   Textarea,
+  ModalFooter,
 } from "@chakra-ui/react";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import selectStyle from "../../theme/forms/selectStyles";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import { UserLabel } from "../../types/UserTypes";
-import { TagLabel } from "../../types/TagTypes";
+import { viewStyle}  from "../../theme/forms/selectStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
   logRecord: LogRecord;
   isOpen: boolean;
   toggleClose: () => void;
   toggleEdit: () => void;
-  employeeOptions: UserLabel[];
-  residentOptions: UserLabel[];
-  buildingOptions: BuildingLabel[];
-  tagOptions: TagLabel[];
+  employeeOptions: SelectLabel[];
+  residentOptions: SelectLabel[];
+  buildingOptions: SelectLabel[];
+  tagOptions: SelectLabel[];
 };
 
 // Helper to get the currently logged in user
@@ -45,11 +44,10 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName && curUser.id) {
-    const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
+  if (curUser && curUser.firstName) {
+    return curUser.firstName
   }
-  return { label: "", value: -1 };
+  return "";
 };
 
 const ViewLog = ({
@@ -70,9 +68,6 @@ const ViewLog = ({
       hour12: false,
     }),
   );
-  const [buildingId, setBuildingId] = useState<number>(-1);
-  const [notes, setNotes] = useState("");
-  const [flagged, setFlagged] = useState(false);
 
   const initializeValues = () => {
     // set state variables
@@ -84,9 +79,6 @@ const ViewLog = ({
         hour12: false,
       }),
     );
-    setBuildingId(logRecord.building.id);
-    setNotes(logRecord.note);
-    setFlagged(logRecord.flagged);
   };
 
   const formatDate = (dateObj: Date) => {
@@ -107,7 +99,7 @@ const ViewLog = ({
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
+        <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>View Log Entry Details</ModalHeader>
@@ -117,11 +109,11 @@ const ViewLog = ({
                 <Col>
                   <FormControl>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      components={{ DropdownIndicator:() => null }}
                       defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      _disabled={{ bg: "transparent" }}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
@@ -133,6 +125,8 @@ const ViewLog = ({
                         <Input
                           isDisabled
                           defaultValue={formatDate(date)}
+                          _disabled={{ bg: "transparent" }}
+                          _hover={{ borderColor: "teal.100" }}
                         />
                       </FormControl>
                     </GridItem>
@@ -144,6 +138,8 @@ const ViewLog = ({
                           size="md"
                           type="time"
                           defaultValue={time}
+                          _disabled={{ bg: "transparent" }}
+                          _hover={{ borderColor: "teal.100" }}
                         />
                       </FormControl>
                     </GridItem>
@@ -157,10 +153,9 @@ const ViewLog = ({
                     <FormLabel>Building</FormLabel>
                     <Input
                       isDisabled
-                      style={selectStyle}
-                      defaultValue={buildingOptions.find(
-                        (item) => item.value === buildingId,
-                      )?.label}
+                      defaultValue={logRecord.building.name}
+                      _disabled={{ bg: "transparent" }}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
@@ -174,7 +169,7 @@ const ViewLog = ({
                       defaultValue={residentOptions.filter(
                         (item) => logRecord.residents.includes(item.label),
                       )}
-                      styles={selectStyle}
+                      styles={viewStyle}
                     />
                   </FormControl>
                 </Col>
@@ -192,7 +187,7 @@ const ViewLog = ({
                       defaultValue={tagOptions.filter(
                         (item) => logRecord.tags.includes(item.label),
                       )}
-                      styles={selectStyle}
+                      styles={viewStyle}
                     />
                   </FormControl>
                 </Col>
@@ -201,41 +196,39 @@ const ViewLog = ({
                     <FormLabel>Attention To</FormLabel>
                     <Input
                       isDisabled
-                      placeholder="No Employee"
-                      defaultValue={employeeOptions.find(
-                        (item) => item.value === logRecord.attnTo?.id,
-                      )?.label}
-                      style={selectStyle}
+                      placeholder="No Attn To"
+                      defaultValue={logRecord.attnTo?.firstName}
+                      _disabled={{ bg: "transparent" }}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
               </Row>
 
               <Checkbox
-                isDisabled
                 colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
+                style={{ paddingTop: "1rem", pointerEvents: "none" }}
                 marginBottom="16px"
-                defaultChecked={flagged}
+                defaultChecked={logRecord.flagged}
               >
-                <Text>Flag this Report</Text>
+                <Text>Flagged</Text>
               </Checkbox>
+
+              <Divider />
 
               <Row>
                 <Col>
                   <FormControl mt={4}>
                     <FormLabel>Notes</FormLabel>
-                    <Textarea
-                      isDisabled
-                      value={notes}
-                      resize="none"
-                    />
+                    <Text whiteSpace="pre-wrap">
+                      {logRecord.note}
+                    </Text>
                   </FormControl>
                 </Col>
               </Row>
+            </ModalBody>
 
-              <Divider />
-
+            <ModalFooter>
               <Box textAlign="right" marginTop="12px" marginBottom="12px">
                 <Button
                   onClick={toggleClose}
@@ -248,7 +241,7 @@ const ViewLog = ({
                   Edit
                 </Button>
               </Box>
-            </ModalBody>
+            </ModalFooter>  
           </ModalContent>
         </Modal>
       </Box>

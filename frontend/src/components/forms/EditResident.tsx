@@ -27,7 +27,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
