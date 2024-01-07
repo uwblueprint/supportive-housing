@@ -16,7 +16,7 @@ import { CloseIcon, SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
 import Select, { MultiValue, SingleValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import selectStyle from "../../../theme/forms/selectStyles";
+import { selectStyle } from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import {
   Resident,

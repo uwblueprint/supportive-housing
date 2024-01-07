@@ -31,7 +31,7 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime } from "../../helper/dateHelpers";
