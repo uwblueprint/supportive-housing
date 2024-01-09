@@ -257,7 +257,7 @@ const CreateEmployee = ({
                 </FormControl>
               </Box>
             </Box>
-            <Box pt="16px" pb="16px">
+            <Box pt="16px">
               <FormControl isRequired isInvalid={invitedAdminStatusError}>
                 <RadioGroup
                   value={invitedAdminStatus}
@@ -303,7 +303,6 @@ const CreateEmployee = ({
                 building.
               </Text>
             </Box>
-            <Divider />
           </ModalBody>
           <ModalFooter>
             <Button variant="primary" type="submit" onClick={handleSubmit}>

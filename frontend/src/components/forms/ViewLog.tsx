@@ -19,6 +19,7 @@ import {
   Text,
   Textarea,
   ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
@@ -102,7 +103,8 @@ const ViewLog = ({
         <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>View Log Entry Details</ModalHeader>
+            <ModalHeader>View Log Record</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
@@ -206,7 +208,7 @@ const ViewLog = ({
               </Row>
 
               <Checkbox
-                colorScheme="gray"
+                colorScheme="teal"
                 style={{ paddingTop: "1rem", pointerEvents: "none" }}
                 marginBottom="16px"
                 defaultChecked={logRecord.flagged}
@@ -229,18 +231,9 @@ const ViewLog = ({
             </ModalBody>
 
             <ModalFooter>
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={toggleClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleEdit} variant="primary" type="submit">
-                  Edit
-                </Button>
-              </Box>
+              <Button onClick={handleEdit} variant="primary" type="submit">
+                Edit
+              </Button>
             </ModalFooter>  
           </ModalContent>
         </Modal>

@@ -198,7 +198,7 @@ const CreateResident = ({
                   <FormControl isRequired isInvalid={initialsError}>
                     <FormLabel>Resident Initials</FormLabel>
                     <Input
-                      placeholder="AA"
+                      placeholder="e.g. AA"
                       value={initials}
                       onChange={handleInitialsChange}
                     />
@@ -211,7 +211,7 @@ const CreateResident = ({
                   <FormControl isRequired isInvalid={roomNumberError}>
                     <FormLabel>Room Number</FormLabel>
                     <Input
-                      placeholder="123"
+                      placeholder="e.g. 123"
                       value={roomNumber}
                       onChange={handleRoomNumberChange}
                       type="number"
@@ -236,7 +236,7 @@ const CreateResident = ({
                   </FormControl>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
+              <Row style={{ marginTop: "16px"}}>
                 <Col>
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>
@@ -250,11 +250,10 @@ const CreateResident = ({
                   </FormControl>
                 </Col>
               </Row>
-              <Divider />
             </ModalBody>
             <ModalFooter>
               <Button onClick={handleSubmit} variant="primary" type="submit">
-                Save
+                Submit
               </Button>
             </ModalFooter>
           </ModalContent>

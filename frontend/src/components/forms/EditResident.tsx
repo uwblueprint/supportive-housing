@@ -22,7 +22,11 @@ import {
   Text,
   ScaleFade,
   Divider,
+  InputGroup,
+  IconButton,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
@@ -91,10 +95,6 @@ const EditResident = ({
         "error",
       );
     }
-  };
-
-  const clearMoveOutDate = () => {
-    setMoveOutDate(undefined);
   };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -254,30 +254,41 @@ const EditResident = ({
                   </FormControl>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isInvalid={moveOutDateError}>
                     <FormLabel>Move Out Date</FormLabel>
-                    <SingleDatepicker
-                      name="date-input"
-                      date={moveOutDate}
-                      onDateChange={handleMoveOutDateChange}
-                      propsConfigs={singleDatePickerStyle}
-                    />
+                    <InputGroup>
+                      <SingleDatepicker
+                        name="date-input"
+                        date={moveOutDate}
+                        onDateChange={handleMoveOutDateChange}
+                        propsConfigs={singleDatePickerStyle}
+                      />
+                    {moveOutDate && (
+                        <InputRightElement>
+                          <IconButton
+                            onClick={() => setMoveOutDate(undefined)}
+                            aria-label="clear"
+                            variant="icon"
+                            icon={
+                              <SmallCloseIcon
+                                boxSize="5"
+                                color="gray.200"
+                                _hover={{ color: "gray.400" }}
+                                transition="color 0.1s ease-in-out"
+                              />
+                            }
+                          />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
                     <FormErrorMessage marginBottom="8px">
                       Move out Date must be after Move in Date
                     </FormErrorMessage>
-                    <Button
-                      marginTop="16px"
-                      onClick={clearMoveOutDate}
-                      variant="secondary"
-                    >
-                      Clear Move Out Date
-                    </Button>
                   </FormControl>
                 </Col>
               </Row>
-              <Divider />
             </ModalBody>
             <ModalFooter>
               <Button onClick={handleSave} variant="primary" type="submit">

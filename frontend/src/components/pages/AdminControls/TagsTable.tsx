@@ -31,8 +31,8 @@ type Props = {
 };
 
 const DELETE_CONFIRMATION_HEADER = "Delete Tag";
-const DELETE_CONFIRMATION_MESSAGE =
-  "Are you sure you want to delete this tag? Deleting a tag will permanently remove it from your system.";
+const deleteConfirmationMessage = (name: string) => 
+  `Are you sure you want to delete tag ${name}? Deleting a tag will permanently remove it from your system.`;
 
 const TagsTable = ({
   tags,
@@ -131,7 +131,7 @@ const TagsTable = ({
         {deletingTag && (
           <ConfirmationModal
             header={DELETE_CONFIRMATION_HEADER}
-            message={DELETE_CONFIRMATION_MESSAGE}
+            message={deleteConfirmationMessage(deletingTag.name)}
             isOpen={isDeleteModalOpen}
             action={() => deleteTag(deletingTag.tagId)}
             toggleClose={() => setIsDeleteModalOpen(false)}

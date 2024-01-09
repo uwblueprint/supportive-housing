@@ -20,15 +20,19 @@ import {
   Grid,
   GridItem,
   Text,
+  ModalFooter,
+  ModalCloseButton,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import CSVConverter from "../../helper/CSVConverter";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 
-const ExportCSVButton = (): React.ReactElement => {
-  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+const ExportToCSV = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [dateError, setDateError] = useState<boolean>(false);
@@ -101,22 +105,42 @@ const ExportCSVButton = (): React.ReactElement => {
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>Export to CSV File</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <FormControl isInvalid={dateError}>
                 <Grid templateColumns="repeat(9, 1fr)">
                   <GridItem colSpan={3}>
-                    <SingleDatepicker
-                      name="start-date-input"
-                      date={startDate}
-                      onDateChange={setStartDate}
-                      propsConfigs={{
-                        ...singleDatePickerStyle,
-                        inputProps: {
-                          ...singleDatePickerStyle.inputProps,
-                          placeholder: "Start Date",
-                        },
-                      }}
-                    />
+                    <InputGroup>
+                      <SingleDatepicker
+                        name="start-date-input"
+                        date={startDate}
+                        onDateChange={setStartDate}
+                        propsConfigs={{
+                          ...singleDatePickerStyle,
+                          inputProps: {
+                            ...singleDatePickerStyle.inputProps,
+                            placeholder: "Start Date",
+                          },
+                        }}
+                      />
+                      {startDate && (
+                        <InputRightElement>
+                          <IconButton
+                            onClick={() => setStartDate(undefined)}
+                            aria-label="clear"
+                            variant="icon"
+                            icon={
+                              <SmallCloseIcon
+                                boxSize="5"
+                                color="gray.200"
+                                _hover={{ color: "gray.400" }}
+                                transition="color 0.1s ease-in-out"
+                              />
+                            }
+                          />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
                   </GridItem>
                   <GridItem
                     colSpan={1}
@@ -129,28 +153,37 @@ const ExportCSVButton = (): React.ReactElement => {
                     </Text>
                   </GridItem>
                   <GridItem colSpan={3}>
-                    <SingleDatepicker
-                      name="end-date-input"
-                      date={endDate}
-                      onDateChange={setEndDate}
-                      propsConfigs={{
-                        ...singleDatePickerStyle,
-                        inputProps: {
-                          ...singleDatePickerStyle.inputProps,
-                          placeholder: "End Date",
-                        },
-                      }}
-                    />
-                  </GridItem>
-                  <GridItem
-                    colSpan={2}
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Button onClick={handleClear} variant="secondary">
-                      Clear
-                    </Button>
+                    <InputGroup>
+                      <SingleDatepicker
+                        name="end-date-input"
+                        date={endDate}
+                        onDateChange={setEndDate}
+                        propsConfigs={{
+                          ...singleDatePickerStyle,
+                          inputProps: {
+                            ...singleDatePickerStyle.inputProps,
+                            placeholder: "End Date",
+                          },
+                        }}
+                      />
+                      {endDate && (
+                        <InputRightElement>
+                          <IconButton
+                            onClick={() => setEndDate(undefined)}
+                            aria-label="clear"
+                            variant="icon"
+                            icon={
+                              <SmallCloseIcon
+                                boxSize="5"
+                                color="gray.200"
+                                _hover={{ color: "gray.400" }}
+                                transition="color 0.1s ease-in-out"
+                              />
+                            }
+                          />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
                   </GridItem>
                 </Grid>
                 {dateError && (
@@ -162,20 +195,13 @@ const ExportCSVButton = (): React.ReactElement => {
                   Note: If a range is not selected, all records will be printed.
                 </FormHelperText>
               </FormControl>
-
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={handleClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="primary" type="submit">
-                  Export
-                </Button>
-              </Box>
             </ModalBody>
+
+            <ModalFooter>
+              <Button onClick={handleSubmit} variant="primary" type="submit">
+                Export
+              </Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>
@@ -198,4 +224,4 @@ const ExportCSVButton = (): React.ReactElement => {
   );
 };
 
-export default ExportCSVButton;
+export default ExportToCSV;

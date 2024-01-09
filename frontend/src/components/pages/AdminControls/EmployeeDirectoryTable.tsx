@@ -31,16 +31,16 @@ type Props = {
 };
 
 const ACTIVATE_CONFIRMATION_HEADER = "Activate Employee";
-const ACTIVATE_CONFIRMATION_MESSAGE =
-  "Are you sure you want to activate this employee?";
+const activateConfirmationMessage = (name: string) => 
+  `Are you sure you want to activate ${name}?`;
 
 const DEACTIVATE_CONFIRMATION_HEADER = "Deactivate Employee";
-const DEACTIVATE_CONFIRMATION_MESSAGE =
-  "Are you sure you want to deactivate this employee?";
+const deactivateConfirmationMessage = (name: string) => 
+  `Are you sure you want to deactivate ${name}?`;
 
 const DELETE_CONFIRMATION_HEADER = "Delete Employee";
-const DELETE_CONFIRMATION_MESSAGE =
-  "Are you sure you want to delete this employee? Deleting an employee will permanently remove it from your system.";
+const deleteConfirmationMessage = (name: string) =>
+  `Are you sure you want to delete ${name}? Deleting an employee will permanently remove it from your system.`;
 
 const constructRole = (user: User): string => {
   let role = "";
@@ -268,7 +268,7 @@ const EmployeeDirectoryTable = ({
         {activatingEmployee && (
           <ConfirmationModal
             header={ACTIVATE_CONFIRMATION_HEADER}
-            message={ACTIVATE_CONFIRMATION_MESSAGE}
+            message={activateConfirmationMessage(`${activatingEmployee.firstName} ${activatingEmployee.lastName}`)}
             isOpen={isActivateModalOpen}
             action={() => activateEmployee(activatingEmployee.id)}
             toggleClose={() => setIsActivateModalOpen(false)}
@@ -277,7 +277,7 @@ const EmployeeDirectoryTable = ({
         {deactivatingEmployee && (
           <ConfirmationModal
             header={DEACTIVATE_CONFIRMATION_HEADER}
-            message={DEACTIVATE_CONFIRMATION_MESSAGE}
+            message={deactivateConfirmationMessage(`${deactivatingEmployee.firstName} ${deactivatingEmployee.lastName}`)}
             isOpen={isDeactivateModalOpen}
             action={() => deactivateEmployee(deactivatingEmployee.id)}
             toggleClose={() => setIsDeactivateModalOpen(false)}
@@ -286,7 +286,7 @@ const EmployeeDirectoryTable = ({
         {deletingEmployee && (
           <ConfirmationModal
             header={DELETE_CONFIRMATION_HEADER}
-            message={DELETE_CONFIRMATION_MESSAGE}
+            message={deleteConfirmationMessage(`${deletingEmployee.firstName} ${deletingEmployee.lastName}`)}
             isOpen={isDeleteModalOpen}
             action={() => deleteEmployee(deletingEmployee.id)}
             toggleClose={() => setIsDeleteModalOpen(false)}

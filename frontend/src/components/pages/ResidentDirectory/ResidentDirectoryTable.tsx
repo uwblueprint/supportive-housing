@@ -71,8 +71,10 @@ const getFormattedDates = (resident: Resident) => {
   };
 };
 
-const DELETE_CONFIRMATION_MESSAGE =
-  "This is a permanent action. Residents can only be deleted if there are no log records associated with them.";
+const DELETE_CONFIRMATION_HEADER = "Delete Resident"
+
+const deleteConfirmationMessage = (name: string) =>
+  `Are you sure you want to delete resident ${name}? This is a permanent action. Residents can only be deleted if there are no log records associated with them.`;
 
 const ResidentDirectoryTable = ({
   buildingOptions,
@@ -225,8 +227,8 @@ const ResidentDirectoryTable = ({
         )}
         {deletingResident && (
           <ConfirmationModal
-            header={`Are you sure you want to delete Resident ${deletingResident.residentId}?`}
-            message={DELETE_CONFIRMATION_MESSAGE}
+            header={DELETE_CONFIRMATION_HEADER}
+            message={deleteConfirmationMessage(deletingResident.residentId)}
             isOpen={isDeleteModalOpen}
             action={() => deleteResident(deletingResident.id)}
             toggleClose={() => setIsDeleteModalOpen(false)}

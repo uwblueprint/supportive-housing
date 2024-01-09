@@ -114,7 +114,7 @@ const CreateTag = ({
             </ModalBody>
             <ModalFooter>
               <Button onClick={handleSubmit} variant="primary" type="submit">
-                Add Tag
+                Submit
               </Button>
             </ModalFooter>
           </ModalContent>
