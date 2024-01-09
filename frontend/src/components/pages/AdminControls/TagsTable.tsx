@@ -31,7 +31,7 @@ type Props = {
 };
 
 const DELETE_CONFIRMATION_HEADER = "Delete Tag";
-const deleteConfirmationMessage = (name: string) => 
+const deleteConfirmationMessage = (name: string) =>
   `Are you sure you want to delete tag ${name}? Deleting a tag will permanently remove it from your system.`;
 
 const TagsTable = ({

@@ -52,7 +52,7 @@ const selectStyle: any = {
       border: `1px solid ${colors.teal[300]}`,
       cursor: "pointer",
     },
-  })
+  }),
 };
 
 const viewStyle: any = {
@@ -75,7 +75,9 @@ const viewStyle: any = {
     border: `1px solid ${colors.teal[100]}`,
     borderColor: state.isFocused ? colors.teal[400] : colors.teal[100],
     boxShadow: "none",
-    backgroundColor: state.isDisabled ? "transparent" : provided.backgroundColor,
+    backgroundColor: state.isDisabled
+      ? "transparent"
+      : provided.backgroundColor,
   }),
   option: (provided: any, state: any) => ({
     ...provided,
@@ -100,11 +102,10 @@ const viewStyle: any = {
   }),
   indicatorSeparator: (provided: any, state: any) => ({
     ...provided,
-    backgroundColor: state.isDisabled ? "transparent" : provided.backgroundColor,
+    backgroundColor: state.isDisabled
+      ? "transparent"
+      : provided.backgroundColor,
   }),
 };
 
-export {
-  selectStyle,
-  viewStyle
-};
+export { selectStyle, viewStyle };

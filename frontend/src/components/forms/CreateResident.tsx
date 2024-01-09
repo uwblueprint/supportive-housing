@@ -236,7 +236,7 @@ const CreateResident = ({
                   </FormControl>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "16px"}}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired isInvalid={buildingError}>
                     <FormLabel>Building</FormLabel>

@@ -71,7 +71,7 @@ const getFormattedDates = (resident: Resident) => {
   };
 };
 
-const DELETE_CONFIRMATION_HEADER = "Delete Resident"
+const DELETE_CONFIRMATION_HEADER = "Delete Resident";
 
 const deleteConfirmationMessage = (name: string) =>
   `Are you sure you want to delete resident ${name}? This is a permanent action. Residents can only be deleted if there are no log records associated with them.`;

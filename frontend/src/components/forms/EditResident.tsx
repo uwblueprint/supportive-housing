@@ -265,7 +265,7 @@ const EditResident = ({
                         onDateChange={handleMoveOutDateChange}
                         propsConfigs={singleDatePickerStyle}
                       />
-                    {moveOutDate && (
+                      {moveOutDate && (
                         <InputRightElement>
                           <IconButton
                             onClick={() => setMoveOutDate(undefined)}

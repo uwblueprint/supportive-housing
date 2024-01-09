@@ -31,11 +31,11 @@ type Props = {
 };
 
 const ACTIVATE_CONFIRMATION_HEADER = "Activate Employee";
-const activateConfirmationMessage = (name: string) => 
+const activateConfirmationMessage = (name: string) =>
   `Are you sure you want to activate ${name}?`;
 
 const DEACTIVATE_CONFIRMATION_HEADER = "Deactivate Employee";
-const deactivateConfirmationMessage = (name: string) => 
+const deactivateConfirmationMessage = (name: string) =>
   `Are you sure you want to deactivate ${name}?`;
 
 const DELETE_CONFIRMATION_HEADER = "Delete Employee";
@@ -268,7 +268,9 @@ const EmployeeDirectoryTable = ({
         {activatingEmployee && (
           <ConfirmationModal
             header={ACTIVATE_CONFIRMATION_HEADER}
-            message={activateConfirmationMessage(`${activatingEmployee.firstName} ${activatingEmployee.lastName}`)}
+            message={activateConfirmationMessage(
+              `${activatingEmployee.firstName} ${activatingEmployee.lastName}`,
+            )}
             isOpen={isActivateModalOpen}
             action={() => activateEmployee(activatingEmployee.id)}
             toggleClose={() => setIsActivateModalOpen(false)}
@@ -277,7 +279,9 @@ const EmployeeDirectoryTable = ({
         {deactivatingEmployee && (
           <ConfirmationModal
             header={DEACTIVATE_CONFIRMATION_HEADER}
-            message={deactivateConfirmationMessage(`${deactivatingEmployee.firstName} ${deactivatingEmployee.lastName}`)}
+            message={deactivateConfirmationMessage(
+              `${deactivatingEmployee.firstName} ${deactivatingEmployee.lastName}`,
+            )}
             isOpen={isDeactivateModalOpen}
             action={() => deactivateEmployee(deactivatingEmployee.id)}
             toggleClose={() => setIsDeactivateModalOpen(false)}
@@ -286,7 +290,9 @@ const EmployeeDirectoryTable = ({
         {deletingEmployee && (
           <ConfirmationModal
             header={DELETE_CONFIRMATION_HEADER}
-            message={deleteConfirmationMessage(`${deletingEmployee.firstName} ${deletingEmployee.lastName}`)}
+            message={deleteConfirmationMessage(
+              `${deletingEmployee.firstName} ${deletingEmployee.lastName}`,
+            )}
             isOpen={isDeleteModalOpen}
             action={() => deleteEmployee(deletingEmployee.id)}
             toggleClose={() => setIsDeleteModalOpen(false)}
