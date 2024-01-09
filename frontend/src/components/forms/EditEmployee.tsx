@@ -229,7 +229,7 @@ const EditEmployee = ({
                 </Box>
               </Box>
             </Box>
-            <Box pt="16px" pb="16px">
+            <Box pt="16px">
               <FormControl isRequired isInvalid={adminStatusError}>
                 <RadioGroup
                   value={adminStatus}
@@ -275,7 +275,6 @@ const EditEmployee = ({
                 building.
               </Text>
             </Box>
-            <Divider />
           </ModalBody>
           <ModalFooter>
             <Button variant="primary" type="submit" onClick={handleSubmit}>

@@ -23,6 +23,8 @@ import {
   Text,
   ScaleFade,
   Textarea,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -300,10 +302,11 @@ const EditLog = ({
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
+        <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Log Entry Details</ModalHeader>
+            <ModalHeader>Edit Log Record</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
@@ -415,6 +418,15 @@ const EditLog = ({
                 </Col>
               </Row>
 
+              <Checkbox
+                colorScheme="teal"
+                style={{ paddingTop: "1rem" }}
+                onChange={() => setFlagged(!flagged)}
+                defaultChecked={flagged}
+              >
+                <Text>Flag this Report</Text>
+              </Checkbox>
+
               <Row>
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
@@ -423,39 +435,20 @@ const EditLog = ({
                       value={notes}
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
-                      resize="none"
+                      resize="vertical"
                     />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
-
-              <Checkbox
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                onChange={() => setFlagged(!flagged)}
-                marginBottom="16px"
-                defaultChecked={flagged}
-              >
-                <Text>Flag this Report</Text>
-              </Checkbox>
-
-              <Divider />
-
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={toggleClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Box>
             </ModalBody>
+
+            <ModalFooter>
+                <Button onClick={handleSubmit} variant="primary" type="submit">
+                  Save
+                </Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>

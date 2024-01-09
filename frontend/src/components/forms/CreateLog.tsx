@@ -23,6 +23,8 @@ import {
   Text,
   ScaleFade,
   Textarea,
+  ModalCloseButton,
+  ModalFooter,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -361,10 +363,11 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       </Box>
 
       <Box>
-        <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
+        <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>New Log Entry Details</ModalHeader>
+            <ModalHeader>Add Log Record</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
@@ -464,6 +467,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 </Col>
               </Row>
 
+              <Checkbox
+                colorScheme="teal"
+                style={{ paddingTop: "1rem" }}
+                onChange={() => setFlagged(!flagged)}
+              >
+                <Text>Flag this Report</Text>
+              </Checkbox>
+
               <Row>
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
@@ -472,7 +483,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       value={notes}
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
-                      resize="none"
+                      resize="vertical"
                     />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
@@ -480,30 +491,12 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 </Col>
               </Row>
 
-              <Checkbox
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                onChange={() => setFlagged(!flagged)}
-                marginBottom="16px"
-              >
-                <Text>Flag this Report</Text>
-              </Checkbox>
-
-              <Divider />
-
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={handleCreateClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Box>
             </ModalBody>
+            <ModalFooter>       
+              <Button onClick={handleSubmit} variant="primary" type="submit">
+                Submit
+              </Button>
+            </ModalFooter>   
           </ModalContent>
         </Modal>
       </Box>

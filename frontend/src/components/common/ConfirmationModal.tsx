@@ -38,7 +38,7 @@ const ConfirmationModal = ({
           <ModalContent>
             <ModalHeader>{header}</ModalHeader>
             <ModalBody>
-              <Box marginBottom="12px">
+              <Box>
                 <Text>{message}</Text>
               </Box>
             </ModalBody>
