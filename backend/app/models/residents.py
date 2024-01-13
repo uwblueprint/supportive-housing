@@ -11,6 +11,12 @@ class Residents(db.Model):
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
+    last_modified = db.Column(
+        db.DateTime,
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+        nullable=False,
+    )
     building = db.relationship("Buildings", back_populates="resident")
     log_records = db.relationship(
         "LogRecords", secondary="log_record_residents", back_populates="residents"

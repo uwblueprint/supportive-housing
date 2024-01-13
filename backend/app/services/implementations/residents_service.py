@@ -125,6 +125,8 @@ class ResidentsService(IResidentsService):
         if date_left is not None:
             query = query.filter(Residents.date_left <= date_left)
 
+        query = query.order_by(Residents.last_modified.desc())
+
         return query
 
     def add_resident(self, resident):
@@ -203,11 +205,11 @@ class ResidentsService(IResidentsService):
                 )
 
             if not return_all:
-                residents_results = residents_results.limit(results_per_page).offset(
+                residents_results = residents_results.order_by(Residents.last_modified.desc()).limit(results_per_page).offset(
                     (page_number - 1) * results_per_page
                 )
-
-            residents_results = residents_results.all()
+            else:
+                residents_results = residents_results.order_by(Residents.last_modified.desc()).all()
 
             return {
                 "residents": self.to_residents_json_list(
