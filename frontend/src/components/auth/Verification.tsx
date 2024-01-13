@@ -5,6 +5,8 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import CreateToast from "../common/Toasts";
 import AuthContext from "../../contexts/AuthContext";
 import { HOME_PAGE } from "../../constants/Routes";
+import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
+import { AuthenticatedUser } from "../../types/AuthTypes";
 
 const Verification = (): React.ReactElement => {
   const newToast = CreateToast();
@@ -13,17 +15,24 @@ const Verification = (): React.ReactElement => {
 
   const handleVerification = async () => {
     if (authenticatedUser) {
-      const authUser = authenticatedUser;
-      authUser.verified = await authAPIClient.isVerified();
-      setAuthenticatedUser(authUser);
+      const isVerified = await authAPIClient.isVerified();
 
-      if (authenticatedUser.verified === false) {
+      if (isVerified === false) {
         newToast(
           "Not Verified",
           "Please check your email for the verification email.",
           "error",
         );
       } else {
+
+        const newAuthenticatedUser: AuthenticatedUser = {...authenticatedUser, verified: true}
+
+        localStorage.setItem(
+          AUTHENTICATED_USER_KEY,
+          JSON.stringify(newAuthenticatedUser),
+        );
+        setAuthenticatedUser(newAuthenticatedUser);
+
         history.push(HOME_PAGE);
       }
     }
