@@ -65,6 +65,7 @@ const NavigationBar = (): React.ReactElement => {
         display="flex"
         justifyContent="center"
         alignItems="center"
+        zIndex="3"
       >
         <Box
           mx="auto"
@@ -104,7 +105,7 @@ const NavigationBar = (): React.ReactElement => {
                   Admin Controls
                 </MenuButton>
                 {isMenuOpen && (
-                  <MenuList>
+                  <MenuList zIndex="3">
                     <MenuItem onClick={navigateToEmployeeDirectory}>
                       Employee Directory
                     </MenuItem>
