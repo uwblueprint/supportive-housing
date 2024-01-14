@@ -45,8 +45,8 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName) {
-    return curUser.firstName
+  if (curUser) {
+    return `${curUser.firstName} ${curUser.lastName}`
   }
   return "";
 };
@@ -199,7 +199,7 @@ const ViewLog = ({
                     <Input
                       isDisabled
                       placeholder="No Attn To"
-                      defaultValue={logRecord.attnTo?.firstName}
+                      defaultValue={logRecord.attnTo ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : undefined}
                       _disabled={{ bg: "transparent" }}
                       _hover={{ borderColor: "teal.100" }}
                     />

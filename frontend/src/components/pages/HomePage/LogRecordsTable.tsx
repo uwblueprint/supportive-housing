@@ -155,7 +155,7 @@ const LogRecordsTable = ({
       const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
-          label: user.firstName,
+          label: `${user.firstName} ${user.lastName}`,
           value: user.id,
         }));
       setEmployeeOptions(userLabels);

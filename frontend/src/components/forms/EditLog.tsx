@@ -89,9 +89,9 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName && curUser.id) {
+  if (curUser) {
     const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
+    return { label: `${curUser.firstName} ${curUser.lastName}`, value: userId };
   }
   return { label: "", value: -1 };
 };
