@@ -13,7 +13,7 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
     flagged: logRecord.flagged,
     note: `"${logRecord.note}"`,
     residents: `"${logRecord.residents.join(", ")}"`,
-    tags: logRecord.tags != null ? logRecord.tags.join("; ") : "",
+    tags: logRecord.tags != null ? `"${logRecord.tags.join(", ")}"` : "",
   };
 };
 

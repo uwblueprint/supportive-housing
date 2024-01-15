@@ -41,8 +41,8 @@ import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { Resident } from "../../types/ResidentTypes";
-import combineDateTime from "../../helper/combineDateTime";
 import { SelectLabel } from "../../types/SharedTypes";
+import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -264,13 +264,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     // reset all states
     setDate(new Date());
-    setTime(
-      new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
+    setTime(getFormattedTime(new Date()));
     setBuildingId(-1);
     setResidents([]);
     setTags([]);

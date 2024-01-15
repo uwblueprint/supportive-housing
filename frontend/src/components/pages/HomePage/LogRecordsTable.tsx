@@ -205,6 +205,7 @@ const LogRecordsTable = ({
           marginTop="12px"
           height="70vh"
           overflowY="unset"
+          overflowWrap="break-word"
           ref={tableRef}
         >
           <Table variant="showTable" verticalAlign="middle">
@@ -242,7 +243,7 @@ const LogRecordsTable = ({
                       <Td width="2.5%">
                         {record.attnTo ? `${record.attnTo.firstName}` : ""}
                       </Td>
-                      <Td width="5%">{formatList(record.tags)}</Td>
+                      <Td width="5%" wordBreak="break-all">{formatList(record.tags)}</Td>
                       <Td width="5%">
                         {(authenticatedUser?.role === "Admin" ||
                           authenticatedUser?.id === record.employee.id) && (
@@ -295,9 +296,7 @@ const LogRecordsTable = ({
                       isOpen={viewOpenMap[record.logId]}
                       toggleClose={() => handleViewToggle(record.logId)}
                       toggleEdit={() => handleEditToggle(record.logId)}
-                      employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
-                      buildingOptions={buildingOptions}
                       tagOptions={tagOptions}
                     />
 

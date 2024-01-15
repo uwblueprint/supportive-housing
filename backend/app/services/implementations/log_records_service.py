@@ -5,7 +5,7 @@ from ...models.user import User
 from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
-from pytz import timezone
+from pytz import timezone, utc
 from sqlalchemy import text
 
 
@@ -31,6 +31,10 @@ class LogRecordsService(ILogRecordsService):
 
         del new_log_record["residents"]
         del new_log_record["tags"]
+
+        new_log_record['datetime'] = datetime.fromisoformat(
+            new_log_record['datetime'].replace("Z", "+00:00")
+        ).replace(tzinfo=utc)
 
         try:
             new_log_record = LogRecords(**new_log_record)
@@ -85,7 +89,7 @@ class LogRecordsService(ILogRecordsService):
                         "tags": log[10] if log[10] else [],
                         "note": log[11],
                         "flagged": log[12],
-                        "datetime": str(log[13].astimezone(timezone("US/Eastern"))),
+                        "datetime": log[13].isoformat(),
                     }
                 )
             return logs_list
@@ -128,21 +132,15 @@ class LogRecordsService(ILogRecordsService):
 
     def filter_by_date_range(self, date_range):
         sql = ""
-        if len(date_range) > 0:
-            if date_range[0] != "":
-                start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
-                    hour=0, minute=0
-                )
-                sql += f"\ndatetime>='{start_date}'"
-            if date_range[-1] != "":
-                end_date = datetime.strptime(
-                    date_range[len(date_range) - 1], "%Y-%m-%d"
-                ).replace(hour=23, minute=59)
-
-                if sql == "":
-                    sql += f"\ndatetime<='{end_date}'"
-                else:
-                    sql += f"\nAND datetime<='{end_date}'"
+        if date_range[0] is not None:
+            start_date = date_range[0].replace("Z", "+00:00")
+            sql += f"\ndatetime>='{start_date}'"
+        if date_range[-1] is not None:
+            end_date = date_range[-1].replace("Z", "+00:00")
+            if sql == "":
+                sql += f"\ndatetime<='{end_date}'"
+            else:
+                sql += f"\nAND datetime<='{end_date}'"
         return sql
 
     def filter_by_tags(self, tags):

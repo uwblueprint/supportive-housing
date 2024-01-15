@@ -85,7 +85,7 @@ const SignInLogsPage = (): React.ReactElement => {
       <Box
         textStyle="dm-sans-font"
         textAlign="center"
-        width="75%"
+        width="90%"
         paddingTop="2%"
         margin="0px auto"
         color="blue.600"

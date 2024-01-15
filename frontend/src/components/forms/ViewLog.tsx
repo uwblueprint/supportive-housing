@@ -28,15 +28,14 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { viewStyle}  from "../../theme/forms/selectStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { SelectLabel } from "../../types/SharedTypes";
+import { convertToString, getFormattedTime } from "../../helper/dateHelpers";
 
 type Props = {
   logRecord: LogRecord;
   isOpen: boolean;
   toggleClose: () => void;
   toggleEdit: () => void;
-  employeeOptions: SelectLabel[];
   residentOptions: SelectLabel[];
-  buildingOptions: SelectLabel[];
   tagOptions: SelectLabel[];
 };
 
@@ -56,46 +55,14 @@ const ViewLog = ({
   isOpen,
   toggleClose,
   toggleEdit,
-  employeeOptions,
   residentOptions,
-  buildingOptions,
   tagOptions,
 }: Props) => {
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(
-    date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-  );
-
-  const initializeValues = () => {
-    // set state variables
-    setDate(new Date(logRecord.datetime));
-    setTime(
-      date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
-  };
-
-  const formatDate = (dateObj: Date) => {
-    return dateObj.toISOString().slice(0, 10);
-  }
 
   const handleEdit = () => {
     toggleClose();
     setTimeout(toggleEdit, 400);
   }
-
-  useEffect(() => {
-    if (isOpen) {
-      initializeValues();
-    }
-  }, [isOpen]);
 
   return (
     <>
@@ -126,7 +93,7 @@ const ViewLog = ({
                         <FormLabel>Date</FormLabel>
                         <Input
                           isDisabled
-                          defaultValue={formatDate(date)}
+                          defaultValue={convertToString(new Date(logRecord.datetime))}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />
@@ -139,7 +106,7 @@ const ViewLog = ({
                           isDisabled
                           size="md"
                           type="time"
-                          defaultValue={time}
+                          defaultValue={getFormattedTime(new Date(logRecord.datetime))}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />

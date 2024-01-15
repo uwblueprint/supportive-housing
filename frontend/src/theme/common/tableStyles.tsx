@@ -19,6 +19,9 @@ const Table: ComponentStyleConfig = {
         top: 0,
         zIndex: 1
       },
+      td: {
+        wordBreak: "break-word"
+      }
     },
   },
 };

@@ -45,22 +45,44 @@ const HomePage = (): React.ReactElement => {
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const formatDate = (date: Date | undefined) => {
-    if (date) {
-      return date
-        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-        .substring(0, 10);
-    }
-    return "";
-  };
-
   const getLogRecords = async (pageNumber: number) => {
-    const buildingIds = buildings.map((building) => building.value);
-    const employeeIds = employees.map((employee) => employee.value);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
-    const residentsIds = residents.map((resident) => resident.value);
-    const dateRange = [formatDate(startDate), formatDate(endDate)];
-    const tagsValues = tags.map((tag) => tag.value);
+    
+    const buildingIds =
+      buildings.length > 0
+        ? buildings.map((building) => building.value)
+        : undefined;    
+        
+    const employeeIds =
+      employees.length > 0
+        ? employees.map((employee) => employee.value)
+        : undefined;  
+
+    const attentionToIds =
+      attentionTos.length > 0
+        ? attentionTos.map((attnTo) => attnTo.value)
+        : undefined; 
+
+    const residentsIds =
+      residents.length > 0
+        ? residents.map((resident) => resident.value)
+        : undefined; 
+
+    const tagIds =
+      tags.length > 0
+        ? tags.map((tag) => tag.value)
+        : undefined; 
+
+    let dateRange;
+    if (startDate || endDate) {
+
+      startDate?.setHours(0, 0, 0, 0);
+      endDate?.setHours(23, 59, 59, 999);
+
+      dateRange = [
+        startDate ? startDate.toISOString() : null,
+        endDate ? endDate.toISOString() : null,
+      ];
+    }
 
     setTableLoaded(false);
 
@@ -68,9 +90,9 @@ const HomePage = (): React.ReactElement => {
       buildings: buildingIds,
       employees: employeeIds,
       attnTos: attentionToIds,
-      dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
+      dateRange,
       residents: residentsIds,
-      tags: tagsValues,
+      tags: tagIds,
       flagged,
       resultsPerPage,
       pageNumber,
@@ -92,14 +114,42 @@ const HomePage = (): React.ReactElement => {
   };
 
   const countLogRecords = async () => {
-    const buildingIds = buildings.map((building) => building.value);
-    const employeeIds = employees.map((employee) => employee.value);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
-    const dateRange =
-      startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
-    const residentsIds = residents.map((resident) => resident.value);
+    const buildingIds =
+    buildings.length > 0
+      ? buildings.map((building) => building.value)
+      : undefined;    
+      
+    const employeeIds =
+      employees.length > 0
+        ? employees.map((employee) => employee.value)
+        : undefined;  
 
-    const tagsValues = tags.map((tag) => tag.value);
+    const attentionToIds =
+      attentionTos.length > 0
+        ? attentionTos.map((attnTo) => attnTo.value)
+        : undefined; 
+
+    const residentsIds =
+      residents.length > 0
+        ? residents.map((resident) => resident.value)
+        : undefined; 
+
+    const tagIds =
+      tags.length > 0
+        ? tags.map((tag) => tag.value)
+        : undefined; 
+
+    let dateRange;
+    if (startDate || endDate) {
+
+      startDate?.setHours(0, 0, 0, 0);
+      endDate?.setHours(23, 59, 59, 999);
+
+      dateRange = [
+        startDate ? startDate.toISOString() : null,
+        endDate ? endDate.toISOString() : null,
+      ];
+    }
 
     const data = await LogRecordAPIClient.countLogRecords({
       buildings: buildingIds,
@@ -107,7 +157,7 @@ const HomePage = (): React.ReactElement => {
       attnTos: attentionToIds,
       dateRange,
       residents: residentsIds,
-      tags: tagsValues,
+      tags: tagIds,
       flagged,
     });
 
@@ -149,7 +199,7 @@ const HomePage = (): React.ReactElement => {
       <Box
         textStyle="dm-sans-font"
         textAlign="center"
-        width="75%"
+        width="90%"
         paddingTop="2%"
         margin="0px auto"
         color="blue.600"

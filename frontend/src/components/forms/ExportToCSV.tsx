@@ -55,15 +55,6 @@ const ExportToCSV = (): React.ReactElement => {
     setOpen(false);
   };
 
-  const formatDate = (date: Date | undefined) => {
-    if (date !== undefined) {
-      return date
-        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-        .substring(0, 10);
-    }
-    return "";
-  };
-
   const handleSubmit = async () => {
     if (startDate && endDate && startDate > endDate) {
       setDateError(true);
@@ -71,10 +62,19 @@ const ExportToCSV = (): React.ReactElement => {
     }
     setDateError(false);
 
-    const dateRange = [formatDate(startDate), formatDate(endDate)];
+    let dateRange;
+    if (startDate || endDate) {
 
+      startDate?.setHours(0, 0, 0, 0);
+      endDate?.setHours(23, 59, 59, 999);
+
+      dateRange = [
+        startDate ? startDate.toISOString() : null,
+        endDate ? endDate.toISOString() : null,
+      ];
+    }
     const data = await LogRecordAPIClient.filterLogRecords({
-      dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
+      dateRange,
       returnAll: true, // return all data
     });
 
