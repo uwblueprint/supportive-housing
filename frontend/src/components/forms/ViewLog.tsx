@@ -37,6 +37,7 @@ type Props = {
   toggleEdit: () => void;
   residentOptions: SelectLabel[];
   tagOptions: SelectLabel[];
+  allowEdit: boolean;
 };
 
 // Helper to get the currently logged in user
@@ -57,6 +58,7 @@ const ViewLog = ({
   toggleEdit,
   residentOptions,
   tagOptions,
+  allowEdit
 }: Props) => {
 
   const handleEdit = () => {
@@ -195,12 +197,16 @@ const ViewLog = ({
                   </FormControl>
                 </Col>
               </Row>
-            </ModalBody>
+            </ModalBody>  
 
             <ModalFooter>
-              <Button onClick={handleEdit} variant="primary" type="submit">
-                Edit
-              </Button>
+              {
+                allowEdit && (
+                  <Button onClick={handleEdit} variant="primary" type="submit">
+                    Edit
+                  </Button>
+                )
+              }
             </ModalFooter>  
           </ModalContent>
         </Modal>

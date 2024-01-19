@@ -8,6 +8,7 @@ from ...utilities.exceptions.auth_exceptions import (
     UserNotInvitedException,
     EmailAlreadyInUseException,
 )
+from ...utilities.exceptions.duplicate_entity_exceptions import DuplicateUserException
 
 
 class UserService(IUserService):
@@ -197,10 +198,11 @@ class UserService(IUserService):
                 db.session.add(user_entry)
                 db.session.commit()
             else:
-                raise Exception("User already exists")
+                raise DuplicateUserException(user.email)
+            
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user_entry)
-
             return UserDTO(**user_dict)
+        
         except Exception as e:
             db.session.rollback()
             reason = getattr(e, "message", None)

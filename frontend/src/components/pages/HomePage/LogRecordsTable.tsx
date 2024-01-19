@@ -245,35 +245,45 @@ const LogRecordsTable = ({
                       </Td>
                       <Td width="5%" wordBreak="break-all">{formatList(record.tags)}</Td>
                       <Td width="5%">
-                        {(authenticatedUser?.role === "Admin" ||
-                          authenticatedUser?.id === record.employee.id) && (
-                          <Menu>
-                            <MenuButton
-                              as={IconButton}
+                          {
+                            (authenticatedUser?.role === "Admin" ||
+                            authenticatedUser?.id === record.employee.id) ? (
+                            <Menu>
+                              <MenuButton
+                                as={IconButton}
+                                aria-label="Options"
+                                icon={<VscKebabVertical />}
+                                w="36px"
+                                variant="ghost"
+                              />
+                                <MenuList>
+                                  <MenuItem
+                                    onClick={() => handleViewToggle(record.logId)}
+                                  >
+                                    View Log Record
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() => handleEditToggle(record.logId)}
+                                  >
+                                    Edit Log Record
+                                  </MenuItem>
+                                  <MenuItem
+                                    onClick={() => handleDeleteToggle(record.logId)}
+                                  >
+                                    Delete Log Record
+                                  </MenuItem>
+                                </MenuList>
+                            </Menu>
+                          ) : (
+                            <IconButton 
                               aria-label="Options"
                               icon={<VscKebabVertical />}
                               w="36px"
                               variant="ghost"
+                              onClick={() => handleViewToggle(record.logId)}
                             />
-                            <MenuList>
-                              <MenuItem
-                                onClick={() => handleViewToggle(record.logId)}
-                              >
-                                View Log Record
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handleEditToggle(record.logId)}
-                              >
-                                Edit Log Record
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => handleDeleteToggle(record.logId)}
-                              >
-                                Delete Log Record
-                              </MenuItem>
-                            </MenuList>
-                          </Menu>
-                        )}
+                          )
+                        }
                       </Td>
                     </Tr>
 
@@ -298,6 +308,7 @@ const LogRecordsTable = ({
                       toggleEdit={() => handleEditToggle(record.logId)}
                       residentOptions={residentOptions}
                       tagOptions={tagOptions}
+                      allowEdit={authenticatedUser?.role === "Admin" || authenticatedUser?.id === record.employee.id}
                     />
 
                     <ConfirmationModal

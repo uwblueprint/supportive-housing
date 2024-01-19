@@ -9,9 +9,9 @@ export const getAuthErrMessage = (
   if (axiosErrRes && axiosErrRes.data && axiosErrRes.data.error) {
     return axiosErrRes.data.error;
   }
-  return `Error ${
-    flow === "LOGIN" ? "logging in" : "signing up"
-  }. Please try again later.`;
+  return `Unable to ${
+    flow === "LOGIN" ? "login" : "sign up"
+  }. Please try again.`;
 };
 
 export const isAuthErrorResponse = (
@@ -21,7 +21,7 @@ export const isAuthErrorResponse = (
 };
 
 export const isErrorResponse = (
-  res: boolean | ErrorResponse,
+  res: boolean | string | ErrorResponse,
 ): res is ErrorResponse => {
-  return typeof res !== "boolean" && "errMessage" in res;
+  return typeof res !== "boolean" && typeof res !== "string" && "errMessage" in res;
 };

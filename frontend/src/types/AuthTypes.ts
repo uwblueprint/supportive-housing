@@ -7,7 +7,7 @@ export type TwoFaResponse = {
 export type AuthTokenResponse = {
   requiresTwoFa: boolean;
   authUser: AuthenticatedUser;
-} | null;
+};
 
 export type AuthenticatedUser = {
   id: number;

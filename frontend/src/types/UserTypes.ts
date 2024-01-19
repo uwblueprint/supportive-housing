@@ -18,6 +18,11 @@ export type CountUsersResponse = {
   numResults: number;
 } | null;
 
+export type GetUserStatusResponse = {
+  userStatus: UserStatus;
+  email: string;
+}
+
 export enum UserRole {
   ADMIN = "Admin",
   REGULAR_STAFF = "Regular Staff",

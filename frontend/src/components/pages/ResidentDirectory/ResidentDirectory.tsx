@@ -188,6 +188,7 @@ const ResidentDirectory = (): React.ReactElement => {
             speed="0.65s"
             emptyColor="gray.200"
             size="xl"
+            marginTop="5%"
           />
         ) : (
           <Box>

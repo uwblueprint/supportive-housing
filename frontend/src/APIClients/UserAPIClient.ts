@@ -7,7 +7,9 @@ import {
   CountUsersResponse,
   UpdateUserParams,
   UserStatus,
+  GetUserStatusResponse,
 } from "../types/UserTypes";
+import { ErrorResponse } from "../types/ErrorTypes";
 
 const getUsers = async ({
   returnAll = false,
@@ -124,10 +126,80 @@ const deleteUser = async (userId: number): Promise<number> => {
   }
 };
 
+const inviteUser = async (
+  email: string,
+  role: string,
+  firstName: string,
+  lastName: string,
+): Promise<boolean | ErrorResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    await baseAPIClient.post(
+      "/users/invite-user",
+      { email, role, firstName, lastName },
+      { headers: { Authorization: bearerToken } },
+    );
+    return true;
+  } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          "User with the specified email already exists.",
+      };
+    }
+    return false;
+  }
+};
+
+const getUserStatus = async (
+  email: string,
+): Promise<UserStatus | ErrorResponse> => {
+  try {
+    const bearerToken = `Bearer ${getLocalStorageObjProperty(
+      AUTHENTICATED_USER_KEY,
+      "accessToken",
+    )}`;
+    const { data } = await baseAPIClient.get<GetUserStatusResponse>("/users/user-status", {
+      params: {
+        email,
+      },
+      headers: { Authorization: bearerToken },
+    });
+    if (data.email === email) {
+      return data.userStatus;
+    }
+    return {
+      errMessage: "This email address has not been invited. Please try again with a different email."
+    };
+  } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 403) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          "This email address has not been invited. Please try again with a different email.",
+      };
+    }
+
+    return {
+      errMessage: "Unable to get status of this user."
+    };
+  }
+};
+
 export default {
   getUsers,
   countUsers,
   updateUser,
   updateUserStatus,
   deleteUser,
+  inviteUser,
+  getUserStatus
 };

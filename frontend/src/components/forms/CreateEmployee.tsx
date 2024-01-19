@@ -21,9 +21,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import commonApiClient from "../../APIClients/CommonAPIClient";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import { isErrorResponse } from "../../helper/error";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -44,7 +45,7 @@ const CreateEmployee = ({
   const [invitedEmail, setInvitedEmail] = useState<string>("");
   const [invitedFirstName, setInvitedFirstName] = useState<string>("");
   const [invitedLastName, setInvitedLastName] = useState<string>("");
-  const [invitedAdminStatus, setinvitedAdminStatus] = useState<string>("");
+  const [invitedAdminStatus, setInvitedAdminStatus] = useState<string>("");
   const [
     isTwoFactorAuthenticated,
     setIsTwoFactorAuthenticated,
@@ -93,7 +94,7 @@ const CreateEmployee = ({
   };
 
   const handleAdminStatusChange = (inputValue: string) => {
-    setinvitedAdminStatus(inputValue);
+    setInvitedAdminStatus(inputValue);
 
     // If admin is selected, uncheck the 2FA checkbox
     if (inputValue === "1") {
@@ -107,7 +108,7 @@ const CreateEmployee = ({
     setInvitedEmail("");
     setInvitedFirstName("");
     setInvitedLastName("");
-    setinvitedAdminStatus("");
+    setInvitedAdminStatus("");
     setIsTwoFactorAuthenticated(false);
 
     setInvitedEmailError(false);
@@ -132,7 +133,6 @@ const CreateEmployee = ({
       !isLastNameError &&
       !isAdminStatusError
     ) {
-      let hasInvitedUser: string | undefined;
       let roleOptionIndex: number | undefined;
 
       if (invitedAdminStatus === "1") {
@@ -144,27 +144,28 @@ const CreateEmployee = ({
       }
 
       if (roleOptionIndex !== undefined) {
-        hasInvitedUser = await commonApiClient.inviteUser(
+        const res = await UserAPIClient.inviteUser(
           invitedEmail,
           RoleOptions[roleOptionIndex],
           invitedFirstName,
           invitedLastName,
         );
-      }
-      if (hasInvitedUser === "Request failed with status code 409") {
-        newToast("Employee already exists", INVITE_EMPLOYEE_ERROR, "error");
-      } else if (hasInvitedUser === "Success") {
-        newToast(
-          "Invite sent",
-          `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
-          "success",
-        );
-        getRecords(1);
-        setUserPageNum(1);
-        countUsers();
-        handleClose();
-      } else {
-        newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
+
+        if (isErrorResponse(res)) {
+          newToast("Error inviting user", res.errMessage, "error");
+        } else if (res) {
+          newToast(
+            "Invite sent",
+            `Your invite has been sent to ${invitedEmail}`,
+            "success",
+          );
+          getRecords(1);
+          setUserPageNum(1);
+          countUsers();
+          handleClose();
+        } else {
+          newToast("Error inviting user", "Unable to invite user.", "error");
+        }
       }
     }
   };
