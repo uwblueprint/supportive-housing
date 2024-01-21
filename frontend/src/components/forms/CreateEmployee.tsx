@@ -33,6 +33,8 @@ type Props = {
 };
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
 
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 const CreateEmployee = ({
   getRecords,
   setUserPageNum,
@@ -71,23 +73,19 @@ const CreateEmployee = ({
     }
   }, [invitedAdminStatus]);
 
-  const handleFirstNameChange = (e: { target: { value: unknown } }) => {
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setInvitedFirstName(inputValue);
-      setInvitedFirstNameError(false);
-    }
+    setInvitedFirstName(inputValue);
+    setInvitedFirstNameError(false);
   };
 
-  const handleLastNameChange = (e: { target: { value: unknown } }) => {
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setInvitedLastName(inputValue);
-      setInvitedLastNameError(false);
-    }
+    setInvitedLastName(inputValue);
+    setInvitedLastNameError(false);
   };
 
-  const handleInvitedEmailChange = (e: { target: { value: unknown } }) => {
+  const handleInvitedEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setInvitedEmail(inputValue);
     setInvitedEmailError(false);
@@ -171,16 +169,11 @@ const CreateEmployee = ({
   };
 
   const handleSubmit = () => {
-    const isEmailError = !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+    const isEmailError = !(emailRegex).test(
       invitedEmail,
     );
-    const onlyLetters = /^[A-Za-z]+$/;
-    const isFirstNameError = !(
-      invitedFirstName && onlyLetters.test(invitedFirstName)
-    );
-    const isLastNameError = !(
-      invitedLastName && onlyLetters.test(invitedLastName)
-    );
+    const isFirstNameError = invitedFirstName === "";
+    const isLastNameError = invitedLastName === "";
     const isAdminStatusError = invitedAdminStatus === "";
 
     setInvitedEmailError(isEmailError);
@@ -226,7 +219,7 @@ const CreateEmployee = ({
                       onChange={handleFirstNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>First Name is required.</FormErrorMessage>
+                    <FormErrorMessage>First name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
 
@@ -239,7 +232,7 @@ const CreateEmployee = ({
                       onChange={handleLastNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>Last Name is required.</FormErrorMessage>
+                    <FormErrorMessage>Last name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
               </Box>

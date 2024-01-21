@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner, Text, VStack } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import CreateToast from "../common/Toasts";
 import AuthContext from "../../contexts/AuthContext";
@@ -13,11 +13,15 @@ const Verification = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleVerification = async () => {
     if (authenticatedUser) {
+      setIsLoading(true)
       const isVerified = await authAPIClient.isVerified();
 
       if (isVerified === false) {
+        setIsLoading(false)
         newToast(
           "Not Verified",
           "Please check your email for the verification email.",
@@ -39,21 +43,40 @@ const Verification = (): React.ReactElement => {
   };
 
   return (
-    <>
-      <Box bg="teal.400" height="100vh">
+    <Flex h="100vh">
+      <Box w="47%">
         <Flex
-          bg="white"
-          height="100vh"
-          width="47%"
-          justifyContent="center"
-          alignItems="center"
+            h="100%"
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            gap="28px"
         >
-          <VStack width="75%" align="flex-start" gap="3vh">
+          <Box w="80%" textAlign="left">
             <Text variant="login">Verification</Text>
+          </Box>
+
+          <Box w="80%" textAlign="left">
             <Text variant="loginSecondary">
               In order to start using your SHOW account, you need to confirm
               your email address.
             </Text>
+          </Box>
+
+          <Box w="80%">
+            {
+              isLoading ?
+              <Flex flexDirection="column" alignItems="center">        
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="lg"
+                margin="0 auto"
+                textAlign="center"
+                />
+              </Flex>
+            :
             <Button
               variant="login"
               onClick={handleVerification}
@@ -64,10 +87,15 @@ const Verification = (): React.ReactElement => {
             >
               Verify Email Address
             </Button>
-          </VStack>
+            }
+          </Box>
         </Flex>
       </Box>
-    </>
+     
+      <Box flex="1" bg="teal.400">
+          {/* Background */}
+      </Box>
+    </Flex>
   );
 };
 

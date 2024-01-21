@@ -40,7 +40,7 @@ const deactivateConfirmationMessage = (name: string) =>
 
 const DELETE_CONFIRMATION_HEADER = "Delete Employee";
 const deleteConfirmationMessage = (name: string) =>
-  `Are you sure you want to delete ${name}? Deleting an employee will permanently remove it from your system.`;
+  `Are you sure you want to delete ${name}? Deleting an employee will permanently remove it from the system.`;
 
 const constructRole = (user: User): string => {
   let role = "";
