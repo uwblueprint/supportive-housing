@@ -1,6 +1,6 @@
 /**
  *
- * @returns an ISOstring 
+ * @returns an ISOstring
  */
 export const combineDateTime = (dateObj: Date, timeStr: string): string => {
   // Extract time components from timeStr
@@ -47,8 +47,8 @@ export const convertToString = (date: Date): string => {
  * @returns date string HH:MM format
  */
 export const getFormattedTime = (date: Date): string => {
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
 
   return `${hours}:${minutes}`;
 };

@@ -64,7 +64,6 @@ const ExportToCSV = (): React.ReactElement => {
 
     let dateRange;
     if (startDate || endDate) {
-
       startDate?.setHours(0, 0, 0, 0);
       endDate?.setHours(23, 59, 59, 999);
 

@@ -169,9 +169,7 @@ const CreateEmployee = ({
   };
 
   const handleSubmit = () => {
-    const isEmailError = !(emailRegex).test(
-      invitedEmail,
-    );
+    const isEmailError = !emailRegex.test(invitedEmail);
     const isFirstNameError = invitedFirstName === "";
     const isLastNameError = invitedLastName === "";
     const isAdminStatusError = invitedAdminStatus === "";

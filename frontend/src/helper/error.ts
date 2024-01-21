@@ -23,5 +23,7 @@ export const isAuthErrorResponse = (
 export const isErrorResponse = (
   res: boolean | string | ErrorResponse,
 ): res is ErrorResponse => {
-  return typeof res !== "boolean" && typeof res !== "string" && "errMessage" in res;
+  return (
+    typeof res !== "boolean" && typeof res !== "string" && "errMessage" in res
+  );
 };

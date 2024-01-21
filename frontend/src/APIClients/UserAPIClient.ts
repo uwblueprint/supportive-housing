@@ -165,17 +165,21 @@ const getUserStatus = async (
       AUTHENTICATED_USER_KEY,
       "accessToken",
     )}`;
-    const { data } = await baseAPIClient.get<GetUserStatusResponse>("/users/user-status", {
-      params: {
-        email,
+    const { data } = await baseAPIClient.get<GetUserStatusResponse>(
+      "/users/user-status",
+      {
+        params: {
+          email,
+        },
+        headers: { Authorization: bearerToken },
       },
-      headers: { Authorization: bearerToken },
-    });
+    );
     if (data.email === email) {
       return data.userStatus;
     }
     return {
-      errMessage: "This email address has not been invited. Please try again with a different email."
+      errMessage:
+        "This email address has not been invited. Please try again with a different email.",
     };
   } catch (error) {
     const axiosErr = (error as any) as AxiosError;
@@ -189,7 +193,7 @@ const getUserStatus = async (
     }
 
     return {
-      errMessage: "Unable to get status of this user."
+      errMessage: "Unable to get status of this user.",
     };
   }
 };
@@ -201,5 +205,5 @@ export default {
   updateUserStatus,
   deleteUser,
   inviteUser,
-  getUserStatus
+  getUserStatus,
 };

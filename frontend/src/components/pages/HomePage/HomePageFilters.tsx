@@ -335,7 +335,9 @@ const HomePageFilters = ({
                     gap={6}
                   >
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700" pointerEvents="none">Tags</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Tags
+                      </FormLabel>
                       <Select
                         value={tags}
                         options={tagLabels}
@@ -347,7 +349,9 @@ const HomePageFilters = ({
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700" pointerEvents="none">Attention To</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Attention To
+                      </FormLabel>
                       <Select
                         value={attentionTos}
                         options={userLabels}
@@ -359,7 +363,9 @@ const HomePageFilters = ({
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700" pointerEvents="none">Building</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Building
+                      </FormLabel>
                       <Select
                         value={buildings}
                         options={buildingOptions}
@@ -370,7 +376,9 @@ const HomePageFilters = ({
                       />
                     </GridItem>
                     <GridItem colSpan={1}>
-                      <FormLabel fontWeight="700" pointerEvents="none">Flagged</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Flagged
+                      </FormLabel>
                       <Checkbox
                         isChecked={flagged}
                         onChange={(e) => setFlagged(e.target.checked)}

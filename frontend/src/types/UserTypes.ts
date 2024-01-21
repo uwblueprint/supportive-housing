@@ -21,7 +21,7 @@ export type CountUsersResponse = {
 export type GetUserStatusResponse = {
   userStatus: UserStatus;
   email: string;
-}
+};
 
 export enum UserRole {
   ADMIN = "Admin",

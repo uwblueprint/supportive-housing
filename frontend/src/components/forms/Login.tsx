@@ -80,10 +80,9 @@ const Login = ({
 
     if (loginClicked) {
       if (inputValue.length === 0) {
-        setGeneralError(true)
-        setGeneralErrorStr("Password is required.")
-      }
-      else {
+        setGeneralError(true);
+        setGeneralErrorStr("Password is required.");
+      } else {
         setGeneralError(false);
         setGeneralErrorStr("");
       }
@@ -94,7 +93,7 @@ const Login = ({
     setLoginClicked(true);
 
     if (emailError || generalError) {
-      return
+      return;
     }
 
     if (!emailRegex.test(email)) {
@@ -104,41 +103,40 @@ const Login = ({
     }
 
     if (password.length === 0) {
-      setGeneralError(true)
-      setGeneralErrorStr("Password is required.")
+      setGeneralError(true);
+      setGeneralErrorStr("Password is required.");
       return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     const res = await UserAPIClient.getUserStatus(email);
     if (isErrorResponse(res)) {
-      setGeneralError(true)
-      setGeneralErrorStr(res.errMessage)
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.DEACTIVATED) {
-      setGeneralError(true)
-      setGeneralErrorStr("This email address has been deactivated. Please try again with another email.")
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.INVITED) {
-      setGeneralError(true)
-      setGeneralErrorStr("This email address has been invited. Sign up first to make an account!")
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.ACTIVE) {
+      setGeneralError(true);
+      setGeneralErrorStr(res.errMessage);
+      setIsLoading(false);
+    } else if (res === UserStatus.DEACTIVATED) {
+      setGeneralError(true);
+      setGeneralErrorStr(
+        "This email address has been deactivated. Please try again with another email.",
+      );
+      setIsLoading(false);
+    } else if (res === UserStatus.INVITED) {
+      setGeneralError(true);
+      setGeneralErrorStr(
+        "This email address has been invited. Sign up first to make an account!",
+      );
+      setIsLoading(false);
+    } else if (res === UserStatus.ACTIVE) {
       const loginResponse = await authAPIClient.login(email, password);
       if (isAuthErrorResponse(loginResponse)) {
         setGeneralError(true);
         setGeneralErrorStr(loginResponse.errMessage);
-        setIsLoading(false)
-      } 
-      else {
-        const { authUser, requiresTwoFa } = loginResponse
+        setIsLoading(false);
+      } else {
+        const { authUser, requiresTwoFa } = loginResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
-        } 
-        else {
+        } else {
           localStorage.setItem(
             AUTHENTICATED_USER_KEY,
             JSON.stringify(authUser),
@@ -146,11 +144,10 @@ const Login = ({
           setAuthenticatedUser(authUser);
         }
       }
-    }
-    else {
+    } else {
       setGeneralError(true);
       setGeneralErrorStr("Unable to login. Please try again.");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -162,7 +159,7 @@ const Login = ({
     return (
       <Flex h="100vh">
         <Box w="47%">
-        <Flex
+          <Flex
             h="100%"
             direction="column"
             justifyContent="center"
@@ -196,16 +193,16 @@ const Login = ({
               </FormControl>
             </Box>
             <Box w="80%">
-              {
-                isLoading ?   
-                <Flex flexDirection="column" alignItems="center">        
-                <Spinner
-                  thickness="4px"
-                  speed="0.65s"
-                  emptyColor="gray.200"
-                  size="lg"
-                />
-                </Flex> :
+              {isLoading ? (
+                <Flex flexDirection="column" alignItems="center">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    size="lg"
+                  />
+                </Flex>
+              ) : (
                 <Button
                   variant="login"
                   _hover={
@@ -221,18 +218,18 @@ const Login = ({
                 >
                   Log In
                 </Button>
-              }
+              )}
             </Box>
             <Box w="80%">
-                <Flex gap="10px">
-                  <Text variant="loginSecondary" paddingRight="17px">
-                    Not a member yet?
-                  </Text>
-                  <Text variant="loginTertiary" onClick={onSignUpClick}>
-                    Sign Up Now
-                  </Text>
-                </Flex>
-              </Box>
+              <Flex gap="10px">
+                <Text variant="loginSecondary" paddingRight="17px">
+                  Not a member yet?
+                </Text>
+                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                  Sign Up Now
+                </Text>
+              </Flex>
+            </Box>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">

@@ -17,19 +17,21 @@ const Verification = (): React.ReactElement => {
 
   const handleVerification = async () => {
     if (authenticatedUser) {
-      setIsLoading(true)
+      setIsLoading(true);
       const isVerified = await authAPIClient.isVerified();
 
       if (isVerified === false) {
-        setIsLoading(false)
+        setIsLoading(false);
         newToast(
           "Not Verified",
           "Please check your email for the verification email.",
           "error",
         );
       } else {
-
-        const newAuthenticatedUser: AuthenticatedUser = {...authenticatedUser, verified: true}
+        const newAuthenticatedUser: AuthenticatedUser = {
+          ...authenticatedUser,
+          verified: true,
+        };
 
         localStorage.setItem(
           AUTHENTICATED_USER_KEY,
@@ -46,11 +48,11 @@ const Verification = (): React.ReactElement => {
     <Flex h="100vh">
       <Box w="47%">
         <Flex
-            h="100%"
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            gap="28px"
+          h="100%"
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          gap="28px"
         >
           <Box w="80%" textAlign="left">
             <Text variant="login">Verification</Text>
@@ -64,36 +66,36 @@ const Verification = (): React.ReactElement => {
           </Box>
 
           <Box w="80%">
-            {
-              isLoading ?
-              <Flex flexDirection="column" alignItems="center">        
+            {isLoading ? (
+              <Flex flexDirection="column" alignItems="center">
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="lg"
-                margin="0 auto"
-                textAlign="center"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="lg"
+                  margin="0 auto"
+                  textAlign="center"
                 />
               </Flex>
-            :
-            <Button
-              variant="login"
-              onClick={handleVerification}
-              _hover={{
-                background: "teal.500",
-                transition: "transition: background-color 0.5s ease !important",
-              }}
-            >
-              Verify Email Address
-            </Button>
-            }
+            ) : (
+              <Button
+                variant="login"
+                onClick={handleVerification}
+                _hover={{
+                  background: "teal.500",
+                  transition:
+                    "transition: background-color 0.5s ease !important",
+                }}
+              >
+                Verify Email Address
+              </Button>
+            )}
           </Box>
         </Flex>
       </Box>
-     
+
       <Box flex="1" bg="teal.400">
-          {/* Background */}
+        {/* Background */}
       </Box>
     </Flex>
   );

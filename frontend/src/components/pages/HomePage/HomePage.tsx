@@ -46,35 +46,30 @@ const HomePage = (): React.ReactElement => {
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getLogRecords = async (pageNumber: number) => {
-    
     const buildingIds =
       buildings.length > 0
         ? buildings.map((building) => building.value)
-        : undefined;    
-        
+        : undefined;
+
     const employeeIds =
       employees.length > 0
         ? employees.map((employee) => employee.value)
-        : undefined;  
+        : undefined;
 
     const attentionToIds =
       attentionTos.length > 0
         ? attentionTos.map((attnTo) => attnTo.value)
-        : undefined; 
+        : undefined;
 
     const residentsIds =
       residents.length > 0
         ? residents.map((resident) => resident.value)
-        : undefined; 
+        : undefined;
 
-    const tagIds =
-      tags.length > 0
-        ? tags.map((tag) => tag.value)
-        : undefined; 
+    const tagIds = tags.length > 0 ? tags.map((tag) => tag.value) : undefined;
 
     let dateRange;
     if (startDate || endDate) {
-
       startDate?.setHours(0, 0, 0, 0);
       endDate?.setHours(23, 59, 59, 999);
 
@@ -115,33 +110,29 @@ const HomePage = (): React.ReactElement => {
 
   const countLogRecords = async () => {
     const buildingIds =
-    buildings.length > 0
-      ? buildings.map((building) => building.value)
-      : undefined;    
-      
+      buildings.length > 0
+        ? buildings.map((building) => building.value)
+        : undefined;
+
     const employeeIds =
       employees.length > 0
         ? employees.map((employee) => employee.value)
-        : undefined;  
+        : undefined;
 
     const attentionToIds =
       attentionTos.length > 0
         ? attentionTos.map((attnTo) => attnTo.value)
-        : undefined; 
+        : undefined;
 
     const residentsIds =
       residents.length > 0
         ? residents.map((resident) => resident.value)
-        : undefined; 
+        : undefined;
 
-    const tagIds =
-      tags.length > 0
-        ? tags.map((tag) => tag.value)
-        : undefined; 
+    const tagIds = tags.length > 0 ? tags.map((tag) => tag.value) : undefined;
 
     let dateRange;
     if (startDate || endDate) {
-
       startDate?.setHours(0, 0, 0, 0);
       endDate?.setHours(23, 59, 59, 999);
 

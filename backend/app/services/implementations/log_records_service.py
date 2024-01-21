@@ -32,8 +32,8 @@ class LogRecordsService(ILogRecordsService):
         del new_log_record["residents"]
         del new_log_record["tags"]
 
-        new_log_record['datetime'] = datetime.fromisoformat(
-            new_log_record['datetime'].replace("Z", "+00:00")
+        new_log_record["datetime"] = datetime.fromisoformat(
+            new_log_record["datetime"].replace("Z", "+00:00")
         ).replace(tzinfo=utc)
 
         try:

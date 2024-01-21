@@ -7,6 +7,7 @@ class DuplicateTagException(Exception):
         message = f"Tag with name {tag_name} already exists."
         super().__init__(message)
 
+
 class DuplicateUserException(Exception):
     """
     Raised when an duplicate user is encountered

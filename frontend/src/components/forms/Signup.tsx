@@ -47,8 +47,8 @@ const Signup = ({
 }: SignupProps): React.ReactElement => {
   const [signupClicked, setSignupClicked] = useState<boolean>(false);
 
-  const [firstNameError, setFirstNameError] = useState<boolean>(false)
-  const [lastNameError, setLastNameError] = useState<boolean>(false)
+  const [firstNameError, setFirstNameError] = useState<boolean>(false);
+  const [lastNameError, setLastNameError] = useState<boolean>(false);
 
   const [emailError, setEmailError] = useState<boolean>(false);
   const [emailErrorStr, setEmailErrorStr] = useState<string>("");
@@ -125,17 +125,17 @@ const Signup = ({
     setSignupClicked(true);
 
     if (firstNameError || lastNameError || emailError || generalError) {
-      return
+      return;
     }
 
     if (firstName.length === 0) {
-      setFirstNameError(true)
-      return
+      setFirstNameError(true);
+      return;
     }
 
     if (lastName.length === 0) {
-      setLastNameError(true)
-      return
+      setLastNameError(true);
+      return;
     }
 
     if (!emailRegex.test(email)) {
@@ -150,25 +150,24 @@ const Signup = ({
       return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
     const res = await UserAPIClient.getUserStatus(email);
 
     if (isErrorResponse(res)) {
-      setGeneralError(true)
-      setGeneralErrorStr(res.errMessage)
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.DEACTIVATED) {
-      setGeneralError(true)
-      setGeneralErrorStr("This email address has been deactivated. Please try again with another email.")
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.ACTIVE) {
-      setGeneralError(true)
-      setGeneralErrorStr("This email address is already active. Log in now!")
-      setIsLoading(false)
-    }
-    else if (res === UserStatus.INVITED) {
+      setGeneralError(true);
+      setGeneralErrorStr(res.errMessage);
+      setIsLoading(false);
+    } else if (res === UserStatus.DEACTIVATED) {
+      setGeneralError(true);
+      setGeneralErrorStr(
+        "This email address has been deactivated. Please try again with another email.",
+      );
+      setIsLoading(false);
+    } else if (res === UserStatus.ACTIVE) {
+      setGeneralError(true);
+      setGeneralErrorStr("This email address is already active. Log in now!");
+      setIsLoading(false);
+    } else if (res === UserStatus.INVITED) {
       const registerResponse = await authAPIClient.register(
         firstName,
         lastName,
@@ -178,13 +177,12 @@ const Signup = ({
       if (isAuthErrorResponse(registerResponse)) {
         setEmailErrorStr(registerResponse.errMessage);
         setEmailError(true);
-        setIsLoading(false)
+        setIsLoading(false);
       } else {
         const { requiresTwoFa, authUser } = registerResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
-        } 
-        else {
+        } else {
           localStorage.setItem(
             AUTHENTICATED_USER_KEY,
             JSON.stringify(authUser),
@@ -192,11 +190,10 @@ const Signup = ({
           setAuthenticatedUser(authUser);
         }
       }
-    }
-    else {
+    } else {
       setGeneralError(true);
       setGeneralErrorStr("Unable to sign up. Please try again.");
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -268,32 +265,32 @@ const Signup = ({
               </FormControl>
             </Box>
             <Box w="80%">
-              {
-                isLoading ?
-                <Flex flexDirection="column" alignItems="center">        
-                <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="lg"
-                />
-                </Flex> : 
+              {isLoading ? (
+                <Flex flexDirection="column" alignItems="center">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    size="lg"
+                  />
+                </Flex>
+              ) : (
                 <Button
-                variant="login"
-                _hover={
-                  email && password && firstName && lastName
-                    ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
-                    : {}
-                }
-                onClick={onSignupClick}
-              >
-                Create Account
-              </Button>
-              }
+                  variant="login"
+                  _hover={
+                    email && password && firstName && lastName
+                      ? {
+                          background: "teal.500",
+                          transition:
+                            "transition: background-color 0.5s ease !important",
+                        }
+                      : {}
+                  }
+                  onClick={onSignupClick}
+                >
+                  Create Account
+                </Button>
+              )}
             </Box>
             <Box w="80%">
               <Flex gap="10px">

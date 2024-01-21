@@ -199,10 +199,10 @@ class UserService(IUserService):
                 db.session.commit()
             else:
                 raise DuplicateUserException(user.email)
-            
+
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user_entry)
             return UserDTO(**user_dict)
-        
+
         except Exception as e:
             db.session.rollback()
             reason = getattr(e, "message", None)

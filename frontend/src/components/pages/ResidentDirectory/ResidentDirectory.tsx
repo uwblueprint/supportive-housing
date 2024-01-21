@@ -30,12 +30,12 @@ const ResidentDirectory = (): React.ReactElement => {
     [],
   );
   // NOTE: Building 362 will always have ID 2 in the database
-  const [buildingSelections, setBuildingSelections] = useState<SelectLabel[]>(
-    [{
+  const [buildingSelections, setBuildingSelections] = useState<SelectLabel[]>([
+    {
       label: "362",
-      value: 2
-    }],
-  );
+      value: 2,
+    },
+  ]);
   const [statusSelections, setStatusSelections] = useState<StatusLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();

@@ -1,7 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Route, Redirect, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
-import { EMPLOYEE_DIRECTORY_PAGE, HOME_PAGE, LOGIN_PAGE, SIGN_IN_LOGS_PAGE, TAGS_PAGE, VERIFICATION_PAGE } from "../../constants/Routes";
+import {
+  EMPLOYEE_DIRECTORY_PAGE,
+  HOME_PAGE,
+  LOGIN_PAGE,
+  SIGN_IN_LOGS_PAGE,
+  TAGS_PAGE,
+  VERIFICATION_PAGE,
+} from "../../constants/Routes";
 import { UserRole } from "../../types/UserTypes";
 
 type PrivateRouteProps = {
@@ -29,15 +36,16 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
     }
   }
 
-  if (authenticatedUser.role !== UserRole.ADMIN && (
-     currentPath.endsWith(EMPLOYEE_DIRECTORY_PAGE) || 
-     currentPath.endsWith(SIGN_IN_LOGS_PAGE) || 
-     currentPath.endsWith(TAGS_PAGE)
-  )) {
+  if (
+    authenticatedUser.role !== UserRole.ADMIN &&
+    (currentPath.endsWith(EMPLOYEE_DIRECTORY_PAGE) ||
+      currentPath.endsWith(SIGN_IN_LOGS_PAGE) ||
+      currentPath.endsWith(TAGS_PAGE))
+  ) {
     return <Redirect to={HOME_PAGE} />;
   }
 
-  console.log(path, currentPath)
+  console.log(path, currentPath);
 
   return <Route path={path} exact={exact} component={component} />;
 };
