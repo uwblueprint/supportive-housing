@@ -82,7 +82,7 @@ const ViewLog = ({
                     <FormLabel>Employee</FormLabel>
                     <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
+                      defaultValue={`${logRecord.employee.firstName} ${logRecord.employee.lastName}`}
                       _disabled={{ bg: "transparent" }}
                       _hover={{ borderColor: "teal.100" }}
                     />

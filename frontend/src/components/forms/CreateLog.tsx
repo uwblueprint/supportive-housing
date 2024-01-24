@@ -368,10 +368,10 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      defaultValue={employee.label}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
