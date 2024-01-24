@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Login from "../forms/Login";
-import Authy from "../auth/Authy";
+import TwoFa from "../auth/TwoFa";
 
 const LoginPage = (): React.ReactElement => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const LoginPage = (): React.ReactElement => {
         toggle={toggle}
         setToggle={setToggle}
       />
-      <Authy email={email} password={password} token={token} toggle={!toggle} />
+      <TwoFa email={email} password={password} token={token} toggle={!toggle} />
     </>
   );
 };

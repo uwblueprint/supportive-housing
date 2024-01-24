@@ -1,4 +1,5 @@
 import os
+import pyotp
 from ..utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
@@ -6,7 +7,6 @@ from ..utilities.exceptions.firebase_exceptions import (
 from ..utilities.exceptions.auth_exceptions import EmailAlreadyInUseException
 
 from flask import Blueprint, current_app, jsonify, request
-from twilio.rest import Client
 
 from ..middlewares.auth import (
     require_authorization_by_user_id,
@@ -44,7 +44,7 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
-client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+totp = pyotp.TOTP(os.getenv("TWO_FA_SECRET"))
 
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
@@ -63,7 +63,7 @@ def login():
             )
         response = {"requires_two_fa": False, "auth_user": None}
 
-        if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+        if os.getenv("TWO_FA_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
 
@@ -100,27 +100,15 @@ def two_fa():
     returns access token in response body and sets refreshToken as an httpOnly cookie only
     """
 
-    passcode = request.args.get("passcode")
-
-    if not passcode:
-        return (
-            jsonify({"error": "Must supply passcode as a query parameter.t"}),
-            400,
-        )
+    passcode = request.args.get("passcode") if request.args.get("passcode") else ""
 
     try:
-        challenge = (
-            client.verify.v2.services(os.getenv("TWILIO_SERVICE_SID"))
-            .entities(os.getenv("TWILIO_ENTITY_ID"))
-            .challenges.create(
-                auth_payload=passcode, factor_sid=os.getenv("TWILIO_FACTOR_SID")
-            )
-        )
+        verified = totp.verify(passcode)
 
-        if challenge.status != "approved":
+        if not verified:
             return (
-                jsonify({"error": "Invalid passcode."}),
-                400,
+                jsonify({"error": "Invalid passcode. Please try again."}),
+                401,
             )
 
         auth_dto = None
@@ -131,7 +119,13 @@ def two_fa():
                 request.json["email"], request.json["password"]
             )
 
-        auth_service.send_email_verification_link(request.json["email"])
+        is_authorized_by_token = auth_service.is_authorized_by_token(
+            auth_dto.access_token
+        )
+
+        if not is_authorized_by_token:
+            auth_service.send_email_verification_link(request.json["email"])
+
         sign_in_logs_service.create_sign_in_log(auth_dto.id)
 
         response = jsonify(
@@ -142,7 +136,7 @@ def two_fa():
                 "last_name": auth_dto.last_name,
                 "email": auth_dto.email,
                 "role": auth_dto.role,
-                "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
+                "verified": is_authorized_by_token,
             }
         )
         response.set_cookie(
