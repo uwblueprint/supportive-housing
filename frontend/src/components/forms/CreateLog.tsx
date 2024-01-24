@@ -41,8 +41,8 @@ import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { Resident } from "../../types/ResidentTypes";
-import combineDateTime from "../../helper/combineDateTime";
 import { SelectLabel } from "../../types/SharedTypes";
+import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -100,9 +100,9 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName && curUser.id) {
+  if (curUser) {
     const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
+    return { label: `${curUser.firstName} ${curUser.lastName}`, value: userId };
   }
   return { label: "", value: -1 };
 };
@@ -241,7 +241,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
-          label: user.firstName,
+          label: `${user.firstName} ${user.lastName}`,
           value: user.id,
         }));
       setEmployeeOptions(userLabels);
@@ -264,13 +264,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     // reset all states
     setDate(new Date());
-    setTime(
-      new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
+    setTime(getFormattedTime(new Date()));
     setBuildingId(-1);
     setResidents([]);
     setTags([]);
@@ -374,10 +368,10 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      defaultValue={employee.label}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>

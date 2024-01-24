@@ -208,7 +208,7 @@ const HomePageFilters = ({
   }, []);
 
   return (
-    <Card style={{ textAlign: "left" }}>
+    <Card style={{ textAlign: "left", zIndex: 2 }}>
       <Box padding="8px 16px 20px">
         <Text fontSize="12px" fontWeight="700" color="#6D8788" align="left">
           FILTER BY
@@ -335,7 +335,9 @@ const HomePageFilters = ({
                     gap={6}
                   >
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700">Tags</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Tags
+                      </FormLabel>
                       <Select
                         value={tags}
                         options={tagLabels}
@@ -347,7 +349,9 @@ const HomePageFilters = ({
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700">Attention To</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Attention To
+                      </FormLabel>
                       <Select
                         value={attentionTos}
                         options={userLabels}
@@ -359,7 +363,9 @@ const HomePageFilters = ({
                       />
                     </GridItem>
                     <GridItem colSpan={2}>
-                      <FormLabel fontWeight="700">Building</FormLabel>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Building
+                      </FormLabel>
                       <Select
                         value={buildings}
                         options={buildingOptions}
@@ -369,11 +375,14 @@ const HomePageFilters = ({
                         styles={selectStyle}
                       />
                     </GridItem>
-                    <GridItem colSpan={1} justifySelf="left">
-                      <FormLabel fontWeight="700">Flagged</FormLabel>
+                    <GridItem colSpan={1}>
+                      <FormLabel fontWeight="700" pointerEvents="none">
+                        Flagged
+                      </FormLabel>
                       <Checkbox
                         isChecked={flagged}
                         onChange={(e) => setFlagged(e.target.checked)}
+                        colorScheme="teal"
                       >
                         <Text>Flagged</Text>
                       </Checkbox>

@@ -46,7 +46,7 @@ type Props = {
 
 const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
 const DELETE_CONFIRMATION_MESSAGE =
-  "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from your system.";
+  "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from the system.";
 
 const formatNote = (note: string) => {
   const NOTE_LIMIT = 150;
@@ -155,7 +155,7 @@ const LogRecordsTable = ({
       const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
-          label: user.firstName,
+          label: `${user.firstName} ${user.lastName}`,
           value: user.id,
         }));
       setEmployeeOptions(userLabels);
@@ -205,6 +205,7 @@ const LogRecordsTable = ({
           marginTop="12px"
           height="70vh"
           overflowY="unset"
+          overflowWrap="break-word"
           ref={tableRef}
         >
           <Table variant="showTable" verticalAlign="middle">
@@ -242,10 +243,12 @@ const LogRecordsTable = ({
                       <Td width="2.5%">
                         {record.attnTo ? `${record.attnTo.firstName}` : ""}
                       </Td>
-                      <Td width="5%">{formatList(record.tags)}</Td>
+                      <Td width="5%" wordBreak="break-all">
+                        {formatList(record.tags)}
+                      </Td>
                       <Td width="5%">
-                        {(authenticatedUser?.role === "Admin" ||
-                          authenticatedUser?.id === record.employee.id) && (
+                        {authenticatedUser?.role === "Admin" ||
+                        authenticatedUser?.id === record.employee.id ? (
                           <Menu>
                             <MenuButton
                               as={IconButton}
@@ -272,6 +275,14 @@ const LogRecordsTable = ({
                               </MenuItem>
                             </MenuList>
                           </Menu>
+                        ) : (
+                          <IconButton
+                            aria-label="Options"
+                            icon={<VscKebabVertical />}
+                            w="36px"
+                            variant="ghost"
+                            onClick={() => handleViewToggle(record.logId)}
+                          />
                         )}
                       </Td>
                     </Tr>
@@ -295,10 +306,12 @@ const LogRecordsTable = ({
                       isOpen={viewOpenMap[record.logId]}
                       toggleClose={() => handleViewToggle(record.logId)}
                       toggleEdit={() => handleEditToggle(record.logId)}
-                      employeeOptions={employeeOptions}
                       residentOptions={residentOptions}
-                      buildingOptions={buildingOptions}
                       tagOptions={tagOptions}
+                      allowEdit={
+                        authenticatedUser?.role === "Admin" ||
+                        authenticatedUser?.id === record.employee.id
+                      }
                     />
 
                     <ConfirmationModal

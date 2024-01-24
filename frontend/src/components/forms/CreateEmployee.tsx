@@ -21,9 +21,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import commonApiClient from "../../APIClients/CommonAPIClient";
 import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import { isErrorResponse } from "../../helper/error";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -31,6 +32,8 @@ type Props = {
   countUsers: () => Promise<void>;
 };
 const RoleOptions = ["Relief Staff", "Admin", "Regular Staff"];
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const CreateEmployee = ({
   getRecords,
@@ -44,7 +47,7 @@ const CreateEmployee = ({
   const [invitedEmail, setInvitedEmail] = useState<string>("");
   const [invitedFirstName, setInvitedFirstName] = useState<string>("");
   const [invitedLastName, setInvitedLastName] = useState<string>("");
-  const [invitedAdminStatus, setinvitedAdminStatus] = useState<string>("");
+  const [invitedAdminStatus, setInvitedAdminStatus] = useState<string>("");
   const [
     isTwoFactorAuthenticated,
     setIsTwoFactorAuthenticated,
@@ -70,30 +73,26 @@ const CreateEmployee = ({
     }
   }, [invitedAdminStatus]);
 
-  const handleFirstNameChange = (e: { target: { value: unknown } }) => {
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setInvitedFirstName(inputValue);
-      setInvitedFirstNameError(false);
-    }
+    setInvitedFirstName(inputValue);
+    setInvitedFirstNameError(false);
   };
 
-  const handleLastNameChange = (e: { target: { value: unknown } }) => {
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setInvitedLastName(inputValue);
-      setInvitedLastNameError(false);
-    }
+    setInvitedLastName(inputValue);
+    setInvitedLastNameError(false);
   };
 
-  const handleInvitedEmailChange = (e: { target: { value: unknown } }) => {
+  const handleInvitedEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setInvitedEmail(inputValue);
     setInvitedEmailError(false);
   };
 
   const handleAdminStatusChange = (inputValue: string) => {
-    setinvitedAdminStatus(inputValue);
+    setInvitedAdminStatus(inputValue);
 
     // If admin is selected, uncheck the 2FA checkbox
     if (inputValue === "1") {
@@ -107,7 +106,7 @@ const CreateEmployee = ({
     setInvitedEmail("");
     setInvitedFirstName("");
     setInvitedLastName("");
-    setinvitedAdminStatus("");
+    setInvitedAdminStatus("");
     setIsTwoFactorAuthenticated(false);
 
     setInvitedEmailError(false);
@@ -132,7 +131,6 @@ const CreateEmployee = ({
       !isLastNameError &&
       !isAdminStatusError
     ) {
-      let hasInvitedUser: string | undefined;
       let roleOptionIndex: number | undefined;
 
       if (invitedAdminStatus === "1") {
@@ -144,42 +142,36 @@ const CreateEmployee = ({
       }
 
       if (roleOptionIndex !== undefined) {
-        hasInvitedUser = await commonApiClient.inviteUser(
+        const res = await UserAPIClient.inviteUser(
           invitedEmail,
           RoleOptions[roleOptionIndex],
           invitedFirstName,
           invitedLastName,
         );
-      }
-      if (hasInvitedUser === "Request failed with status code 409") {
-        newToast("Employee already exists", INVITE_EMPLOYEE_ERROR, "error");
-      } else if (hasInvitedUser === "Success") {
-        newToast(
-          "Invite sent",
-          `Your invite has been sent to ${invitedFirstName} ${invitedLastName}`,
-          "success",
-        );
-        getRecords(1);
-        setUserPageNum(1);
-        countUsers();
-        handleClose();
-      } else {
-        newToast("Error inviting employee", INVITE_EMPLOYEE_ERROR, "error");
+
+        if (isErrorResponse(res)) {
+          newToast("Error inviting user", res.errMessage, "error");
+        } else if (res) {
+          newToast(
+            "Invite sent",
+            `Your invite has been sent to ${invitedEmail}`,
+            "success",
+          );
+          getRecords(1);
+          setUserPageNum(1);
+          countUsers();
+          handleClose();
+        } else {
+          newToast("Error inviting user", "Unable to invite user.", "error");
+        }
       }
     }
   };
 
   const handleSubmit = () => {
-    const isEmailError = !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
-      invitedEmail,
-    );
-    const onlyLetters = /^[A-Za-z]+$/;
-    const isFirstNameError = !(
-      invitedFirstName && onlyLetters.test(invitedFirstName)
-    );
-    const isLastNameError = !(
-      invitedLastName && onlyLetters.test(invitedLastName)
-    );
+    const isEmailError = !emailRegex.test(invitedEmail);
+    const isFirstNameError = invitedFirstName === "";
+    const isLastNameError = invitedLastName === "";
     const isAdminStatusError = invitedAdminStatus === "";
 
     setInvitedEmailError(isEmailError);
@@ -225,7 +217,7 @@ const CreateEmployee = ({
                       onChange={handleFirstNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>First Name is required.</FormErrorMessage>
+                    <FormErrorMessage>First name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
 
@@ -238,7 +230,7 @@ const CreateEmployee = ({
                       onChange={handleLastNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>Last Name is required.</FormErrorMessage>
+                    <FormErrorMessage>Last name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
               </Box>

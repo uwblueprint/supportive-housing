@@ -35,7 +35,7 @@ const login = async (
     }
     return {
       errCode: 500,
-      errMessage: "Error logging in. Please try again.",
+      errMessage: "Unable to login. Please try again.",
     };
   }
 };
@@ -112,7 +112,10 @@ const register = async (
         errMessage: getAuthErrMessage(axiosErr.response, "SIGNUP"),
       };
     }
-    return null;
+    return {
+      errCode: 500,
+      errMessage: "Error signing up. Please try again.",
+    };
   }
 };
 

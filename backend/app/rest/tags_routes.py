@@ -8,7 +8,7 @@ blueprint = Blueprint("tags", __name__, url_prefix="/tags")
 
 
 @blueprint.route("/", methods=["GET"], strict_slashes=False)
-@require_authorization_by_role({"Admin"})
+@require_authorization_by_role({"Relief Staff", "Regular Staff", "Admin"})
 def get_tags():
     """
     Get tags.

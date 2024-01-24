@@ -36,7 +36,7 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
-import { combineDateTime } from "../../helper/dateHelpers";
+import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
@@ -77,25 +77,6 @@ const ALERT_DATA: AlertDataOptions = {
   },
 };
 
-// Replace this with the tags from the db once the API and table are made
-const TAGS = [
-  { label: "Tag A", value: "A" },
-  { label: "Tag B", value: "B" },
-  { label: "Tag C", value: "C" },
-];
-
-// Helper to get the currently logged in user
-const getCurUserSelectOption = () => {
-  const curUser: AuthenticatedUser | null = getLocalStorageObj(
-    AUTHENTICATED_USER_KEY,
-  );
-  if (curUser && curUser.firstName && curUser.id) {
-    const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
-  }
-  return { label: "", value: -1 };
-};
-
 const EditLog = ({
   logRecord,
   userPageNum,
@@ -110,15 +91,9 @@ const EditLog = ({
   buildingOptions,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
+
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(
-    date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-  );
+  const [time, setTime] = useState("");
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<number[]>([]);
@@ -209,15 +184,8 @@ const EditLog = ({
 
   const initializeValues = () => {
     // set state variables
-    setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
-    setTime(
-      date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
+    setTime(getFormattedTime(new Date(logRecord.datetime)));
     setBuildingId(logRecord.building.id);
     const residentIds = residentOptions.filter(
       (item) => logRecord.residents && logRecord.residents.includes(item.label),
@@ -242,7 +210,6 @@ const EditLog = ({
 
   const handleSubmit = async () => {
     // Update error states
-    setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
@@ -251,7 +218,6 @@ const EditLog = ({
 
     // If any required fields are empty, prevent form submission
     if (
-      !employee.label ||
       date === null ||
       time === "" ||
       buildingId === -1 ||
@@ -263,7 +229,7 @@ const EditLog = ({
 
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
-      employeeId: employee.value,
+      employeeId: logRecord.employee.id,
       residents,
       datetime: combineDateTime(date, time),
       flagged,
@@ -313,10 +279,10 @@ const EditLog = ({
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      defaultValue={`${logRecord.employee.firstName} ${logRecord.employee.lastName}`}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>

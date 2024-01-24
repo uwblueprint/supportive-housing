@@ -28,16 +28,16 @@ import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { viewStyle}  from "../../theme/forms/selectStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { SelectLabel } from "../../types/SharedTypes";
+import { convertToString, getFormattedTime } from "../../helper/dateHelpers";
 
 type Props = {
   logRecord: LogRecord;
   isOpen: boolean;
   toggleClose: () => void;
   toggleEdit: () => void;
-  employeeOptions: SelectLabel[];
   residentOptions: SelectLabel[];
-  buildingOptions: SelectLabel[];
   tagOptions: SelectLabel[];
+  allowEdit: boolean;
 };
 
 // Helper to get the currently logged in user
@@ -45,8 +45,8 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName) {
-    return curUser.firstName
+  if (curUser) {
+    return `${curUser.firstName} ${curUser.lastName}`
   }
   return "";
 };
@@ -56,46 +56,15 @@ const ViewLog = ({
   isOpen,
   toggleClose,
   toggleEdit,
-  employeeOptions,
   residentOptions,
-  buildingOptions,
   tagOptions,
+  allowEdit
 }: Props) => {
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(
-    date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-  );
-
-  const initializeValues = () => {
-    // set state variables
-    setDate(new Date(logRecord.datetime));
-    setTime(
-      date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
-  };
-
-  const formatDate = (dateObj: Date) => {
-    return dateObj.toISOString().slice(0, 10);
-  }
 
   const handleEdit = () => {
     toggleClose();
     setTimeout(toggleEdit, 400);
   }
-
-  useEffect(() => {
-    if (isOpen) {
-      initializeValues();
-    }
-  }, [isOpen]);
 
   return (
     <>
@@ -113,7 +82,7 @@ const ViewLog = ({
                     <FormLabel>Employee</FormLabel>
                     <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
+                      defaultValue={`${logRecord.employee.firstName} ${logRecord.employee.lastName}`}
                       _disabled={{ bg: "transparent" }}
                       _hover={{ borderColor: "teal.100" }}
                     />
@@ -126,7 +95,7 @@ const ViewLog = ({
                         <FormLabel>Date</FormLabel>
                         <Input
                           isDisabled
-                          defaultValue={formatDate(date)}
+                          defaultValue={convertToString(new Date(logRecord.datetime))}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />
@@ -139,7 +108,7 @@ const ViewLog = ({
                           isDisabled
                           size="md"
                           type="time"
-                          defaultValue={time}
+                          defaultValue={getFormattedTime(new Date(logRecord.datetime))}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />
@@ -199,7 +168,7 @@ const ViewLog = ({
                     <Input
                       isDisabled
                       placeholder="No Attn To"
-                      defaultValue={logRecord.attnTo?.firstName}
+                      defaultValue={logRecord.attnTo ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : undefined}
                       _disabled={{ bg: "transparent" }}
                       _hover={{ borderColor: "teal.100" }}
                     />
@@ -228,12 +197,16 @@ const ViewLog = ({
                   </FormControl>
                 </Col>
               </Row>
-            </ModalBody>
+            </ModalBody>  
 
             <ModalFooter>
-              <Button onClick={handleEdit} variant="primary" type="submit">
-                Edit
-              </Button>
+              {
+                allowEdit && (
+                  <Button onClick={handleEdit} variant="primary" type="submit">
+                    Edit
+                  </Button>
+                )
+              }
             </ModalFooter>  
           </ModalContent>
         </Modal>

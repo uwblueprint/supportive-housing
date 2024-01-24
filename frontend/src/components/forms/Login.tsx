@@ -7,6 +7,7 @@ import {
   FormControl,
   FormErrorMessage,
   Input,
+  Spinner,
 } from "@chakra-ui/react";
 import { Redirect, useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -17,10 +18,9 @@ import {
   VERIFICATION_PAGE,
 } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthTokenResponse } from "../../types/AuthTypes";
-import { AuthErrorResponse } from "../../types/ErrorTypes";
-import commonApiClient from "../../APIClients/CommonAPIClient";
-import { isAuthErrorResponse } from "../../helper/error";
+import { isAuthErrorResponse, isErrorResponse } from "../../helper/error";
+import UserAPIClient from "../../APIClients/UserAPIClient";
+import { UserStatus } from "../../types/UserTypes";
 
 type CredentialsProps = {
   email: string;
@@ -31,6 +31,8 @@ type CredentialsProps = {
   toggle: boolean;
   setToggle: (toggle: boolean) => void;
 };
+
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const Login = ({
   email,
@@ -43,49 +45,95 @@ const Login = ({
 }: CredentialsProps): React.ReactElement => {
   const { setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
+
   const [emailError, setEmailError] = useState<boolean>(false);
-  const [passwordError, setPasswordError] = useState<boolean>(false);
-  const [passwordErrorStr, setPasswordErrStr] = useState<string>("");
+  const [emailErrorStr, setEmailErrorStr] = useState<string>("");
+
+  const [generalError, setGeneralError] = useState<boolean>(false);
+  const [generalErrorStr, setGeneralErrorStr] = useState<string>("");
+
   const [loginClicked, setLoginClicked] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (loginClicked) {
-      if (emailRegex.test(inputValue)) {
-        setEmailError(false);
-      } else {
-        setEmailError(true);
-      }
-    }
     setEmail(inputValue);
 
-    // Clear password error on changing the email
-    setPasswordError(false);
-    setPasswordErrStr("");
+    if (loginClicked) {
+      if (emailRegex.test(inputValue)) {
+        setEmailErrorStr("");
+        setEmailError(false);
+      } else {
+        setEmailErrorStr("Please enter a valid email.");
+        setEmailError(true);
+      }
+
+      // Clear general error on changing the email
+      setGeneralError(false);
+      setGeneralErrorStr("");
+    }
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setPassword(inputValue);
 
-    // Clear password error on changing the password
-    setPasswordError(false);
-    setPasswordErrStr("");
+    if (loginClicked) {
+      if (inputValue.length === 0) {
+        setGeneralError(true);
+        setGeneralErrorStr("Password is required.");
+      } else {
+        setGeneralError(false);
+        setGeneralErrorStr("");
+      }
+    }
   };
 
-  const onLogInClick = async () => {
+  const onLoginClick = async () => {
     setLoginClicked(true);
-    const isInvited = await commonApiClient.isUserInvited(email);
-    if (isInvited !== "Not Invited") {
-      const loginResponse:
-        | AuthTokenResponse
-        | AuthErrorResponse = await authAPIClient.login(email, password);
+
+    if (emailError || generalError) {
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setEmailErrorStr("Please enter a valid email.");
+      setEmailError(true);
+      return;
+    }
+
+    if (password.length === 0) {
+      setGeneralError(true);
+      setGeneralErrorStr("Password is required.");
+      return;
+    }
+
+    setIsLoading(true);
+    const res = await UserAPIClient.getUserStatus(email);
+    if (isErrorResponse(res)) {
+      setGeneralError(true);
+      setGeneralErrorStr(res.errMessage);
+      setIsLoading(false);
+    } else if (res === UserStatus.DEACTIVATED) {
+      setGeneralError(true);
+      setGeneralErrorStr(
+        "This email address has been deactivated. Please try again with another email.",
+      );
+      setIsLoading(false);
+    } else if (res === UserStatus.INVITED) {
+      setGeneralError(true);
+      setGeneralErrorStr(
+        "This email address has been invited. Sign up first to make an account!",
+      );
+      setIsLoading(false);
+    } else if (res === UserStatus.ACTIVE) {
+      const loginResponse = await authAPIClient.login(email, password);
       if (isAuthErrorResponse(loginResponse)) {
-        setPasswordError(true);
-        setPasswordErrStr(loginResponse.errMessage);
-      } else if (loginResponse) {
-        const { requiresTwoFa, authUser } = loginResponse;
+        setGeneralError(true);
+        setGeneralErrorStr(loginResponse.errMessage);
+        setIsLoading(false);
+      } else {
+        const { authUser, requiresTwoFa } = loginResponse;
         if (requiresTwoFa) {
           setToggle(!toggle);
         } else {
@@ -96,6 +144,10 @@ const Login = ({
           setAuthenticatedUser(authUser);
         }
       }
+    } else {
+      setGeneralError(true);
+      setGeneralErrorStr("Unable to login. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -105,13 +157,19 @@ const Login = ({
 
   if (toggle) {
     return (
-      <Flex>
+      <Flex h="100vh">
         <Box w="47%">
-          <Flex height="100vh" display="flex" align="center" justify="center">
-            <Flex width="80%" align="flex-start" direction="column" gap="28px">
-              <Text variant="login" paddingBottom="12px">
-                Log In
-              </Text>
+          <Flex
+            h="100%"
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            gap="28px"
+          >
+            <Box w="80%" textAlign="left">
+              <Text variant="login">Log In</Text>
+            </Box>
+            <Box w="80%">
               <FormControl isRequired isInvalid={emailError}>
                 <Input
                   variant="login"
@@ -119,9 +177,11 @@ const Login = ({
                   value={email}
                   onChange={handleEmailChange}
                 />
-                <FormErrorMessage>Please enter a valid email.</FormErrorMessage>
+                <FormErrorMessage>{emailErrorStr}</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired isInvalid={passwordError}>
+            </Box>
+            <Box w="80%">
+              <FormControl isRequired isInvalid={generalError}>
                 <Input
                   variant="login"
                   type="password"
@@ -129,35 +189,47 @@ const Login = ({
                   value={password}
                   onChange={handlePasswordChange}
                 />
-                <FormErrorMessage>{passwordErrorStr}</FormErrorMessage>
+                <FormErrorMessage>{generalErrorStr}</FormErrorMessage>
               </FormControl>
-              <Button
-                variant="login"
-                disabled={email === "" || password === ""}
-                _hover={
-                  email && password
-                    ? {
-                        background: "teal.500",
-                        transition:
-                          "transition: background-color 0.5s ease !important",
-                      }
-                    : {}
-                }
-                onClick={onLogInClick}
-              >
-                Log In
-              </Button>
-              <Box w="80%">
-                <Flex gap="10px">
-                  <Text variant="loginSecondary" paddingRight="17px">
-                    Not a member yet?
-                  </Text>
-                  <Text variant="loginTertiary" onClick={onSignUpClick}>
-                    Sign Up Now
-                  </Text>
+            </Box>
+            <Box w="80%">
+              {isLoading ? (
+                <Flex flexDirection="column" alignItems="center">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    size="lg"
+                  />
                 </Flex>
-              </Box>
-            </Flex>
+              ) : (
+                <Button
+                  variant="login"
+                  _hover={
+                    email && password
+                      ? {
+                          background: "teal.500",
+                          transition:
+                            "transition: background-color 0.5s ease !important",
+                        }
+                      : {}
+                  }
+                  onClick={onLoginClick}
+                >
+                  Log In
+                </Button>
+              )}
+            </Box>
+            <Box w="80%">
+              <Flex gap="10px">
+                <Text variant="loginSecondary" paddingRight="17px">
+                  Not a member yet?
+                </Text>
+                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                  Sign Up Now
+                </Text>
+              </Flex>
+            </Box>
           </Flex>
         </Box>
         <Box flex="1" bg="teal.400">

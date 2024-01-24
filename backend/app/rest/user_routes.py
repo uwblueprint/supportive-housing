@@ -13,6 +13,7 @@ from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
 from ..utilities.csv_utils import generate_csv_from_list
 from ..utilities.exceptions.auth_exceptions import UserNotInvitedException
+from ..utilities.exceptions.duplicate_entity_exceptions import DuplicateUserException
 
 
 user_service = UserService(current_app.logger)
@@ -136,15 +137,12 @@ def create_user():
         user = CreateInvitedUserDTO(**request.json)
         created_user = user_service.create_invited_user(user)
         return jsonify(created_user.__dict__), 201
+    except DuplicateUserException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
-        status_code = None
-        if str(e) == "User already exists":
-            status_code = 409
-
-        return jsonify({"error": (error_message if error_message else str(e))}), (
-            status_code if status_code else 500
-        )
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
 @blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)
