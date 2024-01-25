@@ -1,14 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Text,
-  FormControl,
-  FormErrorMessage,
-  Input,
-  Spinner,
-} from "@chakra-ui/react";
+import React from "react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { HOME_PAGE } from "../../../constants/Routes";
 

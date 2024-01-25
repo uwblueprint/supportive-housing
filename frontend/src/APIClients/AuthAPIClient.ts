@@ -1,8 +1,3 @@
-import {
-  FetchResult,
-  MutationFunctionOptions,
-  OperationVariables,
-} from "@apollo/client";
 import { AxiosError } from "axios";
 import { getAuthErrMessage } from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
@@ -26,7 +21,7 @@ const login = async (
     );
     return data;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
@@ -53,7 +48,7 @@ const twoFa = async (
     );
     return data;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errMessage:
@@ -114,7 +109,7 @@ const register = async (
     );
     return data;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
         errCode: axiosErr.response.status,

@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Select from "react-select";
 import {
   Box,
@@ -17,15 +16,11 @@ import {
   ModalOverlay,
   ModalHeader,
   Text,
-  Textarea,
   ModalFooter,
   ModalCloseButton,
 } from "@chakra-ui/react";
 import { Col, Row } from "react-bootstrap";
-import { AuthenticatedUser } from "../../types/AuthTypes";
-import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
-import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { viewStyle}  from "../../theme/forms/selectStyles";
+import { viewStyle } from "../../theme/forms/selectStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { SelectLabel } from "../../types/SharedTypes";
 import { convertToString, getFormattedTime } from "../../helper/dateHelpers";
@@ -40,17 +35,6 @@ type Props = {
   allowEdit: boolean;
 };
 
-// Helper to get the currently logged in user
-const getCurUserSelectOption = () => {
-  const curUser: AuthenticatedUser | null = getLocalStorageObj(
-    AUTHENTICATED_USER_KEY,
-  );
-  if (curUser) {
-    return `${curUser.firstName} ${curUser.lastName}`
-  }
-  return "";
-};
-
 const ViewLog = ({
   logRecord,
   isOpen,
@@ -58,18 +42,22 @@ const ViewLog = ({
   toggleEdit,
   residentOptions,
   tagOptions,
-  allowEdit
-}: Props) => {
-
+  allowEdit,
+}: Props): React.ReactElement => {
   const handleEdit = () => {
     toggleClose();
     setTimeout(toggleEdit, 400);
-  }
+  };
 
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose} size="xl">
+        <Modal
+          isOpen={isOpen}
+          scrollBehavior="inside"
+          onClose={toggleClose}
+          size="xl"
+        >
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>View Log Record</ModalHeader>
@@ -95,7 +83,9 @@ const ViewLog = ({
                         <FormLabel>Date</FormLabel>
                         <Input
                           isDisabled
-                          defaultValue={convertToString(new Date(logRecord.datetime))}
+                          defaultValue={convertToString(
+                            new Date(logRecord.datetime),
+                          )}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />
@@ -108,7 +98,9 @@ const ViewLog = ({
                           isDisabled
                           size="md"
                           type="time"
-                          defaultValue={getFormattedTime(new Date(logRecord.datetime))}
+                          defaultValue={getFormattedTime(
+                            new Date(logRecord.datetime),
+                          )}
                           _disabled={{ bg: "transparent" }}
                           _hover={{ borderColor: "teal.100" }}
                         />
@@ -132,13 +124,16 @@ const ViewLog = ({
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                  <FormLabel>Residents</FormLabel>
+                    <FormLabel>Residents</FormLabel>
                     <Select
                       isDisabled
                       isMulti
-                      components={{ DropdownIndicator: () => null, MultiValueRemove: () => null }}
-                      defaultValue={residentOptions.filter(
-                        (item) => logRecord.residents.includes(item.label),
+                      components={{
+                        DropdownIndicator: () => null,
+                        MultiValueRemove: () => null,
+                      }}
+                      defaultValue={residentOptions.filter((item) =>
+                        logRecord.residents.includes(item.label),
                       )}
                       styles={viewStyle}
                     />
@@ -153,10 +148,13 @@ const ViewLog = ({
                     <Select
                       isDisabled
                       isMulti
-                      components={{ DropdownIndicator: () => null, MultiValueRemove: () => null }}
+                      components={{
+                        DropdownIndicator: () => null,
+                        MultiValueRemove: () => null,
+                      }}
                       placeholder="No Tags"
-                      defaultValue={tagOptions.filter(
-                        (item) => logRecord.tags.includes(item.label),
+                      defaultValue={tagOptions.filter((item) =>
+                        logRecord.tags.includes(item.label),
                       )}
                       styles={viewStyle}
                     />
@@ -168,7 +166,11 @@ const ViewLog = ({
                     <Input
                       isDisabled
                       placeholder="No Attn To"
-                      defaultValue={logRecord.attnTo ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}` : undefined}
+                      defaultValue={
+                        logRecord.attnTo
+                          ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}`
+                          : undefined
+                      }
                       _disabled={{ bg: "transparent" }}
                       _hover={{ borderColor: "teal.100" }}
                     />
@@ -191,23 +193,19 @@ const ViewLog = ({
                 <Col>
                   <FormControl mt={4}>
                     <FormLabel>Notes</FormLabel>
-                    <Text whiteSpace="pre-wrap">
-                      {logRecord.note}
-                    </Text>
+                    <Text whiteSpace="pre-wrap">{logRecord.note}</Text>
                   </FormControl>
                 </Col>
               </Row>
-            </ModalBody>  
+            </ModalBody>
 
             <ModalFooter>
-              {
-                allowEdit && (
-                  <Button onClick={handleEdit} variant="primary" type="submit">
-                    Edit
-                  </Button>
-                )
-              }
-            </ModalFooter>  
+              {allowEdit && (
+                <Button onClick={handleEdit} variant="primary" type="submit">
+                  Edit
+                </Button>
+              )}
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>

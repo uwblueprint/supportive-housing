@@ -118,7 +118,7 @@ const CreateResident = ({
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
       const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
+        (building) => ({ label: building.name, value: building.id }),
       );
       setBuildingOptions(buildingLabels);
     }

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -9,14 +9,10 @@ import {
   Input,
   Spinner,
 } from "@chakra-ui/react";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import {
-  HOME_PAGE,
-  SIGNUP_PAGE,
-  VERIFICATION_PAGE,
-} from "../../constants/Routes";
+import { SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { isAuthErrorResponse, isErrorResponse } from "../../helper/error";
 import UserAPIClient from "../../APIClients/UserAPIClient";
@@ -39,6 +35,7 @@ const Login = ({
   setEmail,
   password,
   setPassword,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   setToken,
   toggle,
   setToggle,

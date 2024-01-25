@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Menu,
   MenuButton,
@@ -60,6 +60,7 @@ const Pagination = ({
   };
 
   // Treat the enter key as an alt method of triggering onBlur (lose focus)
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   const handleKeyUp = (event: any) => {
     if (event.keyCode === 13) {
       event.target.blur();

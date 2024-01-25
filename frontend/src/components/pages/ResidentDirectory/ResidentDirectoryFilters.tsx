@@ -3,18 +3,16 @@ import {
   Box,
   Grid,
   GridItem,
-  Button,
   FormControl,
   FormLabel,
   Text,
   InputGroup,
   InputRightElement,
   IconButton,
-  Flex,
 } from "@chakra-ui/react";
-import { CloseIcon, SmallCloseIcon } from "@chakra-ui/icons";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
-import Select, { MultiValue, SingleValue } from "react-select";
+import Select, { MultiValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { selectStyle } from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
@@ -122,13 +120,6 @@ const ResidentDirectoryFilters = ({
       return;
     }
     setEndDate(newEndDate);
-  };
-
-  const handleClearAll = () => {
-    setResidentSelections([]);
-    setBuildingSelections([]);
-    setEndDate(undefined);
-    setStartDate(undefined);
   };
 
   useEffect(() => {

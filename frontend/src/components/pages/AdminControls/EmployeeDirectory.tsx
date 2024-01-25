@@ -47,6 +47,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   useEffect(() => {
     setUserPageNum(1);
     getUsers(1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [resultsPerPage]);
 
   useEffect(() => {

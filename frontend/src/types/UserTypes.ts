@@ -8,6 +8,12 @@ export type User = {
   authId: string;
 };
 
+export type GetUserParams = {
+  returnAll?: boolean;
+  pageNumber?: number;
+  resultsPerPage?: number;
+};
+
 export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
 
 export type GetUsersResponse = {

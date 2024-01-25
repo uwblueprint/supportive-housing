@@ -65,7 +65,7 @@ const createTag = async ({
     );
     return true;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
@@ -94,7 +94,7 @@ const editTag = async ({
     );
     return true;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
@@ -117,8 +117,8 @@ const deleteTag = async (tagId: number): Promise<number> => {
       headers: { Authorization: bearerToken },
     });
     return 200;
-  } catch (error: any) {
-    const axiosErr = (error as any) as AxiosError;
+  } catch (error) {
+    const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       return axiosErr.response.status;
     }

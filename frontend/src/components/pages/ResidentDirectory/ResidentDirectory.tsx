@@ -48,8 +48,8 @@ const ResidentDirectory = (): React.ReactElement => {
 
     if (data) {
       const buildingLabels: SelectLabel[] = data.buildings.map((building) => ({
-        label: building.name!,
-        value: building.id!,
+        label: building.name,
+        value: building.id,
       }));
       setBuildingOptions(buildingLabels);
     }
@@ -137,6 +137,7 @@ const ResidentDirectory = (): React.ReactElement => {
     setUserPageNum(1);
     getResidents(1);
     countResidents();
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [
     resultsPerPage,
     residentSelections,

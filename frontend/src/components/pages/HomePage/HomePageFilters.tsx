@@ -8,7 +8,6 @@ import {
   Box,
   Grid,
   GridItem,
-  Button,
   Checkbox,
   FormControl,
   FormLabel,
@@ -19,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
-import Select, { MultiValue, SingleValue } from "react-select";
+import Select, { MultiValue } from "react-select";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { selectStyle } from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
@@ -82,7 +81,7 @@ const HomePageFilters = ({
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
       const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
+        (building) => ({ label: building.name, value: building.id }),
       );
       setBuildingOptions(buildingLabels);
     }
@@ -187,17 +186,6 @@ const HomePageFilters = ({
   const handleTagsChange = (selectedTags: MultiValue<SelectLabel>) => {
     const mutableSelectedTags: SelectLabel[] = Array.from(selectedTags);
     setTags(mutableSelectedTags);
-  };
-
-  const handleClearAll = () => {
-    setAttentionTos([]);
-    setBuildings([]);
-    setEmployees([]);
-    setEndDate(undefined);
-    setFlagged(false);
-    setResidents([]);
-    setStartDate(undefined);
-    setTags([]);
   };
 
   useEffect(() => {
