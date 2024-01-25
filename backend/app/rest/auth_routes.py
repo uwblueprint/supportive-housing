@@ -1,4 +1,5 @@
 import os
+import pyotp
 from ..utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
@@ -6,11 +7,11 @@ from ..utilities.exceptions.firebase_exceptions import (
 from ..utilities.exceptions.auth_exceptions import EmailAlreadyInUseException
 
 from flask import Blueprint, current_app, jsonify, request
-from twilio.rest import Client
 
 from ..middlewares.auth import (
     require_authorization_by_user_id,
     require_authorization_by_email,
+    get_access_token,
 )
 from ..middlewares.validate import validate_request
 from ..resources.create_user_dto import CreateUserDTO
@@ -43,7 +44,7 @@ cookie_options = {
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
-client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+totp = pyotp.TOTP(os.getenv("TWO_FA_SECRET"))
 
 
 @blueprint.route("/login", methods=["POST"], strict_slashes=False)
@@ -62,7 +63,7 @@ def login():
             )
         response = {"requires_two_fa": False, "auth_user": None}
 
-        if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+        if os.getenv("TWO_FA_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
 
@@ -73,6 +74,7 @@ def login():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
 
         sign_in_logs_service.create_sign_in_log(auth_dto.id)
@@ -98,27 +100,15 @@ def two_fa():
     returns access token in response body and sets refreshToken as an httpOnly cookie only
     """
 
-    passcode = request.args.get("passcode")
-
-    if not passcode:
-        return (
-            jsonify({"error": "Must supply passcode as a query parameter.t"}),
-            400,
-        )
+    passcode = request.args.get("passcode") if request.args.get("passcode") else ""
 
     try:
-        challenge = (
-            client.verify.v2.services(os.getenv("TWILIO_SERVICE_SID"))
-            .entities(os.getenv("TWILIO_ENTITY_ID"))
-            .challenges.create(
-                auth_payload=passcode, factor_sid=os.getenv("TWILIO_FACTOR_SID")
-            )
-        )
+        verified = totp.verify(passcode)
 
-        if challenge.status != "approved":
+        if not verified:
             return (
-                jsonify({"error": "Invalid passcode."}),
-                400,
+                jsonify({"error": "Invalid passcode. Please try again."}),
+                401,
             )
 
         auth_dto = None
@@ -128,6 +118,16 @@ def two_fa():
             auth_dto = auth_service.generate_token(
                 request.json["email"], request.json["password"]
             )
+
+        is_authorized_by_token = auth_service.is_authorized_by_token(
+            auth_dto.access_token
+        )
+
+        if not is_authorized_by_token:
+            auth_service.send_email_verification_link(request.json["email"])
+
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
+
         response = jsonify(
             {
                 "access_token": auth_dto.access_token,
@@ -136,6 +136,7 @@ def two_fa():
                 "last_name": auth_dto.last_name,
                 "email": auth_dto.email,
                 "role": auth_dto.role,
+                "verified": is_authorized_by_token,
             }
         )
         response.set_cookie(
@@ -143,7 +144,6 @@ def two_fa():
             value=auth_dto.refresh_token,
             **cookie_options,
         )
-        sign_in_logs_service.create_sign_in_log(auth_dto.id)
         return response, 200
 
     except Exception as e:
@@ -165,13 +165,13 @@ def register():
             request.json["email"], request.json["password"]
         )
 
-        auth_service.send_email_verification_link(request.json["email"])
-
         response = {"requires_two_fa": False, "auth_user": None}
 
         if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
+
+        auth_service.send_email_verification_link(request.json["email"])
 
         response["auth_user"] = {
             "access_token": auth_dto.access_token,
@@ -180,7 +180,10 @@ def register():
             "last_name": auth_dto.last_name,
             "email": auth_dto.email,
             "role": auth_dto.role,
+            "verified": auth_service.is_authorized_by_token(auth_dto.access_token),
         }
+
+        sign_in_logs_service.create_sign_in_log(auth_dto.id)
 
         response = jsonify(response)
         response.set_cookie(
@@ -240,6 +243,22 @@ def reset_password(email):
     try:
         auth_service.reset_password(email)
         return "", 204
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route("/verify", methods=["GET"], strict_slashes=False)
+def is_verified():
+    """
+    Checks if a user with a specified email is verified.
+    """
+    try:
+        access_token = get_access_token(request)
+        return (
+            jsonify({"verified": auth_service.is_authorized_by_token(access_token)}),
+            200,
+        )
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

@@ -6,7 +6,10 @@ import {
   CountResidentsResponse,
   CreateResidentParams,
   EditResidentParams,
+  GetResidentsParams,
+  CountResidentsParams,
 } from "../types/ResidentTypes";
+import { ErrorResponse } from "../types/ErrorTypes";
 import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
@@ -14,7 +17,11 @@ const getResidents = async ({
   returnAll = false,
   pageNumber = 1,
   resultsPerPage = 10,
-}): Promise<GetResidentsReponse> => {
+  residents,
+  buildings,
+  statuses,
+  dateRange,
+}: GetResidentsParams): Promise<GetResidentsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -24,6 +31,12 @@ const getResidents = async ({
       `/residents/`,
       {
         params: {
+          filters: {
+            residents,
+            buildings,
+            statuses,
+            dateRange,
+          },
           returnAll,
           pageNumber,
           resultsPerPage,
@@ -37,7 +50,12 @@ const getResidents = async ({
   }
 };
 
-const countResidents = async (): Promise<CountResidentsResponse> => {
+const countResidents = async ({
+  residents,
+  buildings,
+  statuses,
+  dateRange,
+}: CountResidentsParams): Promise<CountResidentsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -46,6 +64,14 @@ const countResidents = async (): Promise<CountResidentsResponse> => {
     const { data } = await baseAPIClient.get<CountResidentsResponse>(
       `/residents/count`,
       {
+        params: {
+          filters: {
+            residents,
+            buildings,
+            statuses,
+            dateRange,
+          },
+        },
         headers: { Authorization: bearerToken },
       },
     );
@@ -60,7 +86,7 @@ const createResident = async ({
   roomNum,
   dateJoined,
   buildingId,
-}: CreateResidentParams): Promise<boolean> => {
+}: CreateResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -73,6 +99,15 @@ const createResident = async ({
     );
     return true;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          `Resident with the specified user ID already exists.`,
+      };
+    }
     return false;
   }
 };
@@ -103,7 +138,7 @@ const editResident = async ({
   dateJoined,
   buildingId,
   dateLeft,
-}: EditResidentParams): Promise<boolean> => {
+}: EditResidentParams): Promise<boolean | ErrorResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -116,6 +151,15 @@ const editResident = async ({
     );
     return true;
   } catch (error) {
+    const axiosErr = (error as any) as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 409) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          "Resident with the specified user ID already exists.",
+      };
+    }
     return false;
   }
 };

@@ -1,5 +1,8 @@
-// Combine date and time
-export const combineDateTime = (dateObj: Date, timeStr: string): Date => {
+/**
+ *
+ * @returns an ISOstring
+ */
+export const combineDateTime = (dateObj: Date, timeStr: string): string => {
   // Extract time components from timeStr
   const [hours, minutes] = timeStr.split(":").map(Number);
 
@@ -8,7 +11,7 @@ export const combineDateTime = (dateObj: Date, timeStr: string): Date => {
   newDateObj.setHours(hours);
   newDateObj.setMinutes(minutes);
 
-  return newDateObj;
+  return newDateObj.toISOString();
 };
 
 /**
@@ -37,4 +40,15 @@ export const convertToString = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+};
+
+/**
+ *
+ * @returns date string HH:MM format
+ */
+export const getFormattedTime = (date: Date): string => {
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${hours}:${minutes}`;
 };

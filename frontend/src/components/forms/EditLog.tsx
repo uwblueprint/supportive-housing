@@ -23,6 +23,8 @@ import {
   Text,
   ScaleFade,
   Textarea,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -31,25 +33,24 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import { UserLabel } from "../../types/UserTypes";
-import { ResidentLabel } from "../../types/ResidentTypes";
 import { LogRecord } from "../../types/LogRecordTypes";
-import { combineDateTime } from "../../helper/dateHelpers";
+import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
   logRecord: LogRecord;
   userPageNum: number;
   isOpen: boolean;
   toggleClose: () => void;
-  employeeOptions: UserLabel[];
-  residentOptions: UserLabel[];
+  employeeOptions: SelectLabel[];
+  residentOptions: SelectLabel[];
+  tagOptions: SelectLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-  buildingOptions: BuildingLabel[];
+  buildingOptions: SelectLabel[];
 };
 
 type AlertData = {
@@ -76,25 +77,6 @@ const ALERT_DATA: AlertDataOptions = {
   },
 };
 
-// Replace this with the tags from the db once the API and table are made
-const TAGS = [
-  { label: "Tag A", value: "A" },
-  { label: "Tag B", value: "B" },
-  { label: "Tag C", value: "C" },
-];
-
-// Helper to get the currently logged in user
-const getCurUserSelectOption = () => {
-  const curUser: AuthenticatedUser | null = getLocalStorageObj(
-    AUTHENTICATED_USER_KEY,
-  );
-  if (curUser && curUser.firstName && curUser.id) {
-    const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
-  }
-  return { label: "", value: -1 };
-};
-
 const EditLog = ({
   logRecord,
   userPageNum,
@@ -102,24 +84,19 @@ const EditLog = ({
   toggleClose,
   employeeOptions,
   residentOptions,
+  tagOptions,
   getRecords,
   countRecords,
   setUserPageNum,
   buildingOptions,
 }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
+
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(
-    date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }),
-  );
+  const [time, setTime] = useState("");
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<number[]>([]);
   const [attnTo, setAttnTo] = useState<number>(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
@@ -166,9 +143,9 @@ const EditLog = ({
   };
 
   const handleResidentsChange = (
-    selectedResidents: MultiValue<ResidentLabel>,
+    selectedResidents: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+    const mutableSelectedResidents: SelectLabel[] = Array.from(
       selectedResidents,
     );
     if (mutableSelectedResidents !== null) {
@@ -179,10 +156,14 @@ const EditLog = ({
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<{ label: string; value: string }>,
+    selectedTags: MultiValue<SelectLabel>,
   ) => {
-    const newTagsList = selectedTags.map((tag) => tag.value);
-    setTags(newTagsList);
+    const mutableSelectedTags: SelectLabel[] = Array.from(
+      selectedTags,
+    );
+    if (mutableSelectedTags !== null) {
+      setTags(mutableSelectedTags.map((tagLabel) => tagLabel.value));
+    }
   };
 
   const handleAttnToChange = (
@@ -203,21 +184,17 @@ const EditLog = ({
 
   const initializeValues = () => {
     // set state variables
-    setEmployee(getCurUserSelectOption());
     setDate(new Date(logRecord.datetime));
-    setTime(
-      date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
+    setTime(getFormattedTime(new Date(logRecord.datetime)));
     setBuildingId(logRecord.building.id);
     const residentIds = residentOptions.filter(
-      (item) => logRecord.residents.includes(item.label),
+      (item) => logRecord.residents && logRecord.residents.includes(item.label),
     ).map((item) => item.value);
     setResidents(residentIds);
-    setTags(logRecord.tags);
+    const tagIds = tagOptions.filter(
+      (item) => logRecord.tags.includes(item.label),
+    ).map((item) => item.value);
+    setTags(tagIds);
     setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
@@ -233,7 +210,6 @@ const EditLog = ({
 
   const handleSubmit = async () => {
     // Update error states
-    setEmployeeError(!employee.label);
     setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
@@ -242,7 +218,6 @@ const EditLog = ({
 
     // If any required fields are empty, prevent form submission
     if (
-      !employee.label ||
       date === null ||
       time === "" ||
       buildingId === -1 ||
@@ -254,7 +229,7 @@ const EditLog = ({
 
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
-      employeeId: employee.value,
+      employeeId: logRecord.employee.id,
       residents,
       datetime: combineDateTime(date, time),
       flagged,
@@ -293,20 +268,21 @@ const EditLog = ({
   return (
     <>
       <Box>
-        <Modal isOpen={isOpen} onClose={toggleClose} size="xl">
+        <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Log Entry Details</ModalHeader>
+            <ModalHeader>Edit Log Record</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      defaultValue={`${logRecord.employee.firstName} ${logRecord.employee.lastName}`}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
@@ -365,7 +341,7 @@ const EditLog = ({
                       placeholder="Select Residents"
                       onChange={handleResidentsChange}
                       defaultValue={residentOptions.filter(
-                        (item) => logRecord.residents.includes(item.label),
+                        (item) => logRecord.residents && logRecord.residents.includes(item.label),
                       )}
                       styles={selectStyle}
                     />
@@ -379,14 +355,15 @@ const EditLog = ({
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
-                      isDisabled
-                      options={TAGS}
+                      options={tagOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
                       onChange={handleTagsChange}
                       styles={selectStyle}
+                      defaultValue={tagOptions.filter(
+                        (item) => logRecord.tags.includes(item.label),
+                      )}
                     />
                   </FormControl>
                 </Col>
@@ -407,6 +384,15 @@ const EditLog = ({
                 </Col>
               </Row>
 
+              <Checkbox
+                colorScheme="teal"
+                style={{ paddingTop: "1rem" }}
+                onChange={() => setFlagged(!flagged)}
+                defaultChecked={flagged}
+              >
+                <Text>Flag this Report</Text>
+              </Checkbox>
+
               <Row>
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
@@ -415,39 +401,20 @@ const EditLog = ({
                       value={notes}
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
-                      resize="none"
+                      resize="vertical"
                     />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
-
-              <Checkbox
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                onChange={() => setFlagged(!flagged)}
-                marginBottom="16px"
-                defaultChecked={flagged}
-              >
-                <Text>Flag this Report</Text>
-              </Checkbox>
-
-              <Divider />
-
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={toggleClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Box>
             </ModalBody>
+
+            <ModalFooter>
+                <Button onClick={handleSubmit} variant="primary" type="submit">
+                  Save
+                </Button>
+            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>

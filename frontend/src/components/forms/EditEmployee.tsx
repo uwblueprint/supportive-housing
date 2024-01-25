@@ -94,20 +94,16 @@ const EditEmployee = ({
     mapRoleToState(employee.role);
   }, [employee]);
 
-  const handleFirstNameChange = (e: { target: { value: unknown } }) => {
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setFirstName(inputValue);
-      setFirstNameError(false);
-    }
+    setFirstName(inputValue);
+    setFirstNameError(false);
   };
 
-  const handleLastNameChange = (e: { target: { value: unknown } }) => {
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
-    if (/^[a-z]{0,}$/i.test(inputValue)) {
-      setLastName(inputValue);
-      setLastNameError(false);
-    }
+    setLastName(inputValue);
+    setLastNameError(false);
   };
 
   const handleAdminStatusChange = (inputValue: string) => {
@@ -173,9 +169,8 @@ const EditEmployee = ({
   };
 
   const handleSubmit = () => {
-    const onlyLetters = /^[A-Za-z]+$/;
-    const isFirstNameError = !(firstName && onlyLetters.test(firstName));
-    const isLastNameError = !(lastName && onlyLetters.test(lastName));
+    const isFirstNameError = firstName === "";
+    const isLastNameError = lastName === "";
     const isAdminStatusError = adminStatus === "";
 
     setFirstNameError(isFirstNameError);
@@ -211,7 +206,7 @@ const EditEmployee = ({
                       onChange={handleFirstNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>First Name is required.</FormErrorMessage>
+                    <FormErrorMessage>First name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
 
@@ -224,12 +219,12 @@ const EditEmployee = ({
                       onChange={handleLastNameChange}
                       maxLength={50}
                     />
-                    <FormErrorMessage>Last Name is required.</FormErrorMessage>
+                    <FormErrorMessage>Last name is required.</FormErrorMessage>
                   </FormControl>
                 </Box>
               </Box>
             </Box>
-            <Box pt="16px" pb="16px">
+            <Box pt="16px">
               <FormControl isRequired isInvalid={adminStatusError}>
                 <RadioGroup
                   value={adminStatus}
@@ -275,7 +270,6 @@ const EditEmployee = ({
                 building.
               </Text>
             </Box>
-            <Divider />
           </ModalBody>
           <ModalFooter>
             <Button variant="primary" type="submit" onClick={handleSubmit}>

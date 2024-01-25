@@ -4,16 +4,10 @@ import {
   OperationVariables,
 } from "@apollo/client";
 import { AxiosError } from "axios";
-import { 
-  getAuthErrMessage
-} 
-from "../helper/authError";
+import { getAuthErrMessage } from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import {
-  AuthenticatedUser,
-  AuthTokenResponse,
-  ErrorResponse,
-} from "../types/AuthTypes";
+import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
+import { AuthErrorResponse, ErrorResponse } from "../types/ErrorTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -23,7 +17,7 @@ import {
 const login = async (
   email: string,
   password: string,
-): Promise<AuthTokenResponse | ErrorResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/login",
@@ -36,12 +30,12 @@ const login = async (
     if (axiosErr.response && axiosErr.response.status === 401) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getAuthErrMessage(axiosErr.response, 'LOGIN'),
+        errMessage: getAuthErrMessage(axiosErr.response, "LOGIN"),
       };
     }
     return {
       errCode: 500,
-      errMessage: "Error logging in. Please try again.",
+      errMessage: "Unable to login. Please try again.",
     };
   }
 };
@@ -50,16 +44,25 @@ const twoFa = async (
   passcode: string,
   email: string,
   password: string,
-): Promise<AuthenticatedUser | null> => {
+): Promise<AuthenticatedUser | ErrorResponse> => {
   try {
-    const { data } = await baseAPIClient.post(
+    const { data } = await baseAPIClient.post<AuthenticatedUser>(
       `/auth/twoFa?passcode=${passcode}`,
       { email, password },
       { withCredentials: true },
     );
     return data;
   } catch (error) {
-    return null;
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 401) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ?? "Invalid passcode. Please try again.",
+      };
+    }
+    return {
+      errMessage: "Unable to authenticate. Please try again.",
+    };
   }
 };
 
@@ -102,7 +105,7 @@ const register = async (
   lastName: string,
   email: string,
   password: string,
-): Promise<AuthTokenResponse | ErrorResponse> => {
+): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
@@ -115,10 +118,13 @@ const register = async (
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
         errCode: axiosErr.response.status,
-        errMessage: getAuthErrMessage(axiosErr.response, 'SIGNUP'),
+        errMessage: getAuthErrMessage(axiosErr.response, "SIGNUP"),
       };
     }
-    return null;
+    return {
+      errCode: 500,
+      errMessage: "Error signing up. Please try again.",
+    };
   }
 };
 
@@ -134,6 +140,21 @@ const resetPassword = async (email: string | undefined): Promise<boolean> => {
       { headers: { Authorization: bearerToken } },
     );
     return true;
+  } catch (error) {
+    return false;
+  }
+};
+
+const isVerified = async (): Promise<boolean> => {
+  const bearerToken = `Bearer ${getLocalStorageObjProperty(
+    AUTHENTICATED_USER_KEY,
+    "accessToken",
+  )}`;
+  try {
+    const { data } = await baseAPIClient.get(`/auth/verify`, {
+      headers: { Authorization: bearerToken },
+    });
+    return data.verified === true;
   } catch (error) {
     return false;
   }
@@ -165,5 +186,6 @@ export default {
   twoFaWithGoogle,
   register,
   resetPassword,
+  isVerified,
   refresh,
 };

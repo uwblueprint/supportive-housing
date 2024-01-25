@@ -22,22 +22,24 @@ import {
   Text,
   ScaleFade,
   Divider,
+  InputGroup,
+  IconButton,
+  InputRightElement,
 } from "@chakra-ui/react";
-import type { AlertStatus } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { SmallCloseIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
-import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
+import { isErrorResponse } from "../../helper/error";
+import { SelectLabel } from "../../types/SharedTypes";
 
 type Props = {
-  buildingOptions: BuildingLabel[],
+  buildingOptions: SelectLabel[];
   resident: Resident;
   isOpen: boolean;
   userPageNum: number;
@@ -76,13 +78,16 @@ const EditResident = ({
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
     });
 
-    if (res != null) {
+    if (isErrorResponse(res)) {
+      newToast("Error updating resident", res.errMessage, "error");
+    } else if (res !== null && res) {
       newToast(
         "Resident updated",
         "Resident has been successfully updated",
         "success",
       );
       getRecords(userPageNum);
+      toggleClose();
     } else {
       newToast(
         "Error updating resident",
@@ -91,11 +96,6 @@ const EditResident = ({
       );
     }
   };
-
-  const clearMoveOutDate = () => {
-    setMoveOutDate(undefined);
-  };
-
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
@@ -176,7 +176,6 @@ const EditResident = ({
     setRoomNumberError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
-    toggleClose();
   };
 
   useEffect(() => {
@@ -255,30 +254,41 @@ const EditResident = ({
                   </FormControl>
                 </Col>
               </Row>
-              <Row style={{ marginTop: "16px", marginBottom: "16px" }}>
+              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isInvalid={moveOutDateError}>
                     <FormLabel>Move Out Date</FormLabel>
-                    <SingleDatepicker
-                      name="date-input"
-                      date={moveOutDate}
-                      onDateChange={handleMoveOutDateChange}
-                      propsConfigs={singleDatePickerStyle}
-                    />
+                    <InputGroup>
+                      <SingleDatepicker
+                        name="date-input"
+                        date={moveOutDate}
+                        onDateChange={handleMoveOutDateChange}
+                        propsConfigs={singleDatePickerStyle}
+                      />
+                      {moveOutDate && (
+                        <InputRightElement>
+                          <IconButton
+                            onClick={() => setMoveOutDate(undefined)}
+                            aria-label="clear"
+                            variant="icon"
+                            icon={
+                              <SmallCloseIcon
+                                boxSize="5"
+                                color="gray.200"
+                                _hover={{ color: "gray.400" }}
+                                transition="color 0.1s ease-in-out"
+                              />
+                            }
+                          />
+                        </InputRightElement>
+                      )}
+                    </InputGroup>
                     <FormErrorMessage marginBottom="8px">
                       Move out Date must be after Move in Date
                     </FormErrorMessage>
-                    <Button
-                      marginTop="16px"
-                      onClick={clearMoveOutDate}
-                      variant="secondary"
-                    >
-                      Clear Move Out Date
-                    </Button>
                   </FormControl>
                 </Col>
               </Row>
-              <Divider />
             </ModalBody>
             <ModalFooter>
               <Button onClick={handleSave} variant="primary" type="submit">

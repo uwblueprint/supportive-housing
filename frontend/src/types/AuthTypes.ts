@@ -7,7 +7,7 @@ export type TwoFaResponse = {
 export type AuthTokenResponse = {
   requiresTwoFa: boolean;
   authUser: AuthenticatedUser;
-} | null;
+};
 
 export type AuthenticatedUser = {
   id: number;
@@ -16,6 +16,7 @@ export type AuthenticatedUser = {
   email: string;
   role: UserRole;
   accessToken: string;
+  verified: boolean;
 };
 
 export type DecodedJWT =
@@ -23,9 +24,4 @@ export type DecodedJWT =
   | null
   | { [key: string]: unknown; exp: number };
 
-export type ErrorResponse = {
-  errCode: number;
-  errMessage: string;
-};
-
-export type AuthFlow = 'LOGIN' | 'SIGNUP';
+export type AuthFlow = "LOGIN" | "SIGNUP";

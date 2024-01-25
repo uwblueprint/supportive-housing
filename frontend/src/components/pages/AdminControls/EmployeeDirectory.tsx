@@ -1,11 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
-import CreateLog from "../../forms/CreateLog";
-import commonAPIClient from "../../../APIClients/CommonAPIClient";
-import ExportCSVButton from "../../common/ExportCSVButton";
 import { User } from "../../../types/UserTypes";
 import EmployeeDirectoryTable from "./EmployeeDirectoryTable";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
@@ -18,10 +15,13 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
+  const [tableLoaded, setTableLoaded] = useState(false);
+
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
   const getUsers = async (pageNumber: number) => {
+    setTableLoaded(false);
     const data = await UserAPIClient.getUsers({ pageNumber, resultsPerPage });
 
     // Reset table scroll
@@ -35,6 +35,8 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true);
   };
 
   const countUsers = async () => {
@@ -57,7 +59,7 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
       <Box
         textStyle="dm-sans-font"
         textAlign="center"
-        width="75%"
+        width="90%"
         paddingTop="2%"
         margin="0px auto"
         color="blue.600"
@@ -71,23 +73,43 @@ const EmployeeDirectoryPage = (): React.ReactElement => {
           />
         </Flex>
 
-        <EmployeeDirectoryTable
-          users={users}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          getRecords={getUsers}
-          countUsers={countUsers}
-        />
-        <Pagination
-          numRecords={numUsers}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getUsers}
-        />
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            marginTop="5%"
+          />
+        ) : (
+          <Box>
+            {numUsers === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <EmployeeDirectoryTable
+                  users={users}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  getRecords={getUsers}
+                  countUsers={countUsers}
+                />
+                <Pagination
+                  numRecords={numUsers}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getUsers}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

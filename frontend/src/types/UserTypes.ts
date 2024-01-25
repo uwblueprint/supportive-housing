@@ -10,11 +10,6 @@ export type User = {
 
 export type UpdateUserParams = Omit<User, "email" | "userStatus" | "authId">;
 
-export type UserLabel = {
-  label: string;
-  value: number;
-};
-
 export type GetUsersResponse = {
   users: User[];
 } | null;
@@ -22,6 +17,11 @@ export type GetUsersResponse = {
 export type CountUsersResponse = {
   numResults: number;
 } | null;
+
+export type GetUserStatusResponse = {
+  userStatus: UserStatus;
+  email: string;
+};
 
 export enum UserRole {
   ADMIN = "Admin",

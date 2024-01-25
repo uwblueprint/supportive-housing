@@ -41,22 +41,22 @@ export type PostLogRecordsResponse = Pick<
 > | null;
 
 export type CountLogRecordFilters = {
-  buildingId?: number[];
-  employeeId?: number[];
-  attnTo?: number[];
-  dateRange?: string[];
+  buildings?: number[];
+  employees?: number[];
+  attnTos?: number[];
+  dateRange?: (string | null)[];
   residents?: number[];
-  tags?: string[];
+  tags?: number[];
   flagged?: boolean;
 };
 
 export type CreateLogRecordParams = {
   employeeId: number;
   residents: number[];
-  datetime: Date;
+  datetime: string;
   flagged: boolean;
   note: string;
-  tags: string[];
+  tags: number[];
   buildingId: number;
   attnTo?: number;
 };
@@ -65,10 +65,10 @@ export type EditLogRecordParams = {
   logId: number;
   employeeId: number;
   residents: number[];
-  datetime: Date;
+  datetime: string;
   flagged: boolean;
   note: string;
-  tags: string[];
+  tags: number[];
   buildingId: number;
   attnTo?: number;
 };

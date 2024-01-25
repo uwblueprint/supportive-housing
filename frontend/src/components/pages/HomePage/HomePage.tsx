@@ -1,18 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, Flex, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import Pagination from "../../common/Pagination";
 import NavigationBar from "../../common/NavigationBar";
 import CreateLog from "../../forms/CreateLog";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
-import SearchAndFilters from "./SearchAndFilters";
-import ExportCSVButton from "../../common/ExportCSVButton";
-import { BuildingLabel } from "../../../types/BuildingTypes";
-import { ResidentLabel } from "../../../types/ResidentTypes";
-import { Tag } from "../../../types/TagsTypes";
-import { UserLabel } from "../../../types/UserTypes";
+import HomePageFilters from "./HomePageFilters";
+import ExportToCSV from "../../forms/ExportToCSV";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
+import { SelectLabel } from "../../../types/SharedTypes";
 
 const HomePage = (): React.ReactElement => {
   /* TODO: change inputs to correct types
@@ -26,13 +23,13 @@ const HomePage = (): React.ReactElement => {
   */
   // TODO: search by resident
   // Filter state
-  const [residents, setResidents] = useState<ResidentLabel[]>([]);
-  const [employees, setEmployees] = useState<UserLabel[]>([]);
+  const [residents, setResidents] = useState<SelectLabel[]>([]);
+  const [employees, setEmployees] = useState<SelectLabel[]>([]);
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [attentionTos, setAttentionTos] = useState<UserLabel[]>([]);
-  const [buildings, setBuildings] = useState<BuildingLabel[]>([]);
+  const [tags, setTags] = useState<SelectLabel[]>([]);
+  const [attentionTos, setAttentionTos] = useState<SelectLabel[]>([]);
+  const [buildings, setBuildings] = useState<SelectLabel[]>([]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
@@ -42,33 +39,55 @@ const HomePage = (): React.ReactElement => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [userPageNum, setUserPageNum] = useState(pageNum);
 
+  // Table Loaded
+  const [tableLoaded, setTableLoaded] = useState(false);
+
   // Table reference
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const formatDate = (date: Date | undefined) => {
-    if (date) {
-      return date
-        .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-        .substring(0, 10);
-    }
-    return "";
-  };
-
   const getLogRecords = async (pageNumber: number) => {
-    const buildingIds = buildings.map((building) => building.value);
-    const employeeIds = employees.map((employee) => employee.value);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
-    const residentsIds = residents.map((resident) => resident.value);
-    const dateRange = [formatDate(startDate), formatDate(endDate)];
-    const tagsValues = tags.map((tag) => tag.value);
+    const buildingIds =
+      buildings.length > 0
+        ? buildings.map((building) => building.value)
+        : undefined;
+
+    const employeeIds =
+      employees.length > 0
+        ? employees.map((employee) => employee.value)
+        : undefined;
+
+    const attentionToIds =
+      attentionTos.length > 0
+        ? attentionTos.map((attnTo) => attnTo.value)
+        : undefined;
+
+    const residentsIds =
+      residents.length > 0
+        ? residents.map((resident) => resident.value)
+        : undefined;
+
+    const tagIds = tags.length > 0 ? tags.map((tag) => tag.value) : undefined;
+
+    let dateRange;
+    if (startDate || endDate) {
+      startDate?.setHours(0, 0, 0, 0);
+      endDate?.setHours(23, 59, 59, 999);
+
+      dateRange = [
+        startDate ? startDate.toISOString() : null,
+        endDate ? endDate.toISOString() : null,
+      ];
+    }
+
+    setTableLoaded(false);
 
     const data = await LogRecordAPIClient.filterLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
-      dateRange: dateRange[0] === "" && dateRange[1] === "" ? [] : dateRange,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
+      dateRange,
       residents: residentsIds,
-      tags: tagsValues,
+      tags: tagIds,
       flagged,
       resultsPerPage,
       pageNumber,
@@ -85,25 +104,51 @@ const HomePage = (): React.ReactElement => {
     } else {
       setPageNum(pageNumber);
     }
+
+    setTableLoaded(true);
   };
 
   const countLogRecords = async () => {
-    const buildingIds = buildings.map((building) => building.value);
-    const employeeIds = employees.map((employee) => employee.value);
-    const attentionToIds = attentionTos.map((attnTo) => attnTo.value);
-    const dateRange =
-      startDate && endDate ? [formatDate(startDate), formatDate(endDate)] : [];
-    const residentsIds = residents.map((resident) => resident.value);
+    const buildingIds =
+      buildings.length > 0
+        ? buildings.map((building) => building.value)
+        : undefined;
 
-    const tagsValues = tags.map((tag) => tag.value);
+    const employeeIds =
+      employees.length > 0
+        ? employees.map((employee) => employee.value)
+        : undefined;
+
+    const attentionToIds =
+      attentionTos.length > 0
+        ? attentionTos.map((attnTo) => attnTo.value)
+        : undefined;
+
+    const residentsIds =
+      residents.length > 0
+        ? residents.map((resident) => resident.value)
+        : undefined;
+
+    const tagIds = tags.length > 0 ? tags.map((tag) => tag.value) : undefined;
+
+    let dateRange;
+    if (startDate || endDate) {
+      startDate?.setHours(0, 0, 0, 0);
+      endDate?.setHours(23, 59, 59, 999);
+
+      dateRange = [
+        startDate ? startDate.toISOString() : null,
+        endDate ? endDate.toISOString() : null,
+      ];
+    }
 
     const data = await LogRecordAPIClient.countLogRecords({
-      buildingId: buildingIds,
-      employeeId: employeeIds,
-      attnTo: attentionToIds,
+      buildings: buildingIds,
+      employees: employeeIds,
+      attnTos: attentionToIds,
       dateRange,
       residents: residentsIds,
-      tags: tagsValues,
+      tags: tagIds,
       flagged,
     });
 
@@ -145,7 +190,7 @@ const HomePage = (): React.ReactElement => {
       <Box
         textStyle="dm-sans-font"
         textAlign="center"
-        width="75%"
+        width="90%"
         paddingTop="2%"
         margin="0px auto"
         color="blue.600"
@@ -159,11 +204,11 @@ const HomePage = (): React.ReactElement => {
               countRecords={countLogRecords}
               setUserPageNum={setUserPageNum}
             />
-            <ExportCSVButton />
+            <ExportToCSV />
           </Flex>
         </Flex>
 
-        <SearchAndFilters
+        <HomePageFilters
           residents={residents}
           employees={employees}
           startDate={startDate}
@@ -182,23 +227,43 @@ const HomePage = (): React.ReactElement => {
           setFlagged={setFlagged}
         />
 
-        <LogRecordsTable
-          logRecords={logRecords}
-          tableRef={tableRef}
-          userPageNum={userPageNum}
-          getRecords={getLogRecords}
-          countRecords={countLogRecords}
-          setUserPageNum={setUserPageNum}
-        />
-        <Pagination
-          numRecords={numRecords}
-          pageNum={pageNum}
-          userPageNum={userPageNum}
-          setUserPageNum={setUserPageNum}
-          resultsPerPage={resultsPerPage}
-          setResultsPerPage={setResultsPerPage}
-          getRecords={getLogRecords}
-        />
+        {!tableLoaded ? (
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            size="xl"
+            marginTop="5%"
+          />
+        ) : (
+          <Box>
+            {numRecords === 0 ? (
+              <Text textAlign="center" paddingTop="5%">
+                No results found.
+              </Text>
+            ) : (
+              <Box>
+                <LogRecordsTable
+                  logRecords={logRecords}
+                  tableRef={tableRef}
+                  userPageNum={userPageNum}
+                  getRecords={getLogRecords}
+                  countRecords={countLogRecords}
+                  setUserPageNum={setUserPageNum}
+                />
+                <Pagination
+                  numRecords={numRecords}
+                  pageNum={pageNum}
+                  userPageNum={userPageNum}
+                  setUserPageNum={setUserPageNum}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  getRecords={getLogRecords}
+                />
+              </Box>
+            )}
+          </Box>
+        )}
       </Box>
     </Box>
   );

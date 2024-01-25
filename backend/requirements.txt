@@ -12,5 +12,5 @@ pytz
 alembic
 pytest
 black
-twilio
+pyotp
 urllib3==1.26.15

@@ -11,7 +11,9 @@ class LogRecordTag(db.Model):
     log_record_id = db.Column(
         db.Integer, db.ForeignKey("log_records.log_id"), nullable=False
     )
-    tag_id = db.Column(db.Integer, db.ForeignKey("tags.tag_id"), nullable=False)
+    tag_id = db.Column(
+        db.Integer, db.ForeignKey("tags.tag_id", ondelete="CASCADE"), nullable=False
+    )
 
     def to_dict(self, include_relationships=False):
         # define the entities table

@@ -5,7 +5,7 @@ from ...models.user import User
 from ...models.tags import Tag
 from ...models import db
 from datetime import datetime
-from pytz import timezone
+from pytz import timezone, utc
 from sqlalchemy import text
 
 
@@ -25,16 +25,21 @@ class LogRecordsService(ILogRecordsService):
 
     def add_record(self, log_record):
         new_log_record = log_record.copy()
+
         residents = new_log_record["residents"]
-        tag_names = new_log_record["tags"]
+        tags = new_log_record["tags"]
 
         del new_log_record["residents"]
         del new_log_record["tags"]
 
+        new_log_record["datetime"] = datetime.fromisoformat(
+            new_log_record["datetime"].replace("Z", "+00:00")
+        ).replace(tzinfo=utc)
+
         try:
             new_log_record = LogRecords(**new_log_record)
             self.construct_residents(new_log_record, residents)
-            self.construct_tags(new_log_record, tag_names)
+            self.construct_tags(new_log_record, tags)
 
             db.session.add(new_log_record)
             db.session.commit()
@@ -51,12 +56,13 @@ class LogRecordsService(ILogRecordsService):
                 raise Exception(f"Resident with id {resident_id} does not exist")
             log_record.residents.append(resident)
 
-    def construct_tags(self, log_record, tag_names):
-        for tag_name in tag_names:
-            tag = Tag.query.filter_by(name=tag_name).first()
+    def construct_tags(self, log_record, tags):
+        tags = list(set(tags))
+        for tag_id in tags:
+            tag = Tag.query.filter_by(tag_id=tag_id).first()
 
             if not tag:
-                raise Exception(f"Tag with name {tag_name} does not exist")
+                raise Exception(f"Tag with id {tag_id} does not exist")
             log_record.tags.append(tag)
 
     def to_json_list(self, logs):
@@ -83,30 +89,28 @@ class LogRecordsService(ILogRecordsService):
                         "tags": log[10] if log[10] else [],
                         "note": log[11],
                         "flagged": log[12],
-                        "datetime": str(log[13].astimezone(timezone("US/Eastern"))),
+                        "datetime": log[13].isoformat(),
                     }
                 )
             return logs_list
         except Exception as postgres_error:
             raise postgres_error
 
-    def filter_by_building_id(self, building_id):
-        if type(building_id) == list:
-            sql_statement = f"\nlogs.building_id={building_id[0]}"
-            for i in range(1, len(building_id)):
-                sql_statement = (
-                    sql_statement + f"\nOR logs.building_id={building_id[i]}"
-                )
+    def filter_by_buildings(self, buildings):
+        if type(buildings) == list:
+            sql_statement = f"\nlogs.building_id={buildings[0]}"
+            for i in range(1, len(buildings)):
+                sql_statement = sql_statement + f"\nOR logs.building_id={buildings[i]}"
             return sql_statement
-        return f"\logs.building_id={building_id}"
+        return f"\logs.building_id={buildings}"
 
-    def filter_by_employee_id(self, employee_id):
-        if type(employee_id) == list:
-            sql_statement = f"\nemployee_id={employee_id[0]}"
-            for i in range(1, len(employee_id)):
-                sql_statement = sql_statement + f"\nOR employee_id={employee_id[i]}"
+    def filter_by_employees(self, employees):
+        if type(employees) == list:
+            sql_statement = f"\nemployee_id={employees[0]}"
+            for i in range(1, len(employees)):
+                sql_statement = sql_statement + f"\nOR employee_id={employees[i]}"
             return sql_statement
-        return f"\nemployee_id={employee_id}"
+        return f"\nemployee_id={employees}"
 
     def filter_by_residents(self, residents):
         if type(residents) == list:
@@ -118,40 +122,34 @@ class LogRecordsService(ILogRecordsService):
             return sql_statement
         return f"\n'{residents}'=ANY (resident_ids)"
 
-    def filter_by_attn_to(self, attn_to):
-        if type(attn_to) == list:
-            sql_statement = f"\nattn_to={attn_to[0]}"
-            for i in range(1, len(attn_to)):
-                sql_statement = sql_statement + f"\nOR attn_to={attn_to[i]}"
+    def filter_by_attn_tos(self, attn_tos):
+        if type(attn_tos) == list:
+            sql_statement = f"\nattn_to={attn_tos[0]}"
+            for i in range(1, len(attn_tos)):
+                sql_statement = sql_statement + f"\nOR attn_to={attn_tos[i]}"
             return sql_statement
-        return f"\nattn_to={attn_to}"
+        return f"\nattn_to={attn_tos}"
 
     def filter_by_date_range(self, date_range):
         sql = ""
-        if len(date_range) > 0:
-            if date_range[0] != "":
-                start_date = datetime.strptime(date_range[0], "%Y-%m-%d").replace(
-                    hour=0, minute=0
-                )
-                sql += f"\ndatetime>='{start_date}'"
-            if date_range[-1] != "":
-                end_date = datetime.strptime(
-                    date_range[len(date_range) - 1], "%Y-%m-%d"
-                ).replace(hour=23, minute=59)
-
-                if sql == "":
-                    sql += f"\ndatetime<='{end_date}'"
-                else:
-                    sql += f"\nAND datetime<='{end_date}'"
+        if date_range[0] is not None:
+            start_date = date_range[0].replace("Z", "+00:00")
+            sql += f"\ndatetime>='{start_date}'"
+        if date_range[-1] is not None:
+            end_date = date_range[-1].replace("Z", "+00:00")
+            if sql == "":
+                sql += f"\ndatetime<='{end_date}'"
+            else:
+                sql += f"\nAND datetime<='{end_date}'"
         return sql
 
     def filter_by_tags(self, tags):
-        if len(tags) >= 1:
-            sql_statement = f"\n'{tags[0]}'=ANY (tag_names)"
+        if type(tags) == list:
+            sql_statement = f"\n'{tags[0]}'=ANY (tag_ids)"
             for i in range(1, len(tags)):
-                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_names)"
+                sql_statement = sql_statement + f"\nAND '{tags[i]}'=ANY (tag_ids)"
             return sql_statement
-        return f"\n'{tags}'=ANY (tag_names)"
+        return f"\n'{tags}'=ANY (tag_ids)"
 
     def filter_by_flagged(self, flagged):
         print(flagged)
@@ -164,10 +162,10 @@ class LogRecordsService(ILogRecordsService):
             is_first_filter = True
 
             options = {
-                "building_id": self.filter_by_building_id,
-                "employee_id": self.filter_by_employee_id,
+                "buildings": self.filter_by_buildings,
+                "employees": self.filter_by_employees,
                 "residents": self.filter_by_residents,
-                "attn_to": self.filter_by_attn_to,
+                "attn_tos": self.filter_by_attn_tos,
                 "date_range": self.filter_by_date_range,
                 "tags": self.filter_by_tags,
                 "flagged": self.filter_by_flagged,
@@ -192,7 +190,7 @@ class LogRecordsService(ILogRecordsService):
 
     def join_tag_attributes(self):
         return "\nLEFT JOIN\n \
-                    (SELECT logs.log_id, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
+                    (SELECT logs.log_id, ARRAY_AGG(tags.tag_id) AS tag_ids, ARRAY_AGG(tags.name) AS tag_names FROM log_records logs\n \
                     JOIN log_record_tag lrt ON logs.log_id = lrt.log_record_id\n \
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \

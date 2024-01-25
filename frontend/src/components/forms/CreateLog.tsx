@@ -23,6 +23,8 @@ import {
   Text,
   ScaleFade,
   Textarea,
+  ModalCloseButton,
+  ModalFooter,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -31,16 +33,16 @@ import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
+import TagAPIClient from "../../APIClients/TagAPIClient";
 import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
-import { BuildingLabel } from "../../types/BuildingTypes";
-import selectStyle from "../../theme/forms/selectStyles";
+import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { UserLabel } from "../../types/UserTypes";
-import { ResidentLabel } from "../../types/ResidentTypes";
-import combineDateTime from "../../helper/combineDateTime";
+import { Resident } from "../../types/ResidentTypes";
+import { SelectLabel } from "../../types/SharedTypes";
+import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -98,16 +100,16 @@ const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
     AUTHENTICATED_USER_KEY,
   );
-  if (curUser && curUser.firstName && curUser.id) {
+  if (curUser) {
     const userId = curUser.id;
-    return { label: curUser.firstName, value: userId };
+    return { label: `${curUser.firstName} ${curUser.lastName}`, value: userId };
   }
   return { label: "", value: -1 };
 };
 
 const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
-  const [employee, setEmployee] = useState<UserLabel>(getCurUserSelectOption());
+  const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
     date.toLocaleTimeString([], {
@@ -118,14 +120,15 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   );
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<number[]>([]);
   const [attnTo, setAttnTo] = useState(-1);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
-  const [employeeOptions, setEmployeeOptions] = useState<UserLabel[]>([]);
-  const [residentOptions, setResidentOptions] = useState<UserLabel[]>([]);
-  const [buildingOptions, setBuildingOptions] = useState<BuildingLabel[]>([]);
+  const [employeeOptions, setEmployeeOptions] = useState<SelectLabel[]>([]);
+  const [residentOptions, setResidentOptions] = useState<SelectLabel[]>([]);
+  const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
+  const [tagOptions, setTagOptions] = useState<SelectLabel[]>([]);
 
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
@@ -171,9 +174,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleResidentsChange = (
-    selectedResidents: MultiValue<ResidentLabel>,
+    selectedResidents: MultiValue<SelectLabel>,
   ) => {
-    const mutableSelectedResidents: ResidentLabel[] = Array.from(
+    const mutableSelectedResidents: SelectLabel[] = Array.from(
       selectedResidents,
     );
     if (mutableSelectedResidents !== null) {
@@ -184,10 +187,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   };
 
   const handleTagsChange = (
-    selectedTags: MultiValue<{ label: string; value: string }>,
+    selectedTags: MultiValue<SelectLabel>,
   ) => {
-    const newTagsList = selectedTags.map((tag) => tag.value);
-    setTags(newTagsList);
+    const mutableSelectedTags: SelectLabel[] = Array.from(
+      selectedTags,
+    );
+    if (mutableSelectedTags !== null) {
+      setTags(mutableSelectedTags.map((tagLabel) => tagLabel.value));
+    }
   };
 
   const handleAttnToChange = (
@@ -206,12 +213,12 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setNotesError(inputValue === "");
   };
 
-  // fetch resident + employee data for log creation
+  // fetch resident + employee + tag data for log creation
   const getLogEntryOptions = async () => {
     const buildingsData = await BuildingAPIClient.getBuildings();
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
-      const buildingLabels: BuildingLabel[] = buildingsData.buildings.map(
+      const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
         (building) => ({ label: building.name!, value: building.id! }),
       );
       setBuildingOptions(buildingLabels);
@@ -223,7 +230,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
-      const residentLabels: ResidentLabel[] = residentsData.residents.map(
+      const residentLabels: SelectLabel[] = residentsData.residents.map(
         (r) => ({ label: r.residentId!, value: r.id! }),
       );
       setResidentOptions(residentLabels);
@@ -231,13 +238,23 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: UserLabel[] = usersData.users
+      const userLabels: SelectLabel[] = usersData.users
         .filter((user) => user.userStatus === "Active")
         .map((user) => ({
-          label: user.firstName,
+          label: `${user.firstName} ${user.lastName}`,
           value: user.id,
         }));
       setEmployeeOptions(userLabels);
+    }
+
+    const tagsData = await TagAPIClient.getTags({ returnAll: true });
+    if (tagsData && tagsData.tags.length !== 0) {
+      const tagLabels: SelectLabel[] = tagsData.tags
+        .map((tag) => ({
+          label: tag.name,
+          value: tag.tagId,
+        }));
+      setTagOptions(tagLabels);
     }
   };
 
@@ -247,13 +264,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     // reset all states
     setDate(new Date());
-    setTime(
-      new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      }),
-    );
+    setTime(getFormattedTime(new Date()));
     setBuildingId(-1);
     setResidents([]);
     setTags([]);
@@ -346,20 +357,21 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
       </Box>
 
       <Box>
-        <Modal isOpen={isCreateOpen} onClose={handleCreateClose} size="xl">
+        <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>New Log Entry Details</ModalHeader>
+            <ModalHeader>Add Log Record</ModalHeader>
+            <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />
               <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired>
                     <FormLabel>Employee</FormLabel>
-                    <Select
+                    <Input
                       isDisabled
-                      defaultValue={getCurUserSelectOption()}
-                      styles={selectStyle}
+                      defaultValue={employee.label}
+                      _hover={{ borderColor: "teal.100" }}
                     />
                   </FormControl>
                 </Col>
@@ -426,9 +438,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                   <FormControl mt={4}>
                     <FormLabel>Tags</FormLabel>
                     <Select
-                      // TODO: Integrate actual tags once implemented
-                      isDisabled
-                      options={TAGS}
+                      options={tagOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select Tags"
@@ -451,6 +461,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 </Col>
               </Row>
 
+              <Checkbox
+                colorScheme="teal"
+                style={{ paddingTop: "1rem" }}
+                onChange={() => setFlagged(!flagged)}
+              >
+                <Text>Flag this Report</Text>
+              </Checkbox>
+
               <Row>
                 <Col>
                   <FormControl isRequired isInvalid={notesError} mt={4}>
@@ -459,7 +477,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                       value={notes}
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
-                      resize="none"
+                      resize="vertical"
                     />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>
@@ -467,30 +485,12 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
                 </Col>
               </Row>
 
-              <Checkbox
-                colorScheme="gray"
-                style={{ paddingTop: "1rem" }}
-                onChange={() => setFlagged(!flagged)}
-                marginBottom="16px"
-              >
-                <Text>Flag this Report</Text>
-              </Checkbox>
-
-              <Divider />
-
-              <Box textAlign="right" marginTop="12px" marginBottom="12px">
-                <Button
-                  onClick={handleCreateClose}
-                  variant="tertiary"
-                  marginRight="8px"
-                >
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit} variant="primary" type="submit">
-                  Submit
-                </Button>
-              </Box>
             </ModalBody>
+            <ModalFooter>       
+              <Button onClick={handleSubmit} variant="primary" type="submit">
+                Submit
+              </Button>
+            </ModalFooter>   
           </ModalContent>
         </Modal>
       </Box>
