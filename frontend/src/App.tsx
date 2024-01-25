@@ -35,48 +35,38 @@ const App = (): React.ReactElement => {
 
   return (
     <ChakraProvider theme={customTheme}>
-          <AuthContext.Provider
-            value={{ authenticatedUser, setAuthenticatedUser }}
-          >
-            <Router>
-              <Switch>
-                <Route exact path={Routes.LOGIN_PAGE} component={LoginPage} />
-                <Route exact path={Routes.SIGNUP_PAGE} component={SignupPage} />
-                <PrivateRoute
-                  exact
-                  path={Routes.VERIFICATION_PAGE}
-                  component={Verification}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOME_PAGE}
-                  component={HomePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.RESIDENT_DIRECTORY_PAGE}
-                  component={ResidentDirectory}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.EMPLOYEE_DIRECTORY_PAGE}
-                  component={EmployeeDirectoryPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.SIGN_IN_LOGS_PAGE}
-                  component={SignInLogsPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.TAGS_PAGE}
-                  component={TagsPage}
-                />
+      <AuthContext.Provider value={{ authenticatedUser, setAuthenticatedUser }}>
+        <Router>
+          <Switch>
+            <Route exact path={Routes.LOGIN_PAGE} component={LoginPage} />
+            <Route exact path={Routes.SIGNUP_PAGE} component={SignupPage} />
+            <PrivateRoute
+              exact
+              path={Routes.VERIFICATION_PAGE}
+              component={Verification}
+            />
+            <PrivateRoute exact path={Routes.HOME_PAGE} component={HomePage} />
+            <PrivateRoute
+              exact
+              path={Routes.RESIDENT_DIRECTORY_PAGE}
+              component={ResidentDirectory}
+            />
+            <PrivateRoute
+              exact
+              path={Routes.EMPLOYEE_DIRECTORY_PAGE}
+              component={EmployeeDirectoryPage}
+            />
+            <PrivateRoute
+              exact
+              path={Routes.SIGN_IN_LOGS_PAGE}
+              component={SignInLogsPage}
+            />
+            <PrivateRoute exact path={Routes.TAGS_PAGE} component={TagsPage} />
 
-                <Route exact path="*" component={NotFound} />
-              </Switch>
-            </Router>
-          </AuthContext.Provider>
+            <Route exact path="*" component={NotFound} />
+          </Switch>
+        </Router>
+      </AuthContext.Provider>
     </ChakraProvider>
   );
 };

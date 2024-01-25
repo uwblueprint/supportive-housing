@@ -67,4 +67,4 @@ const convertLogsToCSV = (data: LogRecord[]): boolean => {
   }
 };
 
-export default convertLogsToCSV
+export default convertLogsToCSV;
