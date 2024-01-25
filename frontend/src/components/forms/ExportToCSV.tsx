@@ -28,9 +28,9 @@ import {
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import CSVConverter from "../../helper/CSVConverter";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
+import convertLogsToCSV from "../../helper/csvHelpers";
 
 const ExportToCSV = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
@@ -77,7 +77,7 @@ const ExportToCSV = (): React.ReactElement => {
       returnAll: true, // return all data
     });
 
-    setShowAlert(!data || !CSVConverter(data.logRecords));
+    setShowAlert(!data || !convertLogsToCSV(data.logRecords));
   };
 
   useEffect(() => {

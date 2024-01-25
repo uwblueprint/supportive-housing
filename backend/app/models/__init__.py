@@ -6,7 +6,6 @@ migrate = Migrate()
 
 
 def init_app(app):
-    from .entity import Entity
     from .user import User
     from .sign_in_logs import SignInLogs
     from .log_records import LogRecords

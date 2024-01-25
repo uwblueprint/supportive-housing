@@ -11,7 +11,6 @@ from ..resources.update_user_status_dto import UpdateUserStatusDTO
 from ..services.implementations.auth_service import AuthService
 from ..services.implementations.email_service import EmailService
 from ..services.implementations.user_service import UserService
-from ..utilities.csv_utils import generate_csv_from_list
 from ..utilities.exceptions.auth_exceptions import UserNotInvitedException
 from ..utilities.exceptions.duplicate_entity_exceptions import DuplicateUserException
 
