@@ -164,13 +164,13 @@ const ResidentDirectory = (): React.ReactElement => {
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
-          {authenticatedUser?.role === UserRole.ADMIN &&
+          {authenticatedUser?.role === UserRole.ADMIN && (
             <CreateResident
               getRecords={getResidents}
               setUserPageNum={setUserPageNum}
               countResidents={countResidents}
             />
-          }
+          )}
         </Flex>
 
         <ResidentDirectoryFilters

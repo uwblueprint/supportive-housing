@@ -102,17 +102,12 @@ To run the linter, use the following commands while the docker containers are ru
 
 Or, if you have yarn installed locally, running `yarn fix` *should* work as well.
 
-### Tests
-```
-cd e2e-tests
-python3 -m pytest --lang python --auth --fs
-```
 ## The Team
 ### Term 3 (F23):
 **Project Lead:** Connor Bechthold<br>
 **Product Managers:** Zafir Raeid<br>
 **Developers:** Aathithan Chandrabalan, Daniel Kim, Kelly Pham, Kevin Pierce, Owen Sellner, Braydon Wang, Carolyn Zhang<br>
-**Designers:** TBD<br>
+**Designers:** Amanda Yu<br>
 
 ### Term 2 (S23):
 **Project Lead:** Safwaan Chowdhury<br>
