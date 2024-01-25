@@ -34,6 +34,7 @@ import UserAPIClient from "../../../APIClients/UserAPIClient";
 import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { SelectLabel } from "../../../types/SharedTypes";
+import { UserRole } from "../../../types/UserTypes";
 
 type Props = {
   logRecords: LogRecord[];
@@ -247,7 +248,7 @@ const LogRecordsTable = ({
                         {formatList(record.tags)}
                       </Td>
                       <Td width="5%">
-                        {authenticatedUser?.role === "Admin" ||
+                        {authenticatedUser?.role === UserRole.ADMIN ||
                         authenticatedUser?.id === record.employee.id ? (
                           <Menu>
                             <MenuButton

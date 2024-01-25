@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Box, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 import ResidentDirectoryTable from "./ResidentDirectoryTable";
 import NavigationBar from "../../common/NavigationBar";
@@ -10,9 +10,12 @@ import CreateResident from "../../forms/CreateResident";
 import ResidentDirectoryFilters from "./ResidentDirectoryFilters";
 import { SelectLabel } from "../../../types/SharedTypes";
 import { convertToString } from "../../../helper/dateHelpers";
+import AuthContext from "../../../contexts/AuthContext";
+import { UserRole } from "../../../types/UserTypes";
 
 const ResidentDirectory = (): React.ReactElement => {
   const [residents, setResidents] = useState<Resident[]>([]);
+  const { authenticatedUser } = useContext(AuthContext);
 
   // Pagination
   const [numResidents, setNumResidents] = useState<number>(0);
@@ -161,11 +164,13 @@ const ResidentDirectory = (): React.ReactElement => {
         <Flex marginBottom="16px" justify="space-between">
           <Box textStyle="hero-table">Resident Directory</Box>
           <Spacer />
-          <CreateResident
-            getRecords={getResidents}
-            setUserPageNum={setUserPageNum}
-            countResidents={countResidents}
-          />
+          {authenticatedUser?.role === UserRole.ADMIN &&
+            <CreateResident
+              getRecords={getResidents}
+              setUserPageNum={setUserPageNum}
+              countResidents={countResidents}
+            />
+          }
         </Flex>
 
         <ResidentDirectoryFilters

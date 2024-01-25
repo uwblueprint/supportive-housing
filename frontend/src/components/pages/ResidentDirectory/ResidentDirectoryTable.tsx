@@ -24,6 +24,7 @@ import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { convertToDate } from "../../../helper/dateHelpers";
 import { SelectLabel } from "../../../types/SharedTypes";
+import { UserRole } from "../../../types/UserTypes";
 
 type Props = {
   buildingOptions: SelectLabel[];
@@ -190,7 +191,7 @@ const ResidentDirectoryTable = ({
                   <Td width="20%">{startDate.date}</Td>
                   <Td width="15%">{endDate ? endDate.date : ""}</Td>
                   <Td width="5%">
-                    {authenticatedUser?.role === "Admin" && (
+                    {authenticatedUser?.role === UserRole.ADMIN && (
                       <Menu>
                         <MenuButton
                           as={IconButton}
