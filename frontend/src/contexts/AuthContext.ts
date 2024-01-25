@@ -8,8 +8,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType>({
   authenticatedUser: null,
-  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   setAuthenticatedUser: (
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     _authenticatedUser: AuthenticatedUser | null,
   ): void => {},
 });

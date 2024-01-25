@@ -29,9 +29,6 @@ import {
 import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
-import { AuthenticatedUser } from "../../types/AuthTypes";
-import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
-import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
@@ -49,7 +46,6 @@ type Props = {
   tagOptions: SelectLabel[];
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
-  setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
   buildingOptions: SelectLabel[];
 };
 
@@ -87,9 +83,8 @@ const EditLog = ({
   tagOptions,
   getRecords,
   countRecords,
-  setUserPageNum,
   buildingOptions,
-}: Props) => {
+}: Props): React.ReactElement => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
 
   const [date, setDate] = useState(new Date());
@@ -102,8 +97,6 @@ const EditLog = ({
   const [flagged, setFlagged] = useState(false);
 
   // error states for non-nullable inputs
-  const [employeeError, setEmployeeError] = useState(false);
-  const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
   const [residentError, setResidentError] = useState(false);
@@ -200,8 +193,6 @@ const EditLog = ({
     setFlagged(logRecord.flagged);
 
     // error states for non-nullable inputs
-    setEmployeeError(false);
-    setDateError(false);
     setTimeError(false);
     setBuildingError(false);
     setResidentError(false);
@@ -210,7 +201,6 @@ const EditLog = ({
 
   const handleSubmit = async () => {
     // Update error states
-    setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
     setResidentError(residents.length === 0);
@@ -254,6 +244,7 @@ const EditLog = ({
     if (isOpen) {
       initializeValues();
     }
+  /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [isOpen]);
 
   useEffect(() => {

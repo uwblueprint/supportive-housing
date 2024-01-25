@@ -3,7 +3,6 @@ import { Redirect } from "react-router-dom";
 import {
   Box,
   Button,
-  Center,
   Flex,
   Input,
   Spinner,
@@ -14,7 +13,6 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
-import { AuthenticatedUser } from "../../types/AuthTypes";
 import CreateToast from "../common/Toasts";
 import { isErrorResponse } from "../../helper/error";
 
@@ -28,6 +26,7 @@ type TwoFaProps = {
 const TwoFa = ({
   email,
   password,
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   token,
   toggle,
 }: TwoFaProps): React.ReactElement => {

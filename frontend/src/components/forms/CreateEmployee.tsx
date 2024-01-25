@@ -21,7 +21,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import { INVITE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import { isErrorResponse } from "../../helper/error";

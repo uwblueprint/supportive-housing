@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Button, Flex, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import CreateToast from "../common/Toasts";
 import AuthContext from "../../contexts/AuthContext";

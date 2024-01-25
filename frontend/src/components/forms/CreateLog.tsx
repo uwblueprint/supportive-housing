@@ -40,7 +40,6 @@ import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { Resident } from "../../types/ResidentTypes";
 import { SelectLabel } from "../../types/SharedTypes";
 import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 
@@ -76,25 +75,6 @@ const ALERT_DATA: AlertDataOptions = {
   },
 };
 
-// Replace this with the tags from the db once the API and table are made
-const TAGS = [
-  { label: "Tag A", value: "A" },
-  { label: "Tag B", value: "B" },
-  { label: "Tag C", value: "C" },
-];
-
-// Changes the border of the Select components if the input is invalid
-function getBorderStyle(state: any, error: boolean): string {
-  if (state.isFocused) {
-    return "2px solid #3182ce";
-  }
-  if (error) {
-    return "2px solid #e53e3e";
-  }
-
-  return "1px solid #cbd5e0";
-}
-
 // Helper to get the currently logged in user
 const getCurUserSelectOption = () => {
   const curUser: AuthenticatedUser | null = getLocalStorageObj(
@@ -107,8 +87,9 @@ const getCurUserSelectOption = () => {
   return { label: "", value: -1 };
 };
 
-const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
+const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.ReactElement => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState(
@@ -133,8 +114,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
   // error states for non-nullable inputs
-  const [employeeError, setEmployeeError] = useState(false);
-  const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
   const [residentError, setResidentError] = useState(false);
@@ -219,7 +198,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
       const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
+        (building) => ({ label: building.name, value: building.id }),
       );
       setBuildingOptions(buildingLabels);
     }
@@ -231,7 +210,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     if (residentsData && residentsData.residents.length !== 0) {
       // TODO: Remove the type assertions here
       const residentLabels: SelectLabel[] = residentsData.residents.map(
-        (r) => ({ label: r.residentId!, value: r.id! }),
+        (r) => ({ label: r.residentId, value: r.id }),
       );
       setResidentOptions(residentLabels);
     }
@@ -272,8 +251,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
     setNotes("");
 
     // reset all error states
-    setEmployeeError(false);
-    setDateError(false);
     setTimeError(false);
     setBuildingError(false);
     setResidentError(false);
@@ -289,8 +266,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props) => {
 
   const handleSubmit = async () => {
     // Update error states
-    setEmployeeError(!employee.label);
-    setDateError(date === null);
     setTimeError(time === "");
     setBuildingError(buildingId === -1);
     setResidentError(residents.length === 0);

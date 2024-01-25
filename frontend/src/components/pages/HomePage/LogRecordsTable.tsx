@@ -79,7 +79,7 @@ const LogRecordsTable = ({
   countRecords,
   setUserPageNum,
 }: Props): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser } = useContext(AuthContext);
 
   const [showAlert, setShowAlert] = useState(false);
 
@@ -135,8 +135,8 @@ const LogRecordsTable = ({
       // TODO: Remove the type assertions here
       const residentLabels: SelectLabel[] = residentsData.residents.map(
         (r) => ({
-          label: r.residentId!,
-          value: r.id!,
+          label: r.residentId,
+          value: r.id,
         }),
       );
       setResidentOptions(residentLabels);
@@ -146,7 +146,7 @@ const LogRecordsTable = ({
 
     if (buildingsData && buildingsData.buildings.length !== 0) {
       const buildingLabels: SelectLabel[] = buildingsData.buildings.map(
-        (building) => ({ label: building.name!, value: building.id! }),
+        (building) => ({ label: building.name, value: building.id }),
       );
       setBuildingOptions(buildingLabels);
     }
@@ -298,7 +298,6 @@ const LogRecordsTable = ({
                       tagOptions={tagOptions}
                       getRecords={getRecords}
                       countRecords={countRecords}
-                      setUserPageNum={setUserPageNum}
                       buildingOptions={buildingOptions}
                     />
 

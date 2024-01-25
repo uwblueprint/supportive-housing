@@ -1,7 +1,6 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import {
-  Resident,
   GetResidentsReponse,
   CountResidentsResponse,
   CreateResidentParams,
@@ -99,7 +98,7 @@ const createResident = async ({
     );
     return true;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
@@ -122,8 +121,8 @@ const deleteResident = async (residentId: number): Promise<number> => {
       headers: { Authorization: bearerToken },
     });
     return 200;
-  } catch (error: any) {
-    const axiosErr = (error as any) as AxiosError;
+  } catch (error) {
+    const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       return axiosErr.response.status;
     }
@@ -151,7 +150,7 @@ const editResident = async ({
     );
     return true;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {

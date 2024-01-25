@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Login from "../../forms/Login";
 import TwoFa from "../../auth/TwoFa";
+import Login from "../../forms/Login";
 
 const LoginPage = (): React.ReactElement => {
   const [email, setEmail] = useState("");

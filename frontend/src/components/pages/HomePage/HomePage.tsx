@@ -158,6 +158,7 @@ const HomePage = (): React.ReactElement => {
   useEffect(() => {
     setUserPageNum(1);
     getLogRecords(1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [
     buildings,
     employees,
@@ -173,6 +174,7 @@ const HomePage = (): React.ReactElement => {
 
   useEffect(() => {
     countLogRecords();
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [
     buildings,
     employees,

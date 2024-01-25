@@ -51,6 +51,7 @@ const TagsPage = (): React.ReactElement => {
   useEffect(() => {
     setUserPageNum(1);
     getTags(1);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [resultsPerPage]);
 
   useEffect(() => {

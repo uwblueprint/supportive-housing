@@ -169,10 +169,9 @@ const ResidentDirectoryTable = ({
           <Tbody>
             {residents.map((resident) => {
               const { startDate, endDate } = getFormattedDates(resident);
-              // TODO: Remove non-null assertion from residentId
               return (
                 <Tr key={resident.id} style={{ verticalAlign: "middle" }}>
-                  <Td width="10%">{resident.residentId!}</Td>
+                  <Td width="10%">{resident.residentId}</Td>
                   <Td
                     width="25%"
                     textStyle="user-status-label"

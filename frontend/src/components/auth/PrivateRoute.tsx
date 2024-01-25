@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Route, Redirect, useLocation } from "react-router-dom";
 import AuthContext from "../../contexts/AuthContext";
 import {
@@ -44,9 +44,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   ) {
     return <Redirect to={HOME_PAGE} />;
   }
-
-  console.log(path, currentPath);
-
   return <Route path={path} exact={exact} component={component} />;
 };
 

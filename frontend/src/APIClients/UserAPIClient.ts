@@ -8,6 +8,7 @@ import {
   UpdateUserParams,
   UserStatus,
   GetUserStatusResponse,
+  GetUserParams,
 } from "../types/UserTypes";
 import { ErrorResponse } from "../types/ErrorTypes";
 
@@ -15,7 +16,7 @@ const getUsers = async ({
   returnAll = false,
   pageNumber = 1,
   resultsPerPage = 10,
-}): Promise<GetUsersResponse> => {
+}: GetUserParams): Promise<GetUsersResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
       AUTHENTICATED_USER_KEY,
@@ -72,8 +73,8 @@ const updateUser = async ({
       },
     );
     return res.status;
-  } catch (error: any) {
-    const axiosErr = (error as any) as AxiosError;
+  } catch (error) {
+    const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       return axiosErr.response.status;
     }
@@ -98,8 +99,8 @@ const updateUserStatus = async (
       },
     );
     return res.status;
-  } catch (error: any) {
-    const axiosErr = (error as any) as AxiosError;
+  } catch (error) {
+    const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       return axiosErr.response.status;
     }
@@ -117,8 +118,8 @@ const deleteUser = async (userId: number): Promise<number> => {
       headers: { Authorization: bearerToken },
     });
     return res.status;
-  } catch (error: any) {
-    const axiosErr = (error as any) as AxiosError;
+  } catch (error) {
+    const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       return axiosErr.response.status;
     }
@@ -144,7 +145,7 @@ const inviteUser = async (
     );
     return true;
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 409) {
       return {
@@ -182,7 +183,7 @@ const getUserStatus = async (
         "This email address has not been invited. Please try again with a different email.",
     };
   } catch (error) {
-    const axiosErr = (error as any) as AxiosError;
+    const axiosErr = error as AxiosError;
 
     if (axiosErr.response && axiosErr.response.status === 403) {
       return {
