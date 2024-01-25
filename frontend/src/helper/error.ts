@@ -1,5 +1,9 @@
 import { AxiosError } from "axios";
-import { AuthTokenResponse, AuthFlow } from "../types/AuthTypes";
+import {
+  AuthTokenResponse,
+  AuthFlow,
+  AuthenticatedUser,
+} from "../types/AuthTypes";
 import { AuthErrorResponse, ErrorResponse } from "../types/ErrorTypes";
 
 export const getAuthErrMessage = (
@@ -21,7 +25,7 @@ export const isAuthErrorResponse = (
 };
 
 export const isErrorResponse = (
-  res: boolean | string | ErrorResponse,
+  res: boolean | string | AuthenticatedUser | ErrorResponse,
 ): res is ErrorResponse => {
   return (
     typeof res !== "boolean" && typeof res !== "string" && "errMessage" in res

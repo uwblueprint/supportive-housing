@@ -1,45 +1,66 @@
 import React, { useContext, useState, useRef } from "react";
 import { Redirect } from "react-router-dom";
-import { Box, Button, Flex, Input, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Input,
+  Spinner,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
+import CreateToast from "../common/Toasts";
+import { isErrorResponse } from "../../helper/error";
 
-type AuthyProps = {
+type TwoFaProps = {
   email: string;
   password: string;
   token: string;
   toggle: boolean;
 };
 
-const Authy = ({
+const TwoFa = ({
   email,
   password,
   token,
   toggle,
-}: AuthyProps): React.ReactElement => {
+}: TwoFaProps): React.ReactElement => {
+  const newToast = CreateToast();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const [error, setError] = useState("");
   const [authCode, setAuthCode] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onAuthySubmit = async () => {
-    let authUser: AuthenticatedUser | null;
+  const twoFaSubmit = async () => {
+    // Uncomment this if Google/Outlook sign in is ever needed
+    // authUser = await authAPIClient.twoFaWithGoogle(authCode, token);
 
-    if (token) {
-      authUser = await authAPIClient.twoFaWithGoogle(authCode, token);
-    } else {
-      authUser = await authAPIClient.twoFa(authCode, email, password);
+    if (authCode.length < 6) {
+      newToast(
+        "Authentication Failed",
+        "Please enter a 6 digit authentication code.",
+        "error",
+      );
+      return;
     }
 
-    if (authUser) {
+    setIsLoading(true);
+    const authUser = await authAPIClient.twoFa(authCode, email, password);
+
+    if (isErrorResponse(authUser)) {
+      setIsLoading(false);
+      newToast("Authentication Failed", authUser.errMessage, "error");
+    } else {
       localStorage.setItem(AUTHENTICATED_USER_KEY, JSON.stringify(authUser));
       setAuthenticatedUser(authUser);
-    } else {
-      setError("Error: Invalid token");
     }
   };
 
@@ -76,8 +97,8 @@ const Authy = ({
             <VStack width="75%" align="flex-start" gap="3vh">
               <Text variant="login">One last step!</Text>
               <Text variant="loginSecondary">
-                In order to protect your account, please enter the authorization
-                code from the Twilio Authy application.
+                In order to protect your account, please enter the 6 digit
+                authentication code from the Authenticator extension.
               </Text>
               <Flex direction="row" width="100%" justifyContent="space-between">
                 {boxIndexes.map((boxIndex) => {
@@ -98,17 +119,30 @@ const Authy = ({
                   );
                 })}
               </Flex>
-              <Button
-                variant="login"
-                disabled={authCode.length < 6}
-                _hover={{
-                  background: "teal.500",
-                  transition:
-                    "transition: background-color 0.5s ease !important",
-                }}
-              >
-                Authenticate
-              </Button>
+              {isLoading ? (
+                <Flex width="100%">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    size="lg"
+                    margin="0 auto"
+                    textAlign="center"
+                  />{" "}
+                </Flex>
+              ) : (
+                <Button
+                  variant="login"
+                  _hover={{
+                    background: "teal.500",
+                    transition:
+                      "transition: background-color 0.5s ease !important",
+                  }}
+                  onClick={twoFaSubmit}
+                >
+                  Authenticate
+                </Button>
+              )}
               <Input
                 ref={inputRef}
                 autoFocus
@@ -126,4 +160,4 @@ const Authy = ({
   return <></>;
 };
 
-export default Authy;
+export default TwoFa;

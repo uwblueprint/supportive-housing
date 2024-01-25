@@ -7,7 +7,7 @@ import { AxiosError } from "axios";
 import { getAuthErrMessage } from "../helper/error";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
-import { AuthErrorResponse } from "../types/ErrorTypes";
+import { AuthErrorResponse, ErrorResponse } from "../types/ErrorTypes";
 import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
@@ -44,16 +44,25 @@ const twoFa = async (
   passcode: string,
   email: string,
   password: string,
-): Promise<AuthenticatedUser | null> => {
+): Promise<AuthenticatedUser | ErrorResponse> => {
   try {
-    const { data } = await baseAPIClient.post(
+    const { data } = await baseAPIClient.post<AuthenticatedUser>(
       `/auth/twoFa?passcode=${passcode}`,
       { email, password },
       { withCredentials: true },
     );
     return data;
   } catch (error) {
-    return null;
+    const axiosErr = (error as any) as AxiosError;
+    if (axiosErr.response && axiosErr.response.status === 401) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ?? "Invalid passcode. Please try again.",
+      };
+    }
+    return {
+      errMessage: "Unable to authenticate. Please try again.",
+    };
   }
 };
 
