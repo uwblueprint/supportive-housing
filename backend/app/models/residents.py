@@ -28,7 +28,7 @@ class Residents(db.Model):
         db.CheckConstraint(
             "date_left IS NULL OR date_left > date_joined", name="check_date_left_valid"
         ),
-        db.UniqueConstraint('initial', 'room_num'),
+        db.UniqueConstraint("initial", "room_num"),
     )
 
     def to_dict(self, include_relationships=False):

@@ -9,7 +9,7 @@ import {
   Flex,
   Box,
   Text,
-  Input
+  Input,
 } from "@chakra-ui/react";
 
 import {
@@ -42,14 +42,14 @@ const Pagination = ({
   const numPages = Math.ceil(Math.max(1, numRecords) / resultsPerPage);
 
   const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value as string
+    const input = e.target.value as string;
 
     if (input === "") {
-      setUserPageNum(NaN)
-      return
+      setUserPageNum(NaN);
+      return;
     }
 
-    const numericInput = input.replace(/[^0-9]/g, '');
+    const numericInput = input.replace(/[^0-9]/g, "");
 
     if (numericInput !== "") {
       const newUserPageNum = Number(numericInput);
