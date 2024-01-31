@@ -48,7 +48,10 @@ jobs:
           heroku config:set MAILER_REFRESH_TOKEN="${{ secrets.MAILER_REFRESH_TOKEN }}" -a $HEROKU_APP_NAME && \
           heroku config:set PREVIEW_DEPLOY=true -a $HEROKU_APP_NAME && \
           heroku config:set FLASK_CONFIG="${{ secrets.FLASK_CONFIG }}" -a $HEROKU_APP_NAME && \
-          heroku config:set FLASK_APP=app -a $HEROKU_APP_NAME
+          heroku config:set FLASK_APP=app -a $HEROKU_APP_NAME && \
+          heroku config:set CREATE_SIGN_IN_LOG="${{ secrets.CREATE_SIGN_IN_LOG }}" -a $HEROKU_APP_NAME && \
+          heroku config:set TWO_FA_ENABLED="${{ secrets.TWO_FA_ENABLED }}" -a $HEROKU_APP_NAME && \
+          heroku config:set TWO_FA_SECRET="${{ secrets.TWO_FA_SECRET }}" -a $HEROKU_APP_NAME
         env:
           HEROKU_APP_NAME: "${{ secrets.HEROKU_APP_NAME }}"
       - name: Push to Heroku
