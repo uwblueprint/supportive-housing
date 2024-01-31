@@ -5,12 +5,11 @@ import {
   MenuList,
   MenuItem,
   Button,
-  NumberInput,
-  NumberInputField,
   IconButton,
   Flex,
   Box,
   Text,
+  Input
 } from "@chakra-ui/react";
 
 import {
@@ -42,14 +41,23 @@ const Pagination = ({
 }: Props): React.ReactElement => {
   const numPages = Math.ceil(Math.max(1, numRecords) / resultsPerPage);
 
-  const handleNumberInputChange = (
-    newUserPageNumString: string,
-    newUserPageNum: number,
-  ) => {
-    if (newUserPageNum < 1 || newUserPageNum > numPages) {
-      return;
+  const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value as string
+
+    if (input === "") {
+      setUserPageNum(NaN)
+      return
     }
-    setUserPageNum(newUserPageNum);
+
+    const numericInput = input.replace(/[^0-9]/g, '');
+
+    if (numericInput !== "") {
+      const newUserPageNum = Number(numericInput);
+      if (newUserPageNum < 1 || newUserPageNum > numPages) {
+        return;
+      }
+      setUserPageNum(newUserPageNum);
+    }
   };
 
   // Only fetch records if a valid page num is present AND the page num has changed
@@ -106,19 +114,17 @@ const Pagination = ({
               width="210px"
             >
               <Text>Page</Text>
-              <NumberInput
+              <Input
                 maxW="60px"
                 value={!Number.isNaN(userPageNum) ? userPageNum : ""}
                 max={numPages}
                 size="sm"
                 onChange={handleNumberInputChange}
                 onBlur={() => handleBlur()}
-              >
-                <NumberInputField
-                  fontWeight="700"
-                  onKeyUp={(e) => handleKeyUp(e)}
-                />
-              </NumberInput>
+                fontWeight="700"
+                color="gray.750"
+                onKeyUp={(e) => handleKeyUp(e)}
+              />
               <Text>of {numPages}</Text>
             </Flex>
             <IconButton

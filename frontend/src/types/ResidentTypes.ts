@@ -7,7 +7,7 @@ export type Resident = {
   id: number;
   residentId: string;
   initial: string;
-  roomNum: number;
+  roomNum: string;
   dateJoined: string;
   dateLeft?: string;
   building: BuildingRecord;

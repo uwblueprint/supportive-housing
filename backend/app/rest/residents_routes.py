@@ -22,7 +22,7 @@ def add_resident():
         )
 
     # Check for the existence of a resident prior to adding them
-    fmt_resident_id = resident.get("initial") + str(resident.get("room_num"))
+    fmt_resident_id = resident.get("initial") + resident.get("room_num")
     try:
         existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
         if existing_resident:
@@ -62,9 +62,7 @@ def update_resident(resident_id):
         )
 
     # Check for the existence of a resident prior to adding them
-    fmt_resident_id = updated_resident.get("initial") + str(
-        updated_resident.get("room_num")
-    )
+    fmt_resident_id = updated_resident.get("initial") + updated_resident.get("room_num")
     try:
         existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
         if existing_resident and existing_resident["id"] != resident_id:

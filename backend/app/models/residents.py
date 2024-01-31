@@ -7,7 +7,7 @@ class Residents(db.Model):
     __tablename__ = "residents"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     initial = db.Column(db.String, nullable=False)
-    room_num = db.Column(db.Integer, nullable=False)
+    room_num = db.Column(db.String, nullable=False)
     date_joined = db.Column(db.Date, nullable=False)
     date_left = db.Column(db.Date, nullable=True)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
@@ -22,12 +22,13 @@ class Residents(db.Model):
         "LogRecords", secondary="log_record_residents", back_populates="residents"
     )
 
-    resident_id = db.column_property(initial + cast(room_num, String))
+    resident_id = db.column_property(initial + room_num)
 
     __table_args__ = (
         db.CheckConstraint(
             "date_left IS NULL OR date_left > date_joined", name="check_date_left_valid"
         ),
+        db.UniqueConstraint('initial', 'room_num'),
     )
 
     def to_dict(self, include_relationships=False):

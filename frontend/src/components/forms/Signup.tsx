@@ -180,6 +180,7 @@ const Signup = ({
         setIsLoading(false);
       } else {
         const { requiresTwoFa, authUser } = registerResponse;
+        console.log(requiresTwoFa, authUser)
         if (requiresTwoFa) {
           setToggle(!toggle);
         } else {
