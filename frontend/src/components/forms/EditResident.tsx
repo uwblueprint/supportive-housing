@@ -50,7 +50,7 @@ const EditResident = ({
   getRecords,
 }: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
-  const [roomNumber, setRoomNumber] = useState(-1);
+  const [roomNumber, setRoomNumber] = useState("");
   const [moveInDate, setMoveInDate] = useState(new Date());
   const [buildingId, setBuildingId] = useState<number>(resident.building.id);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
@@ -102,7 +102,7 @@ const EditResident = ({
   const handleRoomNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
-      setRoomNumber(parseInt(inputValue, 10));
+      setRoomNumber(inputValue);
       setRoomNumberError(false);
     }
   };

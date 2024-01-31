@@ -15,7 +15,7 @@ class IResidentsService(ABC):
         :param initial: initial of resident
         :type initial: string
         :param room_num: room number which the resident resides in
-        :type room_num: int
+        :type room_num: string
         :param date_joined: the date the resident joined
         :type date_joined: date
         :param date_left: the date the resident left, if exists

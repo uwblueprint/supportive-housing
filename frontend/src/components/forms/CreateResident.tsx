@@ -65,7 +65,7 @@ const CreateResident = ({
   const addResident = async () => {
     const res = await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
-      roomNum: parseInt(roomNumber, 10),
+      roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
       buildingId,
     });

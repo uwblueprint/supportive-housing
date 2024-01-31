@@ -167,7 +167,7 @@ def register():
 
         response = {"requires_two_fa": False, "auth_user": None}
 
-        if os.getenv("TWILIO_ENABLED") == "True" and auth_dto.role == "Relief Staff":
+        if os.getenv("TWO_FA_ENABLED") == "True" and auth_dto.role == "Relief Staff":
             response["requires_two_fa"] = True
             return jsonify(response), 200
 
