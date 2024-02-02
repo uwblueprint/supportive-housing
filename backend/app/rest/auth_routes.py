@@ -4,7 +4,11 @@ from ..utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
 )
-from ..utilities.exceptions.auth_exceptions import EmailAlreadyInUseException
+from ..utilities.exceptions.auth_exceptions import (
+    EmailAlreadyInUseException,
+    UserNotFoundException,
+    UserNotActiveException
+)
 
 from flask import Blueprint, current_app, jsonify, request
 
@@ -235,7 +239,6 @@ def logout(user_id):
 @blueprint.route(
     "/resetPassword/<string:email>", methods=["POST"], strict_slashes=False
 )
-@require_authorization_by_email("email")
 def reset_password(email):
     """
     Triggers password reset for user with specified email (reset link will be emailed)
@@ -243,6 +246,12 @@ def reset_password(email):
     try:
         auth_service.reset_password(email)
         return "", 204
+    except UserNotFoundException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 404
+    except UserNotActiveException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 403
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500

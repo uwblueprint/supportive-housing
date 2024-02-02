@@ -4,6 +4,10 @@ from ...utilities.exceptions.firebase_exceptions import (
     InvalidPasswordException,
     TooManyLoginAttemptsException,
 )
+from ...utilities.exceptions.auth_exceptions import (
+    UserNotActiveException,
+    UserNotFoundException
+)
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO
 from ...resources.create_user_dto import CreateUserDTO
@@ -127,6 +131,11 @@ class AuthService(IAuthService):
             raise Exception(error_message)
 
         try:
+            # verify the user exists and is Active
+            user = self.user_service.get_user_by_email(email)
+            if user.user_status != "Active":
+                raise UserNotActiveException
+
             reset_link = firebase_admin.auth.generate_password_reset_link(email)
             email_body = """
                 Hello,
@@ -140,6 +149,22 @@ class AuthService(IAuthService):
                 reset_link=reset_link
             )
             self.email_service.send_email(email, "Your Password Reset Link", email_body)
+        except UserNotFoundException as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to send password reset link for {email}. Reason = {reason}".format(
+                    email=email, reason=(reason if reason else str(e))
+                )
+            )
+            raise e
+        except UserNotActiveException as e:
+            reason = getattr(e, "message", None)
+            self.logger.error(
+                "Failed to send password reset link for {email}. Reason = {reason}".format(
+                    email=email, reason=(reason if reason else str(e))
+                )
+            )
+            raise e
         except Exception as e:
             reason = getattr(e, "message", None)
             self.logger.error(

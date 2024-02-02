@@ -4,6 +4,8 @@ export const LOGIN_PAGE = "/login";
 
 export const SIGNUP_PAGE = "/signup";
 
+export const RESET_PASSWORD_PAGE = "/reset-password";
+
 export const VERIFICATION_PAGE = "/verification";
 
 export const RESIDENT_DIRECTORY_PAGE = "/resident-directory";

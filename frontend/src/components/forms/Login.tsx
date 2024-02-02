@@ -12,7 +12,7 @@ import {
 import { useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { SIGNUP_PAGE } from "../../constants/Routes";
+import { RESET_PASSWORD_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { isAuthErrorResponse, isErrorResponse } from "../../helper/error";
 import UserAPIClient from "../../APIClients/UserAPIClient";
@@ -148,10 +148,6 @@ const Login = ({
     }
   };
 
-  const onSignUpClick = () => {
-    history.push(SIGNUP_PAGE);
-  };
-
   if (toggle) {
     return (
       <Flex h="100vh">
@@ -202,15 +198,11 @@ const Login = ({
               ) : (
                 <Button
                   variant="login"
-                  _hover={
-                    email && password
-                      ? {
-                          background: "teal.500",
-                          transition:
-                            "transition: background-color 0.5s ease !important",
-                        }
-                      : {}
-                  }
+                  _hover={{
+                    background: "teal.500",
+                    transition:
+                      "transition: background-color 0.5s ease !important",
+                  }}
                   onClick={onLoginClick}
                 >
                   Log In
@@ -219,11 +211,18 @@ const Login = ({
             </Box>
             <Box w="80%">
               <Flex gap="10px">
-                <Text variant="loginSecondary" paddingRight="17px">
+                <Text variant="loginSecondary">
                   Not a member yet?
                 </Text>
-                <Text variant="loginTertiary" onClick={onSignUpClick}>
+                <Text variant="loginTertiary" onClick={() => history.push(SIGNUP_PAGE)}>
                   Sign Up Now
+                </Text>
+              </Flex>
+            </Box>
+            <Box w="80%">
+              <Flex gap="10px">
+                <Text variant="loginTertiary" onClick={() => history.push(RESET_PASSWORD_PAGE)}>
+                  Forgot your password?
                 </Text>
               </Flex>
             </Box>

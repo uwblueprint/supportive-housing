@@ -7,7 +7,6 @@ import { ChakraProvider } from "@chakra-ui/react";
 import LoginPage from "./components/pages/Auth/LoginPage";
 import SignupPage from "./components/pages/Auth/SignupPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
-import Verification from "./components/auth/Verification";
 import HomePage from "./components/pages/HomePage/HomePage";
 import NotFound from "./components/pages/Errors/NotFound";
 import * as Routes from "./constants/Routes";
@@ -22,6 +21,8 @@ import customTheme from "./theme";
 import EmployeeDirectoryPage from "./components/pages/AdminControls/EmployeeDirectory";
 import SignInLogsPage from "./components/pages/AdminControls/SignInLogs";
 import TagsPage from "./components/pages/AdminControls/Tags";
+import VerificationPage from "./components/pages/Auth/VerificationPage";
+import ResetPasswordPage from "./components/pages/Auth/ResetPasswordPage";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(
@@ -40,10 +41,11 @@ const App = (): React.ReactElement => {
           <Switch>
             <Route exact path={Routes.LOGIN_PAGE} component={LoginPage} />
             <Route exact path={Routes.SIGNUP_PAGE} component={SignupPage} />
+            <Route exact path={Routes.RESET_PASSWORD_PAGE} component={ResetPasswordPage} />
             <PrivateRoute
               exact
               path={Routes.VERIFICATION_PAGE}
-              component={Verification}
+              component={VerificationPage}
             />
             <PrivateRoute exact path={Routes.HOME_PAGE} component={HomePage} />
             <PrivateRoute

@@ -6,6 +6,7 @@ from ...models import db
 from ...resources.user_dto import UserDTO
 from ...utilities.exceptions.auth_exceptions import (
     UserNotInvitedException,
+    UserNotFoundException,
     EmailAlreadyInUseException,
 )
 from ...utilities.exceptions.duplicate_entity_exceptions import DuplicateUserException
@@ -53,11 +54,7 @@ class UserService(IUserService):
             user = User.query.filter_by(auth_id=firebase_user.uid).first()
 
             if not user:
-                raise Exception(
-                    "user with auth_id {auth_id} not found".format(
-                        auth_id=firebase_user.uid
-                    )
-                )
+                raise UserNotFoundException
 
             user_dict = UserService.__user_to_dict_and_remove_auth_id(user)
             user_dict["email"] = firebase_user.email
@@ -70,7 +67,7 @@ class UserService(IUserService):
                     reason=(reason if reason else str(e))
                 )
             )
-            raise e
+            raise UserNotFoundException
 
     def get_user_role_by_auth_id(self, auth_id):
         try:
