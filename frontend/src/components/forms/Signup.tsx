@@ -286,10 +286,11 @@ const Signup = ({
             </Box>
             <Box w="80%">
               <Flex gap="10px">
-                <Text variant="loginSecondary">
-                  Already have an account?
-                </Text>
-                <Text variant="loginTertiary" onClick={() => history.push(LOGIN_PAGE)}>
+                <Text variant="loginSecondary">Already have an account?</Text>
+                <Text
+                  variant="loginTertiary"
+                  onClick={() => history.push(LOGIN_PAGE)}
+                >
                   Log In Now
                 </Text>
               </Flex>

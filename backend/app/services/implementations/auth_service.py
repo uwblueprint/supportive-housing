@@ -6,7 +6,7 @@ from ...utilities.exceptions.firebase_exceptions import (
 )
 from ...utilities.exceptions.auth_exceptions import (
     UserNotActiveException,
-    UserNotFoundException
+    UserNotFoundException,
 )
 from ..interfaces.auth_service import IAuthService
 from ...resources.auth_dto import AuthDTO

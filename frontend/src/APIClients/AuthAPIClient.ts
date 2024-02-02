@@ -123,7 +123,9 @@ const register = async (
   }
 };
 
-const resetPassword = async (email: string): Promise<boolean | ErrorResponse> => {
+const resetPassword = async (
+  email: string,
+): Promise<boolean | ErrorResponse> => {
   const bearerToken = `Bearer ${getLocalStorageObjProperty(
     AUTHENTICATED_USER_KEY,
     "accessToken",
@@ -148,13 +150,13 @@ const resetPassword = async (email: string): Promise<boolean | ErrorResponse> =>
     if (axiosErr.response && axiosErr.response.status === 404) {
       return {
         errMessage:
-          axiosErr.response.data.error ??
-          "This email address does not exist.",
+          axiosErr.response.data.error ?? "This email address does not exist.",
       };
     }
     return {
-      errMessage: "Unable to send password reset to this email address. Please try again."
-    }
+      errMessage:
+        "Unable to send password reset to this email address. Please try again.",
+    };
   }
 };
 

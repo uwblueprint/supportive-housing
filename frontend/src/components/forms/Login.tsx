@@ -211,17 +211,21 @@ const Login = ({
             </Box>
             <Box w="80%">
               <Flex gap="10px">
-                <Text variant="loginSecondary">
-                  Not a member yet?
-                </Text>
-                <Text variant="loginTertiary" onClick={() => history.push(SIGNUP_PAGE)}>
+                <Text variant="loginSecondary">Not a member yet?</Text>
+                <Text
+                  variant="loginTertiary"
+                  onClick={() => history.push(SIGNUP_PAGE)}
+                >
                   Sign Up Now
                 </Text>
               </Flex>
             </Box>
             <Box w="80%">
               <Flex gap="10px">
-                <Text variant="loginTertiary" onClick={() => history.push(RESET_PASSWORD_PAGE)}>
+                <Text
+                  variant="loginTertiary"
+                  onClick={() => history.push(RESET_PASSWORD_PAGE)}
+                >
                   Forgot your password?
                 </Text>
               </Flex>

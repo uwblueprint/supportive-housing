@@ -7,6 +7,7 @@ class UserNotInvitedException(Exception):
         self.message = "This email address has not been invited. Please try again with a different email."
         super().__init__(self.message)
 
+
 class UserNotFoundException(Exception):
     """
     Raised when a user is not found in the database by email
@@ -15,6 +16,7 @@ class UserNotFoundException(Exception):
     def __init__(self):
         self.message = "This email address does not exist."
         super().__init__(self.message)
+
 
 class UserNotActiveException(Exception):
     """

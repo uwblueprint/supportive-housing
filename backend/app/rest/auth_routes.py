@@ -7,7 +7,7 @@ from ..utilities.exceptions.firebase_exceptions import (
 from ..utilities.exceptions.auth_exceptions import (
     EmailAlreadyInUseException,
     UserNotFoundException,
-    UserNotActiveException
+    UserNotActiveException,
 )
 
 from flask import Blueprint, current_app, jsonify, request
