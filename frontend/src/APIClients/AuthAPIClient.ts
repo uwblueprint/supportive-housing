@@ -123,7 +123,9 @@ const register = async (
   }
 };
 
-const resetPassword = async (email: string | undefined): Promise<boolean> => {
+const resetPassword = async (
+  email: string,
+): Promise<boolean | ErrorResponse> => {
   const bearerToken = `Bearer ${getLocalStorageObjProperty(
     AUTHENTICATED_USER_KEY,
     "accessToken",
@@ -136,7 +138,25 @@ const resetPassword = async (email: string | undefined): Promise<boolean> => {
     );
     return true;
   } catch (error) {
-    return false;
+    const axiosErr = error as AxiosError;
+
+    if (axiosErr.response && axiosErr.response.status === 403) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ??
+          "This email address is not currently active.",
+      };
+    }
+    if (axiosErr.response && axiosErr.response.status === 404) {
+      return {
+        errMessage:
+          axiosErr.response.data.error ?? "This email address does not exist.",
+      };
+    }
+    return {
+      errMessage:
+        "Unable to send password reset to this email address. Please try again.",
+    };
   }
 };
 

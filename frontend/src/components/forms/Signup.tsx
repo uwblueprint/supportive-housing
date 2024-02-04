@@ -197,10 +197,6 @@ const Signup = ({
     }
   };
 
-  const onLogInClick = () => {
-    history.push(LOGIN_PAGE);
-  };
-
   if (authenticatedUser) {
     return <Redirect to={HOME_PAGE} />;
   }
@@ -277,15 +273,11 @@ const Signup = ({
               ) : (
                 <Button
                   variant="login"
-                  _hover={
-                    email && password && firstName && lastName
-                      ? {
-                          background: "teal.500",
-                          transition:
-                            "transition: background-color 0.5s ease !important",
-                        }
-                      : {}
-                  }
+                  _hover={{
+                    background: "teal.500",
+                    transition:
+                      "transition: background-color 0.5s ease !important",
+                  }}
                   onClick={onSignupClick}
                 >
                   Create Account
@@ -294,10 +286,11 @@ const Signup = ({
             </Box>
             <Box w="80%">
               <Flex gap="10px">
-                <Text variant="loginSecondary" paddingRight="1.1vw">
-                  Already have an account?
-                </Text>
-                <Text variant="loginTertiary" onClick={onLogInClick}>
+                <Text variant="loginSecondary">Already have an account?</Text>
+                <Text
+                  variant="loginTertiary"
+                  onClick={() => history.push(LOGIN_PAGE)}
+                >
                   Log In Now
                 </Text>
               </Flex>

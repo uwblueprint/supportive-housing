@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import authAPIClient from "../../APIClients/AuthAPIClient";
-import CreateToast from "../common/Toasts";
-import AuthContext from "../../contexts/AuthContext";
-import { HOME_PAGE } from "../../constants/Routes";
-import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
-import { AuthenticatedUser } from "../../types/AuthTypes";
+import authAPIClient from "../../../APIClients/AuthAPIClient";
+import CreateToast from "../../common/Toasts";
+import AuthContext from "../../../contexts/AuthContext";
+import { HOME_PAGE } from "../../../constants/Routes";
+import AUTHENTICATED_USER_KEY from "../../../constants/AuthConstants";
+import { AuthenticatedUser } from "../../../types/AuthTypes";
 
-const Verification = (): React.ReactElement => {
+const VerificationPage = (): React.ReactElement => {
   const newToast = CreateToast();
   const history = useHistory();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
@@ -101,4 +101,4 @@ const Verification = (): React.ReactElement => {
   );
 };
 
-export default Verification;
+export default VerificationPage;
