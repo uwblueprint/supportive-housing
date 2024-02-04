@@ -47,28 +47,23 @@ const VerificationPage = (): React.ReactElement => {
 
   const resendVerify = async () => {
     if (authenticatedUser) {
-      const { email } = authenticatedUser
-      setIsResendLoading(true)
+      const { email } = authenticatedUser;
+      setIsResendLoading(true);
 
-      const success = await AuthAPIClient.resendVerify(email)
+      const success = await AuthAPIClient.resendVerify(email);
 
       if (success) {
-        newToast(
-          "Success",
-          `An email has been resent to ${email}.`,
-          "success",
-        );
-      }
-      else {
+        newToast("Success", `An email has been resent to ${email}.`, "success");
+      } else {
         newToast(
           "Error",
           `Unable to resend an email to ${email}. Please try again.`,
           "error",
         );
       }
-      setIsResendLoading(false)
+      setIsResendLoading(false);
     }
-  }
+  };
 
   return (
     <Flex h="100vh">
@@ -86,7 +81,9 @@ const VerificationPage = (): React.ReactElement => {
 
           <Box w="80%" textAlign="left">
             <Text variant="loginSecondary">
-              To verify your email address, a verification link has been sent to your inbox. After clicking the link in the email, click the button below to proceed.
+              To verify your email address, a verification link has been sent to
+              your inbox. After clicking the link in the email, click the button
+              below to proceed.
             </Text>
           </Box>
 
@@ -119,20 +116,20 @@ const VerificationPage = (): React.ReactElement => {
 
           <Box w="80%">
             <Flex gap="10px">
-              <Text variant="loginSecondary">Didn&apos;t recieve an email?</Text>
-              <Text
-                variant="loginTertiary"
-                onClick={() => resendVerify()}
-              >
+              <Text variant="loginSecondary">
+                Didn&apos;t recieve an email?
+              </Text>
+              <Text variant="loginTertiary" onClick={() => resendVerify()}>
                 Click here to resend
               </Text>
-              {isResendLoading &&               
+              {isResendLoading && (
                 <Spinner
                   thickness="4px"
                   speed="0.65s"
                   emptyColor="gray.200"
                   size="md"
-                />}
+                />
+              )}
             </Flex>
           </Box>
         </Flex>

@@ -184,7 +184,7 @@ const resendVerify = async (email: string): Promise<boolean> => {
     await baseAPIClient.post(`/auth/resend-verify/${email}`, {
       headers: { Authorization: bearerToken },
     });
-    return true
+    return true;
   } catch (error) {
     return false;
   }
