@@ -1,27 +1,28 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import authAPIClient from "../../../APIClients/AuthAPIClient";
 import CreateToast from "../../common/Toasts";
 import AuthContext from "../../../contexts/AuthContext";
 import { HOME_PAGE } from "../../../constants/Routes";
 import AUTHENTICATED_USER_KEY from "../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../types/AuthTypes";
+import AuthAPIClient from "../../../APIClients/AuthAPIClient";
 
 const VerificationPage = (): React.ReactElement => {
   const newToast = CreateToast();
   const history = useHistory();
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isVerifyLoading, setIsVerifyLoading] = useState<boolean>(false);
+  const [isResendLoading, setIsResendLoading] = useState<boolean>(false);
 
   const handleVerification = async () => {
     if (authenticatedUser) {
-      setIsLoading(true);
-      const isVerified = await authAPIClient.isVerified();
+      setIsVerifyLoading(true);
+      const isVerified = await AuthAPIClient.isVerified();
 
       if (isVerified === false) {
-        setIsLoading(false);
+        setIsVerifyLoading(false);
         newToast(
           "Not Verified",
           "Please check your email for the verification email.",
@@ -44,6 +45,31 @@ const VerificationPage = (): React.ReactElement => {
     }
   };
 
+  const resendVerify = async () => {
+    if (authenticatedUser) {
+      const { email } = authenticatedUser
+      setIsResendLoading(true)
+
+      const success = await AuthAPIClient.resendVerify(email)
+
+      if (success) {
+        newToast(
+          "Success",
+          `An email has been resent to ${email}.`,
+          "success",
+        );
+      }
+      else {
+        newToast(
+          "Error",
+          `Unable to resend an email to ${email}. Please try again.`,
+          "error",
+        );
+      }
+      setIsResendLoading(false)
+    }
+  }
+
   return (
     <Flex h="100vh">
       <Box w="47%">
@@ -60,13 +86,12 @@ const VerificationPage = (): React.ReactElement => {
 
           <Box w="80%" textAlign="left">
             <Text variant="loginSecondary">
-              In order to start using your SHOW account, you need to confirm
-              your email address.
+              To verify your email address, a verification link has been sent to your inbox. After clicking the link in the email, click the button below to proceed.
             </Text>
           </Box>
 
           <Box w="80%">
-            {isLoading ? (
+            {isVerifyLoading ? (
               <Flex flexDirection="column" alignItems="center">
                 <Spinner
                   thickness="4px"
@@ -90,6 +115,25 @@ const VerificationPage = (): React.ReactElement => {
                 Verify Email Address
               </Button>
             )}
+          </Box>
+
+          <Box w="80%">
+            <Flex gap="10px">
+              <Text variant="loginSecondary">Didn&apos;t recieve an email?</Text>
+              <Text
+                variant="loginTertiary"
+                onClick={() => resendVerify()}
+              >
+                Click here to resend
+              </Text>
+              {isResendLoading &&               
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                />}
+            </Flex>
           </Box>
         </Flex>
       </Box>
