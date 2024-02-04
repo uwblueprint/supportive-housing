@@ -271,3 +271,18 @@ def is_verified():
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
+
+
+@blueprint.route(
+    "/resend-verify/<string:email>", methods=["POST"], strict_slashes=False
+)
+def resend_verify(email):
+    """
+    Resends a verification email to a specific email
+    """
+    try:
+        auth_service.send_email_verification_link(email)
+        return "", 200
+    except Exception as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 500

@@ -175,6 +175,21 @@ const isVerified = async (): Promise<boolean> => {
   }
 };
 
+const resendVerify = async (email: string): Promise<boolean> => {
+  const bearerToken = `Bearer ${getLocalStorageObjProperty(
+    AUTHENTICATED_USER_KEY,
+    "accessToken",
+  )}`;
+  try {
+    await baseAPIClient.post(`/auth/resend-verify/${email}`, {
+      headers: { Authorization: bearerToken },
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 // for testing only, refresh does not need to be exposed in the client
 const refresh = async (): Promise<boolean> => {
   try {
@@ -202,5 +217,6 @@ export default {
   register,
   resetPassword,
   isVerified,
+  resendVerify,
   refresh,
 };
