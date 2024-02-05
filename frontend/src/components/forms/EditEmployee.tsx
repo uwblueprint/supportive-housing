@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,10 +20,14 @@ import {
   RadioGroup,
   Text,
 } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import { UPDATE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
 import CreateToast from "../common/Toasts";
 import { User, UserRole } from "../../types/UserTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
+import AuthContext from "../../contexts/AuthContext";
+import AuthAPIClient from "../../APIClients/AuthAPIClient";
+import { HOME_PAGE } from "../../constants/Routes";
 
 const RoleOptions = [
   UserRole.RELIEF_STAFF,
@@ -47,6 +51,7 @@ const EditEmployee = ({
   toggleClose,
 }: Props): React.ReactElement => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const history = useHistory();
   const newToast = CreateToast();
 
   const [firstName, setFirstName] = useState<string>("");
@@ -60,6 +65,8 @@ const EditEmployee = ({
   const [firstNameError, setFirstNameError] = useState<boolean>(false);
   const [lastNameError, setLastNameError] = useState<boolean>(false);
   const [adminStatusError, setAdminStatusError] = useState<boolean>(false);
+
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const mapRoleToState = (role: UserRole) => {
     switch (role) {
@@ -145,11 +152,12 @@ const EditEmployee = ({
       }
 
       if (roleOptionIndex !== undefined) {
+        const newRole = RoleOptions[roleOptionIndex];
         const statusCode = await UserAPIClient.updateUser({
           id: employee.id,
           firstName,
           lastName,
-          role: RoleOptions[roleOptionIndex],
+          role: newRole,
         });
         if (statusCode === 201) {
           newToast(
@@ -157,8 +165,21 @@ const EditEmployee = ({
             "Employee has been successfully updated",
             "success",
           );
-          getRecords(userPageNum);
-          handleClose();
+
+          // logout the user if they're editing themselves and change their role
+          if (
+            authenticatedUser?.id === employee.id &&
+            authenticatedUser?.role !== newRole
+          ) {
+            const success = await AuthAPIClient.logout(authenticatedUser?.id);
+            if (success) {
+              setAuthenticatedUser(null);
+              history.push(HOME_PAGE);
+            }
+          } else {
+            getRecords(userPageNum);
+            handleClose();
+          }
         } else {
           newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
         }
@@ -265,10 +286,21 @@ const EditEmployee = ({
                 </Text>
               </Checkbox>
               <Text fontSize="12px" color="#1B2A2C">
-                Requiring Two Factor Authentication means the employee will only
+                Enabling two factor authentication means the employee will only
                 be able to access the platform while physically in the main
                 building.
               </Text>
+              {authenticatedUser?.id === employee.id && (
+                <Text
+                  fontSize="12px"
+                  fontWeight="bold"
+                  color="#1B2A2C"
+                  paddingTop="10px"
+                >
+                  Note: Changing your role will require you to login to the
+                  application again.
+                </Text>
+              )}
             </Box>
           </ModalBody>
           <ModalFooter>

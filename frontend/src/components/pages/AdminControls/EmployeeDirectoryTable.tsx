@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from "react";
+import React, { RefObject, useContext, useState } from "react";
 import {
   Box,
   IconButton,
@@ -14,12 +14,16 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import { VscKebabVertical } from "react-icons/vsc";
 import { User, UserRole, UserStatus } from "../../../types/UserTypes";
 import EditEmployee from "../../forms/EditEmployee";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import CreateToast from "../../common/Toasts";
 import UserAPIClient from "../../../APIClients/UserAPIClient";
+import AuthContext from "../../../contexts/AuthContext";
+import AuthAPIClient from "../../../APIClients/AuthAPIClient";
+import { HOME_PAGE } from "../../../constants/Routes";
 
 type Props = {
   users: User[];
@@ -91,6 +95,9 @@ const EmployeeDirectoryTable = ({
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const history = useHistory();
+
   const newToast = CreateToast();
 
   const handleEditClick = (employee: User) => {
@@ -106,6 +113,13 @@ const EmployeeDirectoryTable = ({
   const handleDeactivateClick = (employee: User) => {
     setDeactivatingEmployee(employee);
     setIsDeactivateModalOpen(true);
+  };
+
+  const deactivateWarningMessage = (employeeId: number) => {
+    if (authenticatedUser?.id === employeeId) {
+      return "Note: Deactivating your account will log you out of the application.";
+    }
+    return "";
   };
 
   const handleDeleteClick = (employee: User) => {
@@ -146,8 +160,18 @@ const EmployeeDirectoryTable = ({
         "Employee has been successfully deactivated.",
         "success",
       );
-      getRecords(userPageNum);
-      setIsDeactivateModalOpen(false);
+
+      // logout the user if they're deactivating themselves
+      if (authenticatedUser?.id === employeeId) {
+        const success = await AuthAPIClient.logout(authenticatedUser?.id);
+        if (success) {
+          setAuthenticatedUser(null);
+          history.push(HOME_PAGE);
+        }
+      } else {
+        getRecords(userPageNum);
+        setIsDeactivateModalOpen(false);
+      }
     } else {
       newToast(
         "Error Deactivating Employee",
@@ -282,6 +306,7 @@ const EmployeeDirectoryTable = ({
             message={deactivateConfirmationMessage(
               `${deactivatingEmployee.firstName} ${deactivatingEmployee.lastName}`,
             )}
+            warningMessage={deactivateWarningMessage(deactivatingEmployee.id)}
             isOpen={isDeactivateModalOpen}
             action={() => deactivateEmployee(deactivatingEmployee.id)}
             toggleClose={() => setIsDeactivateModalOpen(false)}
