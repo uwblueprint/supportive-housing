@@ -8,6 +8,7 @@ import {
   Spinner,
   Text,
   VStack,
+  Image,
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -15,6 +16,7 @@ import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import CreateToast from "../common/Toasts";
 import { isErrorResponse } from "../../helper/error";
+import SHOW_LOGO from "../../images/show-logo-colour.png";
 
 type TwoFaProps = {
   email: string;
@@ -93,7 +95,10 @@ const TwoFa = ({
             justifyContent="center"
             alignItems="center"
           >
-            <VStack width="75%" align="flex-start" gap="3vh">
+            <VStack width="80%" align="flex-start" gap="3vh">
+              <Flex flexDirection="column" alignItems="center" width="100%">
+                <Image src={SHOW_LOGO} h="100px" />
+              </Flex>
               <Text variant="login">One last step!</Text>
               <Text variant="loginSecondary">
                 In order to protect your account, please enter the 6 digit

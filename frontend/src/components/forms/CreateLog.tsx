@@ -332,9 +332,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       </Box>
 
       <Box>
-        <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose} size="xl">
+        <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose}>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent maxW="50%">
             <ModalHeader>Add Log Record</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
@@ -453,6 +453,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                       onChange={handleNotesChange}
                       placeholder="Enter log notes here..."
                       resize="vertical"
+                      rows={6}
                     />
 
                     <FormErrorMessage>Notes are required.</FormErrorMessage>

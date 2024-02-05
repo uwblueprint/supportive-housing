@@ -1,12 +1,13 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, Button, Flex, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Spinner, Text, Image } from "@chakra-ui/react";
 import CreateToast from "../../common/Toasts";
 import AuthContext from "../../../contexts/AuthContext";
 import { HOME_PAGE } from "../../../constants/Routes";
 import AUTHENTICATED_USER_KEY from "../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../types/AuthTypes";
 import AuthAPIClient from "../../../APIClients/AuthAPIClient";
+import SHOW_LOGO from "../../../images/show-logo-colour.png";
 
 const VerificationPage = (): React.ReactElement => {
   const newToast = CreateToast();
@@ -25,7 +26,7 @@ const VerificationPage = (): React.ReactElement => {
         setIsVerifyLoading(false);
         newToast(
           "Not Verified",
-          "Please check your email for the verification email.",
+          "Please check your email for the verification link.",
           "error",
         );
       } else {
@@ -75,6 +76,11 @@ const VerificationPage = (): React.ReactElement => {
           alignItems="center"
           gap="28px"
         >
+          <Box w="80%" textAlign="left">
+            <Flex flexDirection="column" alignItems="center">
+              <Image src={SHOW_LOGO} h="100px" />
+            </Flex>{" "}
+          </Box>
           <Box w="80%" textAlign="left">
             <Text variant="login">Verification</Text>
           </Box>

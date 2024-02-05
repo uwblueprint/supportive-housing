@@ -9,10 +9,12 @@ import {
   Input,
   Spinner,
   Text,
+  Image,
 } from "@chakra-ui/react";
 import AuthAPIClient from "../../../APIClients/AuthAPIClient";
 import { isErrorResponse } from "../../../helper/error";
 import { LOGIN_PAGE } from "../../../constants/Routes";
+import SHOW_LOGO from "../../../images/show-logo-colour.png";
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -80,6 +82,11 @@ const ResetPasswordPage = (): React.ReactElement => {
           alignItems="center"
           gap="28px"
         >
+          <Box w="80%" textAlign="center">
+            <Flex flexDirection="column" alignItems="center">
+              <Image src={SHOW_LOGO} h="100px" />
+            </Flex>
+          </Box>
           {!emailSent ? (
             <>
               <Box w="80%" textAlign="left">

@@ -96,15 +96,13 @@ const logout = async (userId: number | undefined): Promise<boolean> => {
 };
 
 const register = async (
-  firstName: string,
-  lastName: string,
   email: string,
   password: string,
 ): Promise<AuthTokenResponse | AuthErrorResponse> => {
   try {
     const { data } = await baseAPIClient.post(
       "/auth/register",
-      { firstName, lastName, email, password },
+      { email, password },
       { withCredentials: true },
     );
     return data;
