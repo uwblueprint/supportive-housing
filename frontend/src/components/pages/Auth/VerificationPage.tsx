@@ -78,8 +78,9 @@ const VerificationPage = (): React.ReactElement => {
         >
           <Box w="80%" textAlign="left">
             <Flex flexDirection="column" alignItems="center">
-              <Image src={SHOW_LOGO} h="100px"/>
-            </Flex>          </Box>
+              <Image src={SHOW_LOGO} h="100px" />
+            </Flex>{" "}
+          </Box>
           <Box w="80%" textAlign="left">
             <Text variant="login">Verification</Text>
           </Box>

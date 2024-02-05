@@ -9,7 +9,7 @@ import {
   Input,
   Spinner,
   Text,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE, LOGIN_PAGE } from "../../constants/Routes";
@@ -216,7 +216,7 @@ const Signup = ({
           >
             <Box w="80%" textAlign="center">
               <Flex flexDirection="column" alignItems="center">
-                <Image src={SHOW_LOGO} h="100px"/>
+                <Image src={SHOW_LOGO} h="100px" />
               </Flex>
             </Box>
             <Box w="80%" textAlign="left">

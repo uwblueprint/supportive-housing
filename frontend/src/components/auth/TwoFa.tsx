@@ -8,7 +8,7 @@ import {
   Spinner,
   Text,
   VStack,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
@@ -97,7 +97,7 @@ const TwoFa = ({
           >
             <VStack width="80%" align="flex-start" gap="3vh">
               <Flex flexDirection="column" alignItems="center" width="100%">
-                <Image src={SHOW_LOGO} h="100px"/>
+                <Image src={SHOW_LOGO} h="100px" />
               </Flex>
               <Text variant="login">One last step!</Text>
               <Text variant="loginSecondary">

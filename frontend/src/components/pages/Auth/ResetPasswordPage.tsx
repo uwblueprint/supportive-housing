@@ -9,7 +9,7 @@ import {
   Input,
   Spinner,
   Text,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import AuthAPIClient from "../../../APIClients/AuthAPIClient";
 import { isErrorResponse } from "../../../helper/error";
@@ -84,7 +84,7 @@ const ResetPasswordPage = (): React.ReactElement => {
         >
           <Box w="80%" textAlign="center">
             <Flex flexDirection="column" alignItems="center">
-              <Image src={SHOW_LOGO} h="100px"/>
+              <Image src={SHOW_LOGO} h="100px" />
             </Flex>
           </Box>
           {!emailSent ? (

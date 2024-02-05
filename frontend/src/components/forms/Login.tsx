@@ -8,7 +8,7 @@ import {
   FormErrorMessage,
   Input,
   Spinner,
-  Image
+  Image,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -163,7 +163,7 @@ const Login = ({
           >
             <Box w="80%" textAlign="center">
               <Flex flexDirection="column" alignItems="center">
-                <Image src={SHOW_LOGO} h="100px"/>
+                <Image src={SHOW_LOGO} h="100px" />
               </Flex>
             </Box>
             <Box w="80%" textAlign="left">
