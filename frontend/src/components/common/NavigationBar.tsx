@@ -9,6 +9,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import {
@@ -26,6 +27,7 @@ import SHOW_LOGO from "../../images/show-logo-white.png";
 
 const NavigationBar = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
@@ -96,16 +98,17 @@ const NavigationBar = (): React.ReactElement => {
             </Button>
 
             {authenticatedUser?.role === "Admin" && (
-              <Menu>
+              <Menu isOpen={isOpen}>
                 <MenuButton
                   as={Button}
                   variant="link button-navbar"
                   onClick={handleMenuToggle}
+                  onMouseEnter={onOpen}
+                  onMouseLeave={onClose}
                 >
                   Admin Controls
                 </MenuButton>
-                {isMenuOpen && (
-                  <MenuList zIndex="3">
+                  <MenuList onMouseEnter={onOpen} onMouseLeave={onClose} zIndex="3" marginTop="-8px">
                     <MenuItem onClick={navigateToEmployeeDirectory}>
                       Employee Directory
                     </MenuItem>
@@ -114,7 +117,6 @@ const NavigationBar = (): React.ReactElement => {
                     </MenuItem>
                     <MenuItem onClick={navigateToTags}>Tags</MenuItem>
                   </MenuList>
-                )}
               </Menu>
             )}
 
