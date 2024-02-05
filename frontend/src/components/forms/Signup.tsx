@@ -51,7 +51,7 @@ const Signup = ({
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
-  
+
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setEmail(inputValue);
@@ -123,10 +123,7 @@ const Signup = ({
       setGeneralErrorStr("This email address is already active. Log in now!");
       setIsLoading(false);
     } else if (res === UserStatus.INVITED) {
-      const registerResponse = await authAPIClient.register(
-        email,
-        password,
-      );
+      const registerResponse = await authAPIClient.register(email, password);
       if (isAuthErrorResponse(registerResponse)) {
         setGeneralErrorStr(registerResponse.errMessage);
         setGeneralError(true);
