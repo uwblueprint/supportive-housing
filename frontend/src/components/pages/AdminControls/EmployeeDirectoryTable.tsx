@@ -117,7 +117,7 @@ const EmployeeDirectoryTable = ({
 
   const deactivateWarningMessage = (employeeId: number) => {
     if (authenticatedUser?.id === employeeId) {
-      return "Note: Deactivating your account will require you to login to the application again."
+      return "Note: Deactivating your account will log you out of the application."
     }
     return ""
   }

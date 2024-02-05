@@ -4,6 +4,9 @@ from ...models.residents import Residents
 from ...models.log_record_residents import LogRecordResidents
 from ...models.buildings import Buildings
 from ...models import db
+from ...utilities.exceptions.duplicate_entity_exceptions import (
+    DuplicateResidentException,
+)
 from datetime import datetime
 from sqlalchemy.sql.expression import or_, and_
 from pytz import timezone
@@ -135,28 +138,37 @@ class ResidentsService(IResidentsService):
             db.session.add(new_resident)
             db.session.commit()
             return resident
-        except Exception as postgres_error:
-            raise postgres_error
+        except Exception as e:
+            if type(e).__name__ == "IntegrityError":
+                raise DuplicateResidentException(resident["initial"] + resident["room_num"])
+            else:
+                raise e
 
     def update_resident(self, resident_id, updated_resident):
-        if "date_left" in updated_resident:
-            create_update_resident = Residents.query.filter_by(id=resident_id).update(
-                {
-                    Residents.date_left: updated_resident["date_left"],
-                    **updated_resident,
-                }
-            )
-        else:
-            create_update_resident = Residents.query.filter_by(id=resident_id).update(
-                {Residents.date_left: None, **updated_resident}
-            )
-        if not create_update_resident:
-            raise Exception(
-                "Resident with id {resident_id} not found".format(
-                    resident_id=resident_id
+        try:
+            if "date_left" in updated_resident:
+                create_update_resident = Residents.query.filter_by(id=resident_id).update(
+                    {
+                        Residents.date_left: updated_resident["date_left"],
+                        **updated_resident,
+                    }
                 )
-            )
-        db.session.commit()
+            else:
+                create_update_resident = Residents.query.filter_by(id=resident_id).update(
+                    {Residents.date_left: None, **updated_resident}
+                )
+            if not create_update_resident:
+                raise Exception(
+                    "Resident with id {resident_id} not found".format(
+                        resident_id=resident_id
+                    )
+                )
+            db.session.commit()
+        except Exception as e:
+            if type(e).__name__ == "IntegrityError":
+                raise DuplicateResidentException(updated_resident["initial"] + updated_resident["room_num"])
+            else:
+                raise e
 
     def delete_resident(self, resident_id):
         resident_log_records = LogRecordResidents.query.filter_by(

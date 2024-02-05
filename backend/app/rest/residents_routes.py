@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, jsonify, request
 from ..middlewares.auth import require_authorization_by_role
 from ..services.implementations.residents_service import ResidentsService
-from datetime import datetime
+from ..utilities.exceptions.duplicate_entity_exceptions import DuplicateResidentException
 import json
 
 residents_service = ResidentsService(current_app.logger)
@@ -20,29 +20,13 @@ def add_resident():
             jsonify({"date_left_error": "date_left cannot be less than date_joined"}),
             400,
         )
-
-    # Check for the existence of a resident prior to adding them
-    fmt_resident_id = resident.get("initial") + resident.get("room_num")
-    try:
-        existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
-        if existing_resident:
-            return (
-                jsonify(
-                    {
-                        "error": "Resident with ID {fmt_resident_id} already exists.".format(
-                            fmt_resident_id=fmt_resident_id
-                        )
-                    }
-                ),
-                409,
-            )
-    except Exception as e:
-        error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
-
     try:
         created_resident = residents_service.add_resident(resident)
         return jsonify(created_resident), 201
+    
+    except DuplicateResidentException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
@@ -61,25 +45,6 @@ def update_resident(resident_id):
             400,
         )
 
-    # Check for the existence of a resident prior to adding them
-    fmt_resident_id = updated_resident.get("initial") + updated_resident.get("room_num")
-    try:
-        existing_resident = residents_service.get_resident_by_id(fmt_resident_id)
-        if existing_resident and existing_resident["id"] != resident_id:
-            return (
-                jsonify(
-                    {
-                        "error": "Resident with ID {fmt_resident_id} already exists.".format(
-                            fmt_resident_id=fmt_resident_id
-                        )
-                    }
-                ),
-                409,
-            )
-    except Exception as e:
-        error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
-
     try:
         updated_resident = residents_service.update_resident(
             resident_id, updated_resident
@@ -94,6 +59,9 @@ def update_resident(resident_id):
             ),
             201,
         )
+    except DuplicateResidentException as e:
+        error_message = getattr(e, "message", None)
+        return jsonify({"error": (error_message if error_message else str(e))}), 409
     except Exception as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 500
