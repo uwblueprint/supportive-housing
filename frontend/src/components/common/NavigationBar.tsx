@@ -22,7 +22,7 @@ import {
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
-import SHOW_LOGO from "../../images/SHOW-Logo.png";
+import SHOW_LOGO from "../../images/show-logo-white.png";
 
 const NavigationBar = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);

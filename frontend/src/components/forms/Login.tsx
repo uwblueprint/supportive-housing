@@ -8,6 +8,7 @@ import {
   FormErrorMessage,
   Input,
   Spinner,
+  Image
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -17,6 +18,7 @@ import AuthContext from "../../contexts/AuthContext";
 import { isAuthErrorResponse, isErrorResponse } from "../../helper/error";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import { UserStatus } from "../../types/UserTypes";
+import SHOW_LOGO from "../../images/show-logo-colour.png";
 
 type CredentialsProps = {
   email: string;
@@ -159,6 +161,11 @@ const Login = ({
             alignItems="center"
             gap="28px"
           >
+            <Box w="80%" textAlign="center">
+              <Flex flexDirection="column" alignItems="center">
+                <Image src={SHOW_LOGO} h="100px"/>
+              </Flex>
+            </Box>
             <Box w="80%" textAlign="left">
               <Text variant="login">Log In</Text>
             </Box>

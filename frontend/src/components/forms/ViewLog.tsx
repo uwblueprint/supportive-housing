@@ -56,10 +56,9 @@ const ViewLog = ({
           isOpen={isOpen}
           scrollBehavior="inside"
           onClose={toggleClose}
-          size="xl"
         >
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent maxW="50%">
             <ModalHeader>View Log Record</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
