@@ -95,7 +95,7 @@ const EmployeeDirectoryTable = ({
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext)
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
   const newToast = CreateToast();
@@ -117,10 +117,10 @@ const EmployeeDirectoryTable = ({
 
   const deactivateWarningMessage = (employeeId: number) => {
     if (authenticatedUser?.id === employeeId) {
-      return "Note: Deactivating your account will log you out of the application."
+      return "Note: Deactivating your account will log you out of the application.";
     }
-    return ""
-  }
+    return "";
+  };
 
   const handleDeleteClick = (employee: User) => {
     setDeletingEmployee(employee);
@@ -166,10 +166,9 @@ const EmployeeDirectoryTable = ({
         const success = await AuthAPIClient.logout(authenticatedUser?.id);
         if (success) {
           setAuthenticatedUser(null);
-          history.push(HOME_PAGE)
+          history.push(HOME_PAGE);
         }
-      }
-      else {
+      } else {
         getRecords(userPageNum);
         setIsDeactivateModalOpen(false);
       }

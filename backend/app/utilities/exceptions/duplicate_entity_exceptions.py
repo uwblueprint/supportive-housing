@@ -17,6 +17,7 @@ class DuplicateUserException(Exception):
         message = f"User with email {email} already exists."
         super().__init__(message)
 
+
 class DuplicateResidentException(Exception):
     """
     Raised when an duplicate resident is encountered

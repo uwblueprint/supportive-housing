@@ -51,7 +51,7 @@ const EditEmployee = ({
   toggleClose,
 }: Props): React.ReactElement => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const history = useHistory()
+  const history = useHistory();
   const newToast = CreateToast();
 
   const [firstName, setFirstName] = useState<string>("");
@@ -66,7 +66,7 @@ const EditEmployee = ({
   const [lastNameError, setLastNameError] = useState<boolean>(false);
   const [adminStatusError, setAdminStatusError] = useState<boolean>(false);
 
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext)
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const mapRoleToState = (role: UserRole) => {
     switch (role) {
@@ -152,7 +152,7 @@ const EditEmployee = ({
       }
 
       if (roleOptionIndex !== undefined) {
-        const newRole = RoleOptions[roleOptionIndex]
+        const newRole = RoleOptions[roleOptionIndex];
         const statusCode = await UserAPIClient.updateUser({
           id: employee.id,
           firstName,
@@ -167,14 +167,16 @@ const EditEmployee = ({
           );
 
           // logout the user if they're editing themselves and change their role
-          if (authenticatedUser?.id === employee.id && authenticatedUser?.role !== newRole) {
+          if (
+            authenticatedUser?.id === employee.id &&
+            authenticatedUser?.role !== newRole
+          ) {
             const success = await AuthAPIClient.logout(authenticatedUser?.id);
             if (success) {
               setAuthenticatedUser(null);
-              history.push(HOME_PAGE)
+              history.push(HOME_PAGE);
             }
-          }
-          else {
+          } else {
             getRecords(userPageNum);
             handleClose();
           }
@@ -288,11 +290,17 @@ const EditEmployee = ({
                 be able to access the platform while physically in the main
                 building.
               </Text>
-              {authenticatedUser?.id === employee.id && 
-                <Text fontSize="12px" fontWeight="bold" color="#1B2A2C" paddingTop="10px">
-                  Note: Changing your role will require you to login to the application again.
+              {authenticatedUser?.id === employee.id && (
+                <Text
+                  fontSize="12px"
+                  fontWeight="bold"
+                  color="#1B2A2C"
+                  paddingTop="10px"
+                >
+                  Note: Changing your role will require you to login to the
+                  application again.
                 </Text>
-              }
+              )}
             </Box>
           </ModalBody>
           <ModalFooter>

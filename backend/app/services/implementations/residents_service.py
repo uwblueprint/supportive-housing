@@ -140,23 +140,27 @@ class ResidentsService(IResidentsService):
             return resident
         except Exception as e:
             if type(e).__name__ == "IntegrityError":
-                raise DuplicateResidentException(resident["initial"] + resident["room_num"])
+                raise DuplicateResidentException(
+                    resident["initial"] + resident["room_num"]
+                )
             else:
                 raise e
 
     def update_resident(self, resident_id, updated_resident):
         try:
             if "date_left" in updated_resident:
-                create_update_resident = Residents.query.filter_by(id=resident_id).update(
+                create_update_resident = Residents.query.filter_by(
+                    id=resident_id
+                ).update(
                     {
                         Residents.date_left: updated_resident["date_left"],
                         **updated_resident,
                     }
                 )
             else:
-                create_update_resident = Residents.query.filter_by(id=resident_id).update(
-                    {Residents.date_left: None, **updated_resident}
-                )
+                create_update_resident = Residents.query.filter_by(
+                    id=resident_id
+                ).update({Residents.date_left: None, **updated_resident})
             if not create_update_resident:
                 raise Exception(
                     "Resident with id {resident_id} not found".format(
@@ -166,7 +170,9 @@ class ResidentsService(IResidentsService):
             db.session.commit()
         except Exception as e:
             if type(e).__name__ == "IntegrityError":
-                raise DuplicateResidentException(updated_resident["initial"] + updated_resident["room_num"])
+                raise DuplicateResidentException(
+                    updated_resident["initial"] + updated_resident["room_num"]
+                )
             else:
                 raise e
 

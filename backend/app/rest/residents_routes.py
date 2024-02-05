@@ -1,7 +1,9 @@
 from flask import Blueprint, current_app, jsonify, request
 from ..middlewares.auth import require_authorization_by_role
 from ..services.implementations.residents_service import ResidentsService
-from ..utilities.exceptions.duplicate_entity_exceptions import DuplicateResidentException
+from ..utilities.exceptions.duplicate_entity_exceptions import (
+    DuplicateResidentException,
+)
 import json
 
 residents_service = ResidentsService(current_app.logger)
@@ -23,7 +25,7 @@ def add_resident():
     try:
         created_resident = residents_service.add_resident(resident)
         return jsonify(created_resident), 201
-    
+
     except DuplicateResidentException as e:
         error_message = getattr(e, "message", None)
         return jsonify({"error": (error_message if error_message else str(e))}), 409

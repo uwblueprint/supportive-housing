@@ -42,11 +42,16 @@ const ConfirmationModal = ({
             <ModalBody>
               <Box>
                 <Text>{message}</Text>
-                {
-                  warningMessage && (
-                    <Text fontSize="12px" fontWeight="bold" color="#1B2A2C" paddingTop="10px">{warningMessage}</Text>
-                  )
-                }
+                {warningMessage && (
+                  <Text
+                    fontSize="12px"
+                    fontWeight="bold"
+                    color="#1B2A2C"
+                    paddingTop="10px"
+                  >
+                    {warningMessage}
+                  </Text>
+                )}
               </Box>
             </ModalBody>
             <ModalFooter>
