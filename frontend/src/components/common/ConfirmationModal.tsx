@@ -14,6 +14,7 @@ import {
 type Props = {
   header: string;
   message: string;
+  warningMessage?: string;
   isOpen: boolean;
   toggleClose: () => void;
   action: () => Promise<void>;
@@ -22,6 +23,7 @@ type Props = {
 const ConfirmationModal = ({
   header,
   message,
+  warningMessage,
   isOpen,
   toggleClose,
   action,
@@ -40,6 +42,11 @@ const ConfirmationModal = ({
             <ModalBody>
               <Box>
                 <Text>{message}</Text>
+                {
+                  warningMessage && (
+                    <Text fontSize="12px" fontWeight="bold" color="#1B2A2C" paddingTop="10px">{warningMessage}</Text>
+                  )
+                }
               </Box>
             </ModalBody>
             <ModalFooter>
