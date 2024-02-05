@@ -23,10 +23,6 @@ import SHOW_LOGO from "../../images/show-logo-colour.png";
 type SignupProps = {
   email: string;
   setEmail: (email: string) => void;
-  firstName: string;
-  setFirstName: (firstName: string) => void;
-  lastName: string;
-  setLastName: (lastName: string) => void;
   password: string;
   setPassword: (password: string) => void;
   toggle: boolean;
@@ -38,19 +34,12 @@ const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const Signup = ({
   email,
   setEmail,
-  firstName,
-  setFirstName,
-  lastName,
-  setLastName,
   password,
   setPassword,
   toggle,
   setToggle,
 }: SignupProps): React.ReactElement => {
   const [signupClicked, setSignupClicked] = useState<boolean>(false);
-
-  const [firstNameError, setFirstNameError] = useState<boolean>(false);
-  const [lastNameError, setLastNameError] = useState<boolean>(false);
 
   const [emailError, setEmailError] = useState<boolean>(false);
   const [emailErrorStr, setEmailErrorStr] = useState<string>("");
@@ -62,33 +51,7 @@ const Signup = ({
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
-
-  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value as string;
-    setFirstName(inputValue);
-
-    if (signupClicked) {
-      if (inputValue.length === 0) {
-        setFirstNameError(true);
-      } else {
-        setFirstNameError(false);
-      }
-    }
-  };
-
-  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value as string;
-    setLastName(inputValue);
-
-    if (signupClicked) {
-      if (inputValue.length === 0) {
-        setLastNameError(true);
-      } else {
-        setLastNameError(false);
-      }
-    }
-  };
-
+  
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     setEmail(inputValue);
@@ -126,17 +89,7 @@ const Signup = ({
   const onSignupClick = async () => {
     setSignupClicked(true);
 
-    if (firstNameError || lastNameError || emailError || generalError) {
-      return;
-    }
-
-    if (firstName.length === 0) {
-      setFirstNameError(true);
-      return;
-    }
-
-    if (lastName.length === 0) {
-      setLastNameError(true);
+    if (emailError || generalError) {
       return;
     }
 
@@ -171,14 +124,12 @@ const Signup = ({
       setIsLoading(false);
     } else if (res === UserStatus.INVITED) {
       const registerResponse = await authAPIClient.register(
-        firstName,
-        lastName,
         email,
         password,
       );
       if (isAuthErrorResponse(registerResponse)) {
-        setEmailErrorStr(registerResponse.errMessage);
-        setEmailError(true);
+        setGeneralErrorStr(registerResponse.errMessage);
+        setGeneralError(true);
         setIsLoading(false);
       } else {
         const { requiresTwoFa, authUser } = registerResponse;
@@ -221,28 +172,6 @@ const Signup = ({
             </Box>
             <Box w="80%" textAlign="left">
               <Text variant="login">Sign Up</Text>
-            </Box>
-            <Box w="80%">
-              <FormControl isRequired isInvalid={firstNameError}>
-                <Input
-                  variant="login"
-                  placeholder="Your first name"
-                  value={firstName}
-                  onChange={handleFirstNameChange}
-                />
-                <FormErrorMessage>First name is required.</FormErrorMessage>
-              </FormControl>
-            </Box>
-            <Box w="80%">
-              <FormControl isRequired isInvalid={lastNameError}>
-                <Input
-                  variant="login"
-                  placeholder="Your last name"
-                  value={lastName}
-                  onChange={handleLastNameChange}
-                />
-                <FormErrorMessage>Last name is required.</FormErrorMessage>
-              </FormControl>
             </Box>
             <Box w="80%">
               <FormControl isRequired isInvalid={emailError}>
