@@ -46,7 +46,7 @@ export type CountResidentsResponse = {
 
 export type CreateResidentParams = Omit<
   Resident,
-  "id" | "residentId" | "dateLeft" | "building" | "status"
+  "id" | "residentId" | "building" | "status"
 > & { buildingId: number };
 
 export type EditResidentParams = Omit<

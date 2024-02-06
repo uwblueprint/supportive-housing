@@ -68,8 +68,8 @@ const EditResident = ({
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
-      buildingId,
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
+      buildingId,
     });
 
     if (isErrorResponse(res)) {
@@ -227,28 +227,10 @@ const EditResident = ({
                       propsConfigs={singleDatePickerStyle}
                     />
                     <FormErrorMessage>
-                      Move In Date is required and must be before Move Out Date.
+                      Move in date is required and must be before move out date.
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
-              </Row>
-              <Row style={{ marginTop: "16px" }}>
-                <Col>
-                  <FormControl isRequired isInvalid={buildingError}>
-                    <FormLabel>Building</FormLabel>
-                    <Select
-                      options={buildingOptions}
-                      defaultValue={buildingOptions.find(
-                        (item) => item.value === buildingId,
-                      )}
-                      onChange={handleBuildingChange}
-                      styles={selectStyle}
-                    />
-                    <FormErrorMessage>Building is required.</FormErrorMessage>
-                  </FormControl>
-                </Col>
-              </Row>
-              <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isInvalid={moveOutDateError}>
                     <FormLabel>Move Out Date</FormLabel>
@@ -278,8 +260,24 @@ const EditResident = ({
                       )}
                     </InputGroup>
                     <FormErrorMessage marginBottom="8px">
-                      Move out Date must be after Move in Date
+                      Move out date must be after the move in date.
                     </FormErrorMessage>
+                  </FormControl>
+                </Col>
+              </Row>
+              <Row style={{ marginTop: "16px" }}>
+                <Col>
+                  <FormControl isRequired isInvalid={buildingError}>
+                    <FormLabel>Building</FormLabel>
+                    <Select
+                      options={buildingOptions}
+                      defaultValue={buildingOptions.find(
+                        (item) => item.value === buildingId,
+                      )}
+                      onChange={handleBuildingChange}
+                      styles={selectStyle}
+                    />
+                    <FormErrorMessage>Building is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
