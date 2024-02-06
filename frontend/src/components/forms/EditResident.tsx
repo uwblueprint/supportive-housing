@@ -69,7 +69,7 @@ const EditResident = ({
       roomNum: roomNumber,
       dateJoined: convertToString(moveInDate),
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
-      buildingId
+      buildingId,
     });
 
     if (isErrorResponse(res)) {

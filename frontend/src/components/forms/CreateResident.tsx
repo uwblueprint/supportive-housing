@@ -145,7 +145,7 @@ const CreateResident = ({
     setInitials("");
     setRoomNumber("");
     setMoveInDate(new Date());
-    setMoveOutDate(undefined)
+    setMoveOutDate(undefined);
     setBuildingId(-1);
 
     // Reset the error states
@@ -163,7 +163,6 @@ const CreateResident = ({
   };
 
   const handleSubmit = () => {
-
     if (initials.length !== 2) {
       setInitialsError(true);
       return;
