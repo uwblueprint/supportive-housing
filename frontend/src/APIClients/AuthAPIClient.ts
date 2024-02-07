@@ -4,10 +4,7 @@ import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser, AuthTokenResponse } from "../types/AuthTypes";
 import { AuthErrorResponse, ErrorResponse } from "../types/ErrorTypes";
 import baseAPIClient from "./BaseAPIClient";
-import {
-  getLocalStorageObjProperty,
-  setLocalStorageObjProperty,
-} from "../utils/LocalStorageUtils";
+import { getLocalStorageObjProperty, setLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const login = async (
   email: string,

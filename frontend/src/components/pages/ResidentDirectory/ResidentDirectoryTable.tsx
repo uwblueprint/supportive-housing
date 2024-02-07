@@ -18,11 +18,10 @@ import { VscKebabVertical } from "react-icons/vsc";
 import { Resident, ResidentStatus } from "../../../types/ResidentTypes";
 import EditResident from "../../forms/EditResident";
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
-import getFormattedDateAndTime from "../../../utils/DateUtils";
 import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
-import { convertToDate } from "../../../helper/dateHelpers";
+import { convertToDate, getFormattedDateAndTime } from "../../../helper/dateHelpers";
 import { SelectLabel } from "../../../types/SharedTypes";
 import { UserRole } from "../../../types/UserTypes";
 
@@ -87,25 +86,20 @@ const ResidentDirectoryTable = ({
   countResidents,
 }: Props): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
-  const [showAlert, setShowAlert] = useState(false);
-  const newToast = CreateToast();
 
-  // Delete confirmation state
   const [editingResident, setEditingResident] = useState<Resident | null>(null);
   const [deletingResident, setDeletingResident] = useState<Resident | null>(
     null,
   );
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  // Handle delete confirmation toggle
+
+  const [loading, setLoading] = useState<boolean>(false)
+  const newToast = CreateToast();
 
   const handleEditClick = (resident: Resident) => {
     setEditingResident(resident);
     setIsEditModalOpen(true);
-  };
-
-  const handleEditClose = () => {
-    setIsEditModalOpen(false);
   };
 
   const handleDeleteClick = (resident: Resident) => {
@@ -114,19 +108,20 @@ const ResidentDirectoryTable = ({
   };
 
   const deleteResident = async (itemId: number) => {
+    setLoading(true)
     const statusCode = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       newToast(
-        "Error Deleting Resident",
+        "Error deleting resident",
         "Resident has log records attached.",
         "error",
       );
     } else if (statusCode === 500) {
-      newToast("Error Deleting Resident", "Server error.", "error");
+      newToast("Error deleting resident", "Unable to delete resident.", "error");
     } else {
       newToast(
-        "Deleted Resident",
-        "Resident has been deleted successfully.",
+        "Resident deleted",
+        "Successfully deleted resident.",
         "success",
       );
       const newUserPageNum =
@@ -136,16 +131,8 @@ const ResidentDirectoryTable = ({
       setUserPageNum(newUserPageNum);
       setIsDeleteModalOpen(false);
     }
-    setShowAlert(true);
+    setLoading(false)
   };
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-    }
-  }, [showAlert]);
 
   return (
     <Box>
@@ -221,7 +208,7 @@ const ResidentDirectoryTable = ({
             resident={editingResident}
             isOpen={isEditModalOpen}
             userPageNum={userPageNum}
-            toggleClose={() => handleEditClose()}
+            toggleClose={() => setIsEditModalOpen(false)}
             getRecords={getRecords}
           />
         )}
@@ -230,6 +217,7 @@ const ResidentDirectoryTable = ({
             header={DELETE_CONFIRMATION_HEADER}
             message={deleteConfirmationMessage(deletingResident.residentId)}
             isOpen={isDeleteModalOpen}
+            loading={loading}
             action={() => deleteResident(deletingResident.id)}
             toggleClose={() => setIsDeleteModalOpen(false)}
           />

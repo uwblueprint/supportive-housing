@@ -19,6 +19,7 @@ import {
   Radio,
   RadioGroup,
   Text,
+  Spinner,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import { UPDATE_EMPLOYEE_ERROR } from "../../constants/ErrorMessages";
@@ -52,7 +53,6 @@ const EditEmployee = ({
 }: Props): React.ReactElement => {
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
   const history = useHistory();
-  const newToast = CreateToast();
 
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -67,6 +67,9 @@ const EditEmployee = ({
   const [adminStatusError, setAdminStatusError] = useState<boolean>(false);
 
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const mapRoleToState = (role: UserRole) => {
     switch (role) {
@@ -135,69 +138,71 @@ const EditEmployee = ({
     setAdminStatusError(false);
   };
 
-  const onInviteEmployee = async (
-    isFirstNameError: boolean,
-    isLastNameError: boolean,
-    isAdminStatusError: boolean,
-  ) => {
-    if (!isFirstNameError && !isLastNameError && !isAdminStatusError) {
-      let roleOptionIndex: number | undefined;
+  const onInviteEmployee = async () => {
+    let roleOptionIndex: number | undefined;
 
-      if (adminStatus === "1") {
-        roleOptionIndex = 1;
-      } else if (adminStatus === "2" && isTwoFactorAuthenticated) {
-        roleOptionIndex = 0;
-      } else if (adminStatus === "2" && !isTwoFactorAuthenticated) {
-        roleOptionIndex = 2;
-      }
+    if (adminStatus === "1") {
+      roleOptionIndex = 1;
+    } else if (adminStatus === "2" && isTwoFactorAuthenticated) {
+      roleOptionIndex = 0;
+    } else if (adminStatus === "2" && !isTwoFactorAuthenticated) {
+      roleOptionIndex = 2;
+    }
 
-      if (roleOptionIndex !== undefined) {
-        const newRole = RoleOptions[roleOptionIndex];
-        const statusCode = await UserAPIClient.updateUser({
-          id: employee.id,
-          firstName,
-          lastName,
-          role: newRole,
-        });
-        if (statusCode === 201) {
-          newToast(
-            "Employee updated",
-            "Employee has been successfully updated",
-            "success",
-          );
+    if (roleOptionIndex !== undefined) {
+      const newRole = RoleOptions[roleOptionIndex];
+      setLoading(true)
+      const statusCode = await UserAPIClient.updateUser({
+        id: employee.id,
+        firstName,
+        lastName,
+        role: newRole,
+      });
+      if (statusCode === 201) {
+        newToast(
+          "Employee updated",
+          "Successfully updated employee.",
+          "success",
+        );
 
-          // logout the user if they're editing themselves and change their role
-          if (
-            authenticatedUser?.id === employee.id &&
-            authenticatedUser?.role !== newRole
-          ) {
-            const success = await AuthAPIClient.logout(authenticatedUser?.id);
-            if (success) {
-              setAuthenticatedUser(null);
-              history.push(HOME_PAGE);
-            }
-          } else {
-            getRecords(userPageNum);
-            handleClose();
+        // logout the user if they're editing themselves and change their role
+        if (
+          authenticatedUser?.id === employee.id &&
+          authenticatedUser?.role !== newRole
+        ) {
+          const success = await AuthAPIClient.logout(authenticatedUser?.id);
+          if (success) {
+            setAuthenticatedUser(null);
+            history.push(HOME_PAGE);
           }
         } else {
-          newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
+          getRecords(userPageNum);
+          handleClose();
         }
       } else {
         newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
       }
+      setLoading(false)
+    } else {
+      newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
     }
   };
 
   const handleSubmit = () => {
-    const isFirstNameError = firstName === "";
-    const isLastNameError = lastName === "";
-    const isAdminStatusError = adminStatus === "";
+    if (firstName === "") {
+      setFirstNameError(true)
+      return
+    }
+    if (lastName === "") {
+      setLastNameError(true)
+      return
+    }
+    if (adminStatus === "") {
+      setAdminStatusError(true)
+      return
+    }
 
-    setFirstNameError(isFirstNameError);
-    setLastNameError(isLastNameError);
-    setAdminStatusError(isAdminStatusError);
-    onInviteEmployee(isFirstNameError, isLastNameError, isAdminStatusError);
+    onInviteEmployee();
   };
 
   return (
@@ -304,6 +309,15 @@ const EditEmployee = ({
             </Box>
           </ModalBody>
           <ModalFooter>
+              {loading &&
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+                />
+              } 
             <Button variant="primary" type="submit" onClick={handleSubmit}>
               Save
             </Button>

@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import {
   GetUsersResponse,
@@ -11,6 +10,7 @@ import {
   GetUserParams,
 } from "../types/UserTypes";
 import { ErrorResponse } from "../types/ErrorTypes";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const getUsers = async ({
   returnAll = false,
@@ -154,7 +154,9 @@ const inviteUser = async (
           "User with the specified email already exists.",
       };
     }
-    return false;
+    return {
+      errMessage: "Unable to invite user."
+    };
   }
 };
 

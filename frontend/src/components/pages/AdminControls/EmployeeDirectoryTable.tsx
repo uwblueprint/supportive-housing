@@ -44,7 +44,7 @@ const deactivateConfirmationMessage = (name: string) =>
 
 const DELETE_CONFIRMATION_HEADER = "Delete Employee";
 const deleteConfirmationMessage = (name: string) =>
-  `Are you sure you want to delete ${name}? Deleting an employee will permanently remove it from the system.`;
+  `Are you sure you want to delete ${name}? Deleting an employee will permanently remove them from the system.`;
 
 const constructRole = (user: User): string => {
   let role = "";
@@ -98,6 +98,7 @@ const EmployeeDirectoryTable = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
+  const [loading, setLoading] = useState<boolean>(false)
   const newToast = CreateToast();
 
   const handleEditClick = (employee: User) => {
@@ -128,6 +129,7 @@ const EmployeeDirectoryTable = ({
   };
 
   const activateEmployee = async (employeeId: number) => {
+    setLoading(true);
     const statusCode = await UserAPIClient.updateUserStatus(
       employeeId,
       UserStatus.ACTIVE,
@@ -135,21 +137,23 @@ const EmployeeDirectoryTable = ({
     if (statusCode === 200) {
       newToast(
         "Employee Activated",
-        "Employee has been successfully activated.",
+        "Successfully activated employee.",
         "success",
       );
       getRecords(userPageNum);
       setIsActivateModalOpen(false);
     } else {
       newToast(
-        "Error Activating Employee.",
-        "Employee was unable to be activated.",
+        "Error Activating Employee",
+        "Unable to activate employee.",
         "error",
       );
     }
+    setLoading(false)
   };
 
   const deactivateEmployee = async (employeeId: number) => {
+    setLoading(true)
     const statusCode = await UserAPIClient.updateUserStatus(
       employeeId,
       UserStatus.DEACTIVATED,
@@ -157,7 +161,7 @@ const EmployeeDirectoryTable = ({
     if (statusCode === 200) {
       newToast(
         "Employee Deactivated",
-        "Employee has been successfully deactivated.",
+        "Successfully deactivated employee.",
         "success",
       );
 
@@ -175,18 +179,20 @@ const EmployeeDirectoryTable = ({
     } else {
       newToast(
         "Error Deactivating Employee",
-        "Employee was unable to be deactivated.",
+        "Unable to deactivate employee.",
         "error",
       );
     }
+    setLoading(false)
   };
 
   const deleteEmployee = async (employeeId: number) => {
+    setLoading(true)
     const statusCode = await UserAPIClient.deleteUser(employeeId);
     if (statusCode === 204) {
       newToast(
         "Employee Deleted",
-        "Employee has been successfully deleted.",
+        "Successfully deleted employee.",
         "success",
       );
       const newUserPageNum = users.length === 1 ? userPageNum - 1 : userPageNum;
@@ -196,8 +202,8 @@ const EmployeeDirectoryTable = ({
       setIsDeleteModalOpen(false);
     } else {
       newToast(
-        "Error Deleting Employee.",
-        "Employee was unable to be deleted.",
+        "Error Deleting Employee",
+        "Unable to delete employee.",
         "error",
       );
     }
@@ -296,6 +302,7 @@ const EmployeeDirectoryTable = ({
               `${activatingEmployee.firstName} ${activatingEmployee.lastName}`,
             )}
             isOpen={isActivateModalOpen}
+            loading={loading}
             action={() => activateEmployee(activatingEmployee.id)}
             toggleClose={() => setIsActivateModalOpen(false)}
           />
@@ -308,6 +315,7 @@ const EmployeeDirectoryTable = ({
             )}
             warningMessage={deactivateWarningMessage(deactivatingEmployee.id)}
             isOpen={isDeactivateModalOpen}
+            loading={loading}
             action={() => deactivateEmployee(deactivatingEmployee.id)}
             toggleClose={() => setIsDeactivateModalOpen(false)}
           />
@@ -319,6 +327,7 @@ const EmployeeDirectoryTable = ({
               `${deletingEmployee.firstName} ${deletingEmployee.lastName}`,
             )}
             isOpen={isDeleteModalOpen}
+            loading={loading}
             action={() => deleteEmployee(deletingEmployee.id)}
             toggleClose={() => setIsDeleteModalOpen(false)}
           />

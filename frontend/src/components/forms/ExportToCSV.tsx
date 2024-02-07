@@ -24,6 +24,7 @@ import {
   ModalCloseButton,
   InputGroup,
   InputRightElement,
+  Spinner,
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
@@ -31,19 +32,37 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import convertLogsToCSV from "../../helper/csvHelpers";
+import CreateToast from "../common/Toasts";
+import { getFormattedDateAndTime } from "../../helper/dateHelpers";
 
 const ExportToCSV = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [dateError, setDateError] = useState<boolean>(false);
-  const [showAlert, setShowAlert] = useState(false);
 
   const [isOpen, setOpen] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const handleClear = () => {
     setStartDate(undefined);
     setEndDate(undefined);
     setDateError(false);
+  };
+
+  const handleStartDateChange = (inputValue: Date) => {
+    setStartDate(inputValue);
+    if (endDate && inputValue < endDate) {
+      setDateError(false);
+    }
+  };
+
+  const handleEndDateChange = (inputValue: Date) => {
+    setEndDate(inputValue);
+    if (startDate && inputValue > startDate) {
+      setDateError(false);
+    }
   };
 
   const handleOpen = () => {
@@ -72,21 +91,31 @@ const ExportToCSV = (): React.ReactElement => {
         endDate ? endDate.toISOString() : null,
       ];
     }
+    setLoading(true)
     const data = await LogRecordAPIClient.filterLogRecords({
       dateRange,
       returnAll: true, // return all data
     });
 
-    setShowAlert(!data || !convertLogsToCSV(data.logRecords));
-  };
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
+    if (!data || data.logRecords.length === 0) {
+      newToast("Error downloading CSV", "No records found in the provided date range.", "error");
     }
-  }, [showAlert]);
+    else {
+      const formattedLogRecords = data.logRecords.map((logRecord) => {
+          const { date, time } = getFormattedDateAndTime(new Date(logRecord.datetime), true);
+          return {...logRecord, datetime: `${date}, ${time}`}
+      })
+      const success = convertLogsToCSV(formattedLogRecords)
+      if (success) {
+        newToast("CSV downloaded", "Successfully downloaded CSV.", "success");
+        handleClose()
+      }
+      else {
+        newToast("Error downloading CSV", "Unable to download CSV.", "error");
+      }  
+    }
+    setLoading(false)
+  };
 
   return (
     <>
@@ -113,7 +142,7 @@ const ExportToCSV = (): React.ReactElement => {
                       <SingleDatepicker
                         name="start-date-input"
                         date={startDate}
-                        onDateChange={setStartDate}
+                        onDateChange={handleStartDateChange}
                         propsConfigs={{
                           ...singleDatePickerStyle,
                           inputProps: {
@@ -125,7 +154,10 @@ const ExportToCSV = (): React.ReactElement => {
                       {startDate && (
                         <InputRightElement>
                           <IconButton
-                            onClick={() => setStartDate(undefined)}
+                            onClick={() => {
+                              setStartDate(undefined)
+                              setDateError(false)
+                            }}
                             aria-label="clear"
                             variant="icon"
                             icon={
@@ -156,7 +188,7 @@ const ExportToCSV = (): React.ReactElement => {
                       <SingleDatepicker
                         name="end-date-input"
                         date={endDate}
-                        onDateChange={setEndDate}
+                        onDateChange={handleEndDateChange}
                         propsConfigs={{
                           ...singleDatePickerStyle,
                           inputProps: {
@@ -168,7 +200,10 @@ const ExportToCSV = (): React.ReactElement => {
                       {endDate && (
                         <InputRightElement>
                           <IconButton
-                            onClick={() => setEndDate(undefined)}
+                            onClick={() => {
+                              setEndDate(undefined)
+                              setDateError(false)
+                            }}
                             aria-label="clear"
                             variant="icon"
                             icon={
@@ -197,27 +232,21 @@ const ExportToCSV = (): React.ReactElement => {
             </ModalBody>
 
             <ModalFooter>
+              {loading &&
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+                />
+              }
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Export
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="error" variant="left-accent" borderRadius="6px">
-            <AlertIcon />
-            <AlertDescription>No Log Records Found.</AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </>
   );

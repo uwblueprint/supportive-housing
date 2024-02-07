@@ -9,8 +9,8 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import getFormattedDateAndTime from "../../../utils/DateUtils";
 import { SignInLog } from "../../../types/SignInLogsTypes";
+import { getFormattedDateAndTime } from "../../../helper/dateHelpers";
 
 type Props = {
   signInLogs: SignInLog[];

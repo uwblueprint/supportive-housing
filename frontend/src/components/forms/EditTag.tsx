@@ -14,6 +14,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
 } from "@chakra-ui/react";
 import { Col, Row } from "react-bootstrap";
 import CreateToast from "../common/Toasts";
@@ -37,10 +38,10 @@ const EditTag = ({
   toggleClose,
 }: Props): React.ReactElement => {
   const [tagName, setTagName] = useState("");
-
-  const newToast = CreateToast();
-
   const [tagNameError, setTagNameError] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const handleClose = () => {
     setTagName(tag.name);
@@ -49,6 +50,7 @@ const EditTag = ({
   };
 
   const editTag = async () => {
+    setLoading(true)
     const res = await TagAPIClient.editTag({
       tagId: tag.tagId,
       name: tagName,
@@ -57,12 +59,13 @@ const EditTag = ({
     if (isErrorResponse(res)) {
       newToast("Error updating tag", res.errMessage, "error");
     } else if (res) {
-      newToast("Tag updated", "Tag successfully updated.", "success");
+      newToast("Tag updated", "Successfully updated tag.", "success");
       getTags(userPageNum);
       handleClose();
     } else {
       newToast("Error updating tag", "Unable to update tag.", "error");
     }
+    setLoading(false)
   };
 
   const handleTagNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +114,15 @@ const EditTag = ({
               </Row>
             </ModalBody>
             <ModalFooter>
+              {loading &&
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+                />
+              } 
               <Button onClick={handleSave} variant="primary" type="submit">
                 Save
               </Button>

@@ -25,6 +25,7 @@ import {
   Textarea,
   ModalFooter,
   ModalCloseButton,
+  Spinner,
 } from "@chakra-ui/react";
 import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -35,6 +36,7 @@ import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 import { SelectLabel } from "../../types/SharedTypes";
+import CreateToast from "../common/Toasts";
 
 type Props = {
   logRecord: LogRecord;
@@ -49,29 +51,8 @@ type Props = {
   buildingOptions: SelectLabel[];
 };
 
-type AlertData = {
-  status: AlertStatus;
-  description: string;
-};
-
-type AlertDataOptions = {
-  [key: string]: AlertData;
-};
-
-const ALERT_DATA: AlertDataOptions = {
-  DEFAULT: {
-    status: "info",
-    description: "",
-  },
-  SUCCESS: {
-    status: "success",
-    description: "Log successfully edited.",
-  },
-  ERROR: {
-    status: "error",
-    description: "Error editing log.",
-  },
-};
+// Regex to match time format HH:mm
+const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
 const EditLog = ({
   logRecord,
@@ -85,7 +66,6 @@ const EditLog = ({
   countRecords,
   buildingOptions,
 }: Props): React.ReactElement => {
-  // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
 
   const [date, setDate] = useState(new Date());
   const [time, setTime] = useState("");
@@ -96,22 +76,26 @@ const EditLog = ({
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
-  // error states for non-nullable inputs
+  // error states for inputs
+  const [employeeError, setEmployeeError] = useState(false);
+  const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
   const [residentError, setResidentError] = useState(false);
   const [notesError, setNotesError] = useState(false);
 
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const handleDateChange = (newDate: Date) => {
-    setDate(newDate);
+    if (newDate !== null) {
+      setDate(newDate);
+      setDateError(false);
+    }
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
-    const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Regex to match time format HH:mm
 
     // Check to see if the input is valid, prevents an application crash
     if (timeRegex.test(e.target.value)) {
@@ -120,9 +104,8 @@ const EditLog = ({
       updatedDate.setHours(parseInt(hour, 10));
       updatedDate.setMinutes(parseInt(minute, 10));
       setDate(updatedDate);
+      setTimeError(false)
     }
-
-    setTimeError(e.target.value === "");
   };
 
   const handleBuildingChange = (
@@ -130,9 +113,8 @@ const EditLog = ({
   ) => {
     if (selectedOption !== null) {
       setBuildingId(selectedOption.value);
+      setBuildingError(false)
     }
-
-    setBuildingError(selectedOption === null);
   };
 
   const handleResidentsChange = (
@@ -143,9 +125,8 @@ const EditLog = ({
     );
     if (mutableSelectedResidents !== null) {
       setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
-    }
-    setResidentError(mutableSelectedResidents.length === 0);
-    
+      setResidentError(false);
+    }    
   };
 
   const handleTagsChange = (
@@ -172,7 +153,9 @@ const EditLog = ({
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     setNotes(inputValue);
-    setNotesError(inputValue === "");
+    if (inputValue !== "") {
+      setNotesError(false)
+    }
   };
 
   const initializeValues = () => {
@@ -192,7 +175,9 @@ const EditLog = ({
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
-    // error states for non-nullable inputs
+    // error states for inputs
+    setEmployeeError(false)
+    setDateError(false)
     setTimeError(false);
     setBuildingError(false);
     setResidentError(false);
@@ -201,21 +186,29 @@ const EditLog = ({
 
   const handleSubmit = async () => {
     // Update error states
-    setTimeError(time === "");
-    setBuildingError(buildingId === -1);
-    setResidentError(residents.length === 0);
-    setNotesError(notes === "");
+    if (date === undefined) {
+      setDateError(true)
+      return
+    }
 
-    // If any required fields are empty, prevent form submission
-    if (
-      date === null ||
-      time === "" ||
-      buildingId === -1 ||
-      residents.length === 0 ||
-      notes === ""
-    ) {
+    if (!timeRegex.test(time)) {
+      setTimeError(true)
       return;
     }
+    if (buildingId === -1) {
+      setBuildingError(true)
+      return;
+    }
+    if (residents.length === 0) {
+      setResidentError(true)
+      return;
+    }
+    if (notes.length === 0) {
+      setNotesError(true)
+      return;
+    }
+
+    setLoading(true)
 
     const res = await LogRecordAPIClient.editLogRecord({
       logId: logRecord.logId,
@@ -229,15 +222,14 @@ const EditLog = ({
       attnTo: attnTo === -1 ? undefined : attnTo,
     });
     if (res) {
-      setAlertData(ALERT_DATA.SUCCESS);
+      newToast("Log record updated", "Successfully updated log record.", "success")
       countRecords();
       getRecords(userPageNum);
-
       toggleClose();
     } else {
-      setAlertData(ALERT_DATA.ERROR);
+      newToast("Error updating log record", "Unable to update log record.", "error")
     }
-    setShowAlert(true);
+    setLoading(false)
   };
 
   useEffect(() => {
@@ -246,15 +238,6 @@ const EditLog = ({
     }
   /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [isOpen]);
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-        setAlertData(ALERT_DATA.DEFAULT);
-      }, 3000);
-    }
-  }, [showAlert]);
 
   return (
     <>
@@ -280,7 +263,7 @@ const EditLog = ({
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
                     <GridItem minWidth="100%">
-                      <FormControl isRequired>
+                      <FormControl isRequired isInvalid={dateError}>
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
                           name="date-input"
@@ -288,6 +271,7 @@ const EditLog = ({
                           onDateChange={handleDateChange}
                           propsConfigs={singleDatePickerStyle}
                         />
+                        <FormErrorMessage>Date is invalid.</FormErrorMessage>
                       </FormControl>
                     </GridItem>
                     <GridItem minWidth="100%">
@@ -336,7 +320,7 @@ const EditLog = ({
                       )}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>Resident is required.</FormErrorMessage>
+                    <FormErrorMessage>At least 1 resident is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
@@ -403,31 +387,21 @@ const EditLog = ({
             </ModalBody>
 
             <ModalFooter>
+                {loading &&
+                  <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
+                  />
+                } 
                 <Button onClick={handleSubmit} variant="primary" type="submit">
                   Save
                 </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert
-            status={alertData.status}
-            variant="left-accent"
-            borderRadius="6px"
-          >
-            <AlertIcon />
-            <AlertDescription>{alertData.description}</AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </>
   );

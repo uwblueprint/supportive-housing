@@ -9,6 +9,7 @@ import {
   ModalFooter,
   Button,
   Text,
+  Spinner,
 } from "@chakra-ui/react";
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
   message: string;
   warningMessage?: string;
   isOpen: boolean;
+  loading: boolean;
   toggleClose: () => void;
   action: () => Promise<void>;
 };
@@ -25,6 +27,7 @@ const ConfirmationModal = ({
   message,
   warningMessage,
   isOpen,
+  loading,
   toggleClose,
   action,
 }: Props): React.ReactElement => {
@@ -55,6 +58,15 @@ const ConfirmationModal = ({
               </Box>
             </ModalBody>
             <ModalFooter>
+              {loading &&
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+                />
+              }
               <Button
                 onClick={toggleClose}
                 variant="tertiary"

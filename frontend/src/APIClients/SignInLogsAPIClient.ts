@@ -1,11 +1,11 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 import {
   CountSignInLogsParams,
   CountSignInLogsResponse,
   GetSignInLogsParams,
   GetSignInLogsResponse,
 } from "../types/SignInLogsTypes";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 
 const getSignInLogs = async ({
