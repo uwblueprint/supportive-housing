@@ -7,8 +7,6 @@ from ...models import db
 from datetime import datetime
 from pytz import timezone, utc
 from sqlalchemy import text
-from flask import current_app
-
 
 class LogRecordsService(ILogRecordsService):
     """
