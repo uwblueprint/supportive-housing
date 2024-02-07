@@ -151,7 +151,7 @@ const EditEmployee = ({
 
     if (roleOptionIndex !== undefined) {
       const newRole = RoleOptions[roleOptionIndex];
-      setLoading(true)
+      setLoading(true);
       const statusCode = await UserAPIClient.updateUser({
         id: employee.id,
         firstName,
@@ -182,7 +182,7 @@ const EditEmployee = ({
       } else {
         newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
       }
-      setLoading(false)
+      setLoading(false);
     } else {
       newToast("Error updating employee", UPDATE_EMPLOYEE_ERROR, "error");
     }
@@ -190,16 +190,16 @@ const EditEmployee = ({
 
   const handleSubmit = () => {
     if (firstName === "") {
-      setFirstNameError(true)
-      return
+      setFirstNameError(true);
+      return;
     }
     if (lastName === "") {
-      setLastNameError(true)
-      return
+      setLastNameError(true);
+      return;
     }
     if (adminStatus === "") {
-      setAdminStatusError(true)
-      return
+      setAdminStatusError(true);
+      return;
     }
 
     onInviteEmployee();
@@ -309,15 +309,15 @@ const EditEmployee = ({
             </Box>
           </ModalBody>
           <ModalFooter>
-              {loading &&
-                <Spinner
+            {loading && (
+              <Spinner
                 thickness="4px"
                 speed="0.65s"
                 emptyColor="gray.200"
                 size="md"
                 marginRight="10px"
-                />
-              } 
+              />
+            )}
             <Button variant="primary" type="submit" onClick={handleSubmit}>
               Save
             </Button>

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { MultiValue, SingleValue } from "react-select";
 import {
   Box,

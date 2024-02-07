@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { SingleValue } from "react-select";
 import {
   Box,
@@ -63,7 +63,7 @@ const CreateResident = ({
   const newToast = CreateToast();
 
   const addResident = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
@@ -81,7 +81,7 @@ const CreateResident = ({
       setUserPageNum(1);
       setIsOpen(false);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -218,7 +218,9 @@ const CreateResident = ({
                       onChange={handleRoomNumberChange}
                       type="number"
                     />
-                    <FormErrorMessage>Room number is required and must contain 3 numbers.</FormErrorMessage>
+                    <FormErrorMessage>
+                      Room number is required and must contain 3 numbers.
+                    </FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
@@ -251,8 +253,8 @@ const CreateResident = ({
                         <InputRightElement>
                           <IconButton
                             onClick={() => {
-                              setMoveOutDate(undefined)
-                              setMoveOutDateError(false)
+                              setMoveOutDate(undefined);
+                              setMoveOutDateError(false);
                             }}
                             aria-label="clear"
                             variant="icon"
@@ -290,15 +292,15 @@ const CreateResident = ({
               </Row>
             </ModalBody>
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              } 
+              )}
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Submit
               </Button>

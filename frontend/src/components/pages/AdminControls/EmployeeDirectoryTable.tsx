@@ -98,7 +98,7 @@ const EmployeeDirectoryTable = ({
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const history = useHistory();
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const newToast = CreateToast();
 
   const handleEditClick = (employee: User) => {
@@ -149,11 +149,11 @@ const EmployeeDirectoryTable = ({
         "error",
       );
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const deactivateEmployee = async (employeeId: number) => {
-    setLoading(true)
+    setLoading(true);
     const statusCode = await UserAPIClient.updateUserStatus(
       employeeId,
       UserStatus.DEACTIVATED,
@@ -183,18 +183,14 @@ const EmployeeDirectoryTable = ({
         "error",
       );
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const deleteEmployee = async (employeeId: number) => {
-    setLoading(true)
+    setLoading(true);
     const statusCode = await UserAPIClient.deleteUser(employeeId);
     if (statusCode === 204) {
-      newToast(
-        "Employee Deleted",
-        "Successfully deleted employee.",
-        "success",
-      );
+      newToast("Employee Deleted", "Successfully deleted employee.", "success");
       const newUserPageNum = users.length === 1 ? userPageNum - 1 : userPageNum;
       countUsers();
       getRecords(newUserPageNum);

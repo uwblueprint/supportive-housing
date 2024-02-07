@@ -2,9 +2,6 @@
 import React, { useEffect, useState } from "react";
 import Select, { MultiValue, SingleValue } from "react-select";
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
   Button,
   Checkbox,
@@ -21,13 +18,11 @@ import {
   ModalOverlay,
   ModalHeader,
   Text,
-  ScaleFade,
   Textarea,
   ModalFooter,
   ModalCloseButton,
   Spinner,
 } from "@chakra-ui/react";
-import type { AlertStatus } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
@@ -77,7 +72,6 @@ const EditLog = ({
   const [flagged, setFlagged] = useState(false);
 
   // error states for inputs
-  const [employeeError, setEmployeeError] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
@@ -176,7 +170,6 @@ const EditLog = ({
     setFlagged(logRecord.flagged);
 
     // error states for inputs
-    setEmployeeError(false)
     setDateError(false)
     setTimeError(false);
     setBuildingError(false);

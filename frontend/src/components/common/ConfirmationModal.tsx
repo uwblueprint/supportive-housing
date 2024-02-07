@@ -58,15 +58,15 @@ const ConfirmationModal = ({
               </Box>
             </ModalBody>
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              }
+              )}
               <Button
                 onClick={toggleClose}
                 variant="tertiary"

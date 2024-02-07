@@ -48,7 +48,7 @@ const CreateTag = ({
   };
 
   const addTag = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await TagAPIClient.createTag({
       name: tagName,
     });
@@ -64,7 +64,7 @@ const CreateTag = ({
     } else {
       newToast("Error adding tag", "Unable to add tag.", "error");
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleTagNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,15 +117,15 @@ const CreateTag = ({
               </Row>
             </ModalBody>
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              } 
+              )}
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Submit
               </Button>

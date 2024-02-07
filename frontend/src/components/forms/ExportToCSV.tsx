@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Icon,
   IconButton,
@@ -12,10 +12,6 @@ import {
   Button,
   FormHelperText,
   FormErrorMessage,
-  ScaleFade,
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Tooltip,
   Grid,
   GridItem,
@@ -91,30 +87,35 @@ const ExportToCSV = (): React.ReactElement => {
         endDate ? endDate.toISOString() : null,
       ];
     }
-    setLoading(true)
+    setLoading(true);
     const data = await LogRecordAPIClient.filterLogRecords({
       dateRange,
       returnAll: true, // return all data
     });
 
     if (!data || data.logRecords.length === 0) {
-      newToast("Error downloading CSV", "No records found in the provided date range.", "error");
-    }
-    else {
+      newToast(
+        "Error downloading CSV",
+        "No records found in the provided date range.",
+        "error",
+      );
+    } else {
       const formattedLogRecords = data.logRecords.map((logRecord) => {
-          const { date, time } = getFormattedDateAndTime(new Date(logRecord.datetime), true);
-          return {...logRecord, datetime: `${date}, ${time}`}
-      })
-      const success = convertLogsToCSV(formattedLogRecords)
+        const { date, time } = getFormattedDateAndTime(
+          new Date(logRecord.datetime),
+          true,
+        );
+        return { ...logRecord, datetime: `${date}, ${time}` };
+      });
+      const success = convertLogsToCSV(formattedLogRecords);
       if (success) {
         newToast("CSV downloaded", "Successfully downloaded CSV.", "success");
-        handleClose()
-      }
-      else {
+        handleClose();
+      } else {
         newToast("Error downloading CSV", "Unable to download CSV.", "error");
-      }  
+      }
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (
@@ -155,8 +156,8 @@ const ExportToCSV = (): React.ReactElement => {
                         <InputRightElement>
                           <IconButton
                             onClick={() => {
-                              setStartDate(undefined)
-                              setDateError(false)
+                              setStartDate(undefined);
+                              setDateError(false);
                             }}
                             aria-label="clear"
                             variant="icon"
@@ -201,8 +202,8 @@ const ExportToCSV = (): React.ReactElement => {
                         <InputRightElement>
                           <IconButton
                             onClick={() => {
-                              setEndDate(undefined)
-                              setDateError(false)
+                              setEndDate(undefined);
+                              setDateError(false);
                             }}
                             aria-label="clear"
                             variant="icon"
@@ -232,15 +233,15 @@ const ExportToCSV = (): React.ReactElement => {
             </ModalBody>
 
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              }
+              )}
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Export
               </Button>

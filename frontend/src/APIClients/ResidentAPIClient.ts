@@ -109,7 +109,7 @@ const createResident = async ({
       };
     }
     return {
-      errMessage: "Unable to add resident."
+      errMessage: "Unable to add resident.",
     };
   }
 };
@@ -163,7 +163,7 @@ const editResident = async ({
       };
     }
     return {
-      errMessage: "Unable to update resident."
+      errMessage: "Unable to update resident.",
     };
   }
 };

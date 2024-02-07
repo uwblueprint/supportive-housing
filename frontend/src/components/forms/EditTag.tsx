@@ -50,7 +50,7 @@ const EditTag = ({
   };
 
   const editTag = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await TagAPIClient.editTag({
       tagId: tag.tagId,
       name: tagName,
@@ -65,7 +65,7 @@ const EditTag = ({
     } else {
       newToast("Error updating tag", "Unable to update tag.", "error");
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleTagNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,15 +114,15 @@ const EditTag = ({
               </Row>
             </ModalBody>
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              } 
+              )}
               <Button onClick={handleSave} variant="primary" type="submit">
                 Save
               </Button>

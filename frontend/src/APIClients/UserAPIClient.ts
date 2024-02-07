@@ -155,7 +155,7 @@ const inviteUser = async (
       };
     }
     return {
-      errMessage: "Unable to invite user."
+      errMessage: "Unable to invite user.",
     };
   }
 };

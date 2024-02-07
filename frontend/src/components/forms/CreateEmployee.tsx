@@ -133,7 +133,7 @@ const CreateEmployee = ({
     }
 
     if (roleOptionIndex !== undefined) {
-      setLoading(true)
+      setLoading(true);
       const res = await UserAPIClient.inviteUser(
         invitedEmail,
         RoleOptions[roleOptionIndex],
@@ -154,25 +154,25 @@ const CreateEmployee = ({
         countUsers();
         handleClose();
       }
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   const handleSubmit = () => {
     if (invitedFirstName === "") {
-      setInvitedFirstNameError(true)
-      return
+      setInvitedFirstNameError(true);
+      return;
     }
     if (invitedLastName === "") {
-      setInvitedLastNameError(true)
-      return
+      setInvitedLastNameError(true);
+      return;
     }
     if (!emailRegex.test(invitedEmail)) {
-      setInvitedEmailError(true)
-      return
+      setInvitedEmailError(true);
+      return;
     }
     if (invitedAdminStatus === "") {
-      setInvitedAdminStatusError(true)
+      setInvitedAdminStatusError(true);
       return;
     }
 
@@ -290,15 +290,15 @@ const CreateEmployee = ({
             </Box>
           </ModalBody>
           <ModalFooter>
-              {loading &&
-                <Spinner
+            {loading && (
+              <Spinner
                 thickness="4px"
                 speed="0.65s"
                 emptyColor="gray.200"
                 size="md"
                 marginRight="10px"
-                />
-              }   
+              />
+            )}
             <Button variant="primary" type="submit" onClick={handleSubmit}>
               Invite
             </Button>

@@ -1,4 +1,4 @@
-import React, { RefObject, useState, useContext, useEffect } from "react";
+import React, { RefObject, useState, useContext } from "react";
 import {
   Box,
   IconButton,
@@ -21,7 +21,10 @@ import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import AuthContext from "../../../contexts/AuthContext";
 import CreateToast from "../../common/Toasts";
 import ConfirmationModal from "../../common/ConfirmationModal";
-import { convertToDate, getFormattedDateAndTime } from "../../../helper/dateHelpers";
+import {
+  convertToDate,
+  getFormattedDateAndTime,
+} from "../../../helper/dateHelpers";
 import { SelectLabel } from "../../../types/SharedTypes";
 import { UserRole } from "../../../types/UserTypes";
 
@@ -94,7 +97,7 @@ const ResidentDirectoryTable = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const newToast = CreateToast();
 
   const handleEditClick = (resident: Resident) => {
@@ -108,7 +111,7 @@ const ResidentDirectoryTable = ({
   };
 
   const deleteResident = async (itemId: number) => {
-    setLoading(true)
+    setLoading(true);
     const statusCode = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       newToast(
@@ -117,13 +120,13 @@ const ResidentDirectoryTable = ({
         "error",
       );
     } else if (statusCode === 500) {
-      newToast("Error deleting resident", "Unable to delete resident.", "error");
-    } else {
       newToast(
-        "Resident deleted",
-        "Successfully deleted resident.",
-        "success",
+        "Error deleting resident",
+        "Unable to delete resident.",
+        "error",
       );
+    } else {
+      newToast("Resident deleted", "Successfully deleted resident.", "success");
       const newUserPageNum =
         residents.length === 1 ? userPageNum - 1 : userPageNum;
       countResidents();
@@ -131,7 +134,7 @@ const ResidentDirectoryTable = ({
       setUserPageNum(newUserPageNum);
       setIsDeleteModalOpen(false);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   return (

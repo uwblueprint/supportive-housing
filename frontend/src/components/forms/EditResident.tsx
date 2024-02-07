@@ -65,7 +65,7 @@ const EditResident = ({
   const newToast = CreateToast();
 
   const editResident = async () => {
-    setLoading(true)
+    setLoading(true);
     const res = await ResidentAPIClient.editResident({
       id: resident.id,
       initial: initials.toUpperCase(),
@@ -78,15 +78,11 @@ const EditResident = ({
     if (isErrorResponse(res)) {
       newToast("Error updating resident", res.errMessage, "error");
     } else if (res) {
-      newToast(
-        "Resident updated",
-        "Successfully updated resident.",
-        "success",
-      );
+      newToast("Resident updated", "Successfully updated resident.", "success");
       getRecords(userPageNum);
       toggleClose();
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -243,8 +239,8 @@ const EditResident = ({
                         <InputRightElement>
                           <IconButton
                             onClick={() => {
-                              setMoveOutDate(undefined)
-                              setMoveOutDateError(false)
+                              setMoveOutDate(undefined);
+                              setMoveOutDateError(false);
                             }}
                             aria-label="clear"
                             variant="icon"
@@ -284,15 +280,15 @@ const EditResident = ({
               </Row>
             </ModalBody>
             <ModalFooter>
-              {loading &&
+              {loading && (
                 <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                size="md"
-                marginRight="10px"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
                 />
-              } 
+              )}
               <Button onClick={handleSave} variant="primary" type="submit">
                 Save
               </Button>
