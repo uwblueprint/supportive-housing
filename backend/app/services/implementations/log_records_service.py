@@ -173,11 +173,23 @@ class LogRecordsService(ILogRecordsService):
             for filter in filters:
                 if filters.get(filter):
                     if is_first_filter:
-                        sql = sql + "\nWHERE " + options[filter](filters.get(filter))
+                        sql = (
+                            sql
+                            + "\nWHERE "
+                            + "("
+                            + options[filter](filters.get(filter))
+                            + ")"
+                        )
                         is_first_filter = False
                     else:
                         if filters.get(filter):
-                            sql = sql + "\nAND " + options[filter](filters.get(filter))
+                            sql = (
+                                sql
+                                + "\nAND "
+                                + "("
+                                + options[filter](filters.get(filter))
+                                + ")"
+                            )
         return sql
 
     def join_resident_attributes(self):
