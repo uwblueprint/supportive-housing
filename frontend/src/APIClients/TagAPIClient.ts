@@ -1,6 +1,5 @@
 import { AxiosError } from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import {
   CountTagsResponse,
@@ -10,6 +9,7 @@ import {
   Tag,
 } from "../types/TagTypes";
 import { ErrorResponse } from "../types/ErrorTypes";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const getTags = async ({
   returnAll = false,

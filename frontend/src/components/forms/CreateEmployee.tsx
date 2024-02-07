@@ -19,6 +19,7 @@ import {
   Radio,
   RadioGroup,
   Text,
+  Spinner,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CreateToast from "../common/Toasts";
@@ -41,7 +42,6 @@ const CreateEmployee = ({
 }: Props): React.ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const newToast = CreateToast();
 
   const [invitedEmail, setInvitedEmail] = useState<string>("");
   const [invitedFirstName, setInvitedFirstName] = useState<string>("");
@@ -63,6 +63,9 @@ const CreateEmployee = ({
     invitedAdminStatusError,
     setInvitedAdminStatusError,
   ] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   useEffect(() => {
     if (invitedAdminStatus === "1") {
@@ -118,71 +121,62 @@ const CreateEmployee = ({
     setIsOpen(false);
   };
 
-  const onInviteEmployee = async (
-    isEmailError: boolean,
-    isFirstNameError: boolean,
-    isLastNameError: boolean,
-    isAdminStatusError: boolean,
-  ) => {
-    if (
-      !isEmailError &&
-      !isFirstNameError &&
-      !isLastNameError &&
-      !isAdminStatusError
-    ) {
-      let roleOptionIndex: number | undefined;
+  const onInviteEmployee = async () => {
+    let roleOptionIndex: number | undefined;
 
-      if (invitedAdminStatus === "1") {
-        roleOptionIndex = 1;
-      } else if (invitedAdminStatus === "2" && isTwoFactorAuthenticated) {
-        roleOptionIndex = 0;
-      } else if (invitedAdminStatus === "2" && !isTwoFactorAuthenticated) {
-        roleOptionIndex = 2;
-      }
+    if (invitedAdminStatus === "1") {
+      roleOptionIndex = 1;
+    } else if (invitedAdminStatus === "2" && isTwoFactorAuthenticated) {
+      roleOptionIndex = 0;
+    } else if (invitedAdminStatus === "2" && !isTwoFactorAuthenticated) {
+      roleOptionIndex = 2;
+    }
 
-      if (roleOptionIndex !== undefined) {
-        const res = await UserAPIClient.inviteUser(
-          invitedEmail,
-          RoleOptions[roleOptionIndex],
-          invitedFirstName,
-          invitedLastName,
+    if (roleOptionIndex !== undefined) {
+      setLoading(true);
+      const res = await UserAPIClient.inviteUser(
+        invitedEmail,
+        RoleOptions[roleOptionIndex],
+        invitedFirstName,
+        invitedLastName,
+      );
+
+      if (isErrorResponse(res)) {
+        newToast("Error inviting user", res.errMessage, "error");
+      } else if (res) {
+        newToast(
+          "Invite sent",
+          `An invite has been sent to ${invitedEmail}.`,
+          "success",
         );
-
-        if (isErrorResponse(res)) {
-          newToast("Error inviting user", res.errMessage, "error");
-        } else if (res) {
-          newToast(
-            "Invite sent",
-            `Your invite has been sent to ${invitedEmail}`,
-            "success",
-          );
-          getRecords(1);
-          setUserPageNum(1);
-          countUsers();
-          handleClose();
-        } else {
-          newToast("Error inviting user", "Unable to invite user.", "error");
-        }
+        getRecords(1);
+        setUserPageNum(1);
+        countUsers();
+        handleClose();
       }
+      setLoading(false);
     }
   };
 
   const handleSubmit = () => {
-    const isEmailError = !emailRegex.test(invitedEmail);
-    const isFirstNameError = invitedFirstName === "";
-    const isLastNameError = invitedLastName === "";
-    const isAdminStatusError = invitedAdminStatus === "";
+    if (invitedFirstName === "") {
+      setInvitedFirstNameError(true);
+      return;
+    }
+    if (invitedLastName === "") {
+      setInvitedLastNameError(true);
+      return;
+    }
+    if (!emailRegex.test(invitedEmail)) {
+      setInvitedEmailError(true);
+      return;
+    }
+    if (invitedAdminStatus === "") {
+      setInvitedAdminStatusError(true);
+      return;
+    }
 
-    setInvitedEmailError(isEmailError);
-    setInvitedFirstNameError(isFirstNameError);
-    setInvitedLastNameError(isLastNameError);
-    setInvitedAdminStatusError(isAdminStatusError);
-    onInviteEmployee(
-      isEmailError,
-      isFirstNameError,
-      isLastNameError,
-      isAdminStatusError,
-    );
+    onInviteEmployee();
   };
 
   return (
@@ -289,13 +283,22 @@ const CreateEmployee = ({
                 </Text>
               </Checkbox>
               <Text fontSize="12px" color="#1B2A2C">
-                Requiring Two Factor Authentication means the employee will only
+                Enabling two factor authentication means the employee will only
                 be able to access the platform while physically in the main
                 building.
               </Text>
             </Box>
           </ModalBody>
           <ModalFooter>
+            {loading && (
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+              />
+            )}
             <Button variant="primary" type="submit" onClick={handleSubmit}>
               Invite
             </Button>

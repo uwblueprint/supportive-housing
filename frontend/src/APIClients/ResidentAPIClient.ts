@@ -9,8 +9,8 @@ import {
   CountResidentsParams,
 } from "../types/ResidentTypes";
 import { ErrorResponse } from "../types/ErrorTypes";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const getResidents = async ({
   returnAll = false,
@@ -108,7 +108,9 @@ const createResident = async ({
           `Resident with the specified user ID already exists.`,
       };
     }
-    return false;
+    return {
+      errMessage: "Unable to add resident.",
+    };
   }
 };
 
@@ -160,7 +162,9 @@ const editResident = async ({
           "Resident with the specified user ID already exists.",
       };
     }
-    return false;
+    return {
+      errMessage: "Unable to update resident.",
+    };
   }
 };
 

@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { SingleValue } from "react-select";
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
   Button,
   FormControl,
@@ -17,11 +14,11 @@ import {
   ModalCloseButton,
   ModalOverlay,
   ModalFooter,
-  ScaleFade,
   Divider,
   InputGroup,
   IconButton,
   InputRightElement,
+  Spinner,
 } from "@chakra-ui/react";
 
 import { AddIcon, SmallCloseIcon } from "@chakra-ui/icons";
@@ -61,12 +58,12 @@ const CreateResident = ({
   const [buildingError, setBuildingError] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const newToast = CreateToast();
 
-  const ROOM_ERROR_TEXT = `Room Number is required and must only contain numbers.`;
   const addResident = async () => {
+    setLoading(true);
     const res = await ResidentAPIClient.createResident({
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
@@ -76,17 +73,18 @@ const CreateResident = ({
     });
 
     if (isErrorResponse(res)) {
-      newToast("Error creating resident", res.errMessage, "error");
+      newToast("Error adding resident", res.errMessage, "error");
     } else if (res) {
+      newToast("Resident added", "Successfully added resident.", "success");
       getRecords(1);
       countResidents();
       setUserPageNum(1);
-      setShowAlert(true);
       setIsOpen(false);
     }
+    setLoading(false);
   };
 
-  const handleInitialsChange = (e: { target: { value: unknown } }) => {
+  const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     if (/^[a-z]{0,2}$/i.test(inputValue)) {
       setInitials(inputValue.toUpperCase());
@@ -94,7 +92,7 @@ const CreateResident = ({
     }
   };
 
-  const handleRoomNumberChange = (e: { target: { value: unknown } }) => {
+  const handleRoomNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value as string;
     if (inputValue !== null && /^[0-9]{0,3}$/.test(inputValue)) {
       setRoomNumber(inputValue);
@@ -153,9 +151,6 @@ const CreateResident = ({
     setRoomNumberError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
-
-    //  Reset alert state
-    setShowAlert(false);
   };
 
   const handleClose = () => {
@@ -183,15 +178,6 @@ const CreateResident = ({
     addResident();
   };
 
-  // Timer to remove alert
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-    }
-  }, [showAlert]);
-
   return (
     <>
       <Box textAlign="right">
@@ -212,14 +198,14 @@ const CreateResident = ({
               <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired isInvalid={initialsError}>
-                    <FormLabel>Resident Initials</FormLabel>
+                    <FormLabel>Initials</FormLabel>
                     <Input
                       placeholder="e.g. AA"
                       value={initials}
                       onChange={handleInitialsChange}
                     />
                     <FormErrorMessage>
-                      Resident Initials are required and must contain 2 letters.
+                      Initials are required and must contain 2 letters.
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
@@ -232,7 +218,9 @@ const CreateResident = ({
                       onChange={handleRoomNumberChange}
                       type="number"
                     />
-                    <FormErrorMessage>{ROOM_ERROR_TEXT}</FormErrorMessage>
+                    <FormErrorMessage>
+                      Room number is required and must contain 3 numbers.
+                    </FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
@@ -264,7 +252,10 @@ const CreateResident = ({
                       {moveOutDate && (
                         <InputRightElement>
                           <IconButton
-                            onClick={() => setMoveOutDate(undefined)}
+                            onClick={() => {
+                              setMoveOutDate(undefined);
+                              setMoveOutDateError(false);
+                            }}
                             aria-label="clear"
                             variant="icon"
                             icon={
@@ -301,27 +292,21 @@ const CreateResident = ({
               </Row>
             </ModalBody>
             <ModalFooter>
+              {loading && (
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
+                />
+              )}
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Submit
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="success" variant="left-accent" borderRadius="6px">
-            <AlertIcon />
-            <AlertDescription>Resident successfully added.</AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </>
   );

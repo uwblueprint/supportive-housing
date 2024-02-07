@@ -14,6 +14,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { Col, Row } from "react-bootstrap";
@@ -33,11 +34,12 @@ const CreateTag = ({
   countTags,
 }: Props): React.ReactElement => {
   const [tagName, setTagName] = useState("");
+  const [tagNameError, setTagNameError] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
-  const newToast = CreateToast();
 
-  const [tagNameError, setTagNameError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const handleClose = () => {
     setTagName("");
@@ -46,6 +48,7 @@ const CreateTag = ({
   };
 
   const addTag = async () => {
+    setLoading(true);
     const res = await TagAPIClient.createTag({
       name: tagName,
     });
@@ -53,7 +56,7 @@ const CreateTag = ({
     if (isErrorResponse(res)) {
       newToast("Error adding tag", res.errMessage, "error");
     } else if (res) {
-      newToast("Tag added", "Tag successfully added.", "success");
+      newToast("Tag added", "Successfully added tag.", "success");
       getTags(1);
       countTags();
       setUserPageNum(1);
@@ -61,6 +64,7 @@ const CreateTag = ({
     } else {
       newToast("Error adding tag", "Unable to add tag.", "error");
     }
+    setLoading(false);
   };
 
   const handleTagNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +117,15 @@ const CreateTag = ({
               </Row>
             </ModalBody>
             <ModalFooter>
+              {loading && (
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
+                />
+              )}
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Submit
               </Button>

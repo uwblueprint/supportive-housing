@@ -1,7 +1,7 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import { GetBuildingsResponse } from "../types/BuildingTypes";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const getBuildings = async (): Promise<GetBuildingsResponse> => {
   try {

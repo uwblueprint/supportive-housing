@@ -1,5 +1,4 @@
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
-import { getLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 import baseAPIClient from "./BaseAPIClient";
 import {
   CountLogRecordFilters,
@@ -10,6 +9,7 @@ import {
   EditLogRecordParams,
   CreateLogRecordParams,
 } from "../types/LogRecordTypes";
+import { getLocalStorageObjProperty } from "../helper/localStorageHelpers";
 
 const countLogRecords = async ({
   buildings = [],

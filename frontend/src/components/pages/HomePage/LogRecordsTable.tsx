@@ -13,15 +13,10 @@ import {
   MenuList,
   MenuItem,
   IconButton,
-  ScaleFade,
-  Alert,
-  AlertDescription,
-  AlertIcon,
 } from "@chakra-ui/react";
 import { VscKebabVertical } from "react-icons/vsc";
 
 import { LogRecord } from "../../../types/LogRecordTypes";
-import getFormattedDateAndTime from "../../../utils/DateUtils";
 
 import AuthContext from "../../../contexts/AuthContext";
 
@@ -35,6 +30,8 @@ import BuildingAPIClient from "../../../APIClients/BuildingAPIClient";
 import ConfirmationModal from "../../common/ConfirmationModal";
 import { SelectLabel } from "../../../types/SharedTypes";
 import { UserRole } from "../../../types/UserTypes";
+import CreateToast from "../../common/Toasts";
+import { getFormattedDateAndTime } from "../../../helper/dateHelpers";
 
 type Props = {
   logRecords: LogRecord[];
@@ -81,48 +78,43 @@ const LogRecordsTable = ({
 }: Props): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
-  const [showAlert, setShowAlert] = useState(false);
-
   const [buildingOptions, setBuildingOptions] = useState<SelectLabel[]>([]);
 
-  // Menu states
-  const [deleteOpenMap, setDeleteOpenMap] = useState<{
-    [key: number]: boolean;
-  }>({});
-  const [editOpenMap, setEditOpenMap] = useState<{ [key: number]: boolean }>(
-    {},
+  const [viewingLogRecord, setViewingLogRecord] = useState<LogRecord | null>(
+    null,
   );
-  const [viewOpenMap, setViewOpenMap] = useState<{ [key: number]: boolean }>(
-    {},
+  const [editingLogRecord, setEditingLogRecord] = useState<LogRecord | null>(
+    null,
   );
+  const [deletingLogRecord, setDeletingLogRecord] = useState<LogRecord | null>(
+    null,
+  );
+
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Dropdown option states
   const [employeeOptions, setEmployeeOptions] = useState<SelectLabel[]>([]);
   const [residentOptions, setResidentOptions] = useState<SelectLabel[]>([]);
   const [tagOptions, setTagOptions] = useState<SelectLabel[]>([]);
 
-  // Handle delete confirmation toggle
-  const handleDeleteToggle = (logId: number) => {
-    setDeleteOpenMap((prevDeleteOpenMap) => ({
-      ...prevDeleteOpenMap,
-      [logId]: !prevDeleteOpenMap[logId],
-    }));
+  const [loading, setLoading] = useState<boolean>(false);
+  const newToast = CreateToast();
+
+  const handleViewClick = (logRecord: LogRecord) => {
+    setViewingLogRecord(logRecord);
+    setIsViewModalOpen(true);
   };
 
-  // Handle edit form toggle
-  const handleEditToggle = (logId: number) => {
-    setEditOpenMap((prevEditOpenMap) => ({
-      ...prevEditOpenMap,
-      [logId]: !prevEditOpenMap[logId],
-    }));
+  const handleEditClick = (logRecord: LogRecord) => {
+    setEditingLogRecord(logRecord);
+    setIsEditModalOpen(true);
   };
 
-  // Handle view form toggle
-  const handleViewToggle = (logId: number) => {
-    setViewOpenMap((prevViewOpenMap) => ({
-      ...prevViewOpenMap,
-      [logId]: !prevViewOpenMap[logId],
-    }));
+  const handleDeleteClick = (logRecord: LogRecord) => {
+    setDeletingLogRecord(logRecord);
+    setIsDeleteModalOpen(true);
   };
 
   // fetch resident + employee + tag data for log creation
@@ -173,27 +165,31 @@ const LogRecordsTable = ({
   };
 
   const deleteLogRecord = async (itemId: number) => {
-    try {
-      await LogRecordAPIClient.deleteLogRecord(itemId);
-    } catch (error) {
+    setLoading(true);
+
+    const success = await LogRecordAPIClient.deleteLogRecord(itemId);
+    if (!success) {
+      newToast(
+        "Error deleting log record",
+        "Unable to delete log record.",
+        "error",
+      );
+      setLoading(false);
       return;
     }
+    newToast(
+      "Log record deleted",
+      "Successfully deleted log record.",
+      "success",
+    );
     const newUserPageNum =
       logRecords.length === 1 ? userPageNum - 1 : userPageNum;
     countRecords();
-    setShowAlert(true);
     setUserPageNum(newUserPageNum);
     getRecords(newUserPageNum);
-    handleDeleteToggle(itemId);
+    setIsDeleteModalOpen(false);
+    setLoading(false);
   };
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-    }
-  }, [showAlert]);
 
   useEffect(() => {
     getLogEntryOptions();
@@ -259,18 +255,14 @@ const LogRecordsTable = ({
                               variant="ghost"
                             />
                             <MenuList>
-                              <MenuItem
-                                onClick={() => handleViewToggle(record.logId)}
-                              >
+                              <MenuItem onClick={() => handleViewClick(record)}>
                                 View Log Record
                               </MenuItem>
-                              <MenuItem
-                                onClick={() => handleEditToggle(record.logId)}
-                              >
+                              <MenuItem onClick={() => handleEditClick(record)}>
                                 Edit Log Record
                               </MenuItem>
                               <MenuItem
-                                onClick={() => handleDeleteToggle(record.logId)}
+                                onClick={() => handleDeleteClick(record)}
                               >
                                 Delete Log Record
                               </MenuItem>
@@ -282,68 +274,58 @@ const LogRecordsTable = ({
                             icon={<VscKebabVertical />}
                             w="36px"
                             variant="ghost"
-                            onClick={() => handleViewToggle(record.logId)}
+                            onClick={() => handleViewClick(record)}
                           />
                         )}
                       </Td>
                     </Tr>
-
-                    <EditLog
-                      logRecord={record}
-                      userPageNum={userPageNum}
-                      isOpen={editOpenMap[record.logId]}
-                      toggleClose={() => handleEditToggle(record.logId)}
-                      employeeOptions={employeeOptions}
-                      residentOptions={residentOptions}
-                      tagOptions={tagOptions}
-                      getRecords={getRecords}
-                      countRecords={countRecords}
-                      buildingOptions={buildingOptions}
-                    />
-
-                    <ViewLog
-                      logRecord={record}
-                      isOpen={viewOpenMap[record.logId]}
-                      toggleClose={() => handleViewToggle(record.logId)}
-                      toggleEdit={() => handleEditToggle(record.logId)}
-                      residentOptions={residentOptions}
-                      tagOptions={tagOptions}
-                      allowEdit={
-                        authenticatedUser?.role === "Admin" ||
-                        authenticatedUser?.id === record.employee.id
-                      }
-                    />
-
-                    <ConfirmationModal
-                      header={DELETE_CONFIRMATION_HEADER}
-                      message={DELETE_CONFIRMATION_MESSAGE}
-                      isOpen={deleteOpenMap[record.logId]}
-                      toggleClose={() => handleDeleteToggle(record.logId)}
-                      action={() => deleteLogRecord(record.logId)}
-                    />
                   </>
                 );
               })}
             </Tbody>
           </Table>
+          {viewingLogRecord && (
+            <ViewLog
+              logRecord={viewingLogRecord}
+              isOpen={isViewModalOpen}
+              toggleClose={() => setIsViewModalOpen(false)}
+              toggleEdit={() => {
+                setIsViewModalOpen(false);
+                handleEditClick(viewingLogRecord);
+              }}
+              residentOptions={residentOptions}
+              tagOptions={tagOptions}
+              allowEdit={
+                authenticatedUser?.role === "Admin" ||
+                authenticatedUser?.id === viewingLogRecord.employee.id
+              }
+            />
+          )}
+          {editingLogRecord && (
+            <EditLog
+              logRecord={editingLogRecord}
+              userPageNum={userPageNum}
+              isOpen={isEditModalOpen}
+              toggleClose={() => setIsEditModalOpen(false)}
+              employeeOptions={employeeOptions}
+              residentOptions={residentOptions}
+              tagOptions={tagOptions}
+              getRecords={getRecords}
+              countRecords={countRecords}
+              buildingOptions={buildingOptions}
+            />
+          )}
+          {deletingLogRecord && (
+            <ConfirmationModal
+              header={DELETE_CONFIRMATION_HEADER}
+              message={DELETE_CONFIRMATION_MESSAGE}
+              isOpen={isDeleteModalOpen}
+              loading={loading}
+              toggleClose={() => setIsDeleteModalOpen(false)}
+              action={() => deleteLogRecord(deletingLogRecord.logId)}
+            />
+          )}
         </TableContainer>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert status="success" variant="left-accent" borderRadius="6px">
-            <AlertIcon />
-            <AlertDescription>
-              Log Record deleted successfully.
-            </AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </>
   );

@@ -12,7 +12,6 @@ import NotFound from "./components/pages/Errors/NotFound";
 import * as Routes from "./constants/Routes";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import AuthContext from "./contexts/AuthContext";
-import { getLocalStorageObj } from "./utils/LocalStorageUtils";
 import ResidentDirectory from "./components/pages/ResidentDirectory/ResidentDirectory";
 
 import { AuthenticatedUser } from "./types/AuthTypes";
@@ -23,6 +22,7 @@ import SignInLogsPage from "./components/pages/AdminControls/SignInLogs";
 import TagsPage from "./components/pages/AdminControls/Tags";
 import VerificationPage from "./components/pages/Auth/VerificationPage";
 import ResetPasswordPage from "./components/pages/Auth/ResetPasswordPage";
+import { getLocalStorageObj } from "./helper/localStorageHelpers";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser | null = getLocalStorageObj<AuthenticatedUser>(

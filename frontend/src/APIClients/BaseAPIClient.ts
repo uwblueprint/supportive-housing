@@ -3,8 +3,8 @@ import { camelizeKeys, decamelizeKeys } from "humps";
 import jwt from "jsonwebtoken";
 
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
+import { setLocalStorageObjProperty } from "../helper/localStorageHelpers";
 import { DecodedJWT } from "../types/AuthTypes";
-import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
 
 const baseAPIClient = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_URL,

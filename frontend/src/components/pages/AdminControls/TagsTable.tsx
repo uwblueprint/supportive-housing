@@ -48,6 +48,7 @@ const TagsTable = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const [loading, setLoading] = useState<boolean>(false);
   const newToast = CreateToast();
 
   const handleEditClick = (tag: Tag) => {
@@ -61,17 +62,19 @@ const TagsTable = ({
   };
 
   const deleteTag = async (tagId: number) => {
+    setLoading(true);
     const statusCode = await TagAPIClient.deleteTag(tagId);
     if (statusCode === 200) {
-      newToast("Tag Deleted", "Tag has been successfully deleted.", "success");
+      newToast("Tag Deleted", "Successfully deleted tag.", "success");
       const newUserPageNum = tags.length === 1 ? userPageNum - 1 : userPageNum;
       countTags();
       getTags(newUserPageNum);
       setUserPageNum(newUserPageNum);
       setIsDeleteModalOpen(false);
     } else {
-      newToast("Error Deleting Tag.", "Tag was unable to be deleted.", "error");
+      newToast("Error Deleting Tag", "Unable to delete tag.", "error");
     }
+    setLoading(false);
   };
 
   return (
@@ -133,6 +136,7 @@ const TagsTable = ({
             header={DELETE_CONFIRMATION_HEADER}
             message={deleteConfirmationMessage(deletingTag.name)}
             isOpen={isDeleteModalOpen}
+            loading={loading}
             action={() => deleteTag(deletingTag.tagId)}
             toggleClose={() => setIsDeleteModalOpen(false)}
           />

@@ -1,10 +1,7 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Select, { MultiValue, SingleValue } from "react-select";
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
   Button,
   Checkbox,
@@ -21,12 +18,11 @@ import {
   ModalOverlay,
   ModalHeader,
   Text,
-  ScaleFade,
   Textarea,
   ModalCloseButton,
   ModalFooter,
+  Spinner,
 } from "@chakra-ui/react";
-import type { AlertStatus } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
@@ -34,7 +30,6 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import TagAPIClient from "../../APIClients/TagAPIClient";
-import { getLocalStorageObj } from "../../utils/LocalStorageUtils";
 import AUTHENTICATED_USER_KEY from "../../constants/AuthConstants";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import BuildingAPIClient from "../../APIClients/BuildingAPIClient";
@@ -42,37 +37,13 @@ import { selectStyle } from "../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import { SelectLabel } from "../../types/SharedTypes";
 import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
+import CreateToast from "../common/Toasts";
+import { getLocalStorageObj } from "../../helper/localStorageHelpers";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
-};
-
-type AlertData = {
-  status: AlertStatus;
-  description: string;
-};
-
-type AlertDataOptions = {
-  [key: string]: AlertData;
-};
-
-// Ideally we should be storing this information in the database
-
-const ALERT_DATA: AlertDataOptions = {
-  DEFAULT: {
-    status: "info",
-    description: "",
-  },
-  SUCCESS: {
-    status: "success",
-    description: "Log successfully created.",
-  },
-  ERROR: {
-    status: "error",
-    description: "Error creating log.",
-  },
 };
 
 // Helper to get the currently logged in user
@@ -86,6 +57,9 @@ const getCurUserSelectOption = () => {
   }
   return { label: "", value: -1 };
 };
+
+// Regex to match time format HH:mm
+const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
 
 const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.ReactElement => {
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
@@ -113,22 +87,25 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
 
   const [isCreateOpen, setCreateOpen] = React.useState(false);
 
-  // error states for non-nullable inputs
+  // error states for inputs
+  const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
   const [residentError, setResidentError] = useState(false);
   const [notesError, setNotesError] = useState(false);
 
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertData, setAlertData] = useState<AlertData>(ALERT_DATA.DEFAULT);
+  const [loading, setLoading] = useState(false);
+  const newToast = CreateToast();
 
   const handleDateChange = (newDate: Date) => {
-    setDate(newDate);
+    if (newDate !== null) {
+      setDate(newDate);
+      setDateError(false);
+    }
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
-    const timeRegex = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/; // Regex to match time format HH:mm
 
     // Check to see if the input is valid, prevents an application crash
     if (timeRegex.test(e.target.value)) {
@@ -137,9 +114,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       updatedDate.setHours(parseInt(hour, 10));
       updatedDate.setMinutes(parseInt(minute, 10));
       setDate(updatedDate);
+      setTimeError(false);
     }
-
-    setTimeError(e.target.value === "");
   };
 
   const handleBuildingChange = (
@@ -147,9 +123,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   ) => {
     if (selectedOption !== null) {
       setBuildingId(selectedOption.value);
+      setBuildingError(false)
     }
-
-    setBuildingError(selectedOption === null);
   };
 
   const handleResidentsChange = (
@@ -160,8 +135,8 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     );
     if (mutableSelectedResidents !== null) {
       setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
+      setResidentError(false);
     }
-    setResidentError(mutableSelectedResidents.length === 0);
     
   };
 
@@ -189,7 +164,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   const handleNotesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value as string;
     setNotes(inputValue);
-    setNotesError(inputValue === "");
+    if (inputValue !== "") {
+      setNotesError(false)
+    }
   };
 
   // fetch resident + employee + tag data for log creation
@@ -251,13 +228,11 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     setNotes("");
 
     // reset all error states
+    setDateError(false)
     setTimeError(false);
     setBuildingError(false);
     setResidentError(false);
     setNotesError(false);
-
-    // reset alert state
-    setShowAlert(false);
   };
 
   const handleCreateClose = () => {
@@ -266,28 +241,31 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
 
   const handleSubmit = async () => {
     // Update error states
-    setTimeError(time === "");
-    setBuildingError(buildingId === -1);
-    setResidentError(residents.length === 0);
-    setNotesError(notes === "");
-
-    // If any required fields are empty, prevent form submission
-    if (
-      !employee.label ||
-      date === null ||
-      time === "" ||
-      buildingId === -1 ||
-      residents.length === 0 ||
-      notes === ""
-    ) {
-      return;
+    if (date === undefined) {
+      setDateError(true)
+      return
     }
 
-    // Create a log in the db with this data
-    setCreateOpen(false);
-    // update the table with the new log
-    // NOTE: -1 is the default state for attnTo
+    if (!timeRegex.test(time)) {
+      setTimeError(true)
+      return;
+    }
+    if (buildingId === -1) {
+      setBuildingError(true)
+      return;
+    }
+    if (residents.length === 0) {
+      setResidentError(true)
+      return;
+    }
+    if (notes.length === 0) {
+      setNotesError(true)
+      return;
+    }
     const attentionTo = attnTo === -1 ? undefined : attnTo;
+
+    setLoading(true)
+
     const res = await LogRecordAPIClient.createLog({
       employeeId: employee.value,
       residents,
@@ -299,24 +277,17 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       attnTo: attentionTo,
     });
     if (res != null) {
-      setAlertData(ALERT_DATA.SUCCESS);
+      newToast("Log record added", "Successfully added log record.", "success")
       countRecords();
       getRecords(1);
       setUserPageNum(1);
-    } else {
-      setAlertData(ALERT_DATA.ERROR);
+      setCreateOpen(false)
+    } 
+    else {
+      newToast("Error adding log record", "Unable to add log record.", "error")
     }
-    setShowAlert(true);
+    setLoading(false)
   };
-
-  useEffect(() => {
-    if (showAlert) {
-      setTimeout(() => {
-        setShowAlert(false);
-        setAlertData(ALERT_DATA.DEFAULT);
-      }, 3000);
-    }
-  }, [showAlert]);
 
   return (
     <div>
@@ -334,7 +305,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       <Box>
         <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose}>
           <ModalOverlay />
-          <ModalContent maxW="50%">
+          <ModalContent maxW="50%" overflowY="hidden">
             <ModalHeader>Add Log Record</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
@@ -353,7 +324,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                 <Col>
                   <Grid templateColumns="repeat(2, 1fr)" gap="8px">
                     <GridItem minWidth="100%">
-                      <FormControl isRequired>
+                      <FormControl isRequired isInvalid={dateError}>
                         <FormLabel>Date</FormLabel>
                         <SingleDatepicker
                           name="date-input"
@@ -361,6 +332,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                           onDateChange={handleDateChange}
                           propsConfigs={singleDatePickerStyle}
                         />
+                        <FormErrorMessage>Date is invalid.</FormErrorMessage>
                       </FormControl>
                     </GridItem>
                     <GridItem minWidth="100%">
@@ -403,7 +375,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                       onChange={handleResidentsChange}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>Resident is required.</FormErrorMessage>
+                    <FormErrorMessage>At least 1 resident is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>
@@ -462,32 +434,22 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
               </Row>
 
             </ModalBody>
-            <ModalFooter>       
+            <ModalFooter>   
+              {loading &&
+                <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                size="md"
+                marginRight="10px"
+                />
+              }   
               <Button onClick={handleSubmit} variant="primary" type="submit">
                 Submit
               </Button>
             </ModalFooter>   
           </ModalContent>
         </Modal>
-      </Box>
-
-      <Box
-        position="fixed"
-        bottom="20px"
-        right="20px"
-        width="25%"
-        zIndex={9999}
-      >
-        <ScaleFade in={showAlert} unmountOnExit>
-          <Alert
-            status={alertData.status}
-            variant="left-accent"
-            borderRadius="6px"
-          >
-            <AlertIcon />
-            <AlertDescription>{alertData.description}</AlertDescription>
-          </Alert>
-        </ScaleFade>
       </Box>
     </div>
   );

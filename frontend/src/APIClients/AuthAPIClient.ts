@@ -7,7 +7,7 @@ import baseAPIClient from "./BaseAPIClient";
 import {
   getLocalStorageObjProperty,
   setLocalStorageObjProperty,
-} from "../utils/LocalStorageUtils";
+} from "../helper/localStorageHelpers";
 
 const login = async (
   email: string,

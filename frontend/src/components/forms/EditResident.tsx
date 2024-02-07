@@ -19,6 +19,7 @@ import {
   InputGroup,
   IconButton,
   InputRightElement,
+  Spinner,
 } from "@chakra-ui/react";
 import { SmallCloseIcon } from "@chakra-ui/icons";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
@@ -60,9 +61,11 @@ const EditResident = ({
   const [buildingError, setBuildingError] = useState(false);
   const [moveOutDateError, setMoveOutDateError] = useState(false);
 
+  const [loading, setLoading] = useState(false);
   const newToast = CreateToast();
 
   const editResident = async () => {
+    setLoading(true);
     const res = await ResidentAPIClient.editResident({
       id: resident.id,
       initial: initials.toUpperCase(),
@@ -74,21 +77,12 @@ const EditResident = ({
 
     if (isErrorResponse(res)) {
       newToast("Error updating resident", res.errMessage, "error");
-    } else if (res !== null && res) {
-      newToast(
-        "Resident updated",
-        "Resident has been successfully updated",
-        "success",
-      );
+    } else if (res) {
+      newToast("Resident updated", "Successfully updated resident.", "success");
       getRecords(userPageNum);
       toggleClose();
-    } else {
-      newToast(
-        "Error updating resident",
-        "Resident was unable to be updated",
-        "error",
-      );
     }
+    setLoading(false);
   };
 
   const handleInitialsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,10 +189,10 @@ const EditResident = ({
               <Row style={{ marginTop: "16px" }}>
                 <Col>
                   <FormControl isRequired isInvalid={initialsError}>
-                    <FormLabel>Resident Initials</FormLabel>
+                    <FormLabel>Initials</FormLabel>
                     <Input value={initials} onChange={handleInitialsChange} />
                     <FormErrorMessage>
-                      Resident Initials are required and must contain 2 letters.
+                      Initials are required and must contain 2 letters.
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
@@ -211,7 +205,7 @@ const EditResident = ({
                       type="number"
                     />
                     <FormErrorMessage>
-                      Room Number is required and must only contain numbers.
+                      Room number is required and must contain 3 numbers.
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
@@ -244,7 +238,10 @@ const EditResident = ({
                       {moveOutDate && (
                         <InputRightElement>
                           <IconButton
-                            onClick={() => setMoveOutDate(undefined)}
+                            onClick={() => {
+                              setMoveOutDate(undefined);
+                              setMoveOutDateError(false);
+                            }}
                             aria-label="clear"
                             variant="icon"
                             icon={
@@ -283,6 +280,15 @@ const EditResident = ({
               </Row>
             </ModalBody>
             <ModalFooter>
+              {loading && (
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  size="md"
+                  marginRight="10px"
+                />
+              )}
               <Button onClick={handleSave} variant="primary" type="submit">
                 Save
               </Button>
