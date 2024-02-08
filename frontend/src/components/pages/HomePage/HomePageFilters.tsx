@@ -358,6 +358,7 @@ const HomePageFilters = ({
                         value={buildings}
                         options={buildingOptions}
                         isMulti
+                        closeMenuOnSelect={false}
                         placeholder="Building No."
                         onChange={handleBuildingChange}
                         styles={selectStyle}

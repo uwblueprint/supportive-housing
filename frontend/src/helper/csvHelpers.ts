@@ -11,7 +11,7 @@ const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
     datetime: `"${logRecord.datetime}"`,
     employee: `"${logRecord.employee.firstName} ${logRecord.employee.lastName}"`,
     flagged: logRecord.flagged,
-    note: `"${logRecord.note}"`,
+    note: `"${logRecord.note.replace(/"/g, '""')}"`,
     residents: `"${logRecord.residents.join(", ")}"`,
     tags: logRecord.tags != null ? `"${logRecord.tags.join(", ")}"` : "",
   };
