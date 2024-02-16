@@ -144,23 +144,6 @@ def create_user():
         return jsonify({"error": (error_message if error_message else str(e))}), 500
 
 
-@blueprint.route("/activate-user", methods=["POST"], strict_slashes=False)
-@require_authorization_by_role({"Admin"})
-@validate_request("CreateUserDTO")
-def activate_user():
-    """
-    Activate a user
-    """
-    try:
-        user = CreateUserDTO(**request.json)
-        activated_user = user_service.activate_user(user)
-        auth_service.send_email_verification_link(request.json["email"])
-        return jsonify(activated_user.__dict__), 201
-    except Exception as e:
-        error_message = getattr(e, "message", None)
-        return jsonify({"error": (error_message if error_message else str(e))}), 500
-
-
 @blueprint.route("/<int:user_id>", methods=["PUT"], strict_slashes=False)
 @require_authorization_by_role({"Admin"})
 @validate_request("UpdateUserDTO")
