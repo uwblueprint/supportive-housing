@@ -15,13 +15,14 @@ The frontend is a React application written in TypeScript.
 * 👨‍💻 [Getting Started](#getting-started)
   * 🛳️ [Prerequisites](#prerequisites)
   * 🔨 [Setup](#setup)
-* 🧰 [Useful Commands](#useful-commands)
-  * 🚙 [Database Migrations](#database-migration)
+* 🔐 [Two Factor Authentication](#two-factor-authentication)
+* 📄 [Sign In Logs](#sign-in-logs)
+* 🧰 [Useful Tools](#useful-tools)
+  * 🚙 [Database Migrations](#database-migrations)
   * 🔌 [Connect To Database](#connect-to-database)
   * ♻️ [Restart Docker Containers](#restart-docker-containers)
   * 🌱 [Seeding](#seeding)
   * 👕 [Linter](#linter)
-  * 🧪 [Tests](#tests)     
 * 💻 [The Team](#the-team)
 
 ## Documentation
@@ -67,29 +68,64 @@ bash ./seeding/invite-user.sh
 
 7. Verify your email address. You should receive an email in your inbox with a link - once you click the link, you're good to freely use the app! You can invite any other users through the `Employee Directory` within the `Admin Controls`
 
-## Useful Commands
+## Two Factor Authentication
+Two factor authentication is used for Relief Staff users. You can enable/disable this in your local environment by setting the following environment variable in the root `.env` file:
+```
+TWO_FA_ENABLED=<insert value here> # this can either be "True" or "False"
+```
+If this is enabled, follow these steps to enable code generation:
+1. Download [Authenticator](https://authenticator.cc/) extension (Chrome recommended)
+2. Open the extension and click the `pencil` icon in the top right corner, followed by the `plus` icon
+3. Click `Manual Entry`
+4. Under `Issuer` enter any name you'd like, and under `Secret` enter the `TWO_FA_SECRET` environment variable
+5. Click `Advanced`, and set the `Period` to 30
+6. Click `OK`, and you should see codes being generated!
 
-### Database Migration
+## Sign In Logs
+Sign in logs are automatically generated every time you sign into the application with any user. If you want to control when these are created and ensure your database doesn't become bloated, you can set the following environment variable:
+```
+CREATE_SIGN_IN_LOG=<insert value here> # this can either be "True" or "False"
+```
+## Useful Tools
+
+### Database Migrations
+As mentioned in the previous section, the main command you'll use to sync your local DB will be:
 ```bash
 bash ./scripts/flask-db-upgrade.sh
 ```
 
+If you make any changes to the database schema, you'll need to create a migration for it and re-sync your DB. Follow the guide [here](https://www.notion.so/uwblueprintexecs/Dev-Cheat-Sheet-65c53ce229ca4e91aa3abfe2079ac383?pvs=4#e5f29ee88d0547d586746020b5e7ac0a) to do this.
+
 ### Connect To Database 
+Execute this script to interact directly with the database through SQL queries. Some sample commands that can be ran are linked [here](https://www.notion.so/uwblueprintexecs/Dev-Cheat-Sheet-65c53ce229ca4e91aa3abfe2079ac383?pvs=4#d7da2558fe2748888d84bd7a32c798dc).
 ```bash
 bash ./scripts/exec-db.sh
 ```
 
 ### Restart Docker Containers
+Execute this to restart all running SHOW Docker containers and clear your volumes.
 ```bash
 bash ./scripts/restart-docker.sh
 ```
 
 ### Seeding
-Before running these scripts, remember to update the `.env` file to ensure you're configuring your data to your needs:
-```bash
-bash ./seeding/create-residents.sh    # Create a number of residents
-bash ./seeding/create-log-records.sh  # Create a number of log records
-```
+These scripts will allow you to seed your local database with randomized data. Each step shows the environment variables (in `/seeding/.env`) you should set in order to achieve your desired results. It's recommended that you execute the scripts in the following order:
+1. Create any number of users. Set `FIRST_NAME`, `LAST_NAME`, `ROLE`, and `EMAIL` to your desired values. `ROLE` should be one of `Admin`, `Regular Staff`, or `Relief Staff`, and `EMAIL` should contain a valid email.
+ ```bash
+ bash ./seeding/invite-user.sh
+ ```
+2. Create any number of tags. Set `TAG_ROWS` to your desired value. This should be a valid integer.
+ ```bash
+ bash ./seeding/create-tags.sh
+ ```
+3. Create any number of residents. Set `RESIDENT_ROWS` to your desired value. This should be a valid integer.
+ ```bash
+ bash ./seeding/create-residents.sh
+ ```
+4. Create any number of log records. Set `LOG_RECORD_ROWS` to your desired value. This should be a valid integer.
+ ```bash
+ bash ./seeding/create-log-records.sh
+ ```
 
 ### Linter 
 To run the linter, use the following commands while the docker containers are running:
