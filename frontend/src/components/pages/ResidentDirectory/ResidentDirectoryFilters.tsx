@@ -6,14 +6,9 @@ import {
   FormControl,
   FormLabel,
   Text,
-  InputGroup,
-  InputRightElement,
-  IconButton,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
 import Select, { MultiValue } from "react-select";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { selectStyle } from "../../../theme/forms/selectStyles";
 import { singleDatePickerStyle } from "../../../theme/forms/datePickerStyles";
 import {
@@ -24,6 +19,7 @@ import {
 import ResidentAPIClient from "../../../APIClients/ResidentAPIClient";
 import CreateToast from "../../common/Toasts";
 import { SelectLabel } from "../../../types/SharedTypes";
+import { SingleDatepicker } from "../../common/Datepicker";
 
 type Props = {
   residentSelections: SelectLabel[];
@@ -98,28 +94,30 @@ const ResidentDirectoryFilters = ({
     setStatusSelections(mutableSelectedStatuses);
   };
 
-  const handleStartDateChange = (newStartDate: Date) => {
-    if (endDate && newStartDate > endDate) {
+  const handleStartDateChange = (newStartDate: Date | undefined) => {
+    if (endDate && newStartDate && newStartDate > endDate) {
       dateChangeToast(
         "Invalid Date",
         "The start date must be before the end date.",
         "error",
       );
-      return;
+      return false;
     }
     setStartDate(newStartDate);
+    return true;
   };
 
-  const handleEndDateChange = (newEndDate: Date) => {
-    if (startDate && startDate > newEndDate) {
+  const handleEndDateChange = (newEndDate: Date | undefined) => {
+    if (startDate && newEndDate && startDate > newEndDate) {
       dateChangeToast(
         "Invalid Date",
         "The end date must be after the start date.",
         "error",
       );
-      return;
+      return false;
     }
     setEndDate(newEndDate);
+    return true;
   };
 
   useEffect(() => {
@@ -169,40 +167,21 @@ const ResidentDirectoryFilters = ({
               />
             </GridItem>
             <GridItem colSpan={3}>
-              <FormLabel fontWeight="700">Date</FormLabel>
+              <FormLabel fontWeight="700">Date Range</FormLabel>
               <Grid templateColumns="repeat(7, 1fr)">
                 <GridItem colSpan={3}>
-                  <InputGroup>
-                    <SingleDatepicker
-                      name="start-date-input"
-                      date={startDate}
-                      onDateChange={handleStartDateChange}
-                      propsConfigs={{
-                        ...singleDatePickerStyle,
-                        inputProps: {
-                          ...singleDatePickerStyle.inputProps,
-                          placeholder: "Start Date",
-                        },
-                      }}
-                    />
-                    {startDate && (
-                      <InputRightElement>
-                        <IconButton
-                          onClick={() => setStartDate(undefined)}
-                          aria-label="clear"
-                          variant="icon"
-                          icon={
-                            <SmallCloseIcon
-                              boxSize="5"
-                              color="gray.200"
-                              _hover={{ color: "gray.400" }}
-                              transition="color 0.1s ease-in-out"
-                            />
-                          }
-                        />
-                      </InputRightElement>
-                    )}
-                  </InputGroup>
+                  <SingleDatepicker
+                    name="start-date-input"
+                    date={startDate}
+                    onDateChange={handleStartDateChange}
+                    propsConfigs={{
+                      ...singleDatePickerStyle,
+                      inputProps: {
+                        ...singleDatePickerStyle.inputProps,
+                        placeholder: "YYYY-MM-DD",
+                      },
+                    }}
+                  />
                 </GridItem>
                 <GridItem
                   colSpan={1}
@@ -215,37 +194,18 @@ const ResidentDirectoryFilters = ({
                   </Text>
                 </GridItem>
                 <GridItem colSpan={3}>
-                  <InputGroup>
-                    <SingleDatepicker
-                      name="end-date-input"
-                      date={endDate}
-                      onDateChange={handleEndDateChange}
-                      propsConfigs={{
-                        ...singleDatePickerStyle,
-                        inputProps: {
-                          ...singleDatePickerStyle.inputProps,
-                          placeholder: "End Date",
-                        },
-                      }}
-                    />
-                    {endDate && (
-                      <InputRightElement>
-                        <IconButton
-                          onClick={() => setEndDate(undefined)}
-                          aria-label="clear"
-                          variant="icon"
-                          icon={
-                            <SmallCloseIcon
-                              boxSize="5"
-                              color="gray.200"
-                              _hover={{ color: "gray.400" }}
-                              transition="color 0.1s ease-in-out"
-                            />
-                          }
-                        />
-                      </InputRightElement>
-                    )}
-                  </InputGroup>
+                  <SingleDatepicker
+                    name="end-date-input"
+                    date={endDate}
+                    onDateChange={handleEndDateChange}
+                    propsConfigs={{
+                      ...singleDatePickerStyle,
+                      inputProps: {
+                        ...singleDatePickerStyle.inputProps,
+                        placeholder: "YYYY-MM-DD",
+                      },
+                    }}
+                  />
                 </GridItem>
               </Grid>
             </GridItem>

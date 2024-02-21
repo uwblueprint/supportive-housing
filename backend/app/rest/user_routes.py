@@ -25,7 +25,7 @@ email_service = EmailService(
         "client_secret": os.getenv("MAILER_CLIENT_SECRET"),
     },
     os.getenv("MAILER_USER"),
-    "Supportive Housing",  # must replace
+    "Supportive Housing",
 )
 auth_service = AuthService(current_app.logger, user_service, email_service)
 blueprint = Blueprint("users", __name__, url_prefix="/users")
@@ -135,6 +135,23 @@ def create_user():
     try:
         user = CreateInvitedUserDTO(**request.json)
         created_user = user_service.create_invited_user(user)
+        email = created_user.email
+
+        # send an invite email to the created user
+        email_body = """
+            Hello {first_name},
+            <br><br>
+            You've been invited to the SHOW Resident Managment Platform!
+            <br><br>
+            To join, <a href={sign_up_link}>click here</a>
+            to sign up for an account using the email address this was sent to (<strong>{email}</strong>).
+            """.format(
+            first_name=created_user.first_name,
+            sign_up_link="https://blueprintsupportivehousing.web.app/signup",
+            email=email,
+        )
+        email_service.send_email(email, "You've been invited!", email_body)
+
         return jsonify(created_user.__dict__), 201
     except DuplicateUserException as e:
         error_message = getattr(e, "message", None)

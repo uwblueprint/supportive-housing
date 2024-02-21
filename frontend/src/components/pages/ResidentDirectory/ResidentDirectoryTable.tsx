@@ -189,7 +189,7 @@ const ResidentDirectoryTable = ({
                           w="36px"
                           variant="ghost"
                         />
-                        <MenuList>
+                        <MenuList zIndex={3}>
                           <MenuItem onClick={() => handleEditClick(resident)}>
                             Edit Resident
                           </MenuItem>

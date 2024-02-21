@@ -23,7 +23,6 @@ import {
   ModalCloseButton,
   Spinner,
 } from "@chakra-ui/react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { selectStyle } from "../../theme/forms/selectStyles";
@@ -32,6 +31,7 @@ import { LogRecord } from "../../types/LogRecordTypes";
 import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 import { SelectLabel } from "../../types/SharedTypes";
 import CreateToast from "../common/Toasts";
+import { SingleDatepicker } from "../common/Datepicker";
 
 type Props = {
   logRecord: LogRecord;
@@ -62,7 +62,7 @@ const EditLog = ({
   buildingOptions,
 }: Props): React.ReactElement => {
 
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState("");
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
@@ -81,24 +81,18 @@ const EditLog = ({
   const [loading, setLoading] = useState(false);
   const newToast = CreateToast();
 
-  const handleDateChange = (newDate: Date) => {
-    if (newDate !== null) {
-      setDate(newDate);
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (newDate) {
       setDateError(false);
     }
+    return true;
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
-
-    // Check to see if the input is valid, prevents an application crash
     if (timeRegex.test(e.target.value)) {
-      const [hour, minute] = e.target.value.split(":");
-      const updatedDate = new Date(date); // update the time values of the current date state
-      updatedDate.setHours(parseInt(hour, 10));
-      updatedDate.setMinutes(parseInt(minute, 10));
-      setDate(updatedDate);
-      setTimeError(false)
+      setTimeError(false);
     }
   };
 
@@ -237,7 +231,7 @@ const EditLog = ({
       <Box>
         <Modal isOpen={isOpen} scrollBehavior="inside" onClose={toggleClose}>
           <ModalOverlay />
-          <ModalContent maxW="50%">
+          <ModalContent maxW="60%">
             <ModalHeader>Edit Log Record</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
@@ -262,7 +256,13 @@ const EditLog = ({
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
-                          propsConfigs={singleDatePickerStyle}
+                          propsConfigs={{
+                            ...singleDatePickerStyle,
+                            inputProps: {
+                              ...singleDatePickerStyle.inputProps,
+                              placeholder: "YYYY-MM-DD",
+                            },
+                          }}
                         />
                         <FormErrorMessage>Date is invalid.</FormErrorMessage>
                       </FormControl>

@@ -18,22 +18,25 @@ import {
   Text,
   ModalFooter,
   ModalCloseButton,
-  InputGroup,
-  InputRightElement,
   Spinner,
+  FormLabel,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
 import convertLogsToCSV from "../../helper/csvHelpers";
 import CreateToast from "../common/Toasts";
 import { getFormattedDateAndTime } from "../../helper/dateHelpers";
+import { SingleDatepicker } from "../common/Datepicker";
 
 const ExportToCSV = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
+  const [isStartDateEmpty, setIsStartDateEmpty] = useState<boolean>(true);
   const [endDate, setEndDate] = useState<Date | undefined>();
+  const [isEndDateEmpty, setIsEndDateEmpty] = useState<boolean>(true);
+
+  const [startDateError, setStartDateError] = useState<boolean>(false);
+  const [endDateError, setEndDateError] = useState<boolean>(false);
   const [dateError, setDateError] = useState<boolean>(false);
 
   const [isOpen, setOpen] = useState(false);
@@ -45,20 +48,40 @@ const ExportToCSV = (): React.ReactElement => {
     setStartDate(undefined);
     setEndDate(undefined);
     setDateError(false);
+    setStartDateError(false);
+    setEndDateError(false);
+    setIsStartDateEmpty(true);
+    setIsEndDateEmpty(true);
   };
 
-  const handleStartDateChange = (inputValue: Date) => {
+  const handleStartDateChange = (
+    inputValue: Date | undefined,
+    isEmpty: boolean,
+  ) => {
     setStartDate(inputValue);
-    if (endDate && inputValue < endDate) {
+    setIsStartDateEmpty(isEmpty);
+    if (isEmpty || inputValue) {
+      setStartDateError(false);
+    }
+    if (endDate && inputValue && inputValue < endDate) {
       setDateError(false);
     }
+    return true;
   };
 
-  const handleEndDateChange = (inputValue: Date) => {
+  const handleEndDateChange = (
+    inputValue: Date | undefined,
+    isEmpty: boolean,
+  ) => {
     setEndDate(inputValue);
-    if (startDate && inputValue > startDate) {
+    setIsEndDateEmpty(isEmpty);
+    if (isEmpty || inputValue) {
+      setEndDateError(false);
+    }
+    if (startDate && inputValue && inputValue > startDate) {
       setDateError(false);
     }
+    return true;
   };
 
   const handleOpen = () => {
@@ -71,11 +94,18 @@ const ExportToCSV = (): React.ReactElement => {
   };
 
   const handleSubmit = async () => {
+    if (!startDate && !isStartDateEmpty) {
+      setStartDateError(true);
+      return;
+    }
+    if (!endDate && !isEndDateEmpty) {
+      setEndDateError(true);
+      return;
+    }
     if (startDate && endDate && startDate > endDate) {
       setDateError(true);
       return;
     }
-    setDateError(false);
 
     let dateRange;
     if (startDate || endDate) {
@@ -137,9 +167,10 @@ const ExportToCSV = (): React.ReactElement => {
             <ModalCloseButton size="lg" />
             <ModalBody>
               <FormControl isInvalid={dateError}>
+                <FormLabel>Date Range</FormLabel>
                 <Grid templateColumns="repeat(9, 1fr)">
                   <GridItem colSpan={3}>
-                    <InputGroup>
+                    <FormControl isInvalid={startDateError}>
                       <SingleDatepicker
                         name="start-date-input"
                         date={startDate}
@@ -148,31 +179,14 @@ const ExportToCSV = (): React.ReactElement => {
                           ...singleDatePickerStyle,
                           inputProps: {
                             ...singleDatePickerStyle.inputProps,
-                            placeholder: "Start Date",
+                            placeholder: "YYYY-MM-DD",
                           },
                         }}
                       />
-                      {startDate && (
-                        <InputRightElement>
-                          <IconButton
-                            onClick={() => {
-                              setStartDate(undefined);
-                              setDateError(false);
-                            }}
-                            aria-label="clear"
-                            variant="icon"
-                            icon={
-                              <SmallCloseIcon
-                                boxSize="5"
-                                color="gray.200"
-                                _hover={{ color: "gray.400" }}
-                                transition="color 0.1s ease-in-out"
-                              />
-                            }
-                          />
-                        </InputRightElement>
-                      )}
-                    </InputGroup>
+                      <FormErrorMessage>
+                        Start date is invalid.
+                      </FormErrorMessage>
+                    </FormControl>
                   </GridItem>
                   <GridItem
                     colSpan={1}
@@ -185,7 +199,7 @@ const ExportToCSV = (): React.ReactElement => {
                     </Text>
                   </GridItem>
                   <GridItem colSpan={3}>
-                    <InputGroup>
+                    <FormControl isInvalid={endDateError}>
                       <SingleDatepicker
                         name="end-date-input"
                         date={endDate}
@@ -194,31 +208,12 @@ const ExportToCSV = (): React.ReactElement => {
                           ...singleDatePickerStyle,
                           inputProps: {
                             ...singleDatePickerStyle.inputProps,
-                            placeholder: "End Date",
+                            placeholder: "YYYY-MM-DD",
                           },
                         }}
                       />
-                      {endDate && (
-                        <InputRightElement>
-                          <IconButton
-                            onClick={() => {
-                              setEndDate(undefined);
-                              setDateError(false);
-                            }}
-                            aria-label="clear"
-                            variant="icon"
-                            icon={
-                              <SmallCloseIcon
-                                boxSize="5"
-                                color="gray.200"
-                                _hover={{ color: "gray.400" }}
-                                transition="color 0.1s ease-in-out"
-                              />
-                            }
-                          />
-                        </InputRightElement>
-                      )}
-                    </InputGroup>
+                      <FormErrorMessage>End date is invalid.</FormErrorMessage>
+                    </FormControl>
                   </GridItem>
                 </Grid>
                 {dateError && (

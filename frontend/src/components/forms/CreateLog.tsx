@@ -24,7 +24,6 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import UserAPIClient from "../../APIClients/UserAPIClient";
@@ -39,6 +38,7 @@ import { SelectLabel } from "../../types/SharedTypes";
 import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 import CreateToast from "../common/Toasts";
 import { getLocalStorageObj } from "../../helper/localStorageHelpers";
+import { SingleDatepicker } from "../common/Datepicker";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -65,9 +65,9 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   // currently, the select for employees is locked and should default to current user. Need to check if admins/regular staff are allowed to change this
   /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [employee, setEmployee] = useState<SelectLabel>(getCurUserSelectOption());
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState<Date | undefined>(new Date());
   const [time, setTime] = useState(
-    date.toLocaleTimeString([], {
+    new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
@@ -97,23 +97,17 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   const [loading, setLoading] = useState(false);
   const newToast = CreateToast();
 
-  const handleDateChange = (newDate: Date) => {
-    if (newDate !== null) {
-      setDate(newDate);
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    if (newDate) {
       setDateError(false);
     }
+    return true;
   };
 
   const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTime(e.target.value);
-
-    // Check to see if the input is valid, prevents an application crash
     if (timeRegex.test(e.target.value)) {
-      const [hour, minute] = e.target.value.split(":");
-      const updatedDate = new Date(date); // update the time values of the current date state
-      updatedDate.setHours(parseInt(hour, 10));
-      updatedDate.setMinutes(parseInt(minute, 10));
-      setDate(updatedDate);
       setTimeError(false);
     }
   };
@@ -245,7 +239,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       setDateError(true)
       return
     }
-
     if (!timeRegex.test(time)) {
       setTimeError(true)
       return;
@@ -305,7 +298,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       <Box>
         <Modal isOpen={isCreateOpen} scrollBehavior="inside" onClose={handleCreateClose}>
           <ModalOverlay />
-          <ModalContent maxW="50%" overflowY="hidden">
+          <ModalContent maxW="60%" overflowY="hidden">
             <ModalHeader>Add Log Record</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
@@ -330,7 +323,13 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
-                          propsConfigs={singleDatePickerStyle}
+                          propsConfigs={{
+                            ...singleDatePickerStyle,
+                            inputProps: {
+                              ...singleDatePickerStyle.inputProps,
+                              placeholder: "YYYY-MM-DD",
+                            },
+                          }}
                         />
                         <FormErrorMessage>Date is invalid.</FormErrorMessage>
                       </FormControl>
