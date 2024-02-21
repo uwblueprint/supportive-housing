@@ -323,7 +323,13 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                           name="date-input"
                           date={date}
                           onDateChange={handleDateChange}
-                          propsConfigs={singleDatePickerStyle}
+                          propsConfigs={{
+                            ...singleDatePickerStyle,
+                            inputProps: {
+                              ...singleDatePickerStyle.inputProps,
+                              placeholder: "YYYY-MM-DD",
+                            },
+                          }}
                         />
                         <FormErrorMessage>Date is invalid.</FormErrorMessage>
                       </FormControl>

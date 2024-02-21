@@ -164,6 +164,7 @@ const ExportToCSV = (): React.ReactElement => {
             <ModalCloseButton size="lg" />
             <ModalBody>
               <FormControl isInvalid={dateError}>
+                <FormLabel>Date Range</FormLabel>
                 <Grid templateColumns="repeat(9, 1fr)">
                   <GridItem colSpan={3}>
                     <FormControl isInvalid={startDateError}>
@@ -175,7 +176,7 @@ const ExportToCSV = (): React.ReactElement => {
                           ...singleDatePickerStyle,
                           inputProps: {
                             ...singleDatePickerStyle.inputProps,
-                            placeholder: "Start Date",
+                            placeholder: "YYYY-MM-DD",
                           },
                         }}
                       />
@@ -204,7 +205,7 @@ const ExportToCSV = (): React.ReactElement => {
                           ...singleDatePickerStyle,
                           inputProps: {
                             ...singleDatePickerStyle.inputProps,
-                            placeholder: "End Date",
+                            placeholder: "YYYY-MM-DD",
                           },
                         }}
                       />

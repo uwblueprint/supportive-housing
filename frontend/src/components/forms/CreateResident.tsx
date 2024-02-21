@@ -256,7 +256,13 @@ const CreateResident = ({
                       name="date-input"
                       date={moveInDate}
                       onDateChange={handleMoveInDateChange}
-                      propsConfigs={singleDatePickerStyle}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "YYYY-MM-DD",
+                        },
+                      }}
                     />
                     <FormErrorMessage>
                       Move in date is invalid.
@@ -270,7 +276,13 @@ const CreateResident = ({
                         name="date-input"
                         date={moveOutDate}
                         onDateChange={handleMoveOutDateChange}
-                        propsConfigs={singleDatePickerStyle}
+                        propsConfigs={{
+                          ...singleDatePickerStyle,
+                          inputProps: {
+                            ...singleDatePickerStyle.inputProps,
+                            placeholder: "YYYY-MM-DD",
+                          },
+                        }}
                       />
                     <FormErrorMessage>
                       {moveOutDateErrorMessage}

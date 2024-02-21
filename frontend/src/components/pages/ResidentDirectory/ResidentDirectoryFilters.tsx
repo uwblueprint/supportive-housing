@@ -171,7 +171,7 @@ const ResidentDirectoryFilters = ({
               />
             </GridItem>
             <GridItem colSpan={3}>
-              <FormLabel fontWeight="700">Date</FormLabel>
+              <FormLabel fontWeight="700">Date Range</FormLabel>
               <Grid templateColumns="repeat(7, 1fr)">
                 <GridItem colSpan={3}>
                   <SingleDatepicker
@@ -182,7 +182,7 @@ const ResidentDirectoryFilters = ({
                       ...singleDatePickerStyle,
                       inputProps: {
                         ...singleDatePickerStyle.inputProps,
-                        placeholder: "Start Date",
+                        placeholder: "YYYY-MM-DD",
                       },
                     }}
                   />
@@ -206,7 +206,7 @@ const ResidentDirectoryFilters = ({
                         ...singleDatePickerStyle,
                         inputProps: {
                           ...singleDatePickerStyle.inputProps,
-                          placeholder: "End Date",
+                          placeholder: "YYYY-MM-DD",
                         },
                       }}
                     />
