@@ -16,13 +16,8 @@ import {
   ModalOverlay,
   ModalFooter,
   Divider,
-  InputGroup,
-  IconButton,
-  InputRightElement,
   Spinner,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { Col, Row } from "react-bootstrap";
 import ResidentAPIClient from "../../APIClients/ResidentAPIClient";
 import { Resident } from "../../types/ResidentTypes";
@@ -32,6 +27,7 @@ import CreateToast from "../common/Toasts";
 import { convertToDate, convertToString } from "../../helper/dateHelpers";
 import { isErrorResponse } from "../../helper/error";
 import { SelectLabel } from "../../types/SharedTypes";
+import { SingleDatepicker } from "../common/Datepicker";
 
 type Props = {
   buildingOptions: SelectLabel[];
@@ -52,14 +48,17 @@ const EditResident = ({
 }: Props): React.ReactElement => {
   const [initials, setInitials] = useState("");
   const [roomNumber, setRoomNumber] = useState("");
-  const [moveInDate, setMoveInDate] = useState(new Date());
+  const [moveInDate, setMoveInDate] = useState<Date | undefined>(new Date());
   const [buildingId, setBuildingId] = useState<number>(resident.building.id);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
+  const [isMoveOutDateEmpty, setIsMoveOutDateEmpty] = useState<boolean>(true)
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
+  const [moveInDateError, setMoveInDateError] = useState(false);
   const [moveOutDateError, setMoveOutDateError] = useState(false);
+  const [moveOutDateErrorMessage, setMoveOutDateErrorMessage] = useState("");
 
   const [loading, setLoading] = useState(false);
   const newToast = CreateToast();
@@ -70,7 +69,7 @@ const EditResident = ({
       id: resident.id,
       initial: initials.toUpperCase(),
       roomNum: roomNumber,
-      dateJoined: convertToString(moveInDate),
+      dateJoined: convertToString(moveInDate as Date),
       dateLeft: moveOutDate ? convertToString(moveOutDate) : undefined,
       buildingId,
     });
@@ -101,18 +100,27 @@ const EditResident = ({
     }
   };
 
-  const handleMoveInDateChange = (inputValue: Date) => {
+  const handleMoveInDateChange = (inputValue: Date | undefined) => {
     setMoveInDate(inputValue);
-    if (moveOutDate && inputValue < moveOutDate) {
+    if (inputValue) {
+      setMoveInDateError(false);
+    }
+    if (moveOutDate && inputValue && (inputValue < moveOutDate)) {
       setMoveOutDateError(false);
     }
+    return true;
   };
 
-  const handleMoveOutDateChange = (inputValue: Date) => {
+  const handleMoveOutDateChange = (inputValue: Date | undefined, isEmpty: boolean) => {
     setMoveOutDate(inputValue);
-    if (inputValue > moveInDate) {
+    setIsMoveOutDateEmpty(isEmpty)
+    if (isEmpty) {
+      setMoveOutDateError(false)
+    }
+    if (moveInDate && inputValue && (inputValue > moveInDate)) {
       setMoveOutDateError(false);
     }
+    return true;
   };
 
   const handleBuildingChange = (
@@ -134,9 +142,11 @@ const EditResident = ({
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
+    setIsMoveOutDateEmpty(!!resident.dateLeft)
 
     setInitialsError(false);
     setRoomNumberError(false);
+    setMoveInDateError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
   };
@@ -150,8 +160,18 @@ const EditResident = ({
       setRoomNumberError(true);
       return;
     }
+    if (!moveInDate) {
+      setMoveInDateError(true)
+      return;
+    }
+    if (!moveOutDate && !isMoveOutDateEmpty) {
+      setMoveOutDateError(true)
+      setMoveOutDateErrorMessage("Move out date is invalid.")
+      return;
+    }
     if (moveOutDate && moveOutDate <= moveInDate) {
       setMoveOutDateError(true);
+      setMoveOutDateErrorMessage("Move out date must be after the move in date.")
       return;
     }
     if (buildingId === -1) {
@@ -162,6 +182,7 @@ const EditResident = ({
     await editResident();
     setInitialsError(false);
     setRoomNumberError(false);
+    setMoveInDateError(false)
     setMoveOutDateError(false);
     setBuildingError(false);
   };
@@ -173,7 +194,8 @@ const EditResident = ({
     setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
-    );
+    )
+    setIsMoveOutDateEmpty(!!resident.dateLeft)
   }, [resident]);
 
   return (
@@ -212,7 +234,7 @@ const EditResident = ({
               </Row>
               <Row style={{ marginTop: "16px" }}>
                 <Col>
-                  <FormControl isRequired>
+                  <FormControl isRequired isInvalid={moveInDateError}>
                     <FormLabel>Move In Date</FormLabel>
                     <SingleDatepicker
                       name="date-input"
@@ -221,43 +243,21 @@ const EditResident = ({
                       propsConfigs={singleDatePickerStyle}
                     />
                     <FormErrorMessage>
-                      Move in date is required and must be before move out date.
+                      Move in date is invalid.
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
                 <Col>
                   <FormControl isInvalid={moveOutDateError}>
                     <FormLabel>Move Out Date</FormLabel>
-                    <InputGroup>
                       <SingleDatepicker
                         name="date-input"
                         date={moveOutDate}
                         onDateChange={handleMoveOutDateChange}
                         propsConfigs={singleDatePickerStyle}
                       />
-                      {moveOutDate && (
-                        <InputRightElement>
-                          <IconButton
-                            onClick={() => {
-                              setMoveOutDate(undefined);
-                              setMoveOutDateError(false);
-                            }}
-                            aria-label="clear"
-                            variant="icon"
-                            icon={
-                              <SmallCloseIcon
-                                boxSize="5"
-                                color="gray.200"
-                                _hover={{ color: "gray.400" }}
-                                transition="color 0.1s ease-in-out"
-                              />
-                            }
-                          />
-                        </InputRightElement>
-                      )}
-                    </InputGroup>
                     <FormErrorMessage marginBottom="8px">
-                      Move out date must be after the move in date.
+                      {moveOutDateErrorMessage}
                     </FormErrorMessage>
                   </FormControl>
                 </Col>
