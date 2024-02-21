@@ -114,7 +114,7 @@ const EditResident = ({
   const handleMoveOutDateChange = (inputValue: Date | undefined, isEmpty: boolean) => {
     setMoveOutDate(inputValue);
     setIsMoveOutDateEmpty(isEmpty)
-    if (isEmpty) {
+    if (isEmpty || inputValue) {
       setMoveOutDateError(false)
     }
     if (moveInDate && inputValue && (inputValue > moveInDate)) {
@@ -131,6 +131,8 @@ const EditResident = ({
       setBuildingError(false);
     }
   };
+
+  const blockInvalidChar = (e: React.KeyboardEvent<HTMLInputElement>) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
 
   const handleToggleClose = () => {
     toggleClose();
@@ -225,6 +227,7 @@ const EditResident = ({
                       value={roomNumber}
                       onChange={handleRoomNumberChange}
                       type="number"
+                      onKeyDown={blockInvalidChar}
                     />
                     <FormErrorMessage>
                       Room number is required and must contain 3 numbers.
