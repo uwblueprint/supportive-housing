@@ -12,11 +12,7 @@ import {
   FormControl,
   FormLabel,
   Text,
-  IconButton,
-  InputGroup,
-  InputRightElement,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
 import Select, { MultiValue } from "react-select";
 import { selectStyle } from "../../../theme/forms/selectStyles";
@@ -151,7 +147,7 @@ const HomePageFilters = ({
   };
 
   const handleStartDateChange = (newStartDate: Date | undefined) => {
-    if (endDate && newStartDate && (newStartDate > endDate)) {
+    if (endDate && newStartDate && newStartDate > endDate) {
       dateChangeToast(
         "Invalid Date",
         "The start date must be before the end date.",
@@ -164,7 +160,7 @@ const HomePageFilters = ({
   };
 
   const handleEndDateChange = (newEndDate: Date | undefined) => {
-    if (startDate && newEndDate && (startDate > newEndDate)) {
+    if (startDate && newEndDate && startDate > newEndDate) {
       dateChangeToast(
         "Invalid Date",
         "The end date must be after the start date.",

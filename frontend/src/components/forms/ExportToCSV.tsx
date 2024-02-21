@@ -18,12 +18,9 @@ import {
   Text,
   ModalFooter,
   ModalCloseButton,
-  InputGroup,
-  InputRightElement,
   Spinner,
   FormLabel,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
@@ -34,9 +31,9 @@ import { SingleDatepicker } from "../common/Datepicker";
 
 const ExportToCSV = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
-  const [isStartDateEmpty, setIsStartDateEmpty] = useState<boolean>(true)
+  const [isStartDateEmpty, setIsStartDateEmpty] = useState<boolean>(true);
   const [endDate, setEndDate] = useState<Date | undefined>();
-  const [isEndDateEmpty, setIsEndDateEmpty] = useState<boolean>(true)
+  const [isEndDateEmpty, setIsEndDateEmpty] = useState<boolean>(true);
 
   const [startDateError, setStartDateError] = useState<boolean>(false);
   const [endDateError, setEndDateError] = useState<boolean>(false);
@@ -51,31 +48,37 @@ const ExportToCSV = (): React.ReactElement => {
     setStartDate(undefined);
     setEndDate(undefined);
     setDateError(false);
-    setStartDateError(false)
-    setEndDateError(false)
-    setIsStartDateEmpty(true)
-    setIsEndDateEmpty(true)
+    setStartDateError(false);
+    setEndDateError(false);
+    setIsStartDateEmpty(true);
+    setIsEndDateEmpty(true);
   };
 
-  const handleStartDateChange = (inputValue: Date | undefined, isEmpty: boolean) => {
+  const handleStartDateChange = (
+    inputValue: Date | undefined,
+    isEmpty: boolean,
+  ) => {
     setStartDate(inputValue);
-    setIsStartDateEmpty(isEmpty)
+    setIsStartDateEmpty(isEmpty);
     if (isEmpty || inputValue) {
-      setStartDateError(false)
+      setStartDateError(false);
     }
-    if (endDate && inputValue && (inputValue < endDate)) {
+    if (endDate && inputValue && inputValue < endDate) {
       setDateError(false);
     }
     return true;
   };
 
-  const handleEndDateChange = (inputValue: Date | undefined, isEmpty: boolean) => {
+  const handleEndDateChange = (
+    inputValue: Date | undefined,
+    isEmpty: boolean,
+  ) => {
     setEndDate(inputValue);
-    setIsEndDateEmpty(isEmpty)
+    setIsEndDateEmpty(isEmpty);
     if (isEmpty || inputValue) {
-      setEndDateError(false)
+      setEndDateError(false);
     }
-    if (startDate && inputValue && (inputValue > startDate)) {
+    if (startDate && inputValue && inputValue > startDate) {
       setDateError(false);
     }
     return true;
@@ -92,11 +95,11 @@ const ExportToCSV = (): React.ReactElement => {
 
   const handleSubmit = async () => {
     if (!startDate && !isStartDateEmpty) {
-      setStartDateError(true)
+      setStartDateError(true);
       return;
     }
     if (!endDate && !isEndDateEmpty) {
-      setEndDateError(true)
+      setEndDateError(true);
       return;
     }
     if (startDate && endDate && startDate > endDate) {
@@ -209,9 +212,7 @@ const ExportToCSV = (): React.ReactElement => {
                           },
                         }}
                       />
-                      <FormErrorMessage>
-                        End date is invalid.
-                      </FormErrorMessage>
+                      <FormErrorMessage>End date is invalid.</FormErrorMessage>
                     </FormControl>
                   </GridItem>
                 </Grid>

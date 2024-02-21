@@ -6,11 +6,7 @@ import {
   FormControl,
   FormLabel,
   Text,
-  InputGroup,
-  InputRightElement,
-  IconButton,
 } from "@chakra-ui/react";
-import { SmallCloseIcon } from "@chakra-ui/icons";
 import { Card } from "react-bootstrap";
 import Select, { MultiValue } from "react-select";
 import { selectStyle } from "../../../theme/forms/selectStyles";
@@ -99,7 +95,7 @@ const ResidentDirectoryFilters = ({
   };
 
   const handleStartDateChange = (newStartDate: Date | undefined) => {
-    if (endDate && newStartDate && (newStartDate > endDate)) {
+    if (endDate && newStartDate && newStartDate > endDate) {
       dateChangeToast(
         "Invalid Date",
         "The start date must be before the end date.",
@@ -112,7 +108,7 @@ const ResidentDirectoryFilters = ({
   };
 
   const handleEndDateChange = (newEndDate: Date | undefined) => {
-    if (startDate && newEndDate && (startDate > newEndDate)) {
+    if (startDate && newEndDate && startDate > newEndDate) {
       dateChangeToast(
         "Invalid Date",
         "The end date must be after the start date.",
@@ -198,18 +194,18 @@ const ResidentDirectoryFilters = ({
                   </Text>
                 </GridItem>
                 <GridItem colSpan={3}>
-                    <SingleDatepicker
-                      name="end-date-input"
-                      date={endDate}
-                      onDateChange={handleEndDateChange}
-                      propsConfigs={{
-                        ...singleDatePickerStyle,
-                        inputProps: {
-                          ...singleDatePickerStyle.inputProps,
-                          placeholder: "YYYY-MM-DD",
-                        },
-                      }}
-                    />
+                  <SingleDatepicker
+                    name="end-date-input"
+                    date={endDate}
+                    onDateChange={handleEndDateChange}
+                    propsConfigs={{
+                      ...singleDatePickerStyle,
+                      inputProps: {
+                        ...singleDatePickerStyle.inputProps,
+                        placeholder: "YYYY-MM-DD",
+                      },
+                    }}
+                  />
                 </GridItem>
               </Grid>
             </GridItem>

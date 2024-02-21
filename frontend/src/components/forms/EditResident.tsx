@@ -51,7 +51,7 @@ const EditResident = ({
   const [moveInDate, setMoveInDate] = useState<Date | undefined>(new Date());
   const [buildingId, setBuildingId] = useState<number>(resident.building.id);
   const [moveOutDate, setMoveOutDate] = useState<Date | undefined>();
-  const [isMoveOutDateEmpty, setIsMoveOutDateEmpty] = useState<boolean>(true)
+  const [isMoveOutDateEmpty, setIsMoveOutDateEmpty] = useState<boolean>(true);
 
   const [initialsError, setInitialsError] = useState(false);
   const [roomNumberError, setRoomNumberError] = useState(false);
@@ -105,19 +105,22 @@ const EditResident = ({
     if (inputValue) {
       setMoveInDateError(false);
     }
-    if (moveOutDate && inputValue && (inputValue < moveOutDate)) {
+    if (moveOutDate && inputValue && inputValue < moveOutDate) {
       setMoveOutDateError(false);
     }
     return true;
   };
 
-  const handleMoveOutDateChange = (inputValue: Date | undefined, isEmpty: boolean) => {
+  const handleMoveOutDateChange = (
+    inputValue: Date | undefined,
+    isEmpty: boolean,
+  ) => {
     setMoveOutDate(inputValue);
-    setIsMoveOutDateEmpty(isEmpty)
+    setIsMoveOutDateEmpty(isEmpty);
     if (isEmpty || inputValue) {
-      setMoveOutDateError(false)
+      setMoveOutDateError(false);
     }
-    if (moveInDate && inputValue && (inputValue > moveInDate)) {
+    if (moveInDate && inputValue && inputValue > moveInDate) {
       setMoveOutDateError(false);
     }
     return true;
@@ -132,7 +135,8 @@ const EditResident = ({
     }
   };
 
-  const blockInvalidChar = (e: React.KeyboardEvent<HTMLInputElement>) => ['e', 'E', '+', '-'].includes(e.key) && e.preventDefault();
+  const blockInvalidChar = (e: React.KeyboardEvent<HTMLInputElement>) =>
+    ["e", "E", "+", "-"].includes(e.key) && e.preventDefault();
 
   const handleToggleClose = () => {
     toggleClose();
@@ -144,7 +148,7 @@ const EditResident = ({
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
     );
-    setIsMoveOutDateEmpty(!!resident.dateLeft)
+    setIsMoveOutDateEmpty(!!resident.dateLeft);
 
     setInitialsError(false);
     setRoomNumberError(false);
@@ -163,17 +167,19 @@ const EditResident = ({
       return;
     }
     if (!moveInDate) {
-      setMoveInDateError(true)
+      setMoveInDateError(true);
       return;
     }
     if (!moveOutDate && !isMoveOutDateEmpty) {
-      setMoveOutDateError(true)
-      setMoveOutDateErrorMessage("Move out date is invalid.")
+      setMoveOutDateError(true);
+      setMoveOutDateErrorMessage("Move out date is invalid.");
       return;
     }
     if (moveOutDate && moveOutDate <= moveInDate) {
       setMoveOutDateError(true);
-      setMoveOutDateErrorMessage("Move out date must be after the move in date.")
+      setMoveOutDateErrorMessage(
+        "Move out date must be after the move in date.",
+      );
       return;
     }
     if (buildingId === -1) {
@@ -184,7 +190,7 @@ const EditResident = ({
     await editResident();
     setInitialsError(false);
     setRoomNumberError(false);
-    setMoveInDateError(false)
+    setMoveInDateError(false);
     setMoveOutDateError(false);
     setBuildingError(false);
   };
@@ -196,8 +202,8 @@ const EditResident = ({
     setBuildingId(resident.building.id);
     setMoveOutDate(
       resident.dateLeft ? convertToDate(resident.dateLeft) : undefined,
-    )
-    setIsMoveOutDateEmpty(!!resident.dateLeft)
+    );
+    setIsMoveOutDateEmpty(!!resident.dateLeft);
   }, [resident]);
 
   return (
@@ -259,18 +265,18 @@ const EditResident = ({
                 <Col>
                   <FormControl isInvalid={moveOutDateError}>
                     <FormLabel>Move Out Date</FormLabel>
-                      <SingleDatepicker
-                        name="date-input"
-                        date={moveOutDate}
-                        onDateChange={handleMoveOutDateChange}
-                        propsConfigs={{
-                          ...singleDatePickerStyle,
-                          inputProps: {
-                            ...singleDatePickerStyle.inputProps,
-                            placeholder: "YYYY-MM-DD",
-                          },
-                        }}
-                      />
+                    <SingleDatepicker
+                      name="date-input"
+                      date={moveOutDate}
+                      onDateChange={handleMoveOutDateChange}
+                      propsConfigs={{
+                        ...singleDatePickerStyle,
+                        inputProps: {
+                          ...singleDatePickerStyle.inputProps,
+                          placeholder: "YYYY-MM-DD",
+                        },
+                      }}
+                    />
                     <FormErrorMessage marginBottom="8px">
                       {moveOutDateErrorMessage}
                     </FormErrorMessage>
