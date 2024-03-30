@@ -73,9 +73,9 @@ const CreateResident = ({
     });
 
     if (isErrorResponse(res)) {
-      newToast("Error adding resident", res.errMessage, "error");
+      newToast("Error adding tenant", res.errMessage, "error");
     } else if (res) {
-      newToast("Resident added", "Successfully added resident.", "success");
+      newToast("Tenant added", "Successfully added tenant.", "success");
       getRecords(1);
       countResidents();
       setUserPageNum(1);
@@ -212,7 +212,7 @@ const CreateResident = ({
       <Box textAlign="right">
         <Button onClick={handleOpen} variant="primary">
           <AddIcon boxSize="16px" marginRight="8px" />
-          Add Resident
+          Add Tenant
         </Button>
       </Box>
 
@@ -220,7 +220,7 @@ const CreateResident = ({
         <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Add Resident</ModalHeader>
+            <ModalHeader>Add Tenant</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />

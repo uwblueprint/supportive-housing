@@ -119,7 +119,7 @@ const ViewLog = ({
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                    <FormLabel>Residents</FormLabel>
+                    <FormLabel>Tenants</FormLabel>
                     <Select
                       isDisabled
                       isMulti

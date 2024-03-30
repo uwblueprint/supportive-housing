@@ -365,16 +365,16 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                  <FormLabel>Residents</FormLabel>
+                  <FormLabel>Tenants</FormLabel>
                     <Select
                       options={residentOptions}
                       isMulti
                       closeMenuOnSelect={false}
-                      placeholder="Select Residents"
+                      placeholder="Select Tenants"
                       onChange={handleResidentsChange}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>At least 1 resident is required.</FormErrorMessage>
+                    <FormErrorMessage>At least 1 tenant is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>

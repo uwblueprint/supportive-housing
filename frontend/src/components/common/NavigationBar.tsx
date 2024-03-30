@@ -94,7 +94,7 @@ const NavigationBar = (): React.ReactElement => {
               variant="link button-navbar"
               onClick={navigateToResidentDirectory}
             >
-              Resident Directory
+              Tenant Directory
             </Button>
 
             {authenticatedUser?.role === "Admin" && (

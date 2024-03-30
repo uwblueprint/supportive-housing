@@ -54,7 +54,7 @@ def update_resident(resident_id):
         return (
             jsonify(
                 {
-                    "message": "Resident record with id {resident_id} updated sucessfully".format(
+                    "message": "Tenant record with id {resident_id} updated sucessfully".format(
                         resident_id=resident_id
                     )
                 }

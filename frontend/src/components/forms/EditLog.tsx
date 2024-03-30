@@ -301,7 +301,7 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl isRequired isInvalid={residentError} mt={4}>
-                  <FormLabel>Residents</FormLabel>
+                  <FormLabel>Tenants</FormLabel>
                     <Select
                       options={residentOptions}
                       isMulti
@@ -313,7 +313,7 @@ const EditLog = ({
                       )}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>At least 1 resident is required.</FormErrorMessage>
+                    <FormErrorMessage>At least 1 tenant is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>

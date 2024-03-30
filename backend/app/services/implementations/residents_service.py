@@ -163,7 +163,7 @@ class ResidentsService(IResidentsService):
                 ).update({Residents.date_left: None, **updated_resident})
             if not create_update_resident:
                 raise Exception(
-                    "Resident with id {resident_id} not found".format(
+                    "Tenant with id {resident_id} not found".format(
                         resident_id=resident_id
                     )
                 )

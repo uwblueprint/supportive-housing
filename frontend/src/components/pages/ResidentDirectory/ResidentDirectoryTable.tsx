@@ -74,10 +74,10 @@ const getFormattedDates = (resident: Resident) => {
   };
 };
 
-const DELETE_CONFIRMATION_HEADER = "Delete Resident";
+const DELETE_CONFIRMATION_HEADER = "Delete Tenant";
 
 const deleteConfirmationMessage = (name: string) =>
-  `Are you sure you want to delete resident ${name}? This is a permanent action. Residents can only be deleted if there are no log records associated with them.`;
+  `Are you sure you want to delete tenant ${name}? This is a permanent action. Tenants can only be deleted if there are no log records associated with them.`;
 
 const ResidentDirectoryTable = ({
   buildingOptions,
@@ -115,18 +115,18 @@ const ResidentDirectoryTable = ({
     const statusCode = await ResidentAPIClient.deleteResident(itemId);
     if (statusCode === 400) {
       newToast(
-        "Error deleting resident",
-        "Resident has log records attached.",
+        "Error deleting tenant",
+        "Tenant has log records attached.",
         "error",
       );
     } else if (statusCode === 500) {
       newToast(
-        "Error deleting resident",
-        "Unable to delete resident.",
+        "Error deleting tenant",
+        "Unable to delete tenant.",
         "error",
       );
     } else {
-      newToast("Resident deleted", "Successfully deleted resident.", "success");
+      newToast("Tenant deleted", "Successfully deleted tenant.", "success");
       const newUserPageNum =
         residents.length === 1 ? userPageNum - 1 : userPageNum;
       countResidents();
@@ -148,11 +148,11 @@ const ResidentDirectoryTable = ({
         <Table variant="showTable" verticalAlign="middle">
           <Thead>
             <Tr>
-              <Th>Resident</Th>
+              <Th>Tenant</Th>
               <Th textAlign="center">Status</Th>
               <Th>Building</Th>
-              <Th>Residency Start Date</Th>
-              <Th>Residency End Date</Th>
+              <Th>Tenancy Start Date</Th>
+              <Th>Tenancy End Date</Th>
               <Th> </Th>
             </Tr>
           </Thead>
@@ -191,10 +191,10 @@ const ResidentDirectoryTable = ({
                         />
                         <MenuList zIndex={3}>
                           <MenuItem onClick={() => handleEditClick(resident)}>
-                            Edit Resident
+                            Edit Tenant
                           </MenuItem>
                           <MenuItem onClick={() => handleDeleteClick(resident)}>
-                            Delete Resident
+                            Delete Tenant
                           </MenuItem>
                         </MenuList>
                       </Menu>
