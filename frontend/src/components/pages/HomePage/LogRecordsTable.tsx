@@ -47,7 +47,7 @@ const DELETE_CONFIRMATION_MESSAGE =
   "Are you sure you want to delete this log record? Deleting a log record will permanently remove it from the system.";
 
 const formatNote = (note: string) => {
-  const NOTE_LIMIT = 150;
+  const NOTE_LIMIT = 300;
   if (note.length > NOTE_LIMIT) {
     return note.substring(0, NOTE_LIMIT).concat("...");
   }
