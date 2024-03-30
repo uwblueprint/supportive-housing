@@ -23,12 +23,10 @@ class TagsService(ITagsService):
 
     def get_tags(self, return_all, page_number, results_per_page):
         try:
-            tags_results = Tag.query.order_by(Tag.last_modified.desc())
-
             if return_all:
-                tags_results = tags_results.all()
+                tags_results = Tag.query.order_by(Tag.name).all()
             else:
-                tags_results = tags_results.limit(results_per_page).offset(
+                tags_results = Tag.query.order_by(Tag.last_modified.desc()).limit(results_per_page).offset(
                     (page_number - 1) * results_per_page
                 )
 
