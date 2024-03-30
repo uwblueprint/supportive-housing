@@ -29,7 +29,13 @@ const HomePage = (): React.ReactElement => {
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [tags, setTags] = useState<SelectLabel[]>([]);
   const [attentionTos, setAttentionTos] = useState<SelectLabel[]>([]);
-  const [buildings, setBuildings] = useState<SelectLabel[]>([]);
+  // NOTE: Building 362 will always have ID 2 in the database
+  const [buildings, setBuildings] = useState<SelectLabel[]>([
+    {
+      label: "362",
+      value: 2,
+    },
+  ]);
   const [flagged, setFlagged] = useState(false);
 
   // Record/page state
