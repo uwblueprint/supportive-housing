@@ -230,7 +230,7 @@ class ResidentsService(IResidentsService):
                 )
             else:
                 residents_results = residents_results.order_by(
-                    Residents.last_modified.desc()
+                    Residents.room_num, Residents.initial
                 ).all()
 
             return {
