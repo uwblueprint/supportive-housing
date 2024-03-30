@@ -176,6 +176,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
 
     const residentsData = await ResidentAPIClient.getResidents({
       returnAll: true,
+      statuses: ["Current"]
     });
 
     if (residentsData && residentsData.residents.length !== 0) {
