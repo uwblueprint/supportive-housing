@@ -306,7 +306,7 @@ const EditLog = ({
                       options={residentOptions}
                       isMulti
                       closeMenuOnSelect={false}
-                      placeholder="Select Residents"
+                      placeholder="Select Tenants"
                       onChange={handleResidentsChange}
                       defaultValue={residentOptions.filter(
                         (item) => logRecord.residents && logRecord.residents.includes(item.label),

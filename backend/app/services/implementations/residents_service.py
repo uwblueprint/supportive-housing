@@ -8,7 +8,7 @@ from ...utilities.exceptions.duplicate_entity_exceptions import (
     DuplicateResidentException,
 )
 from datetime import datetime
-from sqlalchemy.sql.expression import or_, and_
+from sqlalchemy.sql.expression import or_, and_, case
 from pytz import timezone
 
 
@@ -40,24 +40,14 @@ class ResidentsService(IResidentsService):
     def to_residents_json_list(self, residents, current_date):
         residents_json_list = []
         for result in residents:
-            resident, building = result[0], result[1]
+            resident, building, status = result[0], result[1], result[2]
 
             resident_dict = resident.to_dict()
             resident_dict["building"]["name"] = building
-            resident_dict["status"] = self.get_resident_status(
-                current_date, resident_dict["date_joined"], resident_dict["date_left"]
-            )
+            resident_dict["status"] = status
 
             residents_json_list.append(resident_dict)
         return residents_json_list
-
-    def get_resident_status(self, current_date, date_joined, date_left):
-        if current_date < date_joined:
-            return "Future"
-        elif date_left is None or current_date <= date_left:
-            return "Current"
-        else:
-            return "Past"
 
     def convert_to_date_obj(self, date):
         return datetime.strptime(date, "%Y-%m-%d")
@@ -78,7 +68,7 @@ class ResidentsService(IResidentsService):
 
         return False
 
-    def construct_filters(self, query, filters, current_date):
+    def construct_filters(self, query, filters, status_column):
         residents = filters.get("residents")
         buildings = filters.get("buildings")
         statuses = filters.get("statuses")
@@ -101,34 +91,11 @@ class ResidentsService(IResidentsService):
         if residents is not None:
             query = query.filter(Residents.id.in_(residents))
         if statuses is not None:
-            conditions = []
-
-            # Construct the conditions for each case
-            for status in statuses:
-                if status == "Future":
-                    conditions.append(Residents.date_joined > current_date)
-                elif status == "Current":
-                    conditions.append(
-                        and_(
-                            Residents.date_joined <= current_date,
-                            or_(
-                                Residents.date_left.is_(None),
-                                Residents.date_left >= current_date,
-                            ),
-                        )
-                    )
-                elif status == "Past":
-                    conditions.append(Residents.date_left < current_date)
-
-            # OR them together and add to filter
-            query = query.filter(or_(*conditions))
-
+            query = query.filter(status_column.in_(statuses))
         if date_joined is not None:
             query = query.filter(Residents.date_joined >= date_joined)
         if date_left is not None:
             query = query.filter(Residents.date_left <= date_left)
-
-        query = query.order_by(Residents.last_modified.desc())
 
         return query
 
@@ -214,17 +181,41 @@ class ResidentsService(IResidentsService):
         try:
             current_date = datetime.now(timezone("US/Eastern")).strftime("%Y-%m-%d")
 
+            # add a status column based on the current date
+            status_column = case(
+                (and_
+                    (Residents.date_joined <= current_date,
+                        or_(
+                            Residents.date_left.is_(None),
+                            Residents.date_left >= current_date,
+                        ),
+                    ),
+                    'Current'
+                ),
+                (Residents.date_joined > current_date, 'Future'),
+                (Residents.date_left < current_date, 'Past')
+            ).label('status')
+
             residents_results = Residents.query.join(
                 Buildings, Buildings.id == Residents.building_id
-            ).with_entities(Residents, Buildings.name.label("building"))
+            ).with_entities(
+                Residents, 
+                Buildings.name.label("building"),
+                status_column
+            )
             if filters:
                 residents_results = self.construct_filters(
-                    residents_results, filters, current_date
+                    residents_results, filters, status_column
                 )
 
             if not return_all:
                 residents_results = (
-                    residents_results.order_by(Residents.last_modified.desc())
+                    residents_results.order_by(
+                        status_column,
+                        case((Residents.date_left.is_(None), 0), else_=1),
+                        Residents.room_num,
+                        Residents.initial
+                    )
                     .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
                 )
@@ -244,14 +235,34 @@ class ResidentsService(IResidentsService):
 
     def count_residents(self, filters):
         try:
+            current_date = datetime.now(timezone("US/Eastern")).strftime("%Y-%m-%d")
+
+            # add a status column based on the current date
+            status_column = case(
+                (and_
+                    (Residents.date_joined <= current_date,
+                        or_(
+                            Residents.date_left.is_(None),
+                            Residents.date_left >= current_date,
+                        ),
+                    ),
+                    'Current'
+                ),
+                (Residents.date_joined > current_date, 'Future'),
+                (Residents.date_left < current_date, 'Past')
+            ).label('status')
+
             residents_results = Residents.query.join(
                 Buildings, Buildings.id == Residents.building_id
-            ).with_entities(Residents, Buildings.name.label("building"))
+            ).with_entities(
+                Residents, 
+                Buildings.name.label("building"),
+                status_column
+            )
 
             if filters:
-                current_date = datetime.now(timezone("US/Eastern")).strftime("%Y-%m-%d")
                 residents_results = self.construct_filters(
-                    residents_results, filters, current_date
+                    residents_results, filters, status_column
                 )
 
             count = residents_results.count()
