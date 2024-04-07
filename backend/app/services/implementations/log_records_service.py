@@ -77,7 +77,7 @@ class LogRecordsService(ILogRecordsService):
                             "first_name": log[2],
                             "last_name": log[3],
                         },
-                        "residents": log[4],
+                        "residents": log[4] if log[4] else [],
                         "attn_to": {
                             "id": log[5],
                             "first_name": log[6],

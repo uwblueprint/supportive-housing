@@ -91,7 +91,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
-  const [residentError, setResidentError] = useState(false);
   const [notesError, setNotesError] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -129,7 +128,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     );
     if (mutableSelectedResidents !== null) {
       setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
-      setResidentError(false);
     }
     
   };
@@ -180,7 +178,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     });
 
     if (residentsData && residentsData.residents.length !== 0) {
-      // TODO: Remove the type assertions here
       const residentLabels: SelectLabel[] = residentsData.residents.map(
         (r) => ({ label: r.residentId, value: r.id }),
       );
@@ -226,7 +223,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     setDateError(false)
     setTimeError(false);
     setBuildingError(false);
-    setResidentError(false);
     setNotesError(false);
   };
 
@@ -246,10 +242,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     }
     if (buildingId === -1) {
       setBuildingError(true)
-      return;
-    }
-    if (residents.length === 0) {
-      setResidentError(true)
       return;
     }
     if (notes.length === 0) {
@@ -365,7 +357,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                   </FormControl>
                 </Col>
                 <Col>
-                  <FormControl isRequired isInvalid={residentError} mt={4}>
+                  <FormControl mt={4}>
                   <FormLabel>Tenants</FormLabel>
                     <Select
                       options={residentOptions}
@@ -375,7 +367,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                       onChange={handleResidentsChange}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>At least 1 tenant is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>

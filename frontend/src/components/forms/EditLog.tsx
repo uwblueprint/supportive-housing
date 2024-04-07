@@ -75,7 +75,6 @@ const EditLog = ({
   const [dateError, setDateError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [buildingError, setBuildingError] = useState(false);
-  const [residentError, setResidentError] = useState(false);
   const [notesError, setNotesError] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -113,7 +112,6 @@ const EditLog = ({
     );
     if (mutableSelectedResidents !== null) {
       setResidents(mutableSelectedResidents.map((residentLabel) => residentLabel.value));
-      setResidentError(false);
     }    
   };
 
@@ -167,7 +165,6 @@ const EditLog = ({
     setDateError(false)
     setTimeError(false);
     setBuildingError(false);
-    setResidentError(false);
     setNotesError(false);
   };
 
@@ -184,10 +181,6 @@ const EditLog = ({
     }
     if (buildingId === -1) {
       setBuildingError(true)
-      return;
-    }
-    if (residents.length === 0) {
-      setResidentError(true)
       return;
     }
     if (notes.length === 0) {
@@ -300,7 +293,7 @@ const EditLog = ({
                   </FormControl>
                 </Col>
                 <Col>
-                  <FormControl isRequired isInvalid={residentError} mt={4}>
+                  <FormControl mt={4}>
                   <FormLabel>Tenants</FormLabel>
                     <Select
                       options={residentOptions}
@@ -309,11 +302,10 @@ const EditLog = ({
                       placeholder="Select Tenants"
                       onChange={handleResidentsChange}
                       defaultValue={residentOptions.filter(
-                        (item) => logRecord.residents && logRecord.residents.includes(item.label),
+                        (item) => logRecord.residents.includes(item.label),
                       )}
                       styles={selectStyle}
                     />
-                    <FormErrorMessage>At least 1 tenant is required.</FormErrorMessage>
                   </FormControl>
                 </Col>
               </Row>

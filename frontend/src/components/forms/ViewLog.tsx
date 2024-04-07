@@ -127,6 +127,7 @@ const ViewLog = ({
                         DropdownIndicator: () => null,
                         MultiValueRemove: () => null,
                       }}
+                      placeholder="No Tenants"
                       defaultValue={residentOptions.filter((item) =>
                         logRecord.residents.includes(item.label),
                       )}
