@@ -120,11 +120,7 @@ const ResidentDirectoryTable = ({
         "error",
       );
     } else if (statusCode === 500) {
-      newToast(
-        "Error deleting tenant",
-        "Unable to delete tenant.",
-        "error",
-      );
+      newToast("Error deleting tenant", "Unable to delete tenant.", "error");
     } else {
       newToast("Tenant deleted", "Successfully deleted tenant.", "success");
       const newUserPageNum =

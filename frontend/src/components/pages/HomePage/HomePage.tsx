@@ -98,7 +98,7 @@ const HomePage = (): React.ReactElement => {
       flagged,
       resultsPerPage,
       pageNumber,
-      sortDirection
+      sortDirection,
     });
 
     // Reset table scroll
@@ -195,8 +195,9 @@ const HomePage = (): React.ReactElement => {
   ]);
 
   useEffect(() => {
-    getLogRecords(pageNum)
-  }, [sortDirection])
+    getLogRecords(pageNum);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [sortDirection]);
 
   return (
     <Box>

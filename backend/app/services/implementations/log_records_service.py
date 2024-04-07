@@ -209,7 +209,12 @@ class LogRecordsService(ILogRecordsService):
                 ) t ON logs.log_id = t.log_id\n"
 
     def get_log_records(
-        self, page_number, return_all, sort_direction="DESC", results_per_page=10, filters=None
+        self,
+        page_number,
+        return_all,
+        sort_direction="DESC",
+        results_per_page=10,
+        filters=None,
     ):
         try:
             sql = "SELECT\n \

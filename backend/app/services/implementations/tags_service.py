@@ -26,8 +26,10 @@ class TagsService(ITagsService):
             if return_all:
                 tags_results = Tag.query.order_by(Tag.name).all()
             else:
-                tags_results = Tag.query.order_by(Tag.last_modified.desc()).limit(results_per_page).offset(
-                    (page_number - 1) * results_per_page
+                tags_results = (
+                    Tag.query.order_by(Tag.last_modified.desc())
+                    .limit(results_per_page)
+                    .offset((page_number - 1) * results_per_page)
                 )
 
             tags_results = list(map(lambda tag: tag.to_dict(), tags_results))

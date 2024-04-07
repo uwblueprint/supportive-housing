@@ -183,26 +183,23 @@ class ResidentsService(IResidentsService):
 
             # add a status column based on the current date
             status_column = case(
-                (and_
-                    (Residents.date_joined <= current_date,
+                (
+                    and_(
+                        Residents.date_joined <= current_date,
                         or_(
                             Residents.date_left.is_(None),
                             Residents.date_left >= current_date,
                         ),
                     ),
-                    'Current'
+                    "Current",
                 ),
-                (Residents.date_joined > current_date, 'Future'),
-                (Residents.date_left < current_date, 'Past')
-            ).label('status')
+                (Residents.date_joined > current_date, "Future"),
+                (Residents.date_left < current_date, "Past"),
+            ).label("status")
 
             residents_results = Residents.query.join(
                 Buildings, Buildings.id == Residents.building_id
-            ).with_entities(
-                Residents, 
-                Buildings.name.label("building"),
-                status_column
-            )
+            ).with_entities(Residents, Buildings.name.label("building"), status_column)
             if filters:
                 residents_results = self.construct_filters(
                     residents_results, filters, status_column
@@ -214,7 +211,7 @@ class ResidentsService(IResidentsService):
                         status_column,
                         case((Residents.date_left.is_(None), 0), else_=1),
                         Residents.room_num,
-                        Residents.initial
+                        Residents.initial,
                     )
                     .limit(results_per_page)
                     .offset((page_number - 1) * results_per_page)
@@ -239,26 +236,23 @@ class ResidentsService(IResidentsService):
 
             # add a status column based on the current date
             status_column = case(
-                (and_
-                    (Residents.date_joined <= current_date,
+                (
+                    and_(
+                        Residents.date_joined <= current_date,
                         or_(
                             Residents.date_left.is_(None),
                             Residents.date_left >= current_date,
                         ),
                     ),
-                    'Current'
+                    "Current",
                 ),
-                (Residents.date_joined > current_date, 'Future'),
-                (Residents.date_left < current_date, 'Past')
-            ).label('status')
+                (Residents.date_joined > current_date, "Future"),
+                (Residents.date_left < current_date, "Past"),
+            ).label("status")
 
             residents_results = Residents.query.join(
                 Buildings, Buildings.id == Residents.building_id
-            ).with_entities(
-                Residents, 
-                Buildings.name.label("building"),
-                status_column
-            )
+            ).with_entities(Residents, Buildings.name.label("building"), status_column)
 
             if filters:
                 residents_results = self.construct_filters(

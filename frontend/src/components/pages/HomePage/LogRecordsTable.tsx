@@ -79,7 +79,7 @@ const LogRecordsTable = ({
   countRecords,
   setUserPageNum,
   sortDirection,
-  setSortDirection
+  setSortDirection,
 }: Props): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
@@ -213,21 +213,29 @@ const LogRecordsTable = ({
           <Table variant="showTable" verticalAlign="middle">
             <Thead>
               <Tr>
-                  <Th>
+                <Th>
                   Date
-                    <IconButton
-                      variant="ghost"
-                      aria-label="Sort direction"
-                      fontSize="16px"
-                      size="xs"
-                      ml={1}
-                      mb={0.5}
-                      icon={sortDirection === "desc" ? <ArrowDownIcon/> : <ArrowUpIcon/>}
-                      onClick={() => setSortDirection(
-                        sortDirection === "desc" ? "asc" : "desc"
-                      )}
-                    />
-                  </Th>
+                  <IconButton
+                    variant="ghost"
+                    aria-label="Sort direction"
+                    fontSize="16px"
+                    size="xs"
+                    ml={1}
+                    mb={0.5}
+                    icon={
+                      sortDirection === "desc" ? (
+                        <ArrowDownIcon />
+                      ) : (
+                        <ArrowUpIcon />
+                      )
+                    }
+                    onClick={() =>
+                      setSortDirection(
+                        sortDirection === "desc" ? "asc" : "desc",
+                      )
+                    }
+                  />
+                </Th>
                 <Th>Time</Th>
                 <Th>Tenants</Th>
                 <Th>Note</Th>
