@@ -119,7 +119,7 @@ const ViewLog = ({
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                    <FormLabel>Residents</FormLabel>
+                    <FormLabel>Tenants</FormLabel>
                     <Select
                       isDisabled
                       isMulti
@@ -127,6 +127,7 @@ const ViewLog = ({
                         DropdownIndicator: () => null,
                         MultiValueRemove: () => null,
                       }}
+                      placeholder="No Tenants"
                       defaultValue={residentOptions.filter((item) =>
                         logRecord.residents.includes(item.label),
                       )}

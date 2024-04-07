@@ -105,11 +105,11 @@ const createResident = async ({
       return {
         errMessage:
           axiosErr.response.data.error ??
-          `Resident with the specified user ID already exists.`,
+          `Tenant with the specified user ID already exists.`,
       };
     }
     return {
-      errMessage: "Unable to add resident.",
+      errMessage: "Unable to add tenant.",
     };
   }
 };
@@ -159,11 +159,11 @@ const editResident = async ({
       return {
         errMessage:
           axiosErr.response.data.error ??
-          "Resident with the specified user ID already exists.",
+          "Tenant with the specified user ID already exists.",
       };
     }
     return {
-      errMessage: "Unable to update resident.",
+      errMessage: "Unable to update tenant.",
     };
   }
 };

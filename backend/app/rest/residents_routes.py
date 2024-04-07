@@ -54,7 +54,7 @@ def update_resident(resident_id):
         return (
             jsonify(
                 {
-                    "message": "Resident record with id {resident_id} updated sucessfully".format(
+                    "message": "Tenant record with id {resident_id} updated sucessfully".format(
                         resident_id=resident_id
                     )
                 }
@@ -117,16 +117,6 @@ def get_residents():
     page_number = 1
     try:
         page_number = int(request.args.get("page_number"))
-    except:
-        pass
-    try:
-        filters = json.loads(request.args.get("filters"))
-    except:
-        filters = None
-
-    filters = None
-    try:
-        filters = json.loads(request.args.get("filters"))
     except:
         pass
 

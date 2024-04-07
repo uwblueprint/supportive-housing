@@ -29,7 +29,7 @@ const convertLogsToCSV = (data: LogRecord[]): boolean => {
       "employee",
       "flagged",
       "note",
-      "residents",
+      "tenants",
       "tags",
     ];
     csvRows.push(headers.join(","));

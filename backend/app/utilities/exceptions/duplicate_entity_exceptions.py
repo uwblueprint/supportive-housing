@@ -24,5 +24,5 @@ class DuplicateResidentException(Exception):
     """
 
     def __init__(self, resident_id):
-        message = f"Resident with ID {resident_id} already exists."
+        message = f"Tenant with ID {resident_id} already exists."
         super().__init__(message)

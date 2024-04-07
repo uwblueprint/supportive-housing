@@ -75,9 +75,9 @@ const EditResident = ({
     });
 
     if (isErrorResponse(res)) {
-      newToast("Error updating resident", res.errMessage, "error");
+      newToast("Error updating tenant", res.errMessage, "error");
     } else if (res) {
-      newToast("Resident updated", "Successfully updated resident.", "success");
+      newToast("Tenant updated", "Successfully updated tenant.", "success");
       getRecords(userPageNum);
       toggleClose();
     }
@@ -212,7 +212,7 @@ const EditResident = ({
         <Modal isOpen={isOpen} onClose={handleToggleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Edit Resident</ModalHeader>
+            <ModalHeader>Edit Tenant</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
               <Divider />

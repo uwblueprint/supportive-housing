@@ -77,7 +77,7 @@ class LogRecordsService(ILogRecordsService):
                             "first_name": log[2],
                             "last_name": log[3],
                         },
-                        "residents": log[4],
+                        "residents": log[4] if log[4] else [],
                         "attn_to": {
                             "id": log[5],
                             "first_name": log[6],
@@ -209,7 +209,12 @@ class LogRecordsService(ILogRecordsService):
                 ) t ON logs.log_id = t.log_id\n"
 
     def get_log_records(
-        self, page_number, return_all, results_per_page=10, filters=None
+        self,
+        page_number,
+        return_all,
+        sort_direction="DESC",
+        results_per_page=10,
+        filters=None,
     ):
         try:
             sql = "SELECT\n \
@@ -236,7 +241,7 @@ class LogRecordsService(ILogRecordsService):
             sql += self.join_tag_attributes()
             sql += self.filter_log_records(filters)
 
-            sql += "\nORDER BY datetime DESC"
+            sql += f"\nORDER BY datetime {sort_direction}"
 
             if not return_all:
                 sql += f"\nLIMIT {results_per_page}"

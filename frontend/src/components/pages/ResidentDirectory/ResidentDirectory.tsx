@@ -163,7 +163,7 @@ const ResidentDirectory = (): React.ReactElement => {
         color="blue.600"
       >
         <Flex marginBottom="16px" justify="space-between">
-          <Box textStyle="hero-table">Resident Directory</Box>
+          <Box textStyle="hero-table">Tenant Directory</Box>
           <Spacer />
           {authenticatedUser?.role === UserRole.ADMIN && (
             <CreateResident

@@ -133,13 +133,13 @@ const ResidentDirectoryFilters = ({
         <FormControl>
           <Grid padding="10px 0px" templateColumns="repeat(9, 1fr)" gap={7}>
             <GridItem colSpan={2}>
-              <FormLabel fontWeight="700">Residents</FormLabel>{" "}
+              <FormLabel fontWeight="700">Tenants</FormLabel>{" "}
               <Select
                 value={residentSelections}
                 options={residentOptions}
                 isMulti
                 closeMenuOnSelect={false}
-                placeholder="Select Residents"
+                placeholder="Select Tenants"
                 onChange={handleResidentsChange}
                 styles={selectStyle}
               />

@@ -77,4 +77,5 @@ export type LogRecordFilters = CountLogRecordFilters & {
   returnAll?: boolean;
   pageNumber?: number;
   resultsPerPage?: number;
+  sortDirection?: string;
 };

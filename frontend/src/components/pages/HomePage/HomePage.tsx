@@ -29,8 +29,15 @@ const HomePage = (): React.ReactElement => {
   const [endDate, setEndDate] = useState<Date | undefined>();
   const [tags, setTags] = useState<SelectLabel[]>([]);
   const [attentionTos, setAttentionTos] = useState<SelectLabel[]>([]);
-  const [buildings, setBuildings] = useState<SelectLabel[]>([]);
+  // NOTE: Building 362 will always have ID 2 in the database
+  const [buildings, setBuildings] = useState<SelectLabel[]>([
+    {
+      label: "362",
+      value: 2,
+    },
+  ]);
   const [flagged, setFlagged] = useState(false);
+  const [sortDirection, setSortDirection] = useState("desc");
 
   // Record/page state
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
@@ -91,6 +98,7 @@ const HomePage = (): React.ReactElement => {
       flagged,
       resultsPerPage,
       pageNumber,
+      sortDirection,
     });
 
     // Reset table scroll
@@ -186,6 +194,11 @@ const HomePage = (): React.ReactElement => {
     flagged,
   ]);
 
+  useEffect(() => {
+    getLogRecords(pageNum);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [sortDirection]);
+
   return (
     <Box>
       <NavigationBar />
@@ -252,6 +265,8 @@ const HomePage = (): React.ReactElement => {
                   getRecords={getLogRecords}
                   countRecords={countLogRecords}
                   setUserPageNum={setUserPageNum}
+                  sortDirection={sortDirection}
+                  setSortDirection={setSortDirection}
                 />
                 <Pagination
                   numRecords={numRecords}
