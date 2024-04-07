@@ -37,6 +37,7 @@ const HomePage = (): React.ReactElement => {
     },
   ]);
   const [flagged, setFlagged] = useState(false);
+  const [sortDirection, setSortDirection] = useState("desc");
 
   // Record/page state
   const [logRecords, setLogRecords] = useState<LogRecord[]>([]);
@@ -97,6 +98,7 @@ const HomePage = (): React.ReactElement => {
       flagged,
       resultsPerPage,
       pageNumber,
+      sortDirection
     });
 
     // Reset table scroll
@@ -192,6 +194,10 @@ const HomePage = (): React.ReactElement => {
     flagged,
   ]);
 
+  useEffect(() => {
+    getLogRecords(pageNum)
+  }, [sortDirection])
+
   return (
     <Box>
       <NavigationBar />
@@ -258,6 +264,8 @@ const HomePage = (): React.ReactElement => {
                   getRecords={getLogRecords}
                   countRecords={countLogRecords}
                   setUserPageNum={setUserPageNum}
+                  sortDirection={sortDirection}
+                  setSortDirection={setSortDirection}
                 />
                 <Pagination
                   numRecords={numRecords}

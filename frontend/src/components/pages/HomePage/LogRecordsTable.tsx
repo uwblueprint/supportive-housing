@@ -14,6 +14,7 @@ import {
   MenuItem,
   IconButton,
 } from "@chakra-ui/react";
+import { ArrowUpIcon, ArrowDownIcon } from "@chakra-ui/icons";
 import { VscKebabVertical } from "react-icons/vsc";
 
 import { LogRecord } from "../../../types/LogRecordTypes";
@@ -40,6 +41,8 @@ type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
   countRecords: () => Promise<void>;
   setUserPageNum: React.Dispatch<React.SetStateAction<number>>;
+  sortDirection: string;
+  setSortDirection: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const DELETE_CONFIRMATION_HEADER = "Delete Log Record";
@@ -75,6 +78,8 @@ const LogRecordsTable = ({
   getRecords,
   countRecords,
   setUserPageNum,
+  sortDirection,
+  setSortDirection
 }: Props): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
@@ -208,7 +213,21 @@ const LogRecordsTable = ({
           <Table variant="showTable" verticalAlign="middle">
             <Thead>
               <Tr>
-                <Th>Date</Th>
+                  <Th>
+                  Date
+                    <IconButton
+                      variant="ghost"
+                      aria-label="Sort direction"
+                      fontSize="16px"
+                      size="xs"
+                      ml={1}
+                      mb={0.5}
+                      icon={sortDirection === "desc" ? <ArrowDownIcon/> : <ArrowUpIcon/>}
+                      onClick={() => setSortDirection(
+                        sortDirection === "desc" ? "asc" : "desc"
+                      )}
+                    />
+                  </Th>
                 <Th>Time</Th>
                 <Th>Tenants</Th>
                 <Th>Note</Th>

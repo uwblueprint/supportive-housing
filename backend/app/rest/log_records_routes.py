@@ -56,9 +56,15 @@ def get_log_records():
     except:
         pass
 
+    sort_direction = "DESC"
+    try:
+        sort_direction = request.args.get("sort_direction").upper()
+    except:
+        pass
+
     try:
         log_records = log_records_service.get_log_records(
-            page_number, return_all, results_per_page, filters
+            page_number, return_all, sort_direction, results_per_page, filters
         )
         return jsonify(log_records), 201
     except Exception as e:

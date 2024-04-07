@@ -57,6 +57,7 @@ const filterLogRecords = async ({
   returnAll = false,
   pageNumber,
   resultsPerPage,
+  sortDirection
 }: LogRecordFilters): Promise<GetLogRecordsReponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -77,6 +78,7 @@ const filterLogRecords = async ({
         returnAll,
         pageNumber,
         resultsPerPage,
+        sortDirection
       },
       headers: { Authorization: bearerToken },
     });
