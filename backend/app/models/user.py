@@ -22,6 +22,9 @@ class User(db.Model):
     last_modified = db.Column(
         db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
     )
+    log_records = db.relationship(
+        "LogRecords", secondary="log_record_attn_tos", back_populates="attn_tos"
+    )
 
     __table_args__ = (
         db.CheckConstraint(

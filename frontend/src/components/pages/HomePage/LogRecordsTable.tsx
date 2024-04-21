@@ -150,12 +150,10 @@ const LogRecordsTable = ({
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: SelectLabel[] = usersData.users
-        .filter((user) => user.userStatus === "Active")
-        .map((user) => ({
-          label: `${user.firstName} ${user.lastName}`,
-          value: user.id,
-        }));
+      const userLabels: SelectLabel[] = usersData.users.map((user) => ({
+        label: `${user.firstName} ${user.lastName}`,
+        value: user.id,
+      }));
       setEmployeeOptions(userLabels);
     }
 
@@ -255,22 +253,32 @@ const LogRecordsTable = ({
                 return (
                   <>
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
-                      <Td width="5%">{date}</Td>
-                      <Td width="5%">{time}</Td>
-                      <Td whiteSpace="normal" width="5%">
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
+                        {date}
+                      </Td>
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
+                        {time}
+                      </Td>
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
                         {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="70%">
                         {formatNote(record.note)}
                       </Td>
-                      <Td width="2.5%">{`${record.employee.firstName}`}</Td>
-                      <Td width="2.5%">
-                        {record.attnTo ? `${record.attnTo.firstName}` : ""}
+                      <Td
+                        whiteSpace="normal"
+                        wordBreak="keep-all"
+                        width="5%"
+                      >{`${record.employee.firstName}`}</Td>
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
+                        {formatList(
+                          record.attnTos.map((attnTo) => attnTo.split(" ")[0]),
+                        )}
                       </Td>
-                      <Td width="5%" wordBreak="break-all">
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
                         {formatList(record.tags)}
                       </Td>
-                      <Td width="5%">
+                      <Td whiteSpace="normal" width="5%">
                         {authenticatedUser?.role === UserRole.ADMIN ||
                         authenticatedUser?.id === record.employee.id ? (
                           <Menu>
@@ -322,6 +330,7 @@ const LogRecordsTable = ({
               }}
               residentOptions={residentOptions}
               tagOptions={tagOptions}
+              employeeOptions={employeeOptions}
               allowEdit={
                 authenticatedUser?.role === "Admin" ||
                 authenticatedUser?.id === viewingLogRecord.employee.id

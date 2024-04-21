@@ -1,5 +1,5 @@
 export type CSVLog = {
-  attnTo: string;
+  attnTos: string;
   building: string;
   datetime: string;
   employee: string;

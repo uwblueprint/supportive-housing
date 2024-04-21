@@ -3,10 +3,8 @@ import { CSVLog } from "../types/CSVLogTypes";
 
 const convertToCSVLog = (logRecord: LogRecord): CSVLog => {
   return {
-    attnTo:
-      logRecord.attnTo != null
-        ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}`
-        : "",
+    attnTos:
+      logRecord.attnTos != null ? `"${logRecord.attnTos.join(", ")}"` : "",
     building: `"${logRecord.building.name}"`,
     datetime: `"${logRecord.datetime}"`,
     employee: `"${logRecord.employee.firstName} ${logRecord.employee.lastName}"`,
@@ -23,7 +21,7 @@ const convertLogsToCSV = (data: LogRecord[]): boolean => {
     const csvRows = [];
 
     const headers = [
-      "attnTo",
+      "attnTos",
       "building",
       "datetime",
       "employee",

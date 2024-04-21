@@ -39,6 +39,7 @@ import { combineDateTime, getFormattedTime } from "../../helper/dateHelpers";
 import CreateToast from "../common/Toasts";
 import { getLocalStorageObj } from "../../helper/localStorageHelpers";
 import { SingleDatepicker } from "../common/Datepicker";
+import { UserStatus } from "../../types/UserTypes";
 
 type Props = {
   getRecords: (pageNumber: number) => Promise<void>;
@@ -76,7 +77,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<number[]>([]);
-  const [attnTo, setAttnTo] = useState(-1);
+  const [attnTos, setAttnTos] = useState<number[]>([]);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
@@ -143,13 +144,14 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     }
   };
 
-  const handleAttnToChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleAttnTosChange = (
+    selectedAttnTos: MultiValue<SelectLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setAttnTo(selectedOption.value);
-    } else {
-      setAttnTo(-1);
+    const mutableSelectedAttnTos: SelectLabel[] = Array.from(
+      selectedAttnTos,
+    );
+    if (mutableSelectedAttnTos !== null) {
+      setAttnTos(mutableSelectedAttnTos.map((attnToLabel) => attnToLabel.value));
     }
   };
 
@@ -187,7 +189,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
       const userLabels: SelectLabel[] = usersData.users
-        .filter((user) => user.userStatus === "Active")
+        .filter((user) => user.userStatus === UserStatus.ACTIVE)
         .map((user) => ({
           label: `${user.firstName} ${user.lastName}`,
           value: user.id,
@@ -216,7 +218,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
     setBuildingId(-1);
     setResidents([]);
     setTags([]);
-    setAttnTo(-1);
+    setAttnTos([]);
     setNotes("");
 
     // reset all error states
@@ -248,7 +250,6 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       setNotesError(true)
       return;
     }
-    const attentionTo = attnTo === -1 ? undefined : attnTo;
 
     setLoading(true)
 
@@ -260,7 +261,7 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
       note: notes,
       tags,
       buildingId,
-      attnTo: attentionTo,
+      attnTos,
     });
     if (res != null) {
       newToast("Log record added", "Successfully added log record.", "success")
@@ -387,12 +388,13 @@ const CreateLog = ({ getRecords, countRecords, setUserPageNum }: Props): React.R
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                    <FormLabel>Attention To</FormLabel>
+                    <FormLabel>Attention Tos</FormLabel>
                     <Select
-                      isClearable
                       options={employeeOptions}
-                      placeholder="Select Employee"
-                      onChange={handleAttnToChange}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      placeholder="Select Employees"
+                      onChange={handleAttnTosChange}
                       styles={selectStyle}
                     />
                   </FormControl>
