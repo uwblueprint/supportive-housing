@@ -10,7 +10,6 @@ class LogRecords(db.Model):
     datetime = db.Column(db.DateTime(timezone=True), nullable=False)
     flagged = db.Column(db.Boolean, nullable=False)
     attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    # TODO: replace open String fields with VarChar(NUM_CHARS)
     note = db.Column(db.String, nullable=False)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
     tags = db.relationship(
@@ -18,6 +17,9 @@ class LogRecords(db.Model):
     )
     residents = db.relationship(
         "Residents", secondary="log_record_residents", back_populates="log_records"
+    )
+    attn_tos = db.relationship(
+        "User", secondary="log_record_attn_tos", back_populates="log_records"
     )
     building = db.relationship("Buildings", back_populates="log_record")
 

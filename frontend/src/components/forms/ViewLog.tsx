@@ -32,6 +32,7 @@ type Props = {
   toggleEdit: () => void;
   residentOptions: SelectLabel[];
   tagOptions: SelectLabel[];
+  employeeOptions: SelectLabel[];
   allowEdit: boolean;
 };
 
@@ -42,6 +43,7 @@ const ViewLog = ({
   toggleEdit,
   residentOptions,
   tagOptions,
+  employeeOptions,
   allowEdit,
 }: Props): React.ReactElement => {
   const handleEdit = () => {
@@ -158,17 +160,19 @@ const ViewLog = ({
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                    <FormLabel>Attention To</FormLabel>
-                    <Input
+                    <FormLabel>Attention Tos</FormLabel>
+                    <Select
                       isDisabled
-                      placeholder="No Attn To"
-                      defaultValue={
-                        logRecord.attnTo
-                          ? `${logRecord.attnTo.firstName} ${logRecord.attnTo.lastName}`
-                          : undefined
-                      }
-                      _disabled={{ bg: "transparent" }}
-                      _hover={{ borderColor: "teal.100" }}
+                      isMulti
+                      components={{
+                        DropdownIndicator: () => null,
+                        MultiValueRemove: () => null,
+                      }}
+                      placeholder="No Attn Tos"
+                      defaultValue={employeeOptions.filter((item) => 
+                        logRecord.attnTos.includes(item.label)
+                      )}
+                      styles={viewStyle}
                     />
                   </FormControl>
                 </Col>

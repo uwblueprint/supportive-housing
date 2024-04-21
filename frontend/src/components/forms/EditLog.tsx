@@ -67,7 +67,7 @@ const EditLog = ({
   const [buildingId, setBuildingId] = useState<number>(-1);
   const [residents, setResidents] = useState<number[]>([]);
   const [tags, setTags] = useState<number[]>([]);
-  const [attnTo, setAttnTo] = useState<number>(-1);
+  const [attnTos, setAttnTos] = useState<number[]>([]);
   const [notes, setNotes] = useState("");
   const [flagged, setFlagged] = useState(false);
 
@@ -126,13 +126,14 @@ const EditLog = ({
     }
   };
 
-  const handleAttnToChange = (
-    selectedOption: SingleValue<{ label: string; value: number }>,
+  const handleAttnTosChange = (
+    selectedAttnTos: MultiValue<SelectLabel>,
   ) => {
-    if (selectedOption !== null) {
-      setAttnTo(selectedOption.value);
-    } else {
-      setAttnTo(-1);
+    const mutableSelectedAttnTos: SelectLabel[] = Array.from(
+      selectedAttnTos,
+    );
+    if (mutableSelectedAttnTos !== null) {
+      setAttnTos(mutableSelectedAttnTos.map((attnToLabel) => attnToLabel.value));
     }
   };
 
@@ -150,14 +151,17 @@ const EditLog = ({
     setTime(getFormattedTime(new Date(logRecord.datetime)));
     setBuildingId(logRecord.building.id);
     const residentIds = residentOptions.filter(
-      (item) => logRecord.residents && logRecord.residents.includes(item.label),
+      (item) => logRecord.residents.includes(item.label),
     ).map((item) => item.value);
     setResidents(residentIds);
     const tagIds = tagOptions.filter(
       (item) => logRecord.tags.includes(item.label),
     ).map((item) => item.value);
     setTags(tagIds);
-    setAttnTo(logRecord.attnTo ? logRecord.attnTo.id : -1);
+    const attnToIds = employeeOptions.filter(
+      (item) => logRecord.attnTos.includes(item.label),
+    ).map((item) => item.value);
+    setAttnTos(attnToIds);
     setNotes(logRecord.note);
     setFlagged(logRecord.flagged);
 
@@ -199,7 +203,7 @@ const EditLog = ({
       note: notes,
       tags,
       buildingId,
-      attnTo: attnTo === -1 ? undefined : attnTo,
+      attnTos
     });
     if (res) {
       newToast("Log record updated", "Successfully updated log record.", "success")
@@ -329,15 +333,16 @@ const EditLog = ({
                 </Col>
                 <Col>
                   <FormControl mt={4}>
-                    <FormLabel>Attention To</FormLabel>
+                    <FormLabel>Attention Tos</FormLabel>
                     <Select
-                      isClearable
                       options={employeeOptions}
-                      placeholder="Select Employee"
-                      onChange={handleAttnToChange}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      placeholder="Select Employees"
+                      onChange={handleAttnTosChange}
                       styles={selectStyle}
-                      defaultValue={employeeOptions.find(
-                        (item) => item.value === logRecord.attnTo?.id,
+                      defaultValue={employeeOptions.filter((item) => 
+                        logRecord.attnTos.includes(item.label)
                       )}
                     />
                   </FormControl>

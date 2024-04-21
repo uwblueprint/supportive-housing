@@ -97,7 +97,7 @@ const createLog = async ({
   note,
   tags,
   buildingId,
-  attnTo,
+  attnTos,
 }: CreateLogRecordParams): Promise<PostLogRecordsResponse> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -114,7 +114,7 @@ const createLog = async ({
         note,
         tags,
         buildingId,
-        attnTo,
+        attnTos,
       },
       { headers: { Authorization: bearerToken } },
     );
@@ -148,7 +148,7 @@ const editLogRecord = async ({
   note,
   tags,
   buildingId,
-  attnTo,
+  attnTos,
 }: EditLogRecordParams): Promise<boolean> => {
   try {
     const bearerToken = `Bearer ${getLocalStorageObjProperty(
@@ -163,7 +163,7 @@ const editLogRecord = async ({
         datetime,
         flagged,
         note,
-        attnTo,
+        attnTos,
         tags,
         buildingId,
       },

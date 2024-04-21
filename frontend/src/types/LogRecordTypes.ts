@@ -11,7 +11,7 @@ type BuildingRecord = {
 
 export type LogRecord = {
   logId: number;
-  attnTo: NameRecord | null;
+  attnTos: string[];
   employee: NameRecord;
   building: BuildingRecord;
   datetime: string;
@@ -31,7 +31,7 @@ export type GetLogRecordCountResponse = {
 
 export type PostLogRecordsResponse = Pick<
   LogRecord,
-  | "attnTo"
+  | "attnTos"
   | "building"
   | "datetime"
   | "employee"
@@ -58,7 +58,7 @@ export type CreateLogRecordParams = {
   note: string;
   tags: number[];
   buildingId: number;
-  attnTo?: number;
+  attnTos: number[];
 };
 
 export type EditLogRecordParams = {
@@ -70,7 +70,7 @@ export type EditLogRecordParams = {
   note: string;
   tags: number[];
   buildingId: number;
-  attnTo?: number;
+  attnTos: number[];
 };
 
 export type LogRecordFilters = CountLogRecordFilters & {
