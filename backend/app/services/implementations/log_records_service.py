@@ -74,7 +74,9 @@ class LogRecordsService(ILogRecordsService):
             attn_to = User.query.filter_by(id=attn_to_id).first()
 
             if not attn_to:
-                raise Exception(f"Employee (attn_to) with id {attn_to_id} does not exist")
+                raise Exception(
+                    f"Employee (attn_to) with id {attn_to_id} does not exist"
+                )
             log_record.attn_tos.append(attn_to)
 
     def to_json_list(self, logs):
@@ -132,7 +134,9 @@ class LogRecordsService(ILogRecordsService):
         if type(attn_tos) == list:
             sql_statement = f"\n'{attn_tos[0]}'=ANY (attn_to_ids)"
             for i in range(1, len(attn_tos)):
-                sql_statement = sql_statement + f"\nAND '{attn_tos[i]}'=ANY (attn_to_ids)"
+                sql_statement = (
+                    sql_statement + f"\nAND '{attn_tos[i]}'=ANY (attn_to_ids)"
+                )
             return sql_statement
         return f"\n'{attn_tos}'=ANY (attn_to_ids)"
 
@@ -213,7 +217,7 @@ class LogRecordsService(ILogRecordsService):
                     JOIN tags ON lrt.tag_id = tags.tag_id\n \
                     GROUP BY logs.log_id \n \
                 ) t ON logs.log_id = t.log_id\n"
-    
+
     def join_attn_to_attributes(self):
         return "\nLEFT JOIN\n \
                     (SELECT logs.log_id, ARRAY_AGG(users.id) AS attn_to_ids, ARRAY_AGG(CONCAT(users.first_name, ' ', users.last_name)) AS attn_to_names FROM log_records logs\n \
@@ -304,7 +308,6 @@ class LogRecordsService(ILogRecordsService):
         db.session.commit()
 
     def update_log_record(self, log_id, updated_log_record):
-
         log_record = LogRecords.query.filter_by(log_id=log_id).first()
         if log_record:
             log_record.residents = []

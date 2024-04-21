@@ -150,11 +150,10 @@ const LogRecordsTable = ({
 
     const usersData = await UserAPIClient.getUsers({ returnAll: true });
     if (usersData && usersData.users.length !== 0) {
-      const userLabels: SelectLabel[] = usersData.users
-        .map((user) => ({
-          label: `${user.firstName} ${user.lastName}`,
-          value: user.id,
-        }));
+      const userLabels: SelectLabel[] = usersData.users.map((user) => ({
+        label: `${user.firstName} ${user.lastName}`,
+        value: user.id,
+      }));
       setEmployeeOptions(userLabels);
     }
 
@@ -254,17 +253,27 @@ const LogRecordsTable = ({
                 return (
                   <>
                     <Tr key={record.logId} style={{ verticalAlign: "middle" }}>
-                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">{date}</Td>
-                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">{time}</Td>
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
+                        {date}
+                      </Td>
+                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
+                        {time}
+                      </Td>
                       <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
                         {formatList(record.residents)}
                       </Td>
                       <Td whiteSpace="normal" width="70%">
                         {formatNote(record.note)}
                       </Td>
-                      <Td whiteSpace="normal" wordBreak="keep-all" width="5%">{`${record.employee.firstName}`}</Td>
+                      <Td
+                        whiteSpace="normal"
+                        wordBreak="keep-all"
+                        width="5%"
+                      >{`${record.employee.firstName}`}</Td>
                       <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
-                        {formatList(record.attnTos.map((attnTo) => attnTo.split(" ")[0]))}
+                        {formatList(
+                          record.attnTos.map((attnTo) => attnTo.split(" ")[0]),
+                        )}
                       </Td>
                       <Td whiteSpace="normal" wordBreak="keep-all" width="5%">
                         {formatList(record.tags)}

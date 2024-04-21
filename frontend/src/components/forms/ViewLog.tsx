@@ -169,8 +169,8 @@ const ViewLog = ({
                         MultiValueRemove: () => null,
                       }}
                       placeholder="No Attn Tos"
-                      defaultValue={employeeOptions.filter((item) => 
-                        logRecord.attnTos.includes(item.label)
+                      defaultValue={employeeOptions.filter((item) =>
+                        logRecord.attnTos.includes(item.label),
                       )}
                       styles={viewStyle}
                     />
