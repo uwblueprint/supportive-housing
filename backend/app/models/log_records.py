@@ -9,7 +9,6 @@ class LogRecords(db.Model):
     employee_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     datetime = db.Column(db.DateTime(timezone=True), nullable=False)
     flagged = db.Column(db.Boolean, nullable=False)
-    attn_to = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     note = db.Column(db.String, nullable=False)
     building_id = db.Column(db.Integer, db.ForeignKey("buildings.id"), nullable=False)
     tags = db.relationship(
