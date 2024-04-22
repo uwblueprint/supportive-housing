@@ -22,11 +22,14 @@ import {
   FormLabel,
   Flex,
 } from "@chakra-ui/react";
-import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import { TiExport } from "react-icons/ti";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import { convertLogsToDOCX, convertLogsToCSV } from "../../helper/exportHelpers";
+import {
+  convertLogsToDOCX,
+  convertLogsToCSV,
+} from "../../helper/exportHelpers";
 import CreateToast from "../common/Toasts";
 import { getFormattedDateAndTime } from "../../helper/dateHelpers";
 import { SingleDatepicker } from "../common/Datepicker";
@@ -51,7 +54,7 @@ const ExportLogs = (): React.ReactElement => {
   const handleClear = () => {
     setStartDate(undefined);
     setEndDate(undefined);
-    setSortDirection("desc")
+    setSortDirection("desc");
     setDateError(false);
     setStartDateError(false);
     setEndDateError(false);
@@ -112,7 +115,7 @@ const ExportLogs = (): React.ReactElement => {
       return false;
     }
     return true;
-  }
+  };
 
   const constructDateRange = (): (string | null)[] | undefined => {
     let dateRange;
@@ -126,8 +129,8 @@ const ExportLogs = (): React.ReactElement => {
       ];
     }
 
-    return dateRange
-  }
+    return dateRange;
+  };
 
   const handleDocxExport = async () => {
     if (!validateDates()) {
@@ -281,16 +284,29 @@ const ExportLogs = (): React.ReactElement => {
                 </FormHelperText>
               </FormControl>
               <FormControl>
-              <FormLabel mt={4}>Sort Direction</FormLabel>
+                <FormLabel mt={4}>Sort Direction</FormLabel>
                 <Flex alignItems="center" gap="10px">
-                  <IconButton aria-label="calendar" size="sm" variant="secondary" fontSize="20px" icon={
-                    sortDirection === "desc" ? <ArrowDownIcon /> : <ArrowUpIcon />
-                  } onClick={() =>
-                    setSortDirection(
-                      sortDirection === "desc" ? "asc" : "desc",
-                    )
-                  }/>
-                  <Text>{sortDirection === "desc" ? "Descending" : "Ascending"}</Text>
+                  <IconButton
+                    aria-label="calendar"
+                    size="sm"
+                    variant="secondary"
+                    fontSize="20px"
+                    icon={
+                      sortDirection === "desc" ? (
+                        <ArrowDownIcon />
+                      ) : (
+                        <ArrowUpIcon />
+                      )
+                    }
+                    onClick={() =>
+                      setSortDirection(
+                        sortDirection === "desc" ? "asc" : "desc",
+                      )
+                    }
+                  />
+                  <Text>
+                    {sortDirection === "desc" ? "Descending" : "Ascending"}
+                  </Text>
                 </Flex>
               </FormControl>
             </ModalBody>
@@ -305,7 +321,12 @@ const ExportLogs = (): React.ReactElement => {
                   marginRight="10px"
                 />
               )}
-              <Button onClick={handleDocxExport} variant="primary" type="submit" marginRight="10px">
+              <Button
+                onClick={handleDocxExport}
+                variant="primary"
+                type="submit"
+                marginRight="10px"
+              >
                 Export As DOCX
               </Button>
               <Button onClick={handleCsvExport} variant="primary" type="submit">

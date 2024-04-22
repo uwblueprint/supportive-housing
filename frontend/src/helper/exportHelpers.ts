@@ -1,64 +1,81 @@
-import { Document, Packer, Paragraph, Table, TableCell, TableRow } from 'docx';
+import { Document, Packer, Paragraph, Table, TableCell, TableRow } from "docx";
 import { LogRecord } from "../types/LogRecordTypes";
 
 export enum DocType {
   DOCX = "docx",
   CSV = "csv",
-} 
-
-const downloadBlob = (blob: Blob, type: DocType): void => {
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-
-    // Get date for file name
-    // "fr-CA" formats the date into YYYY-MM-DD
-    const dateToday = new Date();
-    const dateTodayString = dateToday
-      .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
-      .substring(0, 10);
-
-    link.setAttribute("download", `log_records_${dateTodayString}.${type}`);
-    document.body.appendChild(link);
-    link.click();
-
-    // Cleanup created object
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
 }
 
-export const convertLogsToDOCX = async (data: LogRecord[]): Promise<boolean> => {
+const downloadBlob = (blob: Blob, type: DocType): void => {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
 
+  // Get date for file name
+  // "fr-CA" formats the date into YYYY-MM-DD
+  const dateToday = new Date();
+  const dateTodayString = dateToday
+    .toLocaleString("fr-CA", { timeZone: "America/Toronto" })
+    .substring(0, 10);
+
+  link.setAttribute("download", `log_records_${dateTodayString}.${type}`);
+  document.body.appendChild(link);
+  link.click();
+
+  // Cleanup created object
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+export const convertLogsToDOCX = async (
+  data: LogRecord[],
+): Promise<boolean> => {
   try {
     // Create a table to display log records
     const table = new Table({
       rows: [
         new TableRow({
           children: [
-            new TableCell({ children: [new Paragraph('Datetime')] }),
-            new TableCell({ children: [new Paragraph('Tenants')] }),
-            new TableCell({ children: [new Paragraph('Note')] }),
-            new TableCell({ children: [new Paragraph('Employee')] }),
-            new TableCell({ children: [new Paragraph('Attn Tos')] }),
-            new TableCell({ children: [new Paragraph('Tags')] }),
-            new TableCell({ children: [new Paragraph('Flagged')] }),
-            new TableCell({ children: [new Paragraph('Building')] }),
+            new TableCell({ children: [new Paragraph("Datetime")] }),
+            new TableCell({ children: [new Paragraph("Tenants")] }),
+            new TableCell({ children: [new Paragraph("Note")] }),
+            new TableCell({ children: [new Paragraph("Employee")] }),
+            new TableCell({ children: [new Paragraph("Attn Tos")] }),
+            new TableCell({ children: [new Paragraph("Tags")] }),
+            new TableCell({ children: [new Paragraph("Flagged")] }),
+            new TableCell({ children: [new Paragraph("Building")] }),
           ],
         }),
-        ...data.map((record) =>
-          new TableRow({
-            children: [
-              new TableCell({ children: [new Paragraph(record.datetime)] }),
-              new TableCell({ children: [new Paragraph(record.residents.join(', '))] }),
-              new TableCell({ children: [new Paragraph(record.note)] }),
-              new TableCell({ children: [new Paragraph(`${record.employee.firstName} ${record.employee.lastName}`)] }),
-              new TableCell({ children: [new Paragraph(record.attnTos.join(', '))] }),
-              new TableCell({ children: [new Paragraph(record.tags.join(', '))] }),
-              new TableCell({ children: [new Paragraph(record.flagged ? 'Yes' : 'No')] }),
-              new TableCell({ children: [new Paragraph(record.building.name)] }),
-            ],
-          })
+        ...data.map(
+          (record) =>
+            new TableRow({
+              children: [
+                new TableCell({ children: [new Paragraph(record.datetime)] }),
+                new TableCell({
+                  children: [new Paragraph(record.residents.join(", "))],
+                }),
+                new TableCell({ children: [new Paragraph(record.note)] }),
+                new TableCell({
+                  children: [
+                    new Paragraph(
+                      `${record.employee.firstName} ${record.employee.lastName}`,
+                    ),
+                  ],
+                }),
+                new TableCell({
+                  children: [new Paragraph(record.attnTos.join(", "))],
+                }),
+                new TableCell({
+                  children: [new Paragraph(record.tags.join(", "))],
+                }),
+                new TableCell({
+                  children: [new Paragraph(record.flagged ? "Yes" : "No")],
+                }),
+                new TableCell({
+                  children: [new Paragraph(record.building.name)],
+                }),
+              ],
+            }),
         ),
       ],
     });
@@ -68,36 +85,32 @@ export const convertLogsToDOCX = async (data: LogRecord[]): Promise<boolean> => 
       sections: [
         {
           children: [table],
-        }
-      ]
+        },
+      ],
     });
 
-    const blob = await Packer.toBlob(doc)
-    downloadBlob(blob, DocType.DOCX)
+    const blob = await Packer.toBlob(doc);
+    downloadBlob(blob, DocType.DOCX);
 
-    return true
-
+    return true;
   } catch (error) {
-    console.log("Docx creation failed: ", error)
-
-    return false
+    return false;
   }
 };
 
 export const convertLogsToCSV = (data: LogRecord[]): boolean => {
-
   try {
     const csvRows = [];
 
     const headers = [
-      'Datetime',
-      'Tenants',
-      'Note',
-      'Employee',
-      'Attn Tos',
-      'Tags',
-      'Flagged',
-      'Building'
+      "Datetime",
+      "Tenants",
+      "Note",
+      "Employee",
+      "Attn Tos",
+      "Tags",
+      "Flagged",
+      "Building",
     ];
     csvRows.push(headers.join(","));
     data.forEach((log: LogRecord) => {
@@ -117,7 +130,7 @@ export const convertLogsToCSV = (data: LogRecord[]): boolean => {
     const csvContent = csvRows.join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    downloadBlob(blob, DocType.CSV)
+    downloadBlob(blob, DocType.CSV);
 
     return true;
   } catch {
