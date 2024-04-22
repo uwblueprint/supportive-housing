@@ -20,16 +20,18 @@ import {
   ModalCloseButton,
   Spinner,
   FormLabel,
+  Flex,
 } from "@chakra-ui/react";
+import { ArrowDownIcon, ArrowUpIcon } from '@chakra-ui/icons';
 import { TiExport } from "react-icons/ti";
 import LogRecordAPIClient from "../../APIClients/LogRecordAPIClient";
 import { singleDatePickerStyle } from "../../theme/forms/datePickerStyles";
-import convertLogsToCSV from "../../helper/csvHelpers";
+import { convertLogsToDOCX, convertLogsToCSV } from "../../helper/exportHelpers";
 import CreateToast from "../common/Toasts";
 import { getFormattedDateAndTime } from "../../helper/dateHelpers";
 import { SingleDatepicker } from "../common/Datepicker";
 
-const ExportToCSV = (): React.ReactElement => {
+const ExportLogs = (): React.ReactElement => {
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [isStartDateEmpty, setIsStartDateEmpty] = useState<boolean>(true);
   const [endDate, setEndDate] = useState<Date | undefined>();
@@ -39,6 +41,8 @@ const ExportToCSV = (): React.ReactElement => {
   const [endDateError, setEndDateError] = useState<boolean>(false);
   const [dateError, setDateError] = useState<boolean>(false);
 
+  const [sortDirection, setSortDirection] = useState("desc");
+
   const [isOpen, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -47,6 +51,7 @@ const ExportToCSV = (): React.ReactElement => {
   const handleClear = () => {
     setStartDate(undefined);
     setEndDate(undefined);
+    setSortDirection("desc")
     setDateError(false);
     setStartDateError(false);
     setEndDateError(false);
@@ -93,20 +98,23 @@ const ExportToCSV = (): React.ReactElement => {
     setOpen(false);
   };
 
-  const handleSubmit = async () => {
+  const validateDates = (): boolean => {
     if (!startDate && !isStartDateEmpty) {
       setStartDateError(true);
-      return;
+      return false;
     }
     if (!endDate && !isEndDateEmpty) {
       setEndDateError(true);
-      return;
+      return false;
     }
     if (startDate && endDate && startDate > endDate) {
       setDateError(true);
-      return;
+      return false;
     }
+    return true;
+  }
 
+  const constructDateRange = (): (string | null)[] | undefined => {
     let dateRange;
     if (startDate || endDate) {
       startDate?.setHours(0, 0, 0, 0);
@@ -117,10 +125,57 @@ const ExportToCSV = (): React.ReactElement => {
         endDate ? endDate.toISOString() : null,
       ];
     }
+
+    return dateRange
+  }
+
+  const handleDocxExport = async () => {
+    if (!validateDates()) {
+      return;
+    }
+
     setLoading(true);
     const data = await LogRecordAPIClient.filterLogRecords({
-      dateRange,
-      returnAll: true, // return all data
+      dateRange: constructDateRange(),
+      sortDirection,
+      returnAll: true,
+    });
+
+    if (!data || data.logRecords.length === 0) {
+      newToast(
+        "Error downloading DOCX",
+        "No records found in the provided date range.",
+        "error",
+      );
+    } else {
+      const formattedLogRecords = data.logRecords.map((logRecord) => {
+        const { date, time } = getFormattedDateAndTime(
+          new Date(logRecord.datetime),
+          true,
+        );
+        return { ...logRecord, datetime: `${date}, ${time}` };
+      });
+      const success = await convertLogsToDOCX(formattedLogRecords);
+      if (success) {
+        newToast("DOCX downloaded", "Successfully downloaded DOCX.", "success");
+        handleClose();
+      } else {
+        newToast("Error downloading DOCX", "Unable to download DOCX.", "error");
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleCsvExport = async () => {
+    if (!validateDates()) {
+      return;
+    }
+
+    setLoading(true);
+    const data = await LogRecordAPIClient.filterLogRecords({
+      dateRange: constructDateRange(),
+      sortDirection,
+      returnAll: true,
     });
 
     if (!data || data.logRecords.length === 0) {
@@ -150,9 +205,9 @@ const ExportToCSV = (): React.ReactElement => {
 
   return (
     <>
-      <Tooltip label="Export to CSV">
+      <Tooltip label="Export Logs">
         <IconButton
-          aria-label="Export to CSV"
+          aria-label="Export Logs"
           icon={<Icon boxSize="36px" as={TiExport} />}
           variant="tertiary"
           onClick={handleOpen}
@@ -163,7 +218,7 @@ const ExportToCSV = (): React.ReactElement => {
         <Modal isOpen={isOpen} onClose={handleClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Export to CSV File</ModalHeader>
+            <ModalHeader>Export Logs</ModalHeader>
             <ModalCloseButton size="lg" />
             <ModalBody>
               <FormControl isInvalid={dateError}>
@@ -225,6 +280,19 @@ const ExportToCSV = (): React.ReactElement => {
                   Note: If a range is not selected, all records will be printed.
                 </FormHelperText>
               </FormControl>
+              <FormControl>
+              <FormLabel mt={4}>Sort Direction</FormLabel>
+                <Flex alignItems="center" gap="10px">
+                  <IconButton aria-label="calendar" size="sm" variant="secondary" fontSize="20px" icon={
+                    sortDirection === "desc" ? <ArrowDownIcon /> : <ArrowUpIcon />
+                  } onClick={() =>
+                    setSortDirection(
+                      sortDirection === "desc" ? "asc" : "desc",
+                    )
+                  }/>
+                  <Text>{sortDirection === "desc" ? "Descending" : "Ascending"}</Text>
+                </Flex>
+              </FormControl>
             </ModalBody>
 
             <ModalFooter>
@@ -237,8 +305,11 @@ const ExportToCSV = (): React.ReactElement => {
                   marginRight="10px"
                 />
               )}
-              <Button onClick={handleSubmit} variant="primary" type="submit">
-                Export
+              <Button onClick={handleDocxExport} variant="primary" type="submit" marginRight="10px">
+                Export As DOCX
+              </Button>
+              <Button onClick={handleCsvExport} variant="primary" type="submit">
+                Export As CSV
               </Button>
             </ModalFooter>
           </ModalContent>
@@ -248,4 +319,4 @@ const ExportToCSV = (): React.ReactElement => {
   );
 };
 
-export default ExportToCSV;
+export default ExportLogs;
