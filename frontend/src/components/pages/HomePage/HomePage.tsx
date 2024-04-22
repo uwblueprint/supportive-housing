@@ -7,7 +7,7 @@ import CreateLog from "../../forms/CreateLog";
 import { LogRecord } from "../../../types/LogRecordTypes";
 import LogRecordsTable from "./LogRecordsTable";
 import HomePageFilters from "./HomePageFilters";
-import ExportToCSV from "../../forms/ExportToCSV";
+import ExportLogs from "../../forms/ExportLogs";
 import LogRecordAPIClient from "../../../APIClients/LogRecordAPIClient";
 import { SelectLabel } from "../../../types/SharedTypes";
 
@@ -219,7 +219,7 @@ const HomePage = (): React.ReactElement => {
               countRecords={countLogRecords}
               setUserPageNum={setUserPageNum}
             />
-            <ExportToCSV />
+            <ExportLogs />
           </Flex>
         </Flex>
 

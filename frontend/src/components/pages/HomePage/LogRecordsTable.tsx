@@ -238,7 +238,7 @@ const LogRecordsTable = ({
                 <Th>Tenants</Th>
                 <Th>Note</Th>
                 <Th>Employee</Th>
-                <Th>Attn To</Th>
+                <Th>Attn Tos</Th>
                 <Th>Tags</Th>
                 <Th> </Th>
               </Tr>

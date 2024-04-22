@@ -27,6 +27,7 @@
     "bootstrap": "^4.6.0",
     "date-fns": "^2.30.0",
     "dayzed": "^3.2.3",
+    "docx": "8.0.0",
     "framer-motion": "^4.1.17",
     "graphql": "^15.5.0",
     "humps": "^2.0.1",
